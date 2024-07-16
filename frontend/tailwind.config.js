@@ -6,6 +6,10 @@ export default {
   ],
   theme: {
     extend: {},
+    fontFamily: {
+      Cafe24Ssurround: ["Cafe24Ssurround"],
+      KoPubDotum: ["KoPub Dotum"]
+    }
   },
   plugins: [],
 }
