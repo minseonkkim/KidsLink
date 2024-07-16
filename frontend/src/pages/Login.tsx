@@ -12,7 +12,6 @@ export default function Login(){
                     교육의 모든 순간을 함께하세요.
                 </p>
 
-
                 <form className="absolute left-[180px] top-[490px] flex flex-col">
                     <input type="text" placeholder="로그인" className="w-[530px] h-[78px] rounded-[20px] p-5 bg-white border border-[#b9b9b9] mb-3 text-[26px] font-medium text-left text-[#b9b9b9]"/>
                     <input type="password" placeholder="비밀번호" className="w-[530px] h-[78px] rounded-[20px] p-5 bg-white border border-[#b9b9b9] mb-5 text-[26px] font-medium text-left text-[#b9b9b9]"/>
@@ -27,6 +26,5 @@ export default function Login(){
             />
         </div>
             
- 
     </>
 }
