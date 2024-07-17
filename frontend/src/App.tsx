@@ -36,7 +36,7 @@ const userRoutes = (userType: UserType, path: string) => {
 };
 
 function App() {
-  const userType: UserType = 'teacher';
+  const userType: UserType = 'parent';
   return (
     <BrowserRouter>
       <Routes>

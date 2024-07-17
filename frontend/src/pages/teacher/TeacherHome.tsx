@@ -2,18 +2,15 @@ import TeacherHeader from "../../components/teacher/common/TeacherHeader";
 import profileImg from '../../assets/profile_img.jpg';
 import MenuButton from "../../components/teacher/main/MenuButton";
 import growthdiaryBtnImg from "../../assets/growthdiary_btn_img.png";
-import noticeBtnImg from "../../assets/notice_btn_img.png";
-import albumBtnImg from "../../assets/album_btn_img.png";
-import documentBtnImg from "../../assets/document_btn_img.png";
-import busBtnImg from "../../assets/bus_btn_img.png";
+
 
 export default function TeacherHome(){
     return <>
         <TeacherHeader/>
-        <div className="font-KoPubDotum flex flex-row min-h-[calc(100vh-105px)] h-full items-center justify-between pl-[150px] pr-[110px]">
+        <div className="font-KoPubDotum flex flex-row min-h-[calc(100vh-105px)] h-full items-center justify-between px-[150px]">
             
-            <div className="w-[330px] h-[500px] rounded-[20px] bg-[#f6f6f6] flex flex-col items-center py-7">
-                <div className="w-[170px] h-[170px]">
+            <div className="w-[360px] h-[550px] rounded-[20px] bg-[#f8f8f8] flex flex-col items-center py-10">
+                <div className="w-[180px] h-[180px]">
                     <img src={profileImg} className="w-full h-full rounded-full object-cover"  />
                 </div>
                 <p className="text-[30px] font-bold text-center text-[#8cad1e] mt-3">개나리반 선생님</p>
@@ -31,14 +28,7 @@ export default function TeacherHome(){
                     </div>
                 </div>
             </div>
-            <div className="flex flex-row flex-wrap w-[750px]">
-                <MenuButton name="성장일지" imgpath={growthdiaryBtnImg}/>
-                <MenuButton name="알림장" imgpath={noticeBtnImg}/>
-                <MenuButton name="사진분류" imgpath={albumBtnImg}/>
-                <MenuButton name="문서관리" imgpath={documentBtnImg}/>
-                <MenuButton name="사진분류" imgpath={albumBtnImg}/>
-                <MenuButton name="등하원관리" imgpath={busBtnImg}/>
-            </div>
+            <div><MenuButton name="성장일지" imgpath={growthdiaryBtnImg}/></div>
         </div>
     </>
 }
