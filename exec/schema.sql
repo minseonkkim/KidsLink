@@ -112,6 +112,9 @@ CREATE TABLE `absent` (
     FOREIGN KEY (`child_id`) REFERENCES `child`(`child_id`)
 );
 
+ALTER TABLE `absent`
+ADD COLUMN `confirmation_status` ENUM('T', 'F') DEFAULT 'F';
+
 CREATE TABLE `dosage` (
     `dosage_id` INT NOT NULL AUTO_INCREMENT,
     `dosage_startdate` DATE NULL,
@@ -125,6 +128,9 @@ CREATE TABLE `dosage` (
     PRIMARY KEY (`dosage_id`),
     FOREIGN KEY (`child_id`) REFERENCES `child`(`child_id`)
 );
+
+ALTER TABLE `dosage`
+ADD COLUMN `confirmation_status` ENUM('T', 'F') DEFAULT 'F';
 
 CREATE TABLE `bus_stop` (
     `bus_stop_id` INT NOT NULL AUTO_INCREMENT,
@@ -159,6 +165,14 @@ CREATE TABLE `teacher_notification` (
     PRIMARY KEY (`teacher_notification_id`),
     FOREIGN KEY (`teacher_id`) REFERENCES `teacher`(`teacher_id`)
 );
+-- Add confirmation_status column to parent_notification table
+ALTER TABLE `parent_notification`
+ADD COLUMN `confirmation_status` ENUM('T', 'F') DEFAULT 'F';
+
+-- Add confirmation_status column to teacher_notification table
+ALTER TABLE `teacher_notification`
+ADD COLUMN `confirmation_status` ENUM('T', 'F') DEFAULT 'F';
+
 
 CREATE TABLE `meeting_time` (
     `meeting_time_id` INT NOT NULL AUTO_INCREMENT,
