@@ -9,7 +9,7 @@ export default function TeacherHeader(){
                 <CgProfile className="w-[30px] h-[30px] mr-8 cursor-pointer" style={{ color: '#363636' }} />
                 <div className="relative mr-[160px]">
                     <FaBell className="w-[30px] h-[30px] cursor-pointer" style={{ color: '#363636' }} />
-                    <span className="absolute top-0 right-0 w-5 h-5 bg-red-500 text-white text-[12px] font-bold rounded-full flex items-center justify-center">2</span>
+                    <span className="absolute top-0 right-0 w-4 h-4 bg-red-500 text-white text-[8px] font-bold rounded-full flex items-center justify-center">2</span>
                 </div>
             </div>
         </div>
