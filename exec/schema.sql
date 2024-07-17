@@ -1,5 +1,5 @@
-CREATE SCHEMA `isamtalk` ;
-USE `isamtalk`;
+CREATE SCHEMA `kidslink` ;
+USE `kidslink`;
 
 CREATE TABLE `kindergarten` (
     `kindergarten_id` INT NOT NULL AUTO_INCREMENT,
