@@ -19,7 +19,7 @@ export default function TeacherHome(){
                 <p className="text-[30px] font-bold text-center text-[#8cad1e] mt-3">개나리반 선생님</p>
                 <p className="text-[22px] font-bold text-center text-[#363636] mb-3">정 현 수</p>
                 <div className="w-[290px] h-full rounded-[10px] bg-white flex flex-col items-center justify-between">
-                    <div className="w-[290px] h-[35px] rounded-tl-[10px] rounded-tr-[10px] bg-[#d7d7d7] flex items-center justify-center font-bold text-[#ffffff] text-[18px]">2024 / 07 / 17</div>
+                    <div className="w-[290px] h-[30px] rounded-tl-[10px] rounded-tr-[10px] bg-[#d7d7d7] flex items-center justify-center font-bold text-[#ffffff] text-[18px]">2024 / 07 / 17</div>
                     <div className="w-[250px] mx-3 mt-2 text-center text-[16px] whitespace-nowrap truncate">
                         <div>예정된 상담 3건</div>
                         <div>등원 및 인사</div>
