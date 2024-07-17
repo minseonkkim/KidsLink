@@ -1,5 +1,5 @@
-import LoginHeader from '../components/login/LoginHeader';
-import mainImg from '../assets/main_img.png';                       
+// import LoginHeader from '../components/login/LoginHeader';
+// import mainImg from '../assets/main_img.png';                       
 
 export default function Login(){
     return <>
@@ -26,5 +26,15 @@ export default function Login(){
             />
         </div>
             
-    </>
+//     </>
+// }
+
+import React from 'react'
+
+const Login = () => {
+  return (
+    <div>Login</div>
+  )
 }
+
+export default Login
