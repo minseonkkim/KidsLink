@@ -1,10 +1,10 @@
-package com.ssafy.isamtalk;
+package com.ssafy.kidsnote;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class IsamtalkApplicationTests {
+class KidsnoteApplicationTests {
 
 	@Test
 	void contextLoads() {
