@@ -1,10 +1,10 @@
-package com.ssafy.kidsnote;
+package com.ssafy.kidslink;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class KidsnoteApplicationTests {
+class KidsLinkApplicationTests {
 
 	@Test
 	void contextLoads() {
