@@ -1,13 +1,13 @@
-package com.ssafy.kidsnote;
+package com.ssafy.kidslink;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class KidsnoteApplication {
+public class KidsLinkApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(KidsnoteApplication.class, args);
+		SpringApplication.run(KidsLinkApplication.class, args);
 	}
 
 }
