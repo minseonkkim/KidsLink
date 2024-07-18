@@ -1,6 +1,7 @@
 package com.ssafy.kidslink.config;
 
 import com.ssafy.kidslink.common.exception.CustomAuthenticationEntryPoint;
+import com.ssafy.kidslink.common.jwt.CustomLogoutFilter;
 import com.ssafy.kidslink.common.jwt.JWTAuthenticationFilter;
 import com.ssafy.kidslink.common.jwt.JWTAuthorizationFilter;
 import com.ssafy.kidslink.common.jwt.JWTUtil;
@@ -17,6 +18,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 
 import static org.springframework.http.HttpMethod.POST;
 
@@ -58,6 +60,7 @@ public class SecurityConfig {
                         .anyRequest().permitAll())
                 .addFilterAt(new JWTAuthenticationFilter(authenticationManager(authenticationConfiguration), jwtUtil), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new JWTAuthorizationFilter(jwtUtil, customUserDetailsService), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new CustomLogoutFilter(jwtUtil), LogoutFilter.class)
                 .build();
     }
 }
