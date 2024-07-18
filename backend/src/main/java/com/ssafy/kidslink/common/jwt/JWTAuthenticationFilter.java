@@ -1,7 +1,10 @@
 package com.ssafy.kidslink.common.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ssafy.kidslink.application.parent.domain.Parent;
 import com.ssafy.kidslink.application.user.dto.LoginDTO;
+import com.ssafy.kidslink.common.dto.APIError;
+import com.ssafy.kidslink.common.dto.APIResponse;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -18,7 +21,9 @@ import org.springframework.util.StreamUtils;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import static com.ssafy.kidslink.common.util.CookieUtil.createCookie;
 
@@ -89,11 +94,39 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         response.setHeader("access", access);
         response.addCookie(createCookie("refresh", refresh));
         response.setStatus(HttpStatus.OK.value());
+
+        HashMap<String, String> responseMap = new HashMap<>();
+        responseMap.put("role", role);
+        responseMap.put("token", access);
+        responseMap.put("expiredAt", null);
+        // 필요한 경우 response body를 추가
+        APIResponse<Map<String, String>> responseData = new APIResponse<>(
+                "success",
+                responseMap,
+                "로그인에 성공했습니다.",
+                null
+        );
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        response.setContentType("application/json;charset=UTF-8");
+        response.getWriter().write(objectMapper.writeValueAsString(responseData));
     }
 
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
         log.info("JwtAuthenticationTokenFilter.unsuccessfulAuthentication");
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
+
+        APIError apiError = new APIError("UNAUTHORIZED", "유효한 JWT 토큰이 필요합니다.");
+        APIResponse<Parent> responseData = new APIResponse<>(
+                "error",
+                null,
+                "사용자의 정보 조회를 실패했습니다.",
+                apiError
+        );
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        response.setContentType("application/json;charset=UTF-8");
+        response.getWriter().write(objectMapper.writeValueAsString(responseData));
     }
 }
