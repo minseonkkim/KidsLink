@@ -45,10 +45,10 @@ public class ParentService {
         child.setChildName(childDTO.getName());
         child.setChildBirth(childDTO.getBirth());
 
-        // TODO #2 수정 바람 (도메인 자체를 연결)
-        child.setParentId(savedParent.getParentId());
-        child.setKindergartenClassId(1);
-        child.setKindergartenId(1);
+//        // TODO #2 수정 바람 (도메인 자체를 연결)
+//        child.setParentId(savedParent.getParentId());
+//        child.setKindergartenClassId(1);
+//        child.setKindergartenId(1);
 
         childRepository.save(child);
     }

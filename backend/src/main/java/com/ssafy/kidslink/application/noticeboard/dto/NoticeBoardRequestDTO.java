@@ -4,17 +4,10 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
-
 @Getter
 @Setter
 @ToString
-public class NoticeBoardDTO {
-    private String teacherName;
+public class NoticeBoardRequestDTO {
     private String title;
     private String content;
-    private LocalDate createDate;
-    private LocalTime createTime;
-
 }
