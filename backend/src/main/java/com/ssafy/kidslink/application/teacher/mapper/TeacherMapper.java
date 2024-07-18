@@ -2,7 +2,9 @@ package com.ssafy.kidslink.application.teacher.mapper;
 
 import com.ssafy.kidslink.application.teacher.domain.Teacher;
 import com.ssafy.kidslink.application.teacher.dto.TeacherDTO;
+import org.springframework.stereotype.Component;
 
+@Component
 public class TeacherMapper {
     public TeacherDTO toDTO(Teacher teacher){
         TeacherDTO dto = new TeacherDTO();
