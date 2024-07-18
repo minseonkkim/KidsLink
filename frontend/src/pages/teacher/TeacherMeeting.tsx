@@ -1,9 +1,25 @@
-import React from 'react'
+import NavigateBack from "../../components/teacher/common/NavigateBack";
+import TeacherHeader from "../../components/teacher/common/TeacherHeader";
+import Title from "../../components/teacher/common/Title";
+import ScheduledConsulting from "../../components/teacher/consulting/ScheduledConsulting";
+import ProfileImg from '../../assets/profile_img.jpg';
+import { Link } from "react-router-dom"
 
-const TeacherMeeting = () => {
+export default function TeacherMeeting() {
   return (
-    <div>TeacherMeeting</div>
+    <>
+      <TeacherHeader/>
+      <div className="font-KoPubDotum px-[130px]">
+          <NavigateBack backPage="홈" backLink='/'/>
+          <Title title="화상상담"/>
+          <Link to="/meeting/reservation"><button className="absolute top-[125px] right-[150px] border-[2px] border-[#7C7C7C] bg-[#E3EEFF] px-3 py-1 font-bold rounded-[10px] hover:bg-[#D4DDEA]">상담가능시간 open</button></Link>
+          <div className="flex flex-row flex-wrap justify-between items-start">
+            <ScheduledConsulting time="2024.07.18 17:00" name="김민선" profileImgPath={ProfileImg} isActivate={true}/>
+            <ScheduledConsulting time="2024.07.18 14:00" name="김범수" profileImgPath={ProfileImg} isActivate={false}/>
+            <ScheduledConsulting time="2024.07.18 16:00" name="이상민" profileImgPath={ProfileImg} isActivate={false}/>
+            <ScheduledConsulting time="2024.07.18 16:00" name="이상민" profileImgPath={ProfileImg} isActivate={false}/>
+          </div>
+      </div>
+    </>
   )
 }
-
-export default TeacherMeeting
