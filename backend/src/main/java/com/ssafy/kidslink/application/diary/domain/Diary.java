@@ -10,18 +10,20 @@ import java.time.LocalDate;
 @Entity
 @Getter
 @Setter
+@Table(name = "diary")
 public class Diary {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "diary_id")
     private Integer diaryId;
 
+    @Column(name = "diary_date")
     private LocalDate diaryDate;
 
+    @Column(name = "diary_contents")
     private String diaryContents;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "child_id", nullable = false)
     private Child child;
-
-    // Getters and Setters
 }

@@ -7,22 +7,23 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
 @Setter
 @Table(name = "kindergarten")
 public class Kindergarten {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "kindergarten_id")
     private Integer kindergartenId;
 
+    @Column(name = "kindergarten_name")
     private String kindergartenName;
 
-    @OneToMany(mappedBy = "kindergarten")
-    private List<KindergartenClass> kindergartenClasses;
-
-    @OneToMany(mappedBy = "kindergarten")
-    private List<Schedule> schedules;
+    @OneToMany(mappedBy = "kindergarten", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<KindergartenClass> kindergartenClasses;
 
 }

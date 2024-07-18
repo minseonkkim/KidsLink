@@ -3,6 +3,9 @@ package com.ssafy.kidslink.application.parent.service;
 import com.ssafy.kidslink.application.child.domain.Child;
 import com.ssafy.kidslink.application.child.dto.ChildDTO;
 import com.ssafy.kidslink.application.child.repository.ChildRepository;
+import com.ssafy.kidslink.application.kindergartenclass.domain.KindergartenClass;
+import com.ssafy.kidslink.application.kindergartenclass.repository.KindergartenClassRepository;
+import com.ssafy.kidslink.application.teacher.domain.Teacher;
 import com.ssafy.kidslink.common.exception.PasswordMismatchException;
 import com.ssafy.kidslink.application.parent.domain.Parent;
 import com.ssafy.kidslink.application.parent.dto.JoinDTO;
@@ -11,11 +14,14 @@ import com.ssafy.kidslink.common.enums.Gender;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class ParentService {
     private final ParentRepository parentRepository;
     private final ChildRepository childRepository;
+    private final KindergartenClassRepository kindergartenClassRepository;
 
     /**
      * TODO #1 setKindergartenId 부분 Kindergarten 이름으로 ID 찾아오기
@@ -45,10 +51,15 @@ public class ParentService {
         child.setChildName(childDTO.getName());
         child.setChildBirth(childDTO.getBirth());
 
-//        // TODO #2 수정 바람 (도메인 자체를 연결)
-//        child.setParentId(savedParent.getParentId());
-//        child.setKindergartenClassId(1);
-//        child.setKindergartenId(1);
+        KindergartenClass kindergartenClass =
+                kindergartenClassRepository
+                        .findByKindergartenKindergartenNameAndKindergartenClassName(
+                                childDTO.getKindergartenName(), childDTO.getKindergartenClassName()
+                        );
+
+        // TODO #2 수정 바람 (도메인 자체를 연결)
+        child.setParent(savedParent);
+        child.setKindergartenClass(kindergartenClass);
 
         childRepository.save(child);
     }

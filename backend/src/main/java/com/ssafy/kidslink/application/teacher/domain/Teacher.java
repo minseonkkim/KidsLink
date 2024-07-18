@@ -6,32 +6,43 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
 @Setter
+@Table(name = "teacher")
 public class Teacher {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "teacher_id")
     private Integer teacherId;
 
+    @Column(name = "teacher_name")
     private String teacherName;
+
+    @Column(name = "teacher_username")
     private String teacherUsername;
+
+    @Column(name = "teacher_pwd")
     private String teacherPwd;
+
+    @Column(name = "teacher_nickname")
     private String teacherNickname;
+
+    @Column(name = "teacher_email")
     private String teacherEmail;
+
+    @Column(name = "teacher_tel")
     private String teacherTel;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumns({
-            @JoinColumn(name = "kindergarten_class_id", referencedColumnName = "kindergartenClassId"),
-            @JoinColumn(name = "kindergarten_id", referencedColumnName = "kindergartenId")
+            @JoinColumn(name = "kindergarten_class_id", referencedColumnName = "kindergarten_class_id", nullable = false),
+            @JoinColumn(name = "kindergarten_id", referencedColumnName = "kindergarten_id", nullable = false)
     })
     private KindergartenClass kindergartenClass;
 
-    @OneToMany(mappedBy = "teacher")
-    private List<TeacherSchedule> teacherSchedules;
-
-    // Getters and Setters
+    @OneToMany(mappedBy = "teacher", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<TeacherSchedule> teacherSchedules;
 }

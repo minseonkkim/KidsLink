@@ -6,25 +6,26 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Entity
 @Getter
 @Setter
+@Table(name = "meeting_schedule")
 public class MeetingSchedule {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "meeting_schedule_id")
     private Integer meetingScheduleId;
 
-    private LocalDateTime meetingScheduleDate;
+    @Column(name = "meeting_schedule_date")
+    private LocalDate meetingScheduleDate;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "teacher_id", nullable = false)
     private Teacher teacher;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id", nullable = false)
     private Parent parent;
-
-    // Getters and Setters
 }
