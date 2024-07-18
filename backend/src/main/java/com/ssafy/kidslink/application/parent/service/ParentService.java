@@ -10,8 +10,10 @@ import com.ssafy.kidslink.application.parent.dto.JoinDTO;
 import com.ssafy.kidslink.application.parent.repository.ParentRepository;
 import com.ssafy.kidslink.common.enums.Gender;
 import com.ssafy.kidslink.common.exception.PasswordMismatchException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -21,10 +23,9 @@ public class ParentService {
     private final ParentRepository parentRepository;
     private final ChildRepository childRepository;
     private final KindergartenClassRepository kindergartenClassRepository;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    /**
-     * TODO #1 setKindergartenId 부분 Kindergarten 이름으로 ID 찾아오기
-     */
+    @Transactional
     public void joinProcess(JoinDTO joinDTO) {
         log.info("joinDTO : {}", joinDTO);
 
@@ -39,16 +40,12 @@ public class ParentService {
         parent.setParentNickname(joinDTO.getNickname());
         parent.setParentTel(joinDTO.getTel());
         parent.setParentUsername(joinDTO.getUsername());
-        parent.setParentPwd(joinDTO.getPassword());
+        parent.setParentPwd(bCryptPasswordEncoder.encode(joinDTO.getPassword()));
 
         Parent savedParent = parentRepository.save(parent);
 
         Child child = new Child();
-        if (childDTO.getGender().equals("M")) {
-            child.setChildGender(Gender.M);
-        } else {
-            child.setChildGender(Gender.F);
-        }
+        child.setChildGender(Gender.fromCode(childDTO.getGender()));
         child.setChildName(childDTO.getName());
         child.setChildBirth(childDTO.getBirth());
 
@@ -58,11 +55,13 @@ public class ParentService {
                                 childDTO.getKindergartenName(), childDTO.getKindergartenClassName()
                         );
 
-        // TODO #2 수정 바람 (도메인 자체를 연결)
         child.setParent(savedParent);
         child.setKindergartenClass(kindergartenClass);
 
         childRepository.save(child);
     }
 
+    public Parent getDetailByUsername(String username) {
+        return parentRepository.findByParentUsername(username);
+    }
 }
