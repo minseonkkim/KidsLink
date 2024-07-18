@@ -5,6 +5,9 @@ import com.ssafy.kidslink.application.child.domain.Child;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.io.Serializable;
+import java.util.Objects;
+
 @Entity
 @Getter
 @Setter
@@ -28,5 +31,31 @@ public class BusStopChild {
 
     public enum BoardingStatus {
         T, F
+    }
+}
+
+class BusStopChildId implements Serializable {
+
+    private Integer child;
+    private Integer busStop;
+
+    public BusStopChildId() {}
+
+    public BusStopChildId(Integer child, Integer busStop) {
+        this.child = child;
+        this.busStop = busStop;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        BusStopChildId that = (BusStopChildId) o;
+        return Objects.equals(child, that.child) && Objects.equals(busStop, that.busStop);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(child, busStop);
     }
 }
