@@ -13,6 +13,10 @@ import TeacherAlbum from './pages/teacher/TeacherAlbum';
 import TeacherBus from './pages/teacher/TeacherBus';
 import TeacherMeeting from './pages/teacher/TeacherMeeting';
 import TeacherDocument from './pages/teacher/TeacherDocument';
+import ParentNotice from './pages/parent/ParentNotice';
+import TeacherNotice from './pages/teacher/TeacherNotice';
+import ParentReservation from './pages/parent/ParentReservation';
+import TeacherReservation from './pages/teacher/TeacherReservation';
 
 type UserType = 'parent' | 'teacher';
 
@@ -20,6 +24,8 @@ const userRoutes = (userType: UserType, path: string) => {
   switch (path) {
     case 'home':
       return userType === 'parent' ? <ParentHome /> : <TeacherHome />;
+    case 'notice':
+      return userType === 'parent' ? <ParentNotice /> : <TeacherNotice />;
     case 'growth':
       return userType === 'parent' ? <ParentGrowth /> : <TeacherGrowth />;
     case 'album':
@@ -28,6 +34,8 @@ const userRoutes = (userType: UserType, path: string) => {
       return userType === 'parent' ? <ParentBus /> : <TeacherBus />;
     case 'meeting':
       return userType === 'parent' ? <ParentMeeting /> : <TeacherMeeting />;
+    case 'reservation':
+      return userType === 'parent' ? <ParentReservation /> : <TeacherReservation/>;
     case 'document':
       return userType === 'parent' ? <ParentDocument /> : <TeacherDocument />;
     default:
@@ -36,15 +44,17 @@ const userRoutes = (userType: UserType, path: string) => {
 };
 
 function App() {
-  const userType: UserType = 'parent';
+  const userType: UserType = 'teacher';
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={userRoutes(userType, 'home')} />
+        <Route path="/notice" element={userRoutes(userType, 'notice')} />
         <Route path="/growth" element={userRoutes(userType, 'growth')} />
         <Route path="/album" element={userRoutes(userType, 'album')} />
         <Route path="/bus" element={userRoutes(userType, 'bus')} />
         <Route path="/meeting" element={userRoutes(userType, 'meeting')} />
+        <Route path="/meeting/reservation" element={userRoutes(userType, 'reservation')}/>
         <Route path="/document" element={userRoutes(userType, 'document')} />
         <Route path="/login" element={<Login />} />
       </Routes>

@@ -3,7 +3,8 @@ package com.ssafy.kidslink.application.busstopchild.domain;
 import com.ssafy.kidslink.application.busstop.domain.BusStop;
 import com.ssafy.kidslink.application.child.domain.Child;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.Objects;

@@ -1,15 +1,16 @@
 import { CgProfile } from "react-icons/cg";
 import { FaBell } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 export default function TeacherHeader(){
     return <>
         <div className="flex items-center justify-between h-[85px] bg-[#ffffff] relative shadow-md z-10">
-            <p className="ml-[150px] text-[40px] font-bold text-left font-Cafe24Ssurround gradient-text cursor-pointer">아이샘톡</p>
+            <Link to='/'><p className="ml-[150px] text-[40px] font-bold text-left font-Cafe24Ssurround gradient-text cursor-pointer">키즈링크</p></Link>
             <div className="flex flex-row">
                 <CgProfile className="w-[30px] h-[30px] mr-8 cursor-pointer" style={{ color: '#363636' }} />
-                <div className="relative mr-[160px]">
+                <div className="relative mr-[150px]">
                     <FaBell className="w-[30px] h-[30px] cursor-pointer" style={{ color: '#363636' }} />
-                    <span className="absolute top-0 right-0 w-4 h-4 bg-red-500 text-white text-[8px] font-bold rounded-full flex items-center justify-center">2</span>
+                    <span className="absolute top-0 right-0 w-4 h-4 bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center">2</span>
                 </div>
             </div>
         </div>
