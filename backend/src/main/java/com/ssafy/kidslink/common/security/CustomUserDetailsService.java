@@ -26,13 +26,11 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         log.info("CustomUserDetailsService.loadUserByUsername username - {} ", username);
-        log.info("부모 - {}", parentRepository.findByParentUsername(username));
 
         User userData = new User();
         userData.setUsername(username);
         if (userService.isExistByUsernameForTeacher(username)) {
             Teacher teacher = teacherRepository.findByTeacherUsername(username);
-            log.info("teacher - {} ", teacher);
             if (teacher == null) {
                 return null;
             }
@@ -40,7 +38,6 @@ public class CustomUserDetailsService implements UserDetailsService {
             userData.setRole("ROLE_TEACHER");
         } else {
             Parent parent = parentRepository.findByParentUsername(username);
-            log.info("CustomUserDetailsService.loadUserByUsername parent {} ", parent);
             if (parent == null) {
                 return null;
             }

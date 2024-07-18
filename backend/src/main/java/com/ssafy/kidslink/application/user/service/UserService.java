@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class UserService {
 
-    private final ParentRepository parentRepository;
     private final TeacherRepository teacherRepository;
 
     public boolean isExistByUsernameForTeacher(String username) {

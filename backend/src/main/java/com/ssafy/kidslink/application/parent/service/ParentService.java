@@ -45,11 +45,7 @@ public class ParentService {
         Parent savedParent = parentRepository.save(parent);
 
         Child child = new Child();
-        if (childDTO.getGender().equals("M")) {
-            child.setChildGender(Gender.M);
-        } else {
-            child.setChildGender(Gender.F);
-        }
+        child.setChildGender(Gender.fromCode(childDTO.getGender()));
         child.setChildName(childDTO.getName());
         child.setChildBirth(childDTO.getBirth());
 
@@ -65,4 +61,7 @@ public class ParentService {
         childRepository.save(child);
     }
 
+    public Parent getDetailByUsername(String username) {
+        return parentRepository.findByParentUsername(username);
+    }
 }

@@ -39,8 +39,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        log.info("JwtAuthenticationTokenFilter");
-
+        log.info("JwtAuthenticationTokenFilter.doFilter");
         super.doFilter(request, response, chain);
     }
 
