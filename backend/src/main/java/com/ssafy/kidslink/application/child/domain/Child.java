@@ -1,23 +1,15 @@
 package com.ssafy.kidslink.application.child.domain;
 
-import com.ssafy.kidslink.application.absent.domain.Absent;
-import com.ssafy.kidslink.application.album.domain.Album;
-import com.ssafy.kidslink.application.diary.domain.Diary;
-import com.ssafy.kidslink.application.dosage.domain.Dosage;
 import com.ssafy.kidslink.application.kindergartenclass.domain.KindergartenClass;
 import com.ssafy.kidslink.application.parent.domain.Parent;
 import com.ssafy.kidslink.common.enums.Gender;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
-
-import java.util.List;
 
 @Entity
 @Getter
 @Setter
-@ToString
 @Table(name = "child")
 public class Child {
     @Id
@@ -45,4 +37,17 @@ public class Child {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id", nullable = false)
     private Parent parent;
+
+    @Override
+    public String toString() {
+        return "Child{" +
+                "childId=" + childId +
+                ", childName='" + childName + '\'' +
+                ", childGender=" + childGender +
+                ", childBirth='" + childBirth + '\'' +
+                ", kindergartenName=" + kindergartenClass.getKindergarten().getKindergartenName() +
+                ", kindergartenClassName=" + kindergartenClass.getKindergartenClassName() +
+                ", kindergartenClassName=" + parent.getParentName() +
+                '}';
+    }
 }

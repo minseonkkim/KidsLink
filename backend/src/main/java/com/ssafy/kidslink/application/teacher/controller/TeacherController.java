@@ -4,7 +4,6 @@ import com.ssafy.kidslink.application.teacher.dto.JoinDTO;
 import com.ssafy.kidslink.application.teacher.dto.TeacherDTO;
 import com.ssafy.kidslink.application.teacher.service.TeacherService;
 import com.ssafy.kidslink.common.dto.APIResponse;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
