@@ -1,5 +1,5 @@
 import LoginHeader from '../components/login/LoginHeader';
-import mainImg from '../assets/main_img.png';                       
+import mainImg from '../assets/teacher/main_img.png';                       
 
 export default function Login(){
     return <>

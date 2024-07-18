@@ -12,23 +12,20 @@ import ParentNoticeDetail from "./pages/parent/ParentNoticeDetail";
 import ParentAlbum from "./pages/parent/ParentAlbum";
 import ParentAlbumDetail from "./pages/parent/ParentAlbumDetail";
 import ParentGrowth from "./pages/parent/ParentGrowth";
-import Footer from "./components/parent/common/Footer";
 
 import TeacherDocument from './pages/teacher/TeacherDocument';
 import TeacherNotice from './pages/teacher/TeacherNotice';
 import TeacherAlbum from './pages/teacher/TeacherAlbum';
 import TeacherGrowth from './pages/teacher/TeacherGrowth';
 import TeacherMeeting from './pages/teacher/TeacherMeeting';
+import TeacherReservation from "./pages/teacher/TeacherReservation";
 import TeacherBus from "./pages/teacher/TeacherBus";
 import TeacherHome from "./pages/teacher/TeacherHome";
 import ParentMeeting from "./pages/parent/ParentMeeting";
-
-const LoginPage: React.FC = () => {
-  return <h1>Login Page</h1>;
-};
+import Login from "./pages/Login";
 
 const App: React.FC = () => {
-  const userType: string = "parent"; // 'teacher' or 'parent', 실제로는 사용자 인증 상태에서 가져와야 합니다.
+  const userType: string = "teacher"; // 'teacher' or 'parent', 실제로는 사용자 인증 상태에서 가져와야 합니다.
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -58,10 +55,11 @@ const App: React.FC = () => {
           <Route path="/album" element={<TeacherAlbum />} />
           <Route path="/growth" element={<TeacherGrowth />} />
           <Route path="/meeting" element={<TeacherMeeting />} />
+          <Route path="/meeting/reservation" element={<TeacherReservation />} />
           <Route path="/bus" element={<TeacherBus/>} />
         </>
       ) : (
-        <Route path="/login" element={<LoginPage />} />
+        <Route path="/login" element={<Login />} />
       )}
     </Routes>
   );

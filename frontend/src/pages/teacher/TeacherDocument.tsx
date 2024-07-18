@@ -14,7 +14,7 @@ export default function TeacherDocument(){
         <NavigateBack backPage="홈" backLink='/'/>
         <Title title="문서관리"/>
         <div className="flex flex-row justify-between">
-          <div className="rounded-[20px] bg-[#f6f6f6] w-[380px] h-[520px] p-[10px]">
+          <div className="rounded-[20px] bg-[#f4f4f4] w-[380px] h-[520px] p-[10px]">
             <div className="rounded-[20px] bg-[#f6f6f6] w-[370px] h-[500px] overflow-y-auto custom-scrollbar">
               <Child currentChild={true} type="투약" name="김민선" profileImgPath={ProfileImg} finish={true}/>
               <Child currentChild={false} type="결석" name="김범수" profileImgPath={ProfileImg} finish={false}/>
