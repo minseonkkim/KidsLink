@@ -1,19 +1,17 @@
 package com.ssafy.kidslink.application.busstopchild.domain;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+
 import java.io.Serializable;
 import java.util.Objects;
 
+@NoArgsConstructor
+@AllArgsConstructor
 public class BusStopChildId implements Serializable {
 
     private Integer child;
     private Integer busStop;
-
-    public BusStopChildId() {}
-
-    public BusStopChildId(Integer child, Integer busStop) {
-        this.child = child;
-        this.busStop = busStop;
-    }
 
     @Override
     public boolean equals(Object o) {
