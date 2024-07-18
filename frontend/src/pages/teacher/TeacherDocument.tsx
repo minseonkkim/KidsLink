@@ -1,6 +1,6 @@
 import TeacherHeader from '../../components/teacher/common/TeacherHeader';
 import Child from '../../components/teacher/document/Child';
-import ProfileImg from '../../assets/profile_img.jpg';
+import ProfileImg from '../../assets/teacher/profile_img.jpg';
 import Title from '../../components/teacher/common/Title';
 import NavigateBack from '../../components/teacher/common/NavigateBack';
 import DosageDocument from '../../components/teacher/document/DosageDocument';
