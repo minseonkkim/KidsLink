@@ -14,7 +14,7 @@ public class NoticeBoardService {
 //    private KindergartenClassRepository kindergartenClassRepository;
 //
 //    @Autowired
-//    private JwtUil jwtUil;
+//    private JwtUtil jwtUtil;
 //
 //    public List<NoticeBoardDTO> getAllNoticeBoards() {
 //        List<NoticeBoard> noticeBoards = noticeBoardRepository.findAll();

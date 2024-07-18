@@ -5,6 +5,8 @@ import com.ssafy.kidslink.application.kindergartenclass.domain.KindergartenClass
 import com.ssafy.kidslink.application.kindergartenclass.repository.KindergartenClassRepository;
 import com.ssafy.kidslink.application.teacher.domain.Teacher;
 import com.ssafy.kidslink.application.teacher.dto.JoinDTO;
+import com.ssafy.kidslink.application.teacher.dto.TeacherDTO;
+import com.ssafy.kidslink.application.teacher.mapper.TeacherMapper;
 import com.ssafy.kidslink.application.teacher.repository.TeacherRepository;
 import com.ssafy.kidslink.common.exception.PasswordMismatchException;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +20,8 @@ public class TeacherService {
     private final TeacherRepository teacherRepository;
     private final KindergartenClassRepository kindergartenClassRepository;
     private final ChildRepository childRepository;
-
+    private JwtUtil jwtUtil;
+    private TeacherMapper teacherMapper;
     // 선생님 회원가입
     public void joinProcess(JoinDTO joinDTO){
         if(!joinDTO.getPassword().equals(joinDTO.getPasswordConfirm())){
@@ -39,6 +42,14 @@ public class TeacherService {
         teacher.setKindergartenClass(kindergartenClass);
 
         teacherRepository.save(teacher);
+    }
+
+    public TeacherDTO detailProcess(String token){
+        String teacherUsername = jwtUtil.getUsername(token);
+        Teacher teacher = teacherRepository.findByTeacherUsername(teacherUsername).get(0);
+        return teacherMapper.toDTO(teacher);
+
+
     }
 
 }
