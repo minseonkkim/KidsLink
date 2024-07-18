@@ -7,23 +7,37 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
 @ToString
 @Entity
+@Table(name = "parent")
 public class Parent {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "parent_id")
     int parentId;
 
-    String parentUsername;
-    String parentName;
-    String parentPwd;
-    String parentNickname;
-    String parentTel;
-    String parentEmail;
+    @Column(name = "parent_username")
+    private String parentUsername;
 
-    @OneToMany(mappedBy = "parent")
-    private List<Child> children;
+    @Column(name = "parent_name")
+    private String parentName;
+
+    @Column(name = "parent_pwd")
+    private String parentPwd;
+
+    @Column(name = "parent_nickname")
+    private String parentNickname;
+
+    @Column(name = "parent_tel")
+    private String parentTel;
+
+    @Column(name = "parent_email")
+    private String parentEmail;
+
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Child> children;
 }

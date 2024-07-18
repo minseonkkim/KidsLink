@@ -9,16 +9,18 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
+@Table(name = "image_album")
+@IdClass(ImageAlbumId.class)
 public class ImageAlbum {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer imageAlbumId;
 
-    @ManyToOne
+    @Id
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "image_id", nullable = false)
     private Image image;
 
-    @ManyToOne
+    @Id
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "album_id", nullable = false)
     private Album album;
 }
+

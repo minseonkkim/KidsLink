@@ -17,20 +17,13 @@ import java.util.List;
 public class KindergartenClass {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "kindergarten_class_id")
     private Integer kindergartenClassId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "kindergarten_id", nullable = false)
     private Kindergarten kindergarten;
 
+    @Column(name = "kindergarten_class_name")
     private String kindergartenClassName;
-
-    @OneToMany(mappedBy = "kindergartenClass")
-    private List<NoticeBoard> noticeBoards;
-
-    @OneToMany(mappedBy = "kindergartenClass")
-    private List<Child> children;
-
-    @OneToMany(mappedBy = "kindergartenClass")
-    private List<Teacher> teachers;
 }

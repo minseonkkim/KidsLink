@@ -10,28 +10,25 @@ import java.io.Serializable;
 @Entity
 @Getter
 @Setter
+@Table(name = "bus_stop_child")
+@IdClass(BusStopChildId.class)
 public class BusStopChild {
-    @EmbeddedId
-    private BusStopChildId id;
 
-    @ManyToOne
-    @MapsId("childId")
-    @JoinColumn(name = "child_id")
+    @Id
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "child_id", nullable = false)
     private Child child;
 
-    @ManyToOne
-    @MapsId("busStopId")
-    @JoinColumn(name = "bus_stop_id")
+    @Id
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "bus_stop_id", nullable = false)
     private BusStop busStop;
 
-    private String busBoardingStatus;
-}
+    @Column(name = "bus_boarding_status")
+    @Enumerated(EnumType.STRING)
+    private BoardingStatus busBoardingStatus;
 
-@Embeddable
-@EqualsAndHashCode
-@NoArgsConstructor
-@AllArgsConstructor
-class BusStopChildId implements Serializable {
-    private Integer childId;
-    private Integer busStopId;
+    public enum BoardingStatus {
+        T, F
+    }
 }

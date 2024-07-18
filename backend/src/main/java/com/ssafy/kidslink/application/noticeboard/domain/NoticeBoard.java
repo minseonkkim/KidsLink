@@ -16,12 +16,19 @@ import java.time.LocalDate;
 public class NoticeBoard {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int noticeBoardId;
+    @Column(name = "notice_board_id")
+    private Integer noticeBoardId;
+
+    @Column(name = "notice_board_title")
     private String noticeBoardTitle;
+
+    @Column(name = "notice_board_content")
     private String noticeBoardContent;
+
+    @Column(name = "notice_board_date")
     private LocalDate noticeBoardDate;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumns({
             @JoinColumn(name = "kindergarten_class_id", referencedColumnName = "kindergarten_class_id", nullable = false),
             @JoinColumn(name = "kindergarten_id", referencedColumnName = "kindergarten_id", nullable = false)
