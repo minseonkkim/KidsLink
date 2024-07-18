@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { IoMicOutline, IoMicOffOutline, IoVideocamOffOutline, IoVideocamOutline } from "react-icons/io5";
-import bgImg from "../../assets/parent/meeting/meeting_bg.png";
+import bgImg from "../../assets/parent/meeting_bg.png";
 import ParentNavigateBack from '../../components/parent/common/ParentNavigateBack';
+
 
 export default function ParentMeeting() {
   const [isMicOn, setIsMicOn] = useState<boolean>(true);

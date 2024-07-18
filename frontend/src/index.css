@@ -1,3 +1,8 @@
+@charset "UTF-8";
+@layer;
+@import "//cdn.jsdelivr.net/npm/font-kopub@1.0/kopubdotum.min.css";
+
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -9,7 +14,13 @@
     font-style: normal;
 }
 
-@import "//cdn.jsdelivr.net/npm/font-kopub@1.0/kopubdotum.min.css";
+
+
+
+body {
+    @apply bg-[#FFF9D7] font-KoPubDotum;
+  }
+
 
 .gradient-text {
     background: linear-gradient(to right, #F8DE56, #B2D170);
@@ -142,42 +153,120 @@
     border-radius: 20% !important; /* 둥근 테두리 */
 }
 
-  /* 오늘 날짜 */
-  .react-calendar__tile--now {
-    background-color: #f6f6f6 !important; /* 현재 날짜 배경색 변경 */
-    color: #363636 !important; /* 텍스트 색상 변경 */
-    border-radius: 20% !important; /* 둥근 테두리 */
-  }
-  
-  .react-calendar__tile--now:enabled:hover,
-  .react-calendar__tile--now:enabled:focus {
-    background-color: #f6f6f6 !important; /* hover 및 focus 상태에서도 동일한 배경색 유지 */
-    border-radius: 20% !important; /* 둥근 테두리 유지 */
-  }
-  
-  /* 선택된 날짜의 배경색 변경 */
-  .react-calendar__tile--active {
-    border: 2px solid #8CAD1E !important;
-    background-color: #D2E591 !important; /* 원하는 배경색으로 변경 */
-    color: #000000 !important;
-    border-radius: 20%;
-  }
-  
-  .react-calendar__tile--active:enabled:hover,
-  .react-calendar__tile--active:enabled:focus {
-    border: 2px solid #8CAD1E !important;
-    background-color: #D2E591 !important; /* 원하는 배경색으로 변경 */
-    color: #000000 !important;
-    border-radius: 20% !important;
-   
-  }
+/* 오늘 날짜 */
+.react-calendar__tile--now {
+background-color: #f6f6f6 !important; /* 현재 날짜 배경색 변경 */
+color: #363636 !important; /* 텍스트 색상 변경 */
+border-radius: 20% !important; /* 둥근 테두리 */
+}
 
-  /* 일정 있는 날 표시 점 */
-  .dot {
-    height: 8px;
-    width: 8px;
-    background-color: #51F8C4;
-    border-radius: 50%;
-    text-align: center;
-    margin-top: 3px;
-  }
+.react-calendar__tile--now:enabled:hover,
+.react-calendar__tile--now:enabled:focus {
+background-color: #f6f6f6 !important; /* hover 및 focus 상태에서도 동일한 배경색 유지 */
+border-radius: 20% !important; /* 둥근 테두리 유지 */
+}
+
+/* 선택된 날짜의 배경색 변경 */
+.react-calendar__tile--active {
+border: 2px solid #8CAD1E !important;
+background-color: #D2E591 !important; /* 원하는 배경색으로 변경 */
+color: #000000 !important;
+border-radius: 20%;
+}
+
+.react-calendar__tile--active:enabled:hover,
+.react-calendar__tile--active:enabled:focus {
+border: 2px solid #8CAD1E !important;
+background-color: #D2E591 !important; /* 원하는 배경색으로 변경 */
+color: #000000 !important;
+border-radius: 20% !important;
+
+}
+
+/* 일정 있는 날 표시 점 */
+.dot {
+height: 8px;
+width: 8px;
+background-color: #51F8C4;
+border-radius: 50%;
+text-align: center;
+margin-top: 3px;
+}
+
+/* 확인 */
+.shadow-top {
+box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.1), 0 -10px 15px rgba(0, 0, 0, 0.1);
+}
+
+.header {
+@apply w-full h-[67px] border-b bg-white border-gray-300 p-4 shadow-md flex items-center justify-between;
+}
+
+.header-title {
+@apply text-xl sm:text-2xl font-semibold;
+}
+
+.welcome-section {
+@apply w-full bg-[#FFEC8A] p-4 rounded-lg shadow-md mt-4 flex items-center relative;
+background-size: contain;
+background-repeat: no-repeat;
+background-position: right center;
+height: 180px;
+}
+
+.welcome-text {
+@apply text-lg sm:text-xl font-semibold text-[#E88471] font-KoPubDotum;
+position: absolute;
+left: 2rem; /* 중앙에서 살짝 왼쪽으로 이동 */
+top: 2rem;
+line-height: 1.5;
+}
+
+.child-info {
+@apply text-sm sm:text-base text-gray-800 bg-white p-4 rounded-lg shadow-md w-full max-w-md mx-auto mt-4 text-center;
+}
+
+.child-info .bold {
+font-weight: bold;
+}
+
+.custom-border-color:focus {
+border-color: #FDDA6E;
+}
+
+.menu-section {
+@apply w-full p-6 grid grid-cols-2 gap-4;
+}
+
+.menu-item {
+@apply flex flex-col items-center justify-center p-4 text-gray-800 rounded-lg bg-white shadow-md cursor-pointer transition-all transform hover:scale-105;
+}
+
+.custom-placeholder::placeholder {
+color: #FDDA6E;
+}
+
+.menu-item:hover,
+.menu-item:focus {
+@apply bg-[#FDDA6E] text-white;
+}
+
+.menu-item img {
+@apply w-12 h-12 mb-2;
+}
+
+@keyframes fadeIn {
+from { opacity: 0; }
+to { opacity: 1; }
+}
+
+@keyframes slideIn {
+from { transform: translateY(20px); opacity: 0; }
+to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes popIn {
+from { transform: scale(0.9); opacity: 0; }
+to { transform: scale(1); opacity: 1; }
+}
+  

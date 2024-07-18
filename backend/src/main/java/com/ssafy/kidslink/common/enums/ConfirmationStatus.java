@@ -1,8 +1,8 @@
 package com.ssafy.kidslink.common.enums;
 
 public enum ConfirmationStatus {
-    TRUE("T"),
-    FALSE("F");
+    T("T"),
+    F("F");
 
     private final String code;
 

@@ -2,7 +2,7 @@ import NavigateBack from "../../components/teacher/common/NavigateBack";
 import TeacherHeader from "../../components/teacher/common/TeacherHeader";
 import Title from "../../components/teacher/common/Title";
 import ScheduledConsulting from "../../components/teacher/consulting/ScheduledConsulting";
-import ProfileImg from '../../assets/profile_img.jpg';
+import ProfileImg from '../../assets/teacher/profile_img.jpg';
 import { Link } from "react-router-dom"
 
 export default function TeacherMeeting() {

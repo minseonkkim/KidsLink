@@ -1,11 +1,11 @@
-import profileImg from '../../assets/profile_img.jpg';
+import profileImg from '../../assets/teacher/profile_img.jpg';
 import MenuButton from "../../components/teacher/main/MenuButton";
-import growthdiaryBtnImg from "../../assets/growthdiary_btn_img.png";
-import noticeBtnImg from "../../assets/notice_btn_img.png";
-import albumBtnImg from "../../assets/album_btn_img.png";
-import documentBtnImg from "../../assets/document_btn_img.png";
-import busBtnImg from "../../assets/bus_btn_img.png";
-import consultingBtnImg from "../../assets/consulting_btn_img.png";
+import growthdiaryBtnImg from "../../assets/teacher/growthdiary_btn_img.png";
+import noticeBtnImg from "../../assets/teacher/notice_btn_img.png";
+import albumBtnImg from "../../assets/teacher/album_btn_img.png";
+import documentBtnImg from "../../assets/teacher/document_btn_img.png";
+import busBtnImg from "../../assets/teacher/bus_btn_img.png";
+import consultingBtnImg from "../../assets/teacher/consulting_btn_img.png";
 import TeacherHeader from '../../components/teacher/common/TeacherHeader';
 import { Link } from "react-router-dom";
 
