@@ -18,36 +18,31 @@ import java.util.List;
 @Getter
 @Setter
 @ToString
+@Table(name = "child")
 public class Child {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int childId;
+    @Column(name = "child_id")
+    private Integer childId;
 
+    @Column(name = "child_name")
     private String childName;
+
+    @Column(name = "child_gender")
     @Enumerated(EnumType.STRING)
     private Gender childGender;
+
+    @Column(name = "child_birth")
     private String childBirth;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumns({
-            @JoinColumn(name = "kindergarten_class_id", referencedColumnName = "kindergartenClassId"),
-            @JoinColumn(name = "kindergarten_id", referencedColumnName = "kindergartenId")
+            @JoinColumn(name = "kindergarten_class_id", referencedColumnName = "kindergarten_class_id", nullable = false),
+            @JoinColumn(name = "kindergarten_id", referencedColumnName = "kindergarten_id", nullable = false)
     })
     private KindergartenClass kindergartenClass;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id", nullable = false)
     private Parent parent;
-
-    @OneToMany(mappedBy = "child")
-    private List<Album> albums;
-
-    @OneToMany(mappedBy = "child")
-    private List<Diary> diaries;
-
-    @OneToMany(mappedBy = "child")
-    private List<Absent> absents;
-
-    @OneToMany(mappedBy = "child")
-    private List<Dosage> dosages;
 }
