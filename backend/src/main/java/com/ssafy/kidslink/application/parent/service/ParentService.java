@@ -5,19 +5,18 @@ import com.ssafy.kidslink.application.child.dto.ChildDTO;
 import com.ssafy.kidslink.application.child.repository.ChildRepository;
 import com.ssafy.kidslink.application.kindergartenclass.domain.KindergartenClass;
 import com.ssafy.kidslink.application.kindergartenclass.repository.KindergartenClassRepository;
-import com.ssafy.kidslink.application.teacher.domain.Teacher;
-import com.ssafy.kidslink.common.exception.PasswordMismatchException;
 import com.ssafy.kidslink.application.parent.domain.Parent;
 import com.ssafy.kidslink.application.parent.dto.JoinDTO;
 import com.ssafy.kidslink.application.parent.repository.ParentRepository;
 import com.ssafy.kidslink.common.enums.Gender;
+import com.ssafy.kidslink.common.exception.PasswordMismatchException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ParentService {
     private final ParentRepository parentRepository;
     private final ChildRepository childRepository;
@@ -27,11 +26,13 @@ public class ParentService {
      * TODO #1 setKindergartenId 부분 Kindergarten 이름으로 ID 찾아오기
      */
     public void joinProcess(JoinDTO joinDTO) {
+        log.info("joinDTO : {}", joinDTO);
+
         if (!joinDTO.getPassword().equals(joinDTO.getPasswordConfirm())) {
             throw new PasswordMismatchException("비밀번호와 비밀번호 확인이 다릅니다.");
         }
 
-        ChildDTO childDTO = joinDTO.getChildDTO();
+        ChildDTO childDTO = joinDTO.getChild();
         Parent parent = new Parent();
         parent.setParentName(joinDTO.getName());
         parent.setParentEmail(joinDTO.getEmail());

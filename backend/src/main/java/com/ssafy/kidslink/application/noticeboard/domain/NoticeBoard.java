@@ -34,4 +34,5 @@ public class NoticeBoard {
             @JoinColumn(name = "kindergarten_id", referencedColumnName = "kindergarten_id", nullable = false)
     })
     private KindergartenClass kindergartenClass;
+
 }
