@@ -10,9 +10,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 @RestController
@@ -23,16 +26,36 @@ public class NoticeBoardController {
     private final NoticeBoardService noticeBoardService;
 
     @GetMapping
-    public ResponseEntity<APIResponse<List<NoticeBoardDTO>>> getNoticeBoards() {
-        List<NoticeBoardDTO> noticeBoards = noticeBoardService.getAllNoticeBoards();
+    public ResponseEntity<APIResponse<List<NoticeBoardDTO>>> getNoticeBoards(@AuthenticationPrincipal Object principal) {
+        if (principal instanceof CustomUserDetails) {
+            CustomUserDetails userDetails = (CustomUserDetails) principal;
+
+            Collection<? extends GrantedAuthority> collection = userDetails.getAuthorities();
+            Iterator<? extends GrantedAuthority> it = collection.iterator();
+            GrantedAuthority auth = it.next();
+            String role = auth.getAuthority();
+
+            List<NoticeBoardDTO> noticeBoards = noticeBoardService.getAllNoticeBoards(role,userDetails.getUsername());
+            APIResponse<List<NoticeBoardDTO>> responseData = new APIResponse<>(
+                    "success",
+                    noticeBoards,
+                    "알림장 조회에 성공하였습니다.",
+                    null
+            );
+
+            return new ResponseEntity<>(responseData, HttpStatus.OK);
+        }
+        APIError apiError = new APIError("UNAUTHORIZED", "유효한 JWT 토큰이 필요합니다.");
+
         APIResponse<List<NoticeBoardDTO>> responseData = new APIResponse<>(
                 "success",
-                noticeBoards,
-                "알림장 조회에 성공하였습니다.",
-                null
+                null,
+                "알림장 조회에 실패했습니다.",
+                apiError
         );
 
-        return new ResponseEntity<>(responseData, HttpStatus.OK);
+        return new ResponseEntity<>(responseData, HttpStatus.BAD_REQUEST);
+
     }
 
 

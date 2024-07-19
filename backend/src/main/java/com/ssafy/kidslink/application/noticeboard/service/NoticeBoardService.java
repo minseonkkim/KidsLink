@@ -5,6 +5,7 @@ import com.ssafy.kidslink.application.noticeboard.dto.NoticeBoardDTO;
 import com.ssafy.kidslink.application.noticeboard.dto.NoticeBoardRequestDTO;
 import com.ssafy.kidslink.application.noticeboard.mapper.NoticeBoardMapper;
 import com.ssafy.kidslink.application.noticeboard.repository.NoticeBoardRepository;
+import com.ssafy.kidslink.application.parent.repository.ParentRepository;
 import com.ssafy.kidslink.application.teacher.domain.Teacher;
 import com.ssafy.kidslink.application.teacher.repository.TeacherRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,10 +24,19 @@ public class NoticeBoardService {
     private final NoticeBoardRepository noticeBoardRepository;
     private final NoticeBoardMapper noticeBoardMapper;
     private final TeacherRepository teacherRepository;
+    private final ParentRepository parentRepository;
 
 
-    public List<NoticeBoardDTO> getAllNoticeBoards() {
-        List<NoticeBoard> noticeBoards = noticeBoardRepository.findAll();
+    public List<NoticeBoardDTO> getAllNoticeBoards(String role, String Username) {
+        List<NoticeBoard> noticeBoards = new ArrayList<>();
+        if(role.equals("ROLE_TEACHER")){
+            noticeBoards = noticeBoardRepository.findByKindergartenClassKindergartenClassId(teacherRepository.findByTeacherUsername(Username)
+                    .getKindergartenClass().getKindergartenClassId());
+        }else {
+            noticeBoards = noticeBoardRepository.findByKindergartenClassKindergartenClassId(parentRepository.findByParentUsername(Username)
+                    .getChildren().iterator().next()
+                    .getKindergartenClass().getKindergartenClassId());
+        }
         List<NoticeBoardDTO> noticeBoardDTOs  = new ArrayList<>();
         for(NoticeBoard noticeBoard : noticeBoards) {
             noticeBoardDTOs.add(noticeBoardMapper.toDTO(noticeBoard));
