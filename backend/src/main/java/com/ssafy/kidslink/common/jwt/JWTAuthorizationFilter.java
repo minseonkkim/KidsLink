@@ -31,15 +31,12 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
         if(authorization != null && authorization.startsWith("Bearer ")) {
             token = authorization.substring(7);
         }
-        log.info("token 1 - {}", token);
 
         // token null case
         if (token == null) {
             filterChain.doFilter(request, response);
             return;
         }
-
-        log.info("token 2 - {}", token);
 
         try {
             jwtUtil.isExpired(token);

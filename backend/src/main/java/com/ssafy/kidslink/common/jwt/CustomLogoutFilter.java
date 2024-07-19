@@ -1,5 +1,6 @@
 package com.ssafy.kidslink.common.jwt;
 
+import com.ssafy.kidslink.common.service.RefreshTokenService;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -20,6 +21,8 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class CustomLogoutFilter extends GenericFilterBean {
     private final JWTUtil jwtUtil;
+    private final RefreshTokenService refreshTokenService;
+
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
@@ -78,7 +81,7 @@ public class CustomLogoutFilter extends GenericFilterBean {
 
         // logout process
         // refresh Token Remove
-//        refreshRepository.deleteByRefresh(refresh);
+        refreshTokenService.removeRefreshToken(refresh);
 
         // Refresh Token Cookie Remove
         Cookie cookie = new Cookie("refresh", null);

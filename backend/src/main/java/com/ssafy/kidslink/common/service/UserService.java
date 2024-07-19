@@ -1,6 +1,5 @@
-package com.ssafy.kidslink.application.user.service;
+package com.ssafy.kidslink.common.service;
 
-import com.ssafy.kidslink.application.parent.repository.ParentRepository;
 import com.ssafy.kidslink.application.teacher.repository.TeacherRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
