@@ -11,8 +11,10 @@ import java.util.Date;
 
 @Component
 public class JWTUtil {
+    public static final long ACCESS_TOKEN_VALIDITY_SECONDS = 60 * 60 * 2L;
+    public static final long REFRESH_TOKEN_VALIDITY_SECONDS = 60 * 60 * 24 * 7L;
 
-    private SecretKey secretKey;
+    private final SecretKey secretKey;
 
     public JWTUtil(@Value("${spring.jwt.secret}") String secret) {
         this.secretKey = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), Jwts.SIG.HS256.key().build().getAlgorithm());
