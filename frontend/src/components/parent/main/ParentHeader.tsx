@@ -1,12 +1,20 @@
 import React from 'react';
 import { FaRegBell } from 'react-icons/fa6';
+import { useNavigate } from 'react-router-dom';
+
 
 const ParentHeader: React.FC = () => {
+  const navigate = useNavigate();
+
+  const handleHomeClick = () => {
+    navigate('/');
+  };
+
   const notificationCount = 5; // 예시로 알림 개수를 5로 설정
 
   return (
     <header className="header flex items-center justify-between p-4 bg-white shadow-md">
-      <p className="text-[30px] font-bold text-left font-Cafe24Ssurround gradient-text cursor-pointer">
+      <p className="text-[30px] font-bold text-left font-Cafe24Ssurround gradient-text cursor-pointer" onClick={handleHomeClick}>
         키즈링크
       </p>
       <div className="relative">

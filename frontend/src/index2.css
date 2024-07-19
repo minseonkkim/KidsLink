@@ -1,0 +1,359 @@
+@charset "UTF-8";
+@layer;
+@import "//cdn.jsdelivr.net/npm/font-kopub@1.0/kopubdotum.min.css";
+
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+    font-family: 'Cafe24Ssurround';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2105_2@1.0/Cafe24Ssurround.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+
+body {
+    @apply bg-[#FFF9D7] font-KoPubDotum;
+  }
+
+
+.gradient-text {
+    background: linear-gradient(to right, #F8DE56, #B2D170);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* custom-scrollbar 클래스 정의 */
+.custom-scrollbar {
+    padding: 0 0.5em;
+    max-width: 360px;
+    overflow: auto;
+    overflow-y: auto; /* 세로 스크롤만 허용 */
+    overflow-x: hidden; /* 가로 스크롤 숨기기 */
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+    width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background-color: #F1F1F1;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: #D5E4B4;
+}
+
+.custom-scrollbar::-webkit-scrollbar-button {
+    display: none;
+}
+
+/* hover 효과 */
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: #8CAD1E;
+    transition: all 0.2s; /* 호버 효과에 전환 추가 */
+}
+
+/* 코너에 라운드 효과 */
+.custom-scrollbar::-webkit-scrollbar-track,
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    border-radius: 5px;
+}
+
+
+.react-calendar { 
+    font-family: 'font-KoPubDotum';
+    width: 450px !important;
+    padding: 15px;
+    max-width: 100%;
+    background-color: #fff;
+    color: #222;
+    border-width: 10px;
+    border-radius: 10px !important;
+    font-family: Arial, Helvetica, sans-serif;
+    line-height: 1.125em;
+}
+/* 년-월 */
+.react-calendar__navigation{
+    margin-bottom: 25px !important;
+}
+
+.react-calendar__navigation__label > span {
+    font-family: 'font-KoPubDotum';
+    color: #000;
+    font-family: SUIT Variable;
+    font-size: 20px;
+    font-weight: bold;
+    line-height: 140%;
+}
+
+.react-calendar__navigation button:enabled:hover{
+  color: #171717;
+    width: 16px;
+    background-color: #171717;
+    border-radius: 3px;
+}
+
+/* 요일 */
+.react-calendar__month-view__weekdays__weekday{
+    border-bottom: none !important;
+    font-family: 'font-KoPubDotum';
+    color: #000;
+    font-size: 16px;
+    font-weight: bold;
+    margin-right: 15px;
+    margin-bottom: 12px;
+}
+
+.react-calendar__month-view__days__day--weekend {
+    color: #fff;
+    font-size: 18px;
+    font-weight: bold;
+    width: 44px;
+    height: 44px;
+    text-align: center;
+  }
+  
+/* 이번 달 일자 */
+.react-calendar__tile{
+    font-family: 'font-KoPubDotum';
+    color: #000;
+    font-size: 18px;
+    font-weight: bold;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+}
+
+/* 저번 달 & 다음 달 일자 */
+.react-calendar__month-view__days__day--neighboringMonth{
+    font-family: 'font-KoPubDotum';
+    color: #5F5F5F;
+    font-size: 18px;
+    font-weight: bold;
+    width: 44px;
+    height: 44px;
+}
+
+/* 날짜 사이 간격 */
+.react-calendar__tile {
+    font-family: 'font-KoPubDotum';
+    padding: 10px !important;
+    margin-bottom: 12px !important;
+    font-size: 17px !important;
+}
+
+.react-calendar__tile:hover {
+    border-radius: 20% !important; /* 둥근 테두리 */
+}
+
+/* 오늘 날짜 */
+.react-calendar__tile--now {
+background-color: #f6f6f6 !important; /* 현재 날짜 배경색 변경 */
+color: #363636 !important; /* 텍스트 색상 변경 */
+border-radius: 20% !important; /* 둥근 테두리 */
+}
+
+.react-calendar__tile--now:enabled:hover,
+.react-calendar__tile--now:enabled:focus {
+background-color: #f6f6f6 !important; /* hover 및 focus 상태에서도 동일한 배경색 유지 */
+border-radius: 20% !important; /* 둥근 테두리 유지 */
+}
+
+/* 선택된 날짜의 배경색 변경 */
+.react-calendar__tile--active {
+border: 2px solid #8CAD1E !important;
+background-color: #D2E591 !important; /* 원하는 배경색으로 변경 */
+color: #000000 !important;
+border-radius: 20%;
+}
+
+.react-calendar__tile--active:enabled:hover,
+.react-calendar__tile--active:enabled:focus {
+border: 2px solid #8CAD1E !important;
+background-color: #D2E591 !important; /* 원하는 배경색으로 변경 */
+color: #000000 !important;
+border-radius: 20% !important;
+
+}
+
+/* 일정 있는 날 표시 점 */
+.dot {
+height: 8px;
+width: 8px;
+background-color: #51F8C4;
+border-radius: 50%;
+text-align: center;
+margin-top: 3px;
+}
+
+/* 확인 */
+
+/* 달력 */
+/* @import 'react-calendar/dist/Calendar.css'; */
+
+/* 커스텀 캘린더 컨테이너 스타일 */
+/* .custom-calendar-container {
+  box-shadow: 0px 54px 55px 0 rgba(0, 0, 0, 0.25), 0px -12px 30px 0 rgba(0, 0, 0, 0.12), 0px 4px 6px 0 rgba(0, 0, 0, 0.12), 0px 12px 13px 0 rgba(0, 0, 0, 0.17), 0px -3px 5px 0 rgba(0, 0, 0, 0.09);
+} */
+
+/* 커스텀 캘린더 스타일 */
+/* .custom-calendar {
+  width: 100%;
+  max-width: 100%;
+  background-color: #fffbf0;
+  border: none;
+  font-family: Arial, Helvetica, sans-serif;
+  line-height: 1.125em;
+  border-radius: 20px;
+}
+
+.custom-calendar__navigation {
+  display: flex;
+  justify-content: space-between;
+  background: #f8d9e0;
+  border-bottom: 4px solid #6f48eb;
+  height: 90px;
+  border-radius: 20px 20px 0 0;
+}
+
+.custom-calendar__navigation__label > span {
+  font-size: 24px;
+  font-weight: 600;
+  color: #6f48eb;
+}
+
+.custom-calendar__navigation button:disabled {
+  background-color: #f8d9e0;
+  border-radius: 20px 20px 0 0;
+}
+
+.custom-calendar__navigation button:enabled:hover,
+.custom-calendar__navigation button:enabled:focus {
+  background-color: #f8d9e0;
+  border-radius: 20px 20px 0 0;
+}
+
+.custom-calendar__month-view {
+  padding: 12px 32px;
+}
+
+.custom-calendar__month-view__weekdays {
+  font-size: 18px;
+  font-weight: 900;
+  color: #6f48eb;
+}
+
+.custom-calendar__month-view__weekdays__weekday {
+  text-transform: uppercase;
+}
+
+.custom-calendar__tile {
+  text-align: center;
+  height: 60px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.custom-calendar__tile:enabled:hover,
+.custom-calendar__tile:enabled:focus,
+.custom-calendar__tile--active {
+  background: #f8d9e0;
+  border-radius: 14px;
+  border: 2px solid #f8d9e0;
+}
+
+.custom-calendar__tile--now {
+  background: #ffffa6;
+  border-radius: 14px;
+}
+
+.custom-calendar__tile--now:enabled:hover,
+.custom-calendar__tile--now:enabled:focus {
+  background: #f8d9e0;
+  border-radius: 14px;
+} */
+
+
+.shadow-top {
+box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.1), 0 -10px 15px rgba(0, 0, 0, 0.1);
+}
+
+.header {
+@apply w-full h-[67px] border-b bg-white border-gray-300 p-4 shadow-md flex items-center justify-between;
+}
+
+.header-title {
+@apply text-xl sm:text-2xl font-semibold;
+}
+
+.welcome-section {
+@apply w-full bg-[#FFEC8A] p-4 rounded-lg shadow-md mt-4 flex items-center relative;
+background-size: contain;
+background-repeat: no-repeat;
+background-position: right center;
+height: 180px;
+}
+
+.welcome-text {
+@apply text-lg sm:text-xl font-semibold text-[#E88471] font-KoPubDotum;
+position: absolute;
+left: 2rem; /* 중앙에서 살짝 왼쪽으로 이동 */
+top: 2rem;
+line-height: 1.5;
+}
+
+.child-info {
+@apply text-sm sm:text-base text-gray-800 bg-white p-4 rounded-lg shadow-md w-full max-w-md mx-auto mt-4 text-center;
+}
+
+.child-info .bold {
+font-weight: bold;
+}
+
+.custom-border-color:focus {
+border-color: #FDDA6E;
+}
+
+.menu-section {
+@apply w-full p-6 grid grid-cols-2 gap-4;
+}
+
+.menu-item {
+@apply flex flex-col items-center justify-center p-4 text-gray-800 rounded-lg bg-white shadow-md cursor-pointer transition-all transform hover:scale-105;
+}
+
+.custom-placeholder::placeholder {
+color: #FDDA6E;
+}
+
+.menu-item:hover,
+.menu-item:focus {
+@apply bg-[#FDDA6E] text-white;
+}
+
+.menu-item img {
+@apply w-12 h-12 mb-2;
+}
+
+@keyframes fadeIn {
+from { opacity: 0; }
+to { opacity: 1; }
+}
+
+@keyframes slideIn {
+from { transform: translateY(20px); opacity: 0; }
+to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes popIn {
+from { transform: scale(0.9); opacity: 0; }
+to { transform: scale(1); opacity: 1; }
+}
+  

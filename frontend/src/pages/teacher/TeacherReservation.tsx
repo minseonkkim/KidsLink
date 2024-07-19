@@ -1,9 +1,9 @@
+import { useState } from "react"; // Ensure React is imported
 import NavigateBack from "../../components/teacher/common/NavigateBack";
 import TeacherHeader from "../../components/teacher/common/TeacherHeader";
 import Title from "../../components/teacher/common/Title";
-import { useState } from "react";
 import Calendar from "react-calendar";
-import "react-calendar/dist/Calendar.css";
+// import "react-calendar/dist/Calendar.css";
 import moment from "moment";
 import { FaRegCalendar } from "react-icons/fa6";
 import ReservationTime from "../../components/teacher/consulting/ReservationTime";
@@ -28,7 +28,13 @@ export default function TeacherReservation() {
                 <NavigateBack backPage="화상상담" backLink='/meeting' />
                 <Title title="상담가능시간 open" />
                 <div className="flex flex-row justify-between">
-                    <Calendar onChange={setDate} value={date} formatDay={(locale, date) => date.toLocaleString("en", {day: "numeric"})}/>
+                    <Calendar 
+                        onChange={setDate} 
+                        value={date} 
+                        formatDay={(locale: any, date: Date) => date.toLocaleString("en", {day: "numeric"})}
+                        next2Label={null}
+                        prev2Label={null}
+                    />
                     <div className="w-[637px]">
                         <div className="flex flex-row justify-between">
                             <div className="text-[22px] flex flex-row items-center h-[22px] font-bold text-[#8CAD1E] my-5">
@@ -60,14 +66,13 @@ export default function TeacherReservation() {
                             <ReservationTime time="16:30" isActive={false}/>
                             <ReservationTime time="17:00" isActive={false}/>
                             <ReservationTime time="17:30" isActive={false}/>
-                            <ReservationTime time="18:30" isActive={false}/>
+                            <ReservationTime time="18:00" isActive={false}/>
                             <ReservationTime time="18:30" isActive={false}/>
                             <ReservationTime time="19:00" isActive={false}/>
                             <ReservationTime time="19:30" isActive={false}/>
                         </div>
                     </div>
                 </div>
-
             </div>
         </>
     );
