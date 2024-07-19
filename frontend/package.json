@@ -11,6 +11,7 @@
     "gen-pwa": "pwa-assets-generator --preset minimal public/vite.svg"
   },
   "dependencies": {
+    "@types/react-modal": "^3.16.3",
     "@types/react-router-dom": "^5.3.3",
     "clsx": "^2.1.1",
     "moment": "^2.30.1",
@@ -19,6 +20,7 @@
     "react-datepicker": "^7.3.0",
     "react-dom": "^18.3.1",
     "react-icons": "^5.2.1",
+    "react-modal": "^3.16.1",
     "react-responsive-carousel": "^3.2.23",
     "react-router-dom": "^6.25.1",
     "styled-components": "^6.1.12",

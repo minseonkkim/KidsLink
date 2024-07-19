@@ -14,7 +14,7 @@ export default function TeacherHome(){
         <TeacherHeader/>
         <div className="font-KoPubDotum flex flex-row min-h-[calc(100vh-105px)] h-full items-center justify-between pl-[150px] pr-[110px]">
             
-            <div className="w-[330px] h-[500px] rounded-[20px] bg-[#f6f6f6] flex flex-col items-center py-7">
+            <div className="w-[350px] h-[500px] rounded-[20px] bg-[#f4f4f4] flex flex-col items-center py-7 shadow-md">
                 <div className="w-[170px] h-[170px]">
                     <img src={profileImg} className="w-full h-full rounded-full object-cover"  />
                 </div>
@@ -28,8 +28,8 @@ export default function TeacherHome(){
                         <div>...</div>
                     </div>
                     <div className="flex flex-row">
-                        <button className="w-[120px] h- v  [38px] items-center justify-center rounded-[10px] text-center text-[#b8b8b8] font-bold text-[17px] border-2 border-[#b8b8b8] mx-2 my-3 hover:bg-[#F3F3F3]">모든 일정 보기</button>
-                        <button className="w-[120px] h-[38px] items-center justify-center rounded-[10px] text-center text-[#b8b8b8] font-bold text-[17px] border-2 border-[#b8b8b8] mx-2 my-3 hover:bg-[#F3F3F3]">우리반 보기</button>
+                        <button className="w-[120px] h-[38px] rounded-[10px] text-center text-[#b8b8b8] font-bold text-[17px] border-2 border-[#b8b8b8] mx-2 my-3 hover:bg-[#F3F3F3]">모든 일정 보기</button>
+                        <button className="w-[120px] h-[38px] rounded-[10px] text-center text-[#b8b8b8] font-bold text-[17px] border-2 border-[#b8b8b8] mx-2 my-3 hover:bg-[#F3F3F3]">우리반 보기</button>
                     </div>
                 </div>
             </div>
