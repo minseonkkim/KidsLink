@@ -1,7 +1,10 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import CommonHeader from "../../components/parent/common/CommonHeader";
-import cameraDaramgi from "../../assets/parent/daramgi.png"; // 다람쥐 이미지로 대체
-// import calendarIcon from '../assets/calendar.png'; // 캘린더 아이콘
+
+import daramgi from "../../assets/parent/growth-daramgi.png";
+
+import cameraDaramgi from "../../assets/parent/daramgi.png"; // 임시 이미지
 
 const growthEntries = [
   {
@@ -23,6 +26,11 @@ const growthEntries = [
 
 const ParentGrowthPage: React.FC = () => {
   const [hoveredEntry, setHoveredEntry] = useState<number | null>(null);
+  const navigate = useNavigate();
+
+  const handleBoxClick = (id: number) => {
+    navigate(`/growth/${id}`);
+  };
 
   return (
     <div className="min-h-screen flex flex-col justify-between bg-[#ffec8a]">
@@ -38,23 +46,15 @@ const ParentGrowthPage: React.FC = () => {
                 아이의 성장 이야기
               </p>
             </div>
-            {/* <img
-              src={cameraDaramgi}
-              className="w-[147px] h-[215px] object-cover"
-              alt="Daramgi"
-            /> */}
+            <img
+              src={daramgi}
+              className="w-full h-auto max-w-[150px] object-cover"
+              />
           </div>
           <div
-            className="w-full bg-white rounded-tl-[20px] rounded-tr-[20px] p-8 shadow-top mt-4"
+            className="w-full bg-white rounded-tl-[20px] rounded-tr-[20px] p-8 shadow-top"
             style={{ minHeight: "70vh" }}
           >
-            <div className="flex items-center justify-between mb-6">
-              {/* <img
-                src={calendarIcon}
-                alt="Calendar"
-                className="w-[30px] h-[30px] object-contain"
-              /> */}
-            </div>
             <div className="space-y-6">
               {growthEntries.map((entry) => (
                 <div
@@ -62,6 +62,7 @@ const ParentGrowthPage: React.FC = () => {
                   className="relative flex flex-col p-4 rounded-2xl bg-[#fff9d7] hover:bg-[#ffec8a] transition-colors duration-200 cursor-pointer"
                   onMouseEnter={() => setHoveredEntry(entry.id)}
                   onMouseLeave={() => setHoveredEntry(null)}
+                  onClick={() => handleBoxClick(entry.id)}
                 >
                   <p className="text-lg font-bold text-[#757575]">
                     {entry.date}
