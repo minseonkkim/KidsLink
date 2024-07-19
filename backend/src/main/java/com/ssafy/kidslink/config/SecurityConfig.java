@@ -1,15 +1,19 @@
 package com.ssafy.kidslink.config;
 
 import com.ssafy.kidslink.common.exception.CustomAuthenticationEntryPoint;
+import com.ssafy.kidslink.common.jwt.CustomLogoutFilter;
 import com.ssafy.kidslink.common.jwt.JWTAuthenticationFilter;
 import com.ssafy.kidslink.common.jwt.JWTAuthorizationFilter;
 import com.ssafy.kidslink.common.jwt.JWTUtil;
+import com.ssafy.kidslink.common.repository.RefreshTokenRepository;
 import com.ssafy.kidslink.common.security.CustomUserDetailsService;
+import com.ssafy.kidslink.common.service.RefreshTokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -17,16 +21,20 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 
 import static org.springframework.http.HttpMethod.POST;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity(securedEnabled = true)
 @RequiredArgsConstructor
 public class SecurityConfig {
 
     private final JWTUtil jwtUtil;
     private final AuthenticationConfiguration authenticationConfiguration;
+    private final RefreshTokenService refreshTokenService;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     private final CustomUserDetailsService customUserDetailsService;
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
@@ -56,8 +64,9 @@ public class SecurityConfig {
                         .requestMatchers("/").permitAll()
                         .requestMatchers(POST, "/api/user/**").permitAll()
                         .anyRequest().permitAll())
-                .addFilterAt(new JWTAuthenticationFilter(authenticationManager(authenticationConfiguration), jwtUtil), UsernamePasswordAuthenticationFilter.class)
+                .addFilterAt(new JWTAuthenticationFilter(authenticationManager(authenticationConfiguration), jwtUtil, refreshTokenRepository), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new JWTAuthorizationFilter(jwtUtil, customUserDetailsService), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new CustomLogoutFilter(jwtUtil, refreshTokenService), LogoutFilter.class)
                 .build();
     }
 }

@@ -1,33 +1,35 @@
-import React, { useState } from "react";
-import CommonHeader from "../../components/parent/common/CommonHeader";
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import CommonHeader from '../../components/parent/common/CommonHeader';
 
-import daramgi from "../../assets/parent/document-daramgi.png";
-import pill from "../../assets/parent/pill.png";
-import absentIcon from "../../assets/parent/absent.png";
-import checkedIcon from "../../assets/parent/check.png";
-import handWithPen from "../../assets/parent/pen.png";
+import daramgi from '../../assets/parent/document-daramgi.png';
+import pill from '../../assets/parent/pill.png';
+import absentIcon from '../../assets/parent/absent.png';
+import checkedIcon from '../../assets/parent/check.png';
+import handWithPen from '../../assets/parent/pen.png';
 
 const documents = [
   {
-    date: "2024.07.13 - 2024.07.25",
-    title: "감기약",
-    type: "med",
+    date: '2024.07.13 - 2024.07.25',
+    title: '감기약',
+    type: 'med',
     checked: false,
-    bgColor: "bg-[#fff9d7]",
-    hoverColor: "hover:bg-[#ffec8a]",
+    bgColor: 'bg-[#fff9d7]',
+    hoverColor: 'hover:bg-[#ffec8a]',
   },
   {
-    date: "2024.07.13 - 2024.07.25",
-    title: "불국사 견학",
-    type: "absent",
+    date: '2024.07.13 - 2024.07.25',
+    title: '불국사 견학',
+    type: 'absent',
     checked: true,
-    bgColor: "bg-[#f9fafc]",
-    hoverColor: "hover:bg-[#e0e0e0]",
+    bgColor: 'bg-[#f9fafc]',
+    hoverColor: 'hover:bg-[#e0e0e0]',
   },
 ];
 
 const ParentDocument: React.FC = () => {
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
+  const navigate = useNavigate();
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
@@ -36,6 +38,10 @@ const ParentDocument: React.FC = () => {
   const filteredDocuments = documents.filter((doc) =>
     doc.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const navigateToSubmitPage = () => {
+    navigate('/document/submit');
+  };
 
   return (
     <div className="min-h-screen flex flex-col justify-between bg-[#ffec8a]">
@@ -61,7 +67,7 @@ const ParentDocument: React.FC = () => {
           </div>
           <div
             className="w-full bg-white rounded-tl-[20px] rounded-tr-[20px] p-8 shadow-top"
-            style={{ minHeight: "70vh" }}
+            style={{ minHeight: '70vh' }}
           >
             <div className="flex items-center justify-between mb-6">
               <input
@@ -80,8 +86,8 @@ const ParentDocument: React.FC = () => {
                 >
                   <div className="flex items-center">
                     <img
-                      src={doc.type === "med" ? pill : absentIcon}
-                      alt={doc.type === "med" ? "pill" : "absent"}
+                      src={doc.type === 'med' ? pill : absentIcon}
+                      alt={doc.type === 'med' ? 'pill' : 'absent'}
                       className="w-[30px] h-[30px] mr-4"
                     />
                     <div>
@@ -106,12 +112,15 @@ const ParentDocument: React.FC = () => {
           </div>
         </div>
       </div>
-      <div className="fixed right-10 z-50 bottom-20 md:bottom-16">
+      <div
+        className="fixed right-10 z-50 bottom-20 md:bottom-16"
+        onClick={navigateToSubmitPage}
+      >
         <div
           className="w-[70px] h-[70px] rounded-full bg-[#ffec8a] flex items-center justify-center"
           style={{
             boxShadow:
-              "0px 13px 27px -5px rgba(50,50,93,0.25), 0px 8px 16px -8px rgba(0,0,0,0.3)",
+              '0px 13px 27px -5px rgba(50,50,93,0.25), 0px 8px 16px -8px rgba(0,0,0,0.3)',
           }}
         >
           <img

@@ -4,7 +4,7 @@ import com.ssafy.kidslink.application.parent.domain.Parent;
 import com.ssafy.kidslink.application.parent.repository.ParentRepository;
 import com.ssafy.kidslink.application.teacher.domain.Teacher;
 import com.ssafy.kidslink.application.teacher.repository.TeacherRepository;
-import com.ssafy.kidslink.application.user.service.UserService;
+import com.ssafy.kidslink.common.service.UserService;
 import com.ssafy.kidslink.common.dto.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

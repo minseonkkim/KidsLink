@@ -1,4 +1,4 @@
-package com.ssafy.kidslink.application.user.dto;
+package com.ssafy.kidslink.common.dto;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -20,34 +20,32 @@ const AlbumDetail: React.FC = () => {
   const filteredImages = images.filter((image) => image.date === date);
 
   return (
-    <div className="min-h-screen flex flex-col justify-between bg-[#ffec8a]">
+    <div className="min-h-screen flex flex-col justify-between bg-white">
       <CommonHeader title="앨범" />
-      <div className="relative flex-1 flex flex-col justify-center items-center py-6">
-        <div className="absolute left-[46px] top-[103px] flex items-center">
-          <img
-            src="calendar.png"
-            className="w-[30px] h-[30px] object-contain"
-            alt="Calendar"
-          />
-          <p className="ml-2 text-xl font-bold text-left text-[#353c4e]">
-            {date}
-          </p>
-        </div>
-
-        <div className="w-full max-w-[455px] md:px-0 mt-[161px]">
-          <div
-            className="w-full bg-[#fff9d7] rounded-[20px] shadow-top p-4"
-            style={{ minHeight: "70vh" }}
-          >
-            {filteredImages.map((image, index) => (
-              <div key={index} className="w-full mb-4">
-                <img
-                  src={image.src}
-                  alt={`Album ${index}`}
-                  className="w-full h-auto object-cover rounded-lg"
-                />
-              </div>
-            ))}
+      <div className="flex flex-1 flex-col mt-8 items-center px-4">
+        <div className="w-full max-w-[455px] mt-4">
+          <div className="flex items-center mb-6">
+            <div className="w-[30px] h-[30px] mr-2">
+              {/* <img
+                src="calendar.png"
+                className="w-[30px] h-[30px] object-cover rounded-full"
+                alt="캘린더 아이콘"
+              /> */}
+            </div>
+            <p className="text-xl font-bold text-[#353c4e]">{date}</p>
+          </div>
+          <div className="w-full bg-[#fff9d7] rounded-[20px] px-6 py-8 shadow-lg">
+            <div className="grid grid-cols-1 gap-4">
+              {filteredImages.map((image, index) => (
+                <div key={index} className="w-full">
+                  <img
+                    src={image.src}
+                    alt={`Album ${index}`}
+                    className="w-full h-auto object-cover rounded-lg"
+                  />
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>

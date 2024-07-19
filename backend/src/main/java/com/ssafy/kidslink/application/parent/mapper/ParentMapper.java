@@ -5,11 +5,14 @@ import com.ssafy.kidslink.application.child.mapper.ChildMapper;
 import com.ssafy.kidslink.application.parent.domain.Parent;
 import com.ssafy.kidslink.application.parent.dto.ParentDTO;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.util.Iterator;
 import java.util.Set;
 
 @Component
+@Slf4j
 @RequiredArgsConstructor
 public class ParentMapper {
 
@@ -39,19 +42,11 @@ public class ParentMapper {
         parentDTO.setNickname(parent.getParentNickname());
         parentDTO.setTel(parent.getParentTel());
 
-//        parentDTO.setChildren(parent.getChildren().stream()
-//                .map(child -> childMapper.toDTO(child))
-//                .collect(Collectors.toList()));
-
         Set<Child> children = parent.getChildren();
-        System.out.println(children);
-//        Iterator<Child> iterator = children.iterator();
-//        if (iterator.hasNext()) {
-//            Child child = iterator.next();
-//            parentDTO.setChild(childMapper.toDTO(child));
-//        }
-        if (children != null && !children.isEmpty()) {
-            Child child = children.iterator().next();
+        Iterator<Child> iterator = children.iterator();
+        if (iterator.hasNext()) {
+            Child child = iterator.next();
+            log.info("Child: {}", child);
             parentDTO.setChild(childMapper.toDTO(child));
         }
 
