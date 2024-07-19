@@ -62,6 +62,7 @@ public class ParentService {
     }
 
     public Parent getDetailByUsername(String username) {
+
         return parentRepository.findByParentUsername(username);
     }
 }
