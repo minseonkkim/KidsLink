@@ -1,46 +1,100 @@
+import { useState } from "react";
 import NavigateBack from "../../components/teacher/common/NavigateBack";
 import TeacherHeader from "../../components/teacher/common/TeacherHeader";
 import Title from "../../components/teacher/common/Title";
-import { IoSearch } from "react-icons/io5";
+import { IoSearch, IoCameraOutline } from "react-icons/io5";
 import GrowthChild from "../../components/teacher/growth/GrowthChild";
-import ProfileImg from "../../assets/teacher/profile_img.jpg"
+import ProfileImg from "../../assets/teacher/profile_img.jpg";
 import GrowthDiaryItem from "../../components/teacher/growth/GrowthDiaryItem";
 import { FiPlusCircle } from "react-icons/fi";
-import ExampleImg from "../../assets/teacher/example_img_1.jpg"
+import ExampleImg from "../../assets/teacher/example_img_1.jpg";
+import useModal from "../../hooks/teacher/useModal.tsx";
 
 export default function TeacherGrowth() {
-  return <>
-    <TeacherHeader/>
-    <div className="font-KoPubDotum px-[150px]">
-        <NavigateBack backPage="홈" backLink='/'/>
-        <Title title="성장일지"/>
+  const { openModal, Modal } = useModal();
+  const [selectedImages, setSelectedImages] = useState<string[]>([]);
+
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    try {
+      const files = Array.from(event.target.files || []);
+      if (files.length === 0) return; // If no files were selected, exit the function
+
+      const newImages = files.map((file) => URL.createObjectURL(file));
+      setSelectedImages((prevImages) => [...prevImages, ...newImages]);
+    } catch (error) {
+      console.error("Error selecting images:", error);
+    }
+  };
+
+  const openCreateModal = () => {
+    openModal(
+      <div className="w-[500px]">
+        <form>
+          <div className="mb-4 flex flex-row items-center">
+            <label className="block mr-3 mb-1 font-bold whitespace-nowrap text-[18px]">날짜</label>
+            <input type="date" className="w-full p-2 border-b-2 border-gray-300 focus:outline-none focus:border-[#FDDA6E]" />
+          </div>
+          <div className="mb-4 flex flex-row">
+            <label className="block mr-3 mb-1 font-bold whitespace-nowrap text-[18px]">사진</label>
+            <label htmlFor="photo">
+              <div className="cursor-pointer bg-[#f4f4f4] w-[100px] h-[100px] rounded-[10px] flex items-center justify-center border-[1px]">
+                <IoCameraOutline className="text-[40px]" />
+              </div>
+            </label>
+            <input type="file" id="photo" className="hidden" onChange={handleImageChange} multiple />
+            <div className="ml-2 flex space-x-2">
+              {selectedImages.map((imgSrc, index) => (
+                <img key={index} src={imgSrc} alt={`Selected ${index}`} className="w-[100px] h-[100px] rounded-[10px] border-[1px]" />
+              ))}
+            </div>
+          </div>
+          <div className="mb-4 flex flex-row">
+            <label className="block mr-3 mb-1 font-bold whitespace-nowrap text-[18px]">기록</label>
+            <textarea className="border border-gray-300 p-2 rounded w-full" rows={8}></textarea>
+          </div>
+          <div className="flex items-center justify-center">
+            <button className="w-[70px] h-[38px] border-[2px] border-[#7C7C7C] bg-[#E3EEFF] px-3 py-1 font-bold rounded-[8px] hover:bg-[#D4DDEA]">등록</button>
+          </div>
+        </form>
+      </div>
+    );
+  };
+
+  return (
+    <>
+      <TeacherHeader />
+      <div className="font-KoPubDotum px-[150px]">
+        <NavigateBack backPage="홈" backLink="/" />
+        <Title title="성장일지" />
         <div className="flex flex-row justify-between">
           <div className="rounded-[10px] bg-[#f4f4f4] w-[380px] h-[520px] p-[10px]">
-              <div className="bg-[#fff] h-[53px] rounded-[10px] flex items-center p-3 mx-2 my-3">
-                <IoSearch className="text-[25px] mr-3"/>
-                <input type="text" className="focus:outline-none text-[18px]"/>
-              </div>
-              <div className="flex flex-wrap w-[360px] h-[420px] overflow-y-auto custom-scrollbar">
-                <GrowthChild currentChild={false} name="김민선" profileImgPath={ProfileImg} completed={true}/>
-                <GrowthChild currentChild={true} name="김범수" profileImgPath={ProfileImg} completed={false}/>
-                <GrowthChild currentChild={false} name="김민선" profileImgPath={ProfileImg} completed={false}/>
-                <GrowthChild currentChild={false} name="김민선" profileImgPath={ProfileImg} completed={true}/>
-                <GrowthChild currentChild={false} name="김민선" profileImgPath={ProfileImg} completed={true}/>
-                <GrowthChild currentChild={false} name="김민선" profileImgPath={ProfileImg} completed={true}/>
-              </div>
+            <div className="bg-[#fff] h-[53px] rounded-[10px] flex items-center p-3 mx-2 my-3">
+              <IoSearch className="text-[25px] mr-3" />
+              <input type="text" className="focus:outline-none text-[18px]" />
+            </div>
+            <div className="flex flex-wrap w-[360px] h-[420px] overflow-y-auto custom-scrollbar">
+              <GrowthChild currentChild={false} name="김민선" profileImgPath={ProfileImg} completed={true} />
+              <GrowthChild currentChild={true} name="김범수" profileImgPath={ProfileImg} completed={false} />
+              <GrowthChild currentChild={false} name="김민선" profileImgPath={ProfileImg} completed={false} />
+              <GrowthChild currentChild={false} name="김민선" profileImgPath={ProfileImg} completed={true} />
+              <GrowthChild currentChild={false} name="김민선" profileImgPath={ProfileImg} completed={true} />
+              <GrowthChild currentChild={false} name="김민선" profileImgPath={ProfileImg} completed={true} />
+            </div>
           </div>
           <div className="rounded-[10px] bg-[#f4f4f4] w-[720px] h-[520px] p-[10px]">
             <div className="flex flex-wrap content-start w-[700px] h-[500px] rounded-[20px] bg-[#f4f4f4] overflow-auto custom-scrollbar p-1">
-              <div className="bg-[#fff] rounded-[10px] w-[135px] h-[135px] m-[17px] flex items-center justify-center font-bold text-[18px]">
-                <FiPlusCircle className="text-[30px]"/>
+              <div onClick={openCreateModal} className="bg-[#fff] rounded-[10px] w-[135px] h-[135px] m-[17px] flex items-center justify-center font-bold text-[18px]">
+                <FiPlusCircle className="text-[30px]" />
               </div>
               <GrowthDiaryItem date="2024.07.11" imgPaths={[ExampleImg]} />
-              <GrowthDiaryItem date="2024.07.10" imgPaths={[]}/>
-              <GrowthDiaryItem date="2024.07.09" imgPaths={[]}/>
+              <GrowthDiaryItem date="2024.07.10" imgPaths={[]} />
+              <GrowthDiaryItem date="2024.07.09" imgPaths={[]} />
               <GrowthDiaryItem date="2024.07.11" imgPaths={[]} />
             </div>
           </div>
         </div>
-    </div>
-  </>
+      </div>
+      <Modal />
+    </>
+  );
 }

@@ -1,4 +1,5 @@
 import React from 'react';
+import useModal from '../../../hooks/teacher/useModal';
 
 interface GrowthDiaryItemProps {
     date: string;
@@ -6,6 +7,8 @@ interface GrowthDiaryItemProps {
 }
 
 export default function GrowthDiaryItem({ date, imgPaths }:GrowthDiaryItemProps){
+    const { openModal, Modal } = useModal();
+    
     const backgroundImageWrapperStyle: React.CSSProperties = {
         backgroundImage: imgPaths.length > 0 ? `url(${imgPaths[0]})` : 'none',
         backgroundSize: 'cover',
@@ -32,10 +35,27 @@ export default function GrowthDiaryItem({ date, imgPaths }:GrowthDiaryItemProps)
         backgroundColor: imgPaths.length === 0 ? '#D5E4B4' : 'transparent',
     };
 
+    const openReadModal = () => {
+        openModal(
+            <div className="w-[500px] h-[400px]">
+                <div className="block mr-3 mb-4 font-bold whitespace-nowrap text-[18px]">2024.07.11</div>
+                <div className="cursor-pointer mb-4 bg-[#f4f4f4] w-[100px] h-[100px] rounded-[10px] flex items-center justify-center border-[1px]">
+             
+                </div>
+                <div className="">
+                오늘 민선이는 블록 놀이 시간에 정말 멋진 성을 만들었어요. 친구들과 함께 협력하여 각자의 역할을 맡아 성을 쌓아 올렸고, 중간중간 의견 충돌이 있었지만 잘 해결하는 모습을 보였어요. 민선이가 성의 입구 부분을 맡아서 더욱 견고하게 만들었답니다. 민선이의 창의력과 협동심이 돋보였던 하루였어요.
+                </div>
+            </div>
+        )
+    }
+
     return (
-        <div style={outerContainerStyle}>
-            {imgPaths.length > 0 && <div style={backgroundImageWrapperStyle} />}
-            <p style={{ position: 'relative', zIndex: 10, fontWeight: 'bold', fontSize: '18px' }}>{date}</p>
-        </div>
+        <>
+            <div onClick={openReadModal} style={outerContainerStyle}>
+                {imgPaths.length > 0 && <div style={backgroundImageWrapperStyle} />}
+                <p style={{ position: 'relative', zIndex: 10, fontWeight: 'bold', fontSize: '18px' }}>{date}</p>
+            </div>
+            <Modal/>
+        </>
     );
 };
