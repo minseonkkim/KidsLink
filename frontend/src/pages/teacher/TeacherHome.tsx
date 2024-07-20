@@ -14,7 +14,7 @@ export default function TeacherHome(){
         <TeacherHeader/>
         <div className="font-KoPubDotum flex flex-row min-h-[calc(100vh-105px)] h-full items-center justify-between pl-[150px] pr-[110px]">
             
-            <div className="w-[350px] h-[500px] rounded-[20px] bg-[#f4f4f4] flex flex-col items-center py-7 shadow-md">
+            <div className="w-[350px] h-[500px] rounded-[20px] bg-[#f4f4f4] flex flex-col items-center py-7 drop-shadow-md">
                 <div className="w-[170px] h-[170px]">
                     <img src={profileImg} className="w-full h-full rounded-full object-cover"  />
                 </div>
