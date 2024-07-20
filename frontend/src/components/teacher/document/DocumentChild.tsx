@@ -10,7 +10,7 @@ interface DocumentChildProps {
 
 export default function DocumentChild({currentChild, type, name, profileImgPath, finish}: DocumentChildProps){
     return <>
-        <div className={`font-KoPubDotum flex flex-row items-center rounded-[15px] border-[#B2D170] ${currentChild===true? 'border-[3px]': 'border-none'} w-[320px] h-[100px] bg-[#ffffff] px-5 py-2 m-[10px] cursor-pointer`}>
+        <div className={`font-KoPubDotum flex flex-row items-center rounded-[15px] border-[#B2D170] ${currentChild===true? 'border-[3px]': 'border-none'} w-[320px] h-[100px] bg-[#ffffff] px-5 py-2 m-[10px] mb-[15px] cursor-pointer`}>
             <span className={`rounded-[10px] ${type==='투약' ? 'bg-[#E7DFFF]' : 'bg-[#FFDFDF]'} flex items-center justify-center w-[70px] h-[38px] font-bold text-[18px]`}>{type}</span>
             <div className="w-[47px] h-[47px] ml-5">
                 <img src={profileImgPath} className="w-full h-full rounded-full object-cover"  />
