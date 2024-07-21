@@ -29,7 +29,7 @@ export default function TeacherHome(){
                     </div>
                     <div className="flex flex-row">
                         <button className="w-[120px] h-[38px] rounded-[10px] text-center text-[#b8b8b8] font-bold text-[17px] border-2 border-[#b8b8b8] mx-2 my-3 hover:bg-[#F3F3F3]">모든 일정 보기</button>
-                        <button className="w-[120px] h-[38px] rounded-[10px] text-center text-[#b8b8b8] font-bold text-[17px] border-2 border-[#b8b8b8] mx-2 my-3 hover:bg-[#F3F3F3]">우리반 보기</button>
+                        <Link to="/ourclass"><button className="w-[120px] h-[38px] rounded-[10px] text-center text-[#b8b8b8] font-bold text-[17px] border-2 border-[#b8b8b8] mx-2 my-3 hover:bg-[#F3F3F3]">우리반 보기</button></Link>
                     </div>
                 </div>
             </div>
