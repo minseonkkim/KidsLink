@@ -12,7 +12,7 @@ import { Link } from "react-router-dom";
 export default function TeacherHome(){
     return <>
         <TeacherHeader/>
-        <div className="font-KoPubDotum flex flex-row min-h-[calc(100vh-105px)] h-full items-center justify-between pl-[150px] pr-[110px]">
+        <div className="font-KoPubDotum flex flex-row min-h-[calc(100vh-105px)] h-full items-center justify-between pl-[150px] pr-[35px]">
             
             <div className="w-[350px] h-[500px] rounded-[20px] bg-[#f4f4f4] flex flex-col items-center py-7 drop-shadow-md">
                 <div className="w-[170px] h-[170px]">
@@ -33,7 +33,7 @@ export default function TeacherHome(){
                     </div>
                 </div>
             </div>
-            <div className="flex flex-row flex-wrap w-[740px]">
+            <div className="flex flex-row flex-wrap w-[840px]">
                 <Link to="/growth"><MenuButton name="성장일지" imgpath={growthdiaryBtnImg}/></Link>
                 <Link to="/notice"><MenuButton name="알림장" imgpath={noticeBtnImg}/></Link>
                 <Link to="/album"><MenuButton name="사진분류" imgpath={albumBtnImg}/></Link>

@@ -25,7 +25,6 @@ import TeacherGrowth from "./pages/teacher/TeacherGrowth";
 import TeacherMeeting from "./pages/teacher/TeacherMeeting";
 import TeacherBus from "./pages/teacher/TeacherBus";
 import TeacherHome from "./pages/teacher/TeacherHome";
-import TeacherReservation1 from "./pages/teacher/TeacherReservation";
 import TeacherReservation from "./pages/teacher/TeacherReservation";
 
 import Login from "./pages/Login";
