@@ -28,15 +28,17 @@ import TeacherHome from "./pages/teacher/TeacherHome";
 import TeacherReservation from "./pages/teacher/TeacherReservation";
 
 import Login from "./pages/Login";
+import Join from "./pages/Join";
 import TeacherOurClass from "./pages/teacher/TeacherOurClass";
 
 const App: React.FC = () => {
-    const userType: string = "parent"; // 'teacher' or 'parent', 실제로는 사용자 인증 상태에서 가져와야 합니다.
+    const userType: string = "none"; // 'teacher' or 'parent', 실제로는 사용자 인증 상태에서 가져와야 합니다.
     const navigate = useNavigate();
 
     useEffect(() => {
         if (userType !== "parent" && userType !== "teacher") {
-            navigate("/login");
+            // 회원가입 창으로 이동하기 위해 주석처리
+            // navigate("/login");
         }
     }, [userType, navigate]);
 
@@ -73,7 +75,10 @@ const App: React.FC = () => {
                         <Route path="/ourclass" element={<TeacherOurClass />}/>
                     </>
                 ) : (
+                    <>
                     <Route path="/login" element={<Login />} />
+                    <Route path="/join" element={<Join />} />
+                    </>
                 )}
             </Routes>
             {userType === "parent" && <Footer />}
