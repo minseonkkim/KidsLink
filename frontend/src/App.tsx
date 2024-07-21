@@ -29,6 +29,7 @@ import TeacherReservation1 from "./pages/teacher/TeacherReservation";
 import TeacherReservation from "./pages/teacher/TeacherReservation";
 
 import Login from "./pages/Login";
+import TeacherOurClass from "./pages/teacher/TeacherOurClass";
 
 const App: React.FC = () => {
     const userType: string = "teacher"; // 'teacher' or 'parent', 실제로는 사용자 인증 상태에서 가져와야 합니다.
@@ -70,6 +71,7 @@ const App: React.FC = () => {
                         <Route path="/meeting" element={<TeacherMeeting />} />
                         <Route path="/meeting/reservation" element={<TeacherReservation />} />
                         <Route path="/bus" element={<TeacherBus />} />
+                        <Route path="/ourclass" element={<TeacherOurClass />}/>
                     </>
                 ) : (
                     <Route path="/login" element={<Login />} />
