@@ -11,7 +11,7 @@ import java.util.Date;
 
 @Component
 public class JWTUtil {
-    public static final long ACCESS_TOKEN_VALIDITY_SECONDS = 60 * 60 * 2L;
+    public static final long ACCESS_TOKEN_VALIDITY_SECONDS = 60 * 60 * 24L;
     public static final long REFRESH_TOKEN_VALIDITY_SECONDS = 60 * 60 * 24 * 7L;
 
     private final SecretKey secretKey;

@@ -10,9 +10,10 @@ import java.time.LocalDate;
 @Setter
 @ToString
 public class NoticeBoardDTO {
+    private int noticeBoardId;
     private String teacherName;
     private String title;
     private String content;
-    private LocalDate createDate;
+    private LocalDate NoticeBaordDate;
 
 }

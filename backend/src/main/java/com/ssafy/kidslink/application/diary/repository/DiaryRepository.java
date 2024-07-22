@@ -1,4 +1,9 @@
 package com.ssafy.kidslink.application.diary.repository;
 
-public interface DiaryRepository {
+import com.ssafy.kidslink.application.diary.domain.Diary;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface DiaryRepository extends JpaRepository<Diary, Integer> {
 }

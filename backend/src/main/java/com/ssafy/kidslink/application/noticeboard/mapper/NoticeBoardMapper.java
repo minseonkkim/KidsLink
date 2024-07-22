@@ -8,9 +8,10 @@ import org.springframework.stereotype.Component;
 public class NoticeBoardMapper {
     public NoticeBoardDTO toDTO(NoticeBoard noticeBoard) {
         NoticeBoardDTO dto = new NoticeBoardDTO();
+        dto.setNoticeBoardId(noticeBoard.getNoticeBoardId());
         dto.setContent(noticeBoard.getNoticeBoardContent());
         dto.setTitle(noticeBoard.getNoticeBoardTitle());
-        dto.setCreateDate(noticeBoard.getNoticeBoardDate());
+        dto.setNoticeBaordDate(noticeBoard.getNoticeBoardDate());
         return dto;
     }
 
