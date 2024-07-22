@@ -11,7 +11,9 @@ import org.springframework.web.multipart.MultipartRequest;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -26,7 +28,7 @@ public class ImageService {
     @Value("${file.path}")
     private String LOCAL_LOCATION;
 
-    public String imageUpload(MultipartRequest request) throws IOException {
+    public List<String> imageUpload(MultipartRequest request) throws IOException {
         String today = new SimpleDateFormat("yyMMdd").format(new Date());
         String saveFolder = LOCAL_LOCATION + File.separator + today;
 
@@ -34,32 +36,33 @@ public class ImageService {
         if(!folder.exists())
             folder.mkdirs();
 
-        MultipartFile file = request.getFile("file");
-        String fileName = file.getOriginalFilename();
-        String ext = fileName.substring(fileName.indexOf("."));
+        List<String> savedFilePaths = new ArrayList<>();
+        List<MultipartFile> files = request.getFiles("files");
 
-        String saveFileName = UUID.randomUUID() + ext;
+        for (MultipartFile file : files) {
+            String fileName = file.getOriginalFilename();
+            String ext = fileName.substring(fileName.lastIndexOf("."));
 
-        File localFile = new File(folder, saveFileName);
-        file.transferTo(localFile);
+            String saveFileName = UUID.randomUUID() + ext;
 
-        Image image = new Image();
-        image.setSaveFolder(saveFolder);
-        image.setOriginalFile(fileName);
-        image.setSaveFile(saveFileName);
+            File localFile = new File(folder, saveFileName);
+            file.transferTo(localFile);
 
-        imageRepository.save(image);
+            Image image = new Image();
+            image.setSaveFolder(saveFolder);
+            image.setOriginalFile(fileName);
+            image.setSaveFile(saveFileName);
 
-//
-//
-//        s3Config.amazonS3Client().putObject(new PutObjectRequest(bucket, uuidFileName, localFile).withCannedAcl(CannedAccessControlList.PublicRead));
-//        String s3Url = s3Config.amazonS3Client().getUrl(bucket, uuidFileName).toString();
-//
-//        localFile.delete();
-//
-//        return s3Url;
+            imageRepository.save(image);
 
-        return localFile.getAbsolutePath() + "" + localFile.getName();
+            // If you want to upload to S3
+            // s3Config.amazonS3Client().putObject(new PutObjectRequest(bucket, saveFileName, localFile).withCannedAcl(CannedAccessControlList.PublicRead));
+            // String s3Url = s3Config.amazonS3Client().getUrl(bucket, saveFileName).toString();
+            // savedFilePaths.add(s3Url);
+
+            savedFilePaths.add(localFile.getAbsolutePath() + "/" + localFile.getName());
+        }
+        return savedFilePaths;
     }
 
 }
