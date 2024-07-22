@@ -61,4 +61,3 @@ public class NoticeBoardService {
         noticeBoardRepository.save(noticeBoard);
     }
 }
-
