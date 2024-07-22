@@ -1,6 +1,6 @@
 import { useParams } from 'react-router-dom';
 import CommonContent from './JoinCommon';
-import ParentHeader from '../../components/parent/common/ParentHeader';
+import ParentHeader from '../../components/parent/common/HomeHeader';
 
 interface JoinDetailsProps {
     role: string;
