@@ -32,4 +32,5 @@ public class AbsentService{
         Absent savedAbsent = absentRepository.save(absent);
         return absentMapper.toDTO(savedAbsent);
     }
+
 }
