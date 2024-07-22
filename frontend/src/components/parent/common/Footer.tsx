@@ -14,18 +14,18 @@ const Footer: React.FC = () => {
   };
 
   return (
-    <div className="footer fixed bottom-0 w-full bg-white text-black h-[66px] flex justify-around items-center shadow-md">
+    <div className="z-40 footer fixed bottom-0 w-full bg-white text-gray-700 h-[66px] flex justify-around items-center shadow-md">
       <div className="footer-item flex flex-col items-center" onClick={handleHomeClick}>
-        <AiOutlineHome className="w-8 h-8 text-gray-700" />
+        <AiOutlineHome className="w-8 h-8" />
       </div>
       <div className="footer-item flex flex-col items-center">
-        <AiOutlineMessage className="w-8 h-8 text-gray-700" />
+        <AiOutlineMessage className="w-8 h-8" />
       </div>
       <div className="footer-item flex flex-col items-center" onClick={handleScheduleClick}>
-        <AiOutlineCalendar className="w-8 h-8 text-gray-700" />
+        <AiOutlineCalendar className="w-8 h-8" />
       </div>
       <div className="footer-item flex flex-col items-center">
-        <AiOutlineUser className="w-8 h-8 text-gray-700" />
+        <AiOutlineUser className="w-8 h-8" />
       </div>
     </div>
   );

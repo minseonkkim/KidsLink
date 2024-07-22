@@ -1,6 +1,62 @@
-@import "react-calendar/dist/Calendar.css";
+.react-datepicker {
+  font-family: "Arial", sans-serif;
+}
 
-/* 커스텀 캘린더 컨테이너 스타일 */
+.react-datepicker__day--selected,
+.react-datepicker__day--in-selecting-range,
+.react-datepicker__day--in-range {
+  background-color: #ffec8a;
+  border-radius: 50%;
+}
+
+.react-datepicker__day--selected:hover,
+.react-datepicker__day--in-selecting-range:hover,
+.react-datepicker__day--in-range:hover {
+  background-color: #ffda6e;
+}
+
+.react-datepicker__day--keyboard-selected {
+  outline: none;
+  box-shadow: 0 0 0 2px #ffda6e;
+}
+
+.react-datepicker__input-container input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+.react-datepicker__day-name,
+.react-datepicker__day,
+.react-datepicker__time-name {
+  width: 2.5rem;
+  line-height: 2.5rem;
+}
+
+.react-datepicker__current-month,
+.react-datepicker-time__header,
+.react-datepicker-year-header {
+  font-size: 1.2rem;
+  color: #353c4e;
+}
+
+.react-datepicker__header {
+  background-color: #fff9d7;
+  border-bottom: none;
+}
+
+.react-datepicker__day:hover {
+  background-color: #ffda6e;
+  border-radius: 50%;
+}
+
+.react-datepicker__day--keyboard-selected {
+  border: 2px solid #fdda6e; /* 키보드 선택 시 테두리 색상 */
+}
+
+/* Calendar 컨테이너 스타일 */
 .parent-schedule-calendar-container {
   box-shadow: 0px 54px 55px 0 rgba(0, 0, 0, 0.25),
     0px -12px 30px 0 rgba(0, 0, 0, 0.12), 0px 4px 6px 0 rgba(0, 0, 0, 0.12),
@@ -22,7 +78,7 @@
   display: flex;
   justify-content: space-between;
   background: #ffc0cb; /* 핑크색 */
-  border-bottom: 4px solid #6f48eb;
+  border-bottom: none; /* 테두리 제거 */
   height: 90px;
   border-radius: 20px 20px 0 0;
 }
@@ -64,6 +120,7 @@
   justify-content: flex-start !important; /* 왼쪽 정렬 */
   width: 60px;
   height: 60px;
+  border: none !important; /* 테두리 제거 */
 }
 
 .parent-schedule-calendar__tile {
@@ -90,7 +147,7 @@
 .parent-schedule-calendar__tile--active {
   background: #ffc0cb; /* 핑크색 */
   border-radius: 14px;
-  border: 2px solid #ffc0cb; /* 핑크색 */
+  border: none; /* 테두리 제거 */
 }
 
 .parent-schedule-calendar__tile--now {
@@ -105,7 +162,7 @@
 }
 
 .react-calendar__tile--active {
-  border: 2px solid #ffc0cb !important; /* 핑크색 */
+  border: none !important; /* 테두리 제거 */
   background-color: #ffc0cb !important; /* 핑크색 */
   color: #000000;
   border-radius: 20%;

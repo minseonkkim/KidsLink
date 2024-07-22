@@ -1,54 +1,36 @@
-import MenuButton from './MenuButton'; 
+import MenuItem from "./MenuItem"
+import mailbox from "../../../assets/parent/mailbox.png"
+import openedFolder from "../../../assets/parent/opened-folder.png"
+import picture from "../../../assets/parent/picture.png"
+import shuttleBus from "../../../assets/parent/shuttle-bus.png"
+import videoConference from "../../../assets/parent/video-conference.png"
+import productDocuments from "../../../assets/parent/product-documents.png"
 
-// 이미지 파일을 import 합니다.
-import mailbox from '../../../assets/parent/home/mailbox.png';
-import openedFolder from '../../../assets/parent/home/opened-folder.png';
-import picture from '../../../assets/parent/home/picture.png';
-import shuttleBus from '../../../assets/parent/home/shuttle-bus.png';
-import videoConference from '../../../assets/parent/home/video-conference.png';
-import productDocuments from '../../../assets/parent/home/product-documents.png';
+const menus = [
+  { src: mailbox, label: "알림장", link: "/notice" },
+  { src: openedFolder, label: "성장일지", link: "/growth" },
+  { src: picture, label: "앨범", link: "/album" },
+  { src: shuttleBus, label: "등하원", link: "/bus" },
+  { src: videoConference, label: "상담", link: "/meeting" },
+  { src: productDocuments, label: "문서공유", link: "/document" },
+]
 
+interface MenuProps {
+  onMenuClick: (link: string) => void
+}
 
-export default function Menu() {
+export default function Menu({ onMenuClick }: MenuProps) {
   return (
-    <div>
-      <MenuButton
-        src={mailbox}
-        alt="mailbox"
-        label="알림장"
-        position="left-[59px] top-[169px]"
-      />
-      <MenuButton
-        src={openedFolder}
-        alt="opened_folder"
-        label="성장일지"
-        position="left-[203px] top-[169px]"
-      />
-      <MenuButton
-        src={picture}
-        alt="album"
-        label="앨범"
-        position="left-[332px] top-[169px]"
-      />
-      <MenuButton
-        src={shuttleBus}
-        alt="shuttle_bus"
-        label="등하원"
-        position="left-[67px] top-[306px]"
-      />
-      <MenuButton
-        src={videoConference}
-        alt="video_conference"
-        label="상담"
-        position="left-[203px] top-[306px]"
-      />
-      <MenuButton
-        src={productDocuments}
-        alt="product-documents"
-        label="문서공유"
-        position="left-[332px] top-[306px]"
-      />
+    <div className="grid grid-cols-2 gap-x-4 gap-y-4">
+      {menus.map((menu) => (
+        <MenuItem
+          key={menu.label}
+          src={menu.src}
+          label={menu.label}
+          link={menu.link}
+          onClick={onMenuClick}
+        />
+      ))}
     </div>
-  );
-};
-
+  )
+}

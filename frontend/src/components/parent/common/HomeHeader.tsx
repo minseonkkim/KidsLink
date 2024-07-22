@@ -1,16 +1,12 @@
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FaArrowLeft } from 'react-icons/fa';
 import NotificationBell from './NotificationBell';
 
-interface CommonHeaderProps {
-  title: string;
-}
-
-const CommonHeader: React.FC<CommonHeaderProps> = ({ title }) => {
+const HomeHeader: React.FC = () => {
   const navigate = useNavigate();
 
-  const handleBack = () => {
-    navigate(-1); // 뒤로가기
+  const handleHomeClick = () => {
+    navigate('/');
   };
 
   const notificationCount = 5;
@@ -43,16 +39,16 @@ const CommonHeader: React.FC<CommonHeaderProps> = ({ title }) => {
   ];
 
   return (
-    <div className="z-50 fixed w-full h-[67px] border-b bg-white border-gray-300 p-4 shadow-md flex items-center justify-between">
-      <button onClick={handleBack} className="flex items-center justify-center w-10 h-10">
-        <FaArrowLeft className="w-6 h-6  text-gray-700" />
-      </button>
-      <p className="text-[22px] font-bold text-[#212121]">
-        {title}
+    <header className="fixed w-full h-[67px] border-b bg-white border-gray-300 p-4 shadow-md flex items-center justify-between">
+      <p
+        className="text-[30px] font-bold text-left font-Cafe24Ssurround gradient-text cursor-pointer"
+        onClick={handleHomeClick}
+      >
+        키즈링크
       </p>
       <NotificationBell notificationCount={notificationCount} notifications={notifications} />
-    </div>
+    </header>
   );
 };
 
-export default CommonHeader;
+export default HomeHeader;
