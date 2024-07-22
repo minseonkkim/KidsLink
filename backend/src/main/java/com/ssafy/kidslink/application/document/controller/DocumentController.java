@@ -78,7 +78,18 @@ public class DocumentController {
         );
         return ResponseEntity.status(HttpStatus.OK).body(responseData);
     }
+    @GetMapping("/dosage/{dosageId}")
+    public ResponseEntity<APIResponse<DosageDTO>> getDosageByDosageId(@PathVariable int dosageId) {
+        DosageDTO dosageDTO = dosageService.getDosageByDosageId(dosageId);
+        APIResponse<DosageDTO> responseData = new APIResponse<>(
+                "success",
+                dosageDTO,
+                "해당 아이의 투약정보를 가져왔습니다.",
+                null
+        );
 
+        return ResponseEntity.status(HttpStatus.OK).body(responseData);
+    }
     private String getUsernameFromPrincipal(Object principal) {
         String username = null;
         if (principal instanceof CustomUserDetails) {
