@@ -4,12 +4,17 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.util.List;
+import java.time.LocalDate;
+
+
 
 @Getter
 @Setter
 @ToString
 public class DocumentDTO {
-    private List<DosageDTO> dosages;
-    private List<AbsentDTO> absents;
+    private Long id;
+    private LocalDate date;
+    private String type;
+    private DosageDTO dosage;
+    private AbsentDTO absent;
 }

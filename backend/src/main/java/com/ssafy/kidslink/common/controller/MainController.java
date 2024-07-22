@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartRequest;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.ssafy.kidslink.common.util.CookieUtil.createCookie;
@@ -36,7 +37,7 @@ public class MainController {
     public ResponseEntity<APIResponse<Map<String, Object>>> uploadPhotos(MultipartRequest request) throws IOException {
         // 테스트
         // curl -X POST -F "file=@test_image.jpg" http://localhost:8080/upload/photos
-        String path = imageService.imageUpload(request);
+        List<String> path = imageService.imageUpload(request);
 
         System.out.println(path);
         return null;

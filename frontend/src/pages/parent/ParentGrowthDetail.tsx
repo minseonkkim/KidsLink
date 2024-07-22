@@ -1,151 +1,81 @@
-import React, { useState } from 'react';
+import React from "react";
+import { useParams } from "react-router-dom";
+import CommonHeader from "../../components/parent/common/CommonHeader";
+import { Carousel } from "react-responsive-carousel";
+import "react-responsive-carousel/lib/styles/carousel.min.css";
 
-const ParentSchedule: React.FC = () => {
-  const [selectedDate, setSelectedDate] = useState<string | null>(null);
-  const scheduleData: { [key: string]: { type: string; title: string }[] } = {
-    '2024-07-01': [{ type: '투약', title: '감기약' }],
-    '2024-07-02': [{ type: '결석', title: '불국사 견학' }],
-    '2024-07-03': [{ type: '상담', title: '개나리반 교사와의 상담' }],
-    // 추가 데이터
-  };
+import profileImg from "../../assets/parent/notice-daramgi.png";
+import cameraDaramgi from "../../assets/parent/daramgi.png"; // 다람쥐 이미지로 대체
 
-  const handleDateClick = (date: string) => {
-    setSelectedDate(date);
-  };
+const growthEntries = [
+  {
+    id: 1,
+    date: "2024.07.15 (월)",
+    content: "오늘 민선이는 블록 놀이 시간에 정말 멋진 성을 만들었어요. ...",
+    images: [cameraDaramgi, cameraDaramgi, cameraDaramgi],
+  },
+  {
+    id: 2,
+    date: "2024.07.12 (금)",
+    content: "민선이는 오늘 그림 그리기를 통해 창의력을 발휘했어요.",
+    images: [],
+  },
+  // 다른 성장 기록들 추가
+];
+
+const ParentGrowthDetailPage: React.FC = () => {
+  const { id } = useParams<{ id: string }>();
+  const entry = growthEntries.find(
+    (entry) => entry.id === parseInt(id || "0", 10)
+  );
+
+  if (!entry) {
+    return <p>해당 성장 기록을 찾을 수 없습니다.</p>;
+  }
 
   return (
-    <div className="w-[412px] h-[915px] relative overflow-hidden bg-[#ffec8a]">
-      <div className="w-full h-[807px] absolute left-0 top-[93px]">
-        <div
-          className="w-full h-full absolute left-0 top-0 rounded-tl-[20px] rounded-tr-[20px] bg-white"
-          style={{
-            boxShadow:
-              '0px 54px 55px 0 rgba(0,0,0,0.25), 0px -12px 30px 0 rgba(0,0,0,0.12), 0px 4px 6px 0 rgba(0,0,0,0.12), 0px 12px 13px 0 rgba(0,0,0,0.17), 0px -3px 5px 0 rgba(0,0,0,0.09)',
-          }}
-        />
-        <div className="flex flex-col justify-start items-center w-full h-[465px] absolute left-0 top-12 gap-2 px-1 py-2.5 bg-white">
-          <div className="flex justify-center items-center w-full relative gap-2.5 px-8 py-4">
-            <svg
-              width={24}
-              height={24}
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              className="w-6 h-6"
-              preserveAspectRatio="none"
-            >
-              <path
-                d="M15 18L9 12L15 6"
-                stroke="black"
-                strokeWidth={2}
-                strokeLinecap="round"
-                strokeLinejoin="round"
+    <div className="min-h-screen flex flex-col justify-between bg-white">
+      <CommonHeader title="성장 일지" />
+      <div className="flex flex-1 flex-col my-16 items-center px-6">
+        <div className="relative w-full mt-4 mb-12">
+          <div className="flex items-center my-6">
+            <div className="w-[40px] h-[40px] mr-2">
+              <img
+                src={profileImg}
+                className="w-full h-full object-cover rounded-full"
+                alt="프로필 이미지"
               />
-            </svg>
-            <p className="w-[277px] text-[28px] font-semibold text-center text-[#363636]">2024년 7월</p>
-            <svg
-              width={24}
-              height={24}
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              className="w-6 h-6"
-              preserveAspectRatio="none"
-            >
-              <path
-                d="M9 18L15 12L9 6"
-                stroke="black"
-                strokeWidth={2}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </div>
-          <div className="flex flex-col justify-start items-start w-full gap-1">
-            <div className="flex justify-center items-center w-full gap-[11px] px-8 py-2">
-              {['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'].map((day) => (
-                <div key={day} className="flex justify-center items-center flex-grow relative gap-2.5 px-2 py-0.5">
-                  <p className="text-lg font-medium text-left uppercase text-black">
-                    {day}
-                  </p>
-                </div>
-              ))}
             </div>
-            <div className="flex flex-col justify-start items-start w-full">
-              {[...Array(5)].map((_, weekIndex) => (
-                <div key={weekIndex} className="flex justify-center items-center w-full gap-2.5 px-8 py-2.5">
-                  {[...Array(7)].map((_, dayIndex) => {
-                    const day = weekIndex * 7 + dayIndex;
-                    const date = `2024-07-${String(day + 1).padStart(2, '0')}`;
-                    const isSelected = selectedDate === date;
-                    return (
-                      <div
-                        key={dayIndex}
-                        className={`flex flex-col justify-center items-center flex-grow h-[42px] relative gap-2.5 p-2.5 rounded-full cursor-pointer ${isSelected ? 'bg-[#ffec8a] border-2 border-yellow-500' : ''}`}
-                        onClick={() => handleDateClick(date)}
-                      >
-                        <p className={`text-[22px] font-medium text-center ${isSelected ? 'text-white' : 'text-black'}`}>
-                          {day + 1}
-                        </p>
-                      </div>
-                    );
-                  })}
-                </div>
-              ))}
+            <p className="text-lg font-medium text-[#353c4e]">개나리반 선생님</p>
+          </div>
+
+          <div className="relative w-full bg-[#fff9d7] rounded-[20px] px-6 py-8 shadow-lg border-2 border-[#ffec8a] bg-notebook-pattern">
+            {/* 테이프 효과 */}
+            <div className="absolute -top-4 -left-4 w-16 h-8 bg-yellow-300 rotate-12 transform z-10"></div>
+            <div className="absolute -top-4 -right-4 w-16 h-8 bg-yellow-300 -rotate-12 transform z-10"></div>
+            <div className="absolute -bottom-4 -left-4 w-16 h-8 bg-yellow-300 -rotate-12 transform z-10"></div>
+            <div className="absolute -bottom-4 -right-4 w-16 h-8 bg-yellow-300 rotate-12 transform z-10"></div>
+
+            {entry.images.length > 0 && (
+              <Carousel showThumbs={false} showStatus={false} infiniteLoop>
+                {entry.images.map((image, index) => (
+                  <div key={index}>
+                    <img src={image} alt={`성장 이미지 ${index + 1}`} className="rounded-lg" />
+                  </div>
+                ))}
+              </Carousel>
+            )}
+            <p className="text-sm font-light text-[#353c4e] mt-8 mb-4">
+              {entry.date}
+            </p>
+            <div className="text-base text-[#212121] space-y-4 whitespace-pre-line">
+              {entry.content}
             </div>
           </div>
-        </div>
-        <div className="absolute left-[51px] top-[539px]">
-          {selectedDate && (
-            <>
-              {scheduleData[selectedDate]?.filter(item => item.type === '투약').length > 0 && (
-                <div className="mb-3">
-                  <p className="text-xl font-bold mb-2">투약</p>
-                  {scheduleData[selectedDate].filter(item => item.type === '투약').map((item, index) => (
-                    <div key={index} className="w-[284px] h-10 flex items-center mb-2">
-                      <div className="w-[69px] h-10 rounded-[10px] bg-[#e7dfff]" />
-                      <p className="w-[32.08px] h-[28.31px] absolute left-[18.16px] top-[6.15px] text-lg font-bold text-center text-[#363636]">
-                        {item.type}
-                      </p>
-                      <p className="ml-4 text-xl font-medium text-left text-black">{item.title}</p>
-                    </div>
-                  ))}
-                </div>
-              )}
-              {scheduleData[selectedDate]?.filter(item => item.type === '결석').length > 0 && (
-                <div className="mb-3">
-                  <p className="text-xl font-bold mb-2">결석</p>
-                  {scheduleData[selectedDate].filter(item => item.type === '결석').map((item, index) => (
-                    <div key={index} className="w-[284px] h-10 flex items-center mb-2">
-                      <div className="w-[69px] h-10 rounded-[10px] bg-[#ffdfdf]" />
-                      <p className="w-[32.08px] h-[28.31px] absolute left-[18.16px] top-[6.15px] text-lg font-bold text-center text-[#363636]">
-                        {item.type}
-                      </p>
-                      <p className="ml-4 text-xl font-medium text-left text-black">{item.title}</p>
-                    </div>
-                  ))}
-                </div>
-              )}
-              {scheduleData[selectedDate]?.filter(item => item.type === '상담').length > 0 && (
-                <div className="mb-3">
-                  <p className="text-xl font-bold mb-2">상담</p>
-                  {scheduleData[selectedDate].filter(item => item.type === '상담').map((item, index) => (
-                    <div key={index} className="w-[284px] h-10 flex items-center mb-2">
-                      <div className="w-[69px] h-10 rounded-[10px] bg-[#d5e4b4]" />
-                      <p className="w-[32.08px] h-[28.31px] absolute left-[18.16px] top-[6.15px] text-lg font-bold text-center text-[#363636]">
-                        {item.type}
-                      </p>
-                      <p className="ml-4 text-xl font-medium text-left text-black">{item.title}</p>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </>
-          )}
         </div>
       </div>
     </div>
   );
 };
 
-export default ParentSchedule;
+export default ParentGrowthDetailPage;

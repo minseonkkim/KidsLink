@@ -23,6 +23,8 @@ public class Dosage {
 
     @Column(name = "dosage_enddate")
     private LocalDate dosageEnddate;
+    @Column(name = "dosage_name")
+    private String dosageName;
 
     @Column(name = "dosage_volume")
     private String dosageVolume;

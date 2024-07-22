@@ -25,12 +25,7 @@ export default function NoticeItem({title, date, content}: NoticeItemProps){
                         <p className="text-[#8CAD1E]">[{date}]</p>&nbsp;
                         <p>{title}</p>
                     </div>
-                    {expanded ? 
-                        <div className="flex flex-row items-center">
-                            <button className="mr-3 border-[2px] bg-[#fff] px-2 py-1 rounded-[10px]">수정하기</button>
-                            <IoIosArrowUp />
-                        </div>
-                        : <IoIosArrowDown />}
+                    {expanded ?  <IoIosArrowUp /> : <IoIosArrowDown />}
                 </div>
                 
                 <div className={` ${expanded? 'whitespace-pre-line' : 'text-ellipsis overflow-hidden whitespace-nowrap'} text-[15px]`}>{content}</div>
