@@ -4,12 +4,11 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.util.List;
-
 @Getter
 @Setter
 @ToString
-public class OpenMeetingTimeDTO {
+public class MeetingTimeDTO {
+    private int meetingId;
     private String date;
-    private List<String> times;
+    private String time;
 }
