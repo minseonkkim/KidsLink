@@ -1,6 +1,7 @@
 package com.ssafy.kidslink.application.image.service;
 
 import com.ssafy.kidslink.application.image.domain.Image;
+import com.ssafy.kidslink.application.image.dto.ImageDTO;
 import com.ssafy.kidslink.application.image.repository.ImageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,11 +22,10 @@ import java.util.UUID;
 public class ImageService {
     private final ImageRepository imageRepository;
 
-
     @Value("${file.path}")
     private String LOCAL_LOCATION;
 
-    public List<String> imageUpload(MultipartRequest request) throws IOException {
+    public List<ImageDTO> imageUpload(MultipartRequest request) throws IOException {
         String today = new SimpleDateFormat("yyMMdd").format(new Date());
         String saveFolder = LOCAL_LOCATION + File.separator + today;
 
@@ -34,7 +34,7 @@ public class ImageService {
             folder.mkdirs();
         }
 
-        List<String> savedFilePaths = new ArrayList<>();
+        List<ImageDTO> savedFilePaths = new ArrayList<>();
         List<MultipartFile> files = request.getFiles("files");
 
         for (MultipartFile file : files) {
@@ -51,14 +51,18 @@ public class ImageService {
             image.setOriginalFile(fileName);
             image.setSaveFile(saveFileName);
 
-            imageRepository.save(image);
+            Image savedImage = imageRepository.save(image);
 
             // If you want to upload to S3
             // s3Config.amazonS3Client().putObject(new PutObjectRequest(bucket, saveFileName, localFile).withCannedAcl(CannedAccessControlList.PublicRead));
             // String s3Url = s3Config.amazonS3Client().getUrl(bucket, saveFileName).toString();
             // savedFilePaths.add(s3Url);
 
-            savedFilePaths.add(localFile.getAbsolutePath() + "/" + localFile.getName());
+            ImageDTO imageDTO = new ImageDTO();
+            imageDTO.setImageId(savedImage.getImageId());
+            imageDTO.setPath(localFile.getAbsolutePath());
+
+            savedFilePaths.add(imageDTO);
         }
         return savedFilePaths;
     }
