@@ -5,6 +5,7 @@ import Title from "../../components/teacher/common/Title";
 import { LuPencilLine } from "react-icons/lu";
 import NoticeItem from "../../components/teacher/notice/NoticeItem";
 import { MdOutlineNavigateBefore, MdOutlineNavigateNext } from "react-icons/md";
+import useModal from "../../hooks/teacher/useModal.tsx";
 
 const noticeItems = [
     { id: 6, title: "딸기농장 현장실습", date: "2024.07.15", content: "안녕하세요. 이번주 금요일에 아이들이 기다리던 딸기 농장으로 현장학습을 갑니다.\n아래의 일정을 참고해주시고, 필요한 준비물을 챙겨주세요.\n\n일시: 이번주 금요일, 7월 19일\n장소: 딸기 농장" },
@@ -18,6 +19,7 @@ const noticeItems = [
 const ITEMS_PER_PAGE = 4;
 
 export default function TeacherNotice() {
+    const { openModal, Modal } = useModal();
     const [currentPage, setCurrentPage] = useState(1);
 
     const totalPages = Math.ceil(noticeItems.length / ITEMS_PER_PAGE);
@@ -36,13 +38,38 @@ export default function TeacherNotice() {
         }
     };
 
+    const openCreateModal = () => {
+        openModal(
+            <div className="w-[500px]">
+                <form>
+                    <div className="mb-4 flex flex-row items-center">
+                        <label className="block mr-3 mb-1 font-bold whitespace-nowrap text-[18px]">날짜</label>
+                        <input type="date" className="w-full p-2 border-b-2 border-gray-300 focus:outline-none focus:border-[#FDDA6E]" />
+                    </div>
+                    <div className="mb-4 flex flex-row">
+                        <label className="block mr-3 mb-1 font-bold whitespace-nowrap text-[18px]">제목</label>
+                        <input className="border border-gray-300 p-2 rounded w-full" />
+                    </div>
+                    
+                    <div className="mb-4 flex flex-row">
+                        <label className="block mr-3 mb-1 font-bold whitespace-nowrap text-[18px]">내용</label>
+                        <textarea className="border border-gray-300 p-2 rounded w-full" rows={10}></textarea>
+                    </div>
+                    <div className="flex items-center justify-center">
+                        <button className="w-[70px] h-[38px] border-[2px] border-[#7C7C7C] bg-[#E3EEFF] px-3 py-1 font-bold rounded-[8px] hover:bg-[#D4DDEA]">등록</button>
+                    </div>
+                </form>
+            </div>
+        );
+    }
+
     return (
         <>
             <TeacherHeader />
             <div className="px-[150px] flex flex-col items-center">
                 <NavigateBack backPage="홈" backLink='/' />
                 <Title title="알림장" />
-                <button className="absolute top-[125px] right-[150px] border-[2px] border-[#7C7C7C] bg-[#E3EEFF] px-3 py-1 font-bold rounded-[10px] hover:bg-[#D4DDEA] flex flex-row items-center">
+                <button onClick={openCreateModal} className="absolute top-[125px] right-[150px] border-[2px] border-[#7C7C7C] bg-[#E3EEFF] px-3 py-1 font-bold rounded-[10px] hover:bg-[#D4DDEA] flex flex-row items-center">
                     <LuPencilLine className="mr-2" />알림장 작성하기
                 </button>
                 <div>
@@ -91,6 +118,7 @@ export default function TeacherNotice() {
                     </nav>
                 </div>
             </div>
+            <Modal/>
         </>
     );
 }
