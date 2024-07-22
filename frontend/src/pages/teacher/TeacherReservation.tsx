@@ -7,6 +7,7 @@ import Calendar from "react-calendar";
 import moment from "moment";
 import { FaRegCalendar } from "react-icons/fa6";
 import ReservationTime from "../../components/teacher/consulting/ReservationTime";
+import "./teacher-schedule.css";
 
 export default function TeacherReservation() {
     type ValuePiece = Date | null;
@@ -27,7 +28,7 @@ export default function TeacherReservation() {
             <div className="font-KoPubDotum px-[150px]">
                 <NavigateBack backPage="화상상담" backLink='/meeting' />
                 <Title title="상담가능시간 open" />
-                <div className="flex flex-row justify-between">
+                <div className="flex flex-row justify-between mt-10">
                     <Calendar 
                         onChange={setDate} 
                         value={date} 
@@ -36,7 +37,7 @@ export default function TeacherReservation() {
                         prev2Label={null}
                     />
                     <div className="w-[637px]">
-                        <div className="flex flex-row justify-between">
+                        <div className="flex flex-row justify-between mb-2">
                             <div className="text-[22px] flex flex-row items-center h-[22px] font-bold text-[#8CAD1E] my-5">
                                 <FaRegCalendar className="mr-3"/>
                                 {formatDate(date)}
