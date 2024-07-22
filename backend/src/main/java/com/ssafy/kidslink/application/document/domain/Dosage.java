@@ -1,4 +1,4 @@
-package com.ssafy.kidslink.application.dosage.domain;
+package com.ssafy.kidslink.application.document.domain;
 
 import com.ssafy.kidslink.application.child.domain.Child;
 import com.ssafy.kidslink.common.enums.ConfirmationStatus;
