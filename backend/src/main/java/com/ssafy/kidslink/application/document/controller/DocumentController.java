@@ -90,6 +90,18 @@ public class DocumentController {
 
         return ResponseEntity.status(HttpStatus.OK).body(responseData);
     }
+    @GetMapping("/absent/{absentId}")
+    public ResponseEntity<APIResponse<AbsentDTO>> getAbsentByAbsentId(@PathVariable int absentId) {
+        AbsentDTO absentDTO = absentService.getAbsentByAbsentId(absentId);
+        APIResponse<AbsentDTO> responseData = new APIResponse<>(
+                "success",
+                absentDTO,
+                "해당 아이의 투약정보를 가져왔습니다.",
+                null
+        );
+
+        return ResponseEntity.status(HttpStatus.OK).body(responseData);
+    }
     private String getUsernameFromPrincipal(Object principal) {
         String username = null;
         if (principal instanceof CustomUserDetails) {
