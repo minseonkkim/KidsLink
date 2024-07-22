@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import CommonHeader from '../../components/parent/common/CommonHeader';
 import { useNavigate } from 'react-router-dom';
-import cameraDaramgi from '../../assets/parent/daramgi.png'; // 다람쥐 이미지로 대체
+
+import daramgi from "../../assets/parent/camera-daramgi.png";
+
+import cameraDaramgi from '../../assets/parent/daramgi.png'; // 임시 이미지
 
 const images = [
   { src: cameraDaramgi, date: '2024-07-15' },
@@ -20,10 +23,11 @@ const Album: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredImages, setFilteredImages] = useState(images);
 
-  const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (searchTerm) {
-      const filtered = images.filter((image) => image.date === searchTerm);
+  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedDate = e.target.value;
+    setSearchTerm(selectedDate);
+    if (selectedDate) {
+      const filtered = images.filter((image) => image.date === selectedDate);
       setFilteredImages(filtered);
     } else {
       setFilteredImages(images);
@@ -34,12 +38,17 @@ const Album: React.FC = () => {
     navigate(`/album/${date}`);
   };
 
+  const handleViewAllClick = () => {
+    setSearchTerm('');
+    setFilteredImages(images);
+  };
+
   return (
     <div className="min-h-screen bg-[#ffec8a] flex flex-col">
       <CommonHeader title="앨범" />
 
       <div className="w-full flex flex-col items-center py-6 flex-1">
-        <div className="flex items-center justify-center mb-4">
+        <div className="flex items-center justify-center">
           <div className="text-left mr-4">
             <p className="text-[6vw] md:text-[27px] font-bold text-[#212121]">
               아이의 추억
@@ -48,18 +57,37 @@ const Album: React.FC = () => {
               을 차곡차곡 담았어요!
             </p>
           </div>
+          <img
+              src={daramgi}
+              className="w-full h-auto max-w-[150px] object-cover"
+          />
         </div>
 
-        <div className="w-full bg-white rounded-tl-[20px] rounded-tr-[20px] p-4 shadow-top mt-4 max-w-[455px] flex flex-col min-h-[70vh]">
-          <form onSubmit={handleSearch} className="flex items-center justify-between mb-6">
-            <input
-              type="date"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full p-2 rounded-lg border border-gray-300"
-            />
-            <button type="submit" className="ml-4 px-4 py-2 bg-blue-500 text-white rounded-lg">검색</button>
-          </form>
+        <div className="w-full bg-white rounded-tl-[20px] rounded-tr-[20px] p-4 shadow-top max-w-[455px] flex flex-col min-h-[70vh]">
+          <div className="flex items-center justify-between mb-4">
+            <button
+              type="button"
+              className={`px-4 py-2 rounded-lg shadow ${
+                searchTerm === ''
+                  ? 'bg-[#FDDA6E] text-[#212121]'
+                  : 'border border-[#FDDA6E] text-[#FDDA6E]'
+              }`}
+              onClick={handleViewAllClick}
+            >
+              전체사진보기
+            </button>
+          </div>
+
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center w-full">
+              <input
+                type="date"
+                value={searchTerm}
+                onChange={handleDateChange}
+                className="w-full p-2 border-b-2 border-gray-300 focus:outline-none focus:border-[#FDDA6E]"
+              />
+            </div>
+          </div>
 
           <div className="grid grid-cols-3 gap-4">
             {filteredImages.map((image, index) => (
@@ -67,7 +95,7 @@ const Album: React.FC = () => {
                 <img
                   src={image.src}
                   alt={`Album ${index}`}
-                  className="absolute inset-0 w-full h-full object-cover rounded-lg"
+                  className="absolute inset-0 w-full h-full object-cover rounded-lg cursor-pointer"
                   onClick={() => handleDateClick(image.date)}
                 />
               </div>

@@ -1,0 +1,121 @@
+@import "react-calendar/dist/Calendar.css";
+
+/* 커스텀 캘린더 컨테이너 스타일 */
+.parent-schedule-calendar-container {
+  box-shadow: 0px 54px 55px 0 rgba(0, 0, 0, 0.25),
+    0px -12px 30px 0 rgba(0, 0, 0, 0.12), 0px 4px 6px 0 rgba(0, 0, 0, 0.12),
+    0px 12px 13px 0 rgba(0, 0, 0, 0.17), 0px -3px 5px 0 rgba(0, 0, 0, 0.09);
+}
+
+/* 커스텀 캘린더 스타일 */
+.parent-schedule-calendar {
+  width: 100%;
+  max-width: 100%;
+  background-color: #fffbf0;
+  border: none;
+  font-family: Arial, Helvetica, sans-serif;
+  line-height: 1.125em;
+  border-radius: 20px;
+}
+
+.parent-schedule-calendar__navigation {
+  display: flex;
+  justify-content: space-between;
+  background: #ffc0cb; /* 핑크색 */
+  border-bottom: 4px solid #6f48eb;
+  height: 90px;
+  border-radius: 20px 20px 0 0;
+}
+
+.parent-schedule-calendar__navigation__label > span {
+  font-size: 24px;
+  font-weight: 600;
+  color: #6f48eb;
+}
+
+.parent-schedule-calendar__navigation button:disabled {
+  background-color: #ffc0cb; /* 핑크색 */
+  border-radius: 20px 20px 0 0;
+}
+
+.parent-schedule-calendar__navigation button:enabled:hover,
+.parent-schedule-calendar__navigation button:enabled:focus {
+  background-color: #ffc0cb; /* 핑크색 */
+  border-radius: 20px 20px 0 0;
+}
+
+.parent-schedule-calendar__month-view {
+  padding: 12px 32px;
+}
+
+.parent-schedule-calendar__month-view__weekdays {
+  font-size: 18px;
+  font-weight: 900;
+  color: #6f48eb;
+}
+
+.parent-schedule-calendar__month-view__weekdays__weekday {
+  text-transform: uppercase;
+}
+
+.react-calendar__tile {
+  display: flex !important;
+  align-items: flex-center !important; /* items-start 대신 flex-start 사용 */
+  justify-content: flex-start !important; /* 왼쪽 정렬 */
+  width: 60px;
+  height: 60px;
+}
+
+.parent-schedule-calendar__tile {
+  text-align: center;
+  height: 60px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* 높이 동일하게 유지 */
+  align-items: center;
+  position: relative;
+}
+
+.parent-schedule-calendar__tile .day-number {
+  position: absolute;
+  top: 10%;
+}
+
+.parent-schedule-calendar__tile .emoji {
+  margin-top: 20px; /* 이모티콘과 숫자 사이의 간격 조정 */
+}
+
+.parent-schedule-calendar__tile:enabled:hover,
+.parent-schedule-calendar__tile:enabled:focus,
+.parent-schedule-calendar__tile--active {
+  background: #ffc0cb; /* 핑크색 */
+  border-radius: 14px;
+  border: 2px solid #ffc0cb; /* 핑크색 */
+}
+
+.parent-schedule-calendar__tile--now {
+  background: #ffffa6;
+  border-radius: 14px;
+}
+
+.parent-schedule-calendar__tile--now:enabled:hover,
+.parent-schedule-calendar__tile--now:enabled:focus {
+  background: #ffc0cb; /* 핑크색 */
+  border-radius: 14px;
+}
+
+.react-calendar__tile--active {
+  border: 2px solid #ffc0cb !important; /* 핑크색 */
+  background-color: #ffc0cb !important; /* 핑크색 */
+  color: #000000;
+  border-radius: 20%;
+}
+
+.react-calendar__tile--now {
+  background-color: #ffffa6 !important;
+}
+
+.custom-icon {
+  height: 24px;
+  width: 24px;
+}

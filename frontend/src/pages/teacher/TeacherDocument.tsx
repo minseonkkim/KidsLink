@@ -1,10 +1,11 @@
 import TeacherHeader from '../../components/teacher/common/TeacherHeader';
-import Child from '../../components/teacher/document/Child';
 import ProfileImg from '../../assets/teacher/profile_img.jpg';
 import Title from '../../components/teacher/common/Title';
 import NavigateBack from '../../components/teacher/common/NavigateBack';
+import { IoSearch } from "react-icons/io5";
 import DosageDocument from '../../components/teacher/document/DosageDocument';
 import AbsentDocument from '../../components/teacher/document/AbsentDocument';
+import DocumentChild from '../../components/teacher/document/DocumentChild';
 
 export default function TeacherDocument(){
   return (
@@ -14,14 +15,18 @@ export default function TeacherDocument(){
         <NavigateBack backPage="홈" backLink='/'/>
         <Title title="문서관리"/>
         <div className="flex flex-row justify-between">
-          <div className="rounded-[20px] bg-[#f6f6f6] w-[380px] h-[520px] p-[10px]">
-            <div className="rounded-[20px] bg-[#f6f6f6] w-[370px] h-[500px] overflow-y-auto custom-scrollbar">
-              <Child currentChild={true} type="투약" name="김민선" profileImgPath={ProfileImg} finish={true}/>
-              <Child currentChild={false} type="결석" name="김범수" profileImgPath={ProfileImg} finish={false}/>
-              <Child currentChild={false} type="투약" name="김민선" profileImgPath={ProfileImg} finish={false}/>
-              <Child currentChild={false} type="결석" name="김지원" profileImgPath={ProfileImg} finish={true}/>
-              <Child currentChild={false} type="결석" name="김민선" profileImgPath={ProfileImg} finish={true}/>
-              <Child currentChild={false} type="투약" name="김민선" profileImgPath={ProfileImg} finish={false}/>
+          <div className="rounded-[20px] bg-[#f4f4f4] w-[380px] h-[520px] p-[10px]">
+          <div className="bg-[#fff] h-[53px] rounded-[10px] flex items-center p-3 mx-2 my-3">
+              <IoSearch className="text-[25px] mr-3" />
+              <input type="text" className="focus:outline-none text-[18px]" />
+            </div>
+            <div className="rounded-[20px] bg-[#f4f4f4] w-[360px] h-[420px] overflow-y-auto custom-scrollbar">
+              <DocumentChild currentChild={true} type="투약" name="김민선" profileImgPath={ProfileImg} finish={true}/>
+              <DocumentChild currentChild={false} type="결석" name="김범수" profileImgPath={ProfileImg} finish={false}/>
+              <DocumentChild currentChild={false} type="투약" name="김민선" profileImgPath={ProfileImg} finish={false}/>
+              <DocumentChild currentChild={false} type="결석" name="김지원" profileImgPath={ProfileImg} finish={true}/>
+              <DocumentChild currentChild={false} type="결석" name="김민선" profileImgPath={ProfileImg} finish={true}/>
+              <DocumentChild currentChild={false} type="투약" name="김민선" profileImgPath={ProfileImg} finish={false}/>
             </div>
           </div>
           <DosageDocument/>
