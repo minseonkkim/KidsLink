@@ -41,8 +41,19 @@ public class DocumentController {
 
         return ResponseEntity.status(HttpStatus.OK).body(responseData);
     }
+    @GetMapping("/{childId}")
+    public ResponseEntity<APIResponse<List<DocumentDTO>>> getAllDocumentsByChild(@PathVariable int childId) {
+        List<DocumentDTO> allDocumentsByChild = documentService.getAllDocumentsByChild(childId);
 
+        APIResponse<List<DocumentDTO>> responseData = new APIResponse<>(
+                "success",
+                allDocumentsByChild,
+                "해당 아이의 모든 서류를 가져왔습니다.",
+                null
+        );
 
+        return ResponseEntity.status(HttpStatus.OK).body(responseData);
+    }
     @PostMapping("/absent")
     public ResponseEntity<APIResponse<Void>> createAbsent(@AuthenticationPrincipal Object principal, @RequestBody AbsentDTO absentDTO) {
         String username = getUsernameFromPrincipal(principal);

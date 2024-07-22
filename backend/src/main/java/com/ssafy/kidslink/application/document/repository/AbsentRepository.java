@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface AbsentRepository extends JpaRepository<Absent, Integer> {
-    List<Absent> findByAbsentId(int childId);
+    List<Absent> findByChildChildId(int childId);
 }
