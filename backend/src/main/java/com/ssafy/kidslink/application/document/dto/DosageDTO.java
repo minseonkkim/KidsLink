@@ -8,6 +8,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Getter
 @Setter
@@ -16,9 +17,10 @@ public class DosageDTO {
     private Integer dosageId;
     private LocalDate dosageStartdate;
     private LocalDate dosageEnddate;
+    private String dosageName;
     private String dosageVolume;
     private String dosageNum;
-    private String dosageTime;
+    private List<String> dosageTime;
     private String dosageStore;
     private String dosageDetails;
     private ConfirmationStatus confirmationStatus;
