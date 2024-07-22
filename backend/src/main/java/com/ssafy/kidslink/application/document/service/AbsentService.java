@@ -12,6 +12,9 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 @Service
 @Slf4j
@@ -31,6 +34,17 @@ public class AbsentService{
         Absent absent = absentMapper.toEntity(absentDTO, child);
         Absent savedAbsent = absentRepository.save(absent);
         return absentMapper.toDTO(savedAbsent);
+    }
+    public List<AbsentDTO> getAllAbsents() {
+        List<Absent> absentList = absentRepository.findAll();
+        List<AbsentDTO> absentDTOList = new ArrayList<>();
+
+        for (Absent absent : absentList) {
+            AbsentDTO dto = absentMapper.toDTO(absent);
+            absentDTOList.add(dto);
+        }
+
+        return absentDTOList;
     }
 
 }

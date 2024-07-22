@@ -15,14 +15,14 @@ import java.util.List;
 @ToString
 public class DosageDTO {
     private Integer dosageId;
-    private LocalDate dosageStartdate;
-    private LocalDate dosageEnddate;
-    private String dosageName;
-    private String dosageVolume;
-    private String dosageNum;
-    private List<String> dosageTime;
-    private String dosageStore;
-    private String dosageDetails;
+    private LocalDate startDate;
+    private LocalDate endDate;
+    private String name;
+    private String volume;
+    private String num;
+    private List<String> times;
+    private String storageInfo;
+    private String details;
     private ConfirmationStatus confirmationStatus;
     private Integer childId;
 }

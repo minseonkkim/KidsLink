@@ -7,7 +7,6 @@ import com.ssafy.kidslink.application.document.dto.DosageDTO;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
-
 @Component
 public class DosageMapper {
     public DosageDTO toDTO(Dosage dosage) {
@@ -17,16 +16,16 @@ public class DosageMapper {
 
         DosageDTO dto = new DosageDTO();
         dto.setDosageId(dosage.getDosageId());
-        dto.setDosageStartdate(dosage.getDosageStartdate());
-        dto.setDosageEnddate(dosage.getDosageEnddate());
-        dto.setDosageName(dosage.getDosageName());
-        dto.setDosageVolume(dosage.getDosageVolume());
-        dto.setDosageNum(dosage.getDosageNum());
-        dto.setDosageTime(Arrays.asList(dosage.getDosageTime().split(",")));
-        dto.setDosageStore(dosage.getDosageStore());
-        dto.setDosageDetails(dosage.getDosageDetails());
+        dto.setStartDate(dosage.getDosageStartdate());
+        dto.setEndDate(dosage.getDosageEnddate());
+        dto.setName(dosage.getDosageName());
+        dto.setVolume(dosage.getDosageVolume());
+        dto.setNum(dosage.getDosageNum());
+        dto.setTimes(Arrays.asList(dosage.getDosageTime().split(",")));
+        dto.setStorageInfo(dosage.getDosageStore());
+        dto.setDetails(dosage.getDosageDetails());
         dto.setConfirmationStatus(dosage.getConfirmationStatus());
-        dto.setChildId(dosage.getDosageId());
+        dto.setChildId(dosage.getChild().getChildId());
         return dto;
     }
 
@@ -36,14 +35,14 @@ public class DosageMapper {
         }
         Dosage dosage = new Dosage();
         dosage.setDosageId(dto.getDosageId());
-        dosage.setDosageStartdate(dto.getDosageStartdate());
-        dosage.setDosageEnddate(dto.getDosageEnddate());
-        dosage.setDosageName(dto.getDosageName());
-        dosage.setDosageVolume(dto.getDosageVolume());
-        dosage.setDosageNum(dto.getDosageNum());
-        dosage.setDosageTime(String.join(",", dto.getDosageTime()));
-        dosage.setDosageStore(dto.getDosageStore());
-        dosage.setDosageDetails(dto.getDosageDetails());
+        dosage.setDosageStartdate(dto.getStartDate());
+        dosage.setDosageEnddate(dto.getEndDate());
+        dosage.setDosageName(dto.getName());
+        dosage.setDosageVolume(dto.getVolume());
+        dosage.setDosageNum(dto.getNum());
+        dosage.setDosageTime(String.join(",", dto.getTimes()));
+        dosage.setDosageStore(dto.getStorageInfo());
+        dosage.setDosageDetails(dto.getDetails());
         dosage.setConfirmationStatus(dto.getConfirmationStatus());
         dosage.setChild(child);
         return dosage;
