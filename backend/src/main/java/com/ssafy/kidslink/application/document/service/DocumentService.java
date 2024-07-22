@@ -23,7 +23,7 @@ public class DocumentService {
     private final DosageRepository dosageRepository;
     private final AbsentMapper absentMapper;
     private final DosageMapper dosageMapper;
-    
+
     public List<DocumentDTO> getAllDocuments() {
         List<Absent> absents = absentRepository.findAll();
         List<Dosage> dosages = dosageRepository.findAll();
