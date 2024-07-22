@@ -9,12 +9,14 @@ import com.ssafy.kidslink.application.document.mapper.DosageMapper;
 import com.ssafy.kidslink.application.document.repository.DosageRepository;
 import com.ssafy.kidslink.application.parent.domain.Parent;
 import com.ssafy.kidslink.application.parent.repository.ParentRepository;
+import com.ssafy.kidslink.common.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -43,5 +45,13 @@ public class DosageService {
         }
 
         return dosageDTOList;
+    }
+    public DosageDTO getDosageByDosageId(int dosageId) {
+        Optional<Dosage> dosage = dosageRepository.findById(dosageId);
+        if (dosage.isPresent()) {
+            return dosageMapper.toDTO(dosage.get());
+        } else {
+            throw new ResourceNotFoundException("Dosage not found with id " + dosageId);
+        }
     }
 }
