@@ -42,10 +42,6 @@ export default function TeacherNotice() {
         openModal(
             <div className="w-[500px]">
                 <form>
-                    <div className="mb-4 flex flex-row items-center">
-                        <label className="block mr-3 mb-1 font-bold whitespace-nowrap text-[18px]">날짜</label>
-                        <input type="date" className="w-full p-2 border-b-2 border-gray-300 focus:outline-none focus:border-[#FDDA6E]" />
-                    </div>
                     <div className="mb-4 flex flex-row">
                         <label className="block mr-3 mb-1 font-bold whitespace-nowrap text-[18px]">제목</label>
                         <input className="border border-gray-300 p-2 rounded w-full" />
