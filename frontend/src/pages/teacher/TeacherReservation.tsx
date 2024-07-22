@@ -33,7 +33,7 @@ export default function TeacherReservation() {
     }
     // 시간 클릭할 때
     const handleTimeClick = (time: string) => {
-        if (!isEditing) return;
+        if (!isEditing) return
         setSelectedTimes((prevTimes) =>
             prevTimes.includes(time) ? prevTimes.filter((t) => t !== time) : [...prevTimes, time]
         )
