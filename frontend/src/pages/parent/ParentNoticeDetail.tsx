@@ -1,5 +1,4 @@
-import React from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import CommonHeader from "../../components/parent/common/CommonHeader";
 
 import profileImg from "../../assets/parent/notice-daramgi.png";
@@ -34,7 +33,6 @@ const ParentNoticeDetail: React.FC = () => {
   const notice = notices.find(
     (notice) => notice.id === parseInt(id || "0", 10)
   );
-  const navigate = useNavigate();
 
   if (!notice) {
     return <p>해당 알림장을 찾을 수 없습니다.</p>;
@@ -43,26 +41,33 @@ const ParentNoticeDetail: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col justify-between bg-white">
       <CommonHeader title="알림장" />
-      <div className="flex flex-1 flex-col mt-8 items-center px-4">
-        <div className="w-full max-w-[455px] mt-4">
-          <div className="flex items-center mb-6">
-            <div className="w-[30px] h-[30px] mr-2">
+      <div className="flex flex-1 flex-col my-16 items-center px-6">
+        <div className="relative w-full mt-4 mb-12">
+          <div className="flex items-center my-6">
+            <div className="w-[40px] h-[40px] mr-2">
               <img
                 src={profileImg}
-                className="w-[30px] h-[30px] object-cover rounded-full"
+                className="w-full h-full object-cover rounded-full"
                 alt="프로필 이미지"
               />
             </div>
-            <p className="text-xl font-bold text-[#353c4e]">개나리반 선생님</p>
+            <p className="text-lg font-medium text-[#353c4e]">개나리반 선생님</p>
           </div>
-          <div className="w-full bg-[#fff9d7] rounded-[20px] px-6 py-8 shadow-lg">
-            <p className="text-[6vw] md:text-[27px] font-bold text-[#212121] mb-2">
+
+          <div className="relative w-full bg-[#fff9d7] rounded-[20px] px-6 py-8 shadow-lg border-2 border-[#ffec8a] bg-notebook-pattern">
+            {/* 테이프 효과 */}
+            <div className="absolute -top-4 -left-4 w-16 h-8 bg-yellow-300 rotate-12 transform z-10"></div>
+            <div className="absolute -top-4 -right-4 w-16 h-8 bg-yellow-300 -rotate-12 transform z-10"></div>
+            <div className="absolute -bottom-4 -left-4 w-16 h-8 bg-yellow-300 -rotate-12 transform z-10"></div>
+            <div className="absolute -bottom-4 -right-4 w-16 h-8 bg-yellow-300 rotate-12 transform z-10"></div>
+
+            <p className="text-xl font-bold text-[#212121] mb-2">
               {notice.title}
             </p>
-            <p className="text-[4vw] md:text-[17px] font-light text-[#353c4e] mb-6">
+            <p className="text-sm font-light text-[#353c4e] mb-6">
               {notice.date}
             </p>
-            <div className="text-[4vw] md:text-[17px] text-[#212121] space-y-4 whitespace-pre-line">
+            <div className="text-base text-[#212121] space-y-4 whitespace-pre-line">
               {notice.content}
             </div>
           </div>

@@ -14,9 +14,6 @@
     font-style: normal;
 }
 
-
-
-
 body {
     @apply font-KoPubDotum;
   }
@@ -67,13 +64,10 @@ body {
 }
 
 
+
 /* 확인 */
 .shadow-top {
 box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.1), 0 -10px 15px rgba(0, 0, 0, 0.1);
-}
-
-.header {
-@apply w-full h-[67px] border-b bg-white border-gray-300 p-4 shadow-md flex items-center justify-between;
 }
 
 .header-title {
