@@ -49,4 +49,29 @@ public class DocumentService {
         Collections.sort(allDocuments, (d1, d2) -> d1.getDate().compareTo(d2.getDate()));
         return allDocuments;
     }
+    public List<DocumentDTO> getAllDocumentsByChild(int childId) {
+        List<Absent> absents = absentRepository.findByChildChildId(childId);
+        List<Dosage> dosages = dosageRepository.findByChildChildId(childId);
+
+        List<DocumentDTO> allDocuments = new ArrayList<>();
+
+        for (Absent absent : absents) {
+            DocumentDTO document = new DocumentDTO();
+            document.setDate(absent.getAbsentStartdate());
+            document.setType("Absent");
+            document.setAbsent(absentMapper.toDTO(absent));
+            allDocuments.add(document);
+        }
+
+        for (Dosage dosage : dosages) {
+            DocumentDTO document = new DocumentDTO();
+            document.setDate(dosage.getDosageStartdate());
+            document.setType("Dosage");
+            document.setDosage(dosageMapper.toDTO(dosage));
+            allDocuments.add(document);
+        }
+
+        Collections.sort(allDocuments, (d1, d2) -> d1.getDate().compareTo(d2.getDate()));
+        return allDocuments;
+    }
 }
