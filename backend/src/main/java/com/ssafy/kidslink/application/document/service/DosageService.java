@@ -13,6 +13,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -29,5 +32,16 @@ public class DosageService {
         Dosage dosage = dosageMapper.toEntity(dosageDTO, child);
         Dosage savedDosage = dosageRepository.save(dosage);
         return dosageMapper.toDTO(savedDosage);
+    }
+    public List<DosageDTO> getAllDosages() {
+        List<Dosage> dosageList = dosageRepository.findAll();
+        List<DosageDTO> dosageDTOList = new ArrayList<>();
+
+        for (Dosage dosage : dosageList) {
+            DosageDTO dto = dosageMapper.toDTO(dosage);
+            dosageDTOList.add(dto);
+        }
+
+        return dosageDTOList;
     }
 }
