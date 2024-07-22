@@ -19,11 +19,8 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class ImageService {
-
-//    private final S3Config s3Config;
     private final ImageRepository imageRepository;
-//    @Value("${cloud.aws.s3.bucket}")
-//    private String bucket;
+
 
     @Value("${file.path}")
     private String LOCAL_LOCATION;
@@ -33,8 +30,9 @@ public class ImageService {
         String saveFolder = LOCAL_LOCATION + File.separator + today;
 
         File folder = new File(saveFolder);
-        if(!folder.exists())
+        if (!folder.exists()) {
             folder.mkdirs();
+        }
 
         List<String> savedFilePaths = new ArrayList<>();
         List<MultipartFile> files = request.getFiles("files");
@@ -64,5 +62,6 @@ public class ImageService {
         }
         return savedFilePaths;
     }
+
 
 }
