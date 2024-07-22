@@ -1,7 +1,8 @@
-import React from "react";
-import { useParams } from "react-router-dom";
-import CommonHeader from "../../components/parent/common/CommonHeader";
-import cameraDaramgi from "../../assets/parent/daramgi.png"; // 다람쥐 이미지로 대체
+import { useParams } from "react-router-dom"
+import CommonHeader from "../../components/parent/common/CommonHeader"
+import { FaRegCalendarCheck } from "react-icons/fa6"
+
+import cameraDaramgi from "../../assets/parent/daramgi.png" // 임시 앨범 이미지
 
 const images = [
   { src: cameraDaramgi, date: "2024-07-15" },
@@ -15,26 +16,27 @@ const images = [
   { src: cameraDaramgi, date: "2024-07-09" },
 ];
 
-const AlbumDetail: React.FC = () => {
-  const { date } = useParams<{ date: string }>();
-  const filteredImages = images.filter((image) => image.date === date);
+export default function AlbumDetail() {
+  const { date } = useParams<{ date: string }>()
+  const filteredImages = images.filter((image) => image.date === date)
 
   return (
     <div className="min-h-screen flex flex-col justify-between bg-white">
       <CommonHeader title="앨범" />
-      <div className="flex flex-1 flex-col mt-8 items-center px-4">
-        <div className="w-full max-w-[455px] mt-4">
-          <div className="flex items-center mb-6">
-            <div className="w-[30px] h-[30px] mr-2">
-              {/* <img
-                src="calendar.png"
-                className="w-[30px] h-[30px] object-cover rounded-full"
-                alt="캘린더 아이콘"
-              /> */}
-            </div>
-            <p className="text-xl font-bold text-[#353c4e]">{date}</p>
+      <div className="flex flex-1 flex-col my-16 items-center px-6">
+        <div className="relative w-full mt-4 mb-12">
+          <div className="flex items-center my-6">
+            <FaRegCalendarCheck className="w-[25px] h-[25px] mr-2 text-gray-700" />
+            <p className="text-lg font-bold text-[#353c4e]">{date}</p>
           </div>
-          <div className="w-full bg-[#fff9d7] rounded-[20px] px-6 py-8 shadow-lg">
+          
+          <div className="relative w-full bg-[#fff9d7] rounded-[20px] px-6 py-8 shadow-lg border-2 border-[#ffec8a] bg-notebook-pattern">
+             {/* 테이프 효과 */}
+             <div className="absolute -top-4 -left-4 w-16 h-8 bg-yellow-300 rotate-12 transform z-10"></div>
+            <div className="absolute -top-4 -right-4 w-16 h-8 bg-yellow-300 -rotate-12 transform z-10"></div>
+            <div className="absolute -bottom-4 -left-4 w-16 h-8 bg-yellow-300 -rotate-12 transform z-10"></div>
+            <div className="absolute -bottom-4 -right-4 w-16 h-8 bg-yellow-300 rotate-12 transform z-10"></div>
+            
             <div className="grid grid-cols-1 gap-4">
               {filteredImages.map((image, index) => (
                 <div key={index} className="w-full">
@@ -50,7 +52,5 @@ const AlbumDetail: React.FC = () => {
         </div>
       </div>
     </div>
-  );
-};
-
-export default AlbumDetail;
+  )
+}

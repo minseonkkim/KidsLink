@@ -27,16 +27,21 @@ import TeacherBus from "./pages/teacher/TeacherBus";
 import TeacherHome from "./pages/teacher/TeacherHome";
 import TeacherReservation from "./pages/teacher/TeacherReservation";
 
-import Login from "./pages/Login";
+import Login from "./pages/common/Login";
+import Join from "./pages/common/Join";
 import TeacherOurClass from "./pages/teacher/TeacherOurClass";
 
+import TeacherSchedule from "./pages/teacher/TeacherSchedule";
+import JoinDetailsWrapper from "./pages/common/JoinDetailWrapper";
+
 const App: React.FC = () => {
-    const userType: string = "teacher"; // 'teacher' or 'parent', 실제로는 사용자 인증 상태에서 가져와야 합니다.
+    const userType: string = "parent"; // 'teacher' or 'parent', 실제로는 사용자 인증 상태에서 가져와야 합니다.
     const navigate = useNavigate();
 
     useEffect(() => {
         if (userType !== "parent" && userType !== "teacher") {
-            navigate("/login");
+            // 회원가입 창으로 이동하기 위해 주석처리
+            // navigate("/login");
         }
     }, [userType, navigate]);
 
@@ -71,9 +76,14 @@ const App: React.FC = () => {
                         <Route path="/meeting/reservation" element={<TeacherReservation />} />
                         <Route path="/bus" element={<TeacherBus />} />
                         <Route path="/ourclass" element={<TeacherOurClass />}/>
+                        <Route path="/schedule" element={<TeacherSchedule/>}/>
                     </>
                 ) : (
+                    <>
                     <Route path="/login" element={<Login />} />
+                    <Route path="/join" element={<Join />} />
+                    <Route path="/join/details/:role" element={<JoinDetailsWrapper />} />
+                    </>
                 )}
             </Routes>
             {userType === "parent" && <Footer />}

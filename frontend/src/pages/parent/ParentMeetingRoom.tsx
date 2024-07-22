@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { IoMicOutline, IoMicOffOutline, IoVideocamOffOutline, IoVideocamOutline } from "react-icons/io5";
 import bgImg from "../../assets/parent/meeting_bg.png";
-import ParentNavigateBack from '../../components/parent/common/ParentNavigateBack';
 
 
 export default function ParentMeeting() {
@@ -14,7 +13,7 @@ export default function ParentMeeting() {
   return (
     <>
       <div className="relative">
-        <ParentNavigateBack backPage="목록" backLink='/meetinghome' />
+        
         <div className="relative w-[455px] h-[918px]">
           <img src={bgImg} className="w-full h-full object-cover" alt='meeting'/>
           <div className="absolute inset-0 w-full h-full bg-[#897153] mix-blend-multiply" />
