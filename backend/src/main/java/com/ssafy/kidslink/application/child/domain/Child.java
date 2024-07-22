@@ -27,6 +27,9 @@ public class Child {
     @Column(name = "child_birth")
     private String childBirth;
 
+    @Column(name = "child_image")
+    private String childImage;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumns({
             @JoinColumn(name = "kindergarten_class_id", referencedColumnName = "kindergarten_class_id", nullable = false),
