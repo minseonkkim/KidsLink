@@ -27,9 +27,10 @@ import TeacherBus from "./pages/teacher/TeacherBus";
 import TeacherHome from "./pages/teacher/TeacherHome";
 import TeacherReservation from "./pages/teacher/TeacherReservation";
 
-import Login from "./pages/Login";
-import Join from "./pages/Join";
+import Login from "./pages/common/Login";
+import Join from "./pages/common/Join";
 import TeacherOurClass from "./pages/teacher/TeacherOurClass";
+import JoinDetailsWrapper from "./pages/common/JoinDetailWrapper";
 
 const App: React.FC = () => {
     const userType: string = "none"; // 'teacher' or 'parent', 실제로는 사용자 인증 상태에서 가져와야 합니다.
@@ -78,6 +79,7 @@ const App: React.FC = () => {
                     <>
                     <Route path="/login" element={<Login />} />
                     <Route path="/join" element={<Join />} />
+                    <Route path="/join/details/:role" element={<JoinDetailsWrapper />} />
                     </>
                 )}
             </Routes>
