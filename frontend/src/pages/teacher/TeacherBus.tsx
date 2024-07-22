@@ -111,7 +111,7 @@ export default function TeacherBus() {
             )}
           </div>
           <div className="flex items-center justify-between">
-            <div className="w-[210px] h-[330px] bg-[#F4F8ED] rounded-[20px] flex items-center justify-center font-bold text-[24px]">
+            <div className={`w-[210px] h-[330px] ${currentStopIndex > 0 ? 'bg-[#F4F8ED]' : 'bg-transparent'} rounded-[20px] flex items-center justify-center font-bold text-[24px]`}>
               {currentStopIndex > 0 ? busItems[currentStopIndex - 1].busStopName : ''}
             </div>
             <MdNavigateBefore className={`${currentStopIndex <= 0 && 'invisible'} text-[50px] text-[#8CAD1E] cursor-pointer`} onClick={handlePrevStop} />
@@ -133,7 +133,7 @@ export default function TeacherBus() {
               </div>
             </div>
             <MdNavigateNext className={`${currentStopIndex >= busItems.length - 1 && 'invisible'} text-[50px] text-[#8CAD1E] cursor-pointer`} onClick={handleNextStop} />
-            <div className="w-[210px] h-[330px] bg-[#F4F8ED] rounded-[20px] flex items-center justify-center font-bold text-[24px]">
+            <div className={`w-[210px] h-[330px] ${currentStopIndex < busItems.length - 1 ? 'bg-[#F4F8ED]' : 'bg-transparent'} rounded-[20px] flex items-center justify-center font-bold text-[24px]`}>
               {currentStopIndex < busItems.length - 1 ? busItems[currentStopIndex + 1].busStopName : ''}
             </div>
           </div>
