@@ -40,7 +40,7 @@ import TeacherSchedule from "./pages/teacher/TeacherSchedule";
 import JoinDetailsWrapper from "./pages/common/JoinDetailWrapper";
 
 const App: React.FC = () => {
-  const userType: string = "none"; // 'teacher' or 'parent', 실제로는 사용자 인증 상태에서 가져와야 합니다.
+  const userType: string = "teacher"; // 'teacher' or 'parent', 실제로는 사용자 인증 상태에서 가져와야 합니다.
   const navigate = useNavigate();
 
   useEffect(() => {
