@@ -1,109 +1,107 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import CommonHeader from "../../components/parent/common/CommonHeader";
-
-import daramgi from "../../assets/parent/meeting-daramgi.png";
-import meetingTimeIcon from '../../assets/parent/meeting.png';
-
+import { useEffect, useRef, useState } from "react"
+import { useNavigate } from "react-router-dom"
+import CommonHeader from "../../components/parent/common/CommonHeader"
+import InfoSection from "../../components/parent/common/InfoSection"
+import daramgi from "../../assets/parent/meeting-daramgi.png"
+import meetingTimeIcon from '../../assets/parent/meeting.png'
 
 const meetings = [
   {
-    // id
+    id: 1,
     date: "2024.07.13",
-    title: "학습 지도 상담",
+    title: "개나리반 선생님과의 상담",
     time: "12:00 - 12:20",
-    // 상담완료: T/F
-    bgColor: "bg-[#fff9d7]", //- 색은 위에 T/F로 달라지게 추가
-    hoverColor: "hover:bg-[#ffec8a]",
+    completed: true,
   },
-  {
-    // id
+  { 
+    id: 2,
     date: "2024.07.04",
-    title: "학습 지도 상담",
+    title: "개나리반 선생님과의 상담",
     time: "12:00 - 12:20",
-    bgColor: "bg-[#f9fafc]",
-    hoverColor: "hover:bg-[#e0e0e0]",
+    completed: false,
   },
-];
+]
 
-const ParentMeeting: React.FC = () => {
+export default function ParentMeeting() {
   const navigate = useNavigate();
+  const [scroll, setScroll] = useState(false)
+  const divRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (divRef.current) {
+        const topPosition = divRef.current.getBoundingClientRect().top
+        if (topPosition <= 200) {
+          setScroll(true)
+        } else {
+          setScroll(false)
+        }
+      }
+    }
+
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   const navigateToSubmitPage = () => {
     navigate("/meeting/submit");
-  };
+  }
+
+  const navigateToMeetingRoomPage = (id: number) => {
+    navigate(`/meeting/${id}`);
+  }
 
   return (
-    <div className="min-h-screen flex flex-col justify-between bg-[#ffec8a]">
+    <div className="min-h-screen flex flex-col items-center bg-[#FFEC8A]">
       <CommonHeader title="상담" />
-      <div className="flex flex-1 flex-col justify-center items-center">
-        <div className="w-full max-w-[455px] md:px-0">
-          <div className="flex items-center justify-center mt-4">
-            <div className="text-left mr-4">
-              <p className="text-[6vw] md:text-[27px] font-bold text-[#212121]">
-                예약부터 상담까지
-              </p>
-              <p className="text-[6vw] md:text-[27px] font-medium text-[#212121]">
-                온라인으로 한번에
-              </p>
-            </div>
-            <img
-              src={daramgi}
-              className="w-full h-auto max-w-[150px] object-cover"
-              />
-          </div>
-          <div
-            className="w-full bg-white rounded-tl-[20px] rounded-tr-[20px] p-8 shadow-top"
-            style={{ minHeight: "70vh" }}
-          >
-            <div className="space-y-6">
-              {meetings.map((meeting, index) => (
-                <div
-                  key={index}
-                  className={`flex flex-col p-4 rounded-2xl ${meeting.bgColor} ${meeting.hoverColor} transition-colors duration-200`}
-                >
-                  <div className="flex items-center">
-                    <div>
-                      <p className="text-[22px] font-bold text-[#353c4e]">
-                        {meeting.title}
-                      </p>
-                      <p className="text-lg font-bold text-[#757575]">
-                        {meeting.date}
-                      </p>
-                      <p className="text-lg font-medium text-[#757575]">
-                        {meeting.time}
-                      </p>
-                    </div>
-                    <svg
-                      width={40}
-                      height={40}
-                      viewBox="0 0 40 40"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="w-10 h-10 ml-auto"
-                      preserveAspectRatio="xMidYMid meet"
-                    >
-                      <rect width={40} height={40} rx={20} fill="#EADDFF" />
-                      <path
-                        fillRule="evenodd"
-                        clipRule="evenodd"
-                        d="M26.0002 16C26.0002 19.3137 23.314 22 20.0002 22C16.6865 22 14.0002 19.3137 14.0002 16C14.0002 12.6863 16.6865 10 20.0002 10C23.314 10 26.0002 12.6863 26.0002 16ZM24.0002 16C24.0002 18.2091 22.2094 20 20.0002 20C17.7911 20 16.0002 18.2091 16.0002 16C16.0002 13.7909 17.7911 12 20.0002 12C22.2094 12 24.0002 13.7909 24.0002 16Z"
-                        fill="#21005D"
-                      />
-                      <path
-                        d="M20.0002 25C13.5259 25 8.00952 28.8284 5.9082 34.192C6.4201 34.7004 6.95934 35.1812 7.52353 35.6321C9.08827 30.7077 13.997 27 20.0002 27C26.0035 27 30.9122 30.7077 32.477 35.6321C33.0412 35.1812 33.5804 34.7004 34.0923 34.1921C31.991 28.8284 26.4746 25 20.0002 25Z"
-                        fill="#21005D"
-                      />
-                    </svg>
+
+      <div className="w-full flex flex-col items-center mt-16 flex-grow">
+        <InfoSection
+          main1="예약부터 상담까지"
+          main2=""
+          description2="온라인으로 한번에"
+          imageSrc={daramgi}
+          altText="다람쥐"
+        />
+
+        <div
+          ref={divRef}
+          className="w-full bg-white rounded-tl-[20px] rounded-tr-[20px] py-12 px-12 shadow-top flex-grow overflow-hidden animate-slideUp"
+          style={{ marginTop: '-40px' }}
+        >
+          <div className={`space-y-6 ${scroll ? 'overflow-y-auto' : 'overflow-hidden'}`} style={{ maxHeight: scroll ? 'calc(100vh - 200px)' : 'auto', paddingBottom: '100px', scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+            {meetings.map((meeting) => (
+              <div
+                key={meeting.id}
+                className={`flex flex-col p-4 rounded-2xl ${meeting.completed ? 'bg-[#FFF9D7] hover:bg-[#ffec8a]' : 'bg-[#D3D3D3] cursor-not-allowed'} transition-colors duration-200`}
+                style={{
+                  boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
+                  transform: 'rotateX(10deg)',
+                  perspective: '1000px',
+                  border: meeting.completed ? '2px solid #FFEC8A' : 'none',
+                }}
+                onClick={() => meeting.completed && navigateToMeetingRoomPage(meeting.id)}
+              >
+                <div className="flex items-center">
+                  <div>
+                    <p className={`text-lg font-bold ${meeting.completed ? 'text-[#353c4e]' : 'text-gray-500'}`}>
+                      {meeting.title}
+                    </p>
+                    <p className={`text-base font-bold ${meeting.completed ? 'text-[#757575]' : 'text-gray-400'}`}>
+                      {meeting.date}
+                    </p>
+                    <p className={`text-base font-medium ${meeting.completed ? 'text-[#757575]' : 'text-gray-400'}`}>
+                      {meeting.time}
+                    </p>
                   </div>
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
       <div
-        className="fixed right-10 z-50 bottom-20 md:bottom-16"
+        className="fixed right-10 z-50 bottom-20"
         onClick={navigateToSubmitPage}
       >
         <div
@@ -121,7 +119,5 @@ const ParentMeeting: React.FC = () => {
         </div>
       </div>
     </div>
-  );
-};
-
-export default ParentMeeting;
+  )
+}

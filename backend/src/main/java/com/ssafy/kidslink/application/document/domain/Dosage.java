@@ -1,4 +1,4 @@
-package com.ssafy.kidslink.application.dosage.domain;
+package com.ssafy.kidslink.application.document.domain;
 
 import com.ssafy.kidslink.application.child.domain.Child;
 import com.ssafy.kidslink.common.enums.ConfirmationStatus;
@@ -23,6 +23,8 @@ public class Dosage {
 
     @Column(name = "dosage_enddate")
     private LocalDate dosageEnddate;
+    @Column(name = "dosage_name")
+    private String dosageName;
 
     @Column(name = "dosage_volume")
     private String dosageVolume;

@@ -209,3 +209,5 @@ CREATE TABLE `bus_stop_child` (
     FOREIGN KEY (`child_id`) REFERENCES `child`(`child_id`),
     FOREIGN KEY (`bus_stop_id`) REFERENCES `bus_stop`(`bus_stop_id`)
 );
+ALTER TABLE `dosage`
+ADD COLUMN `dosage_name` VARCHAR(500) NULL AFTER `dosage_id`;
