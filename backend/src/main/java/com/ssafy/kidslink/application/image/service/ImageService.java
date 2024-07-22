@@ -17,22 +17,21 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class ImageService {
-
-//    private final S3Config s3Config;
     private final ImageRepository imageRepository;
-//    @Value("${cloud.aws.s3.bucket}")
-//    private String bucket;
+
 
     @Value("${file.path}")
     private String LOCAL_LOCATION;
+
 
     public String imageUpload(MultipartRequest request) throws IOException {
         String today = new SimpleDateFormat("yyMMdd").format(new Date());
         String saveFolder = LOCAL_LOCATION + File.separator + today;
 
         File folder = new File(saveFolder);
-        if(!folder.exists())
+        if (!folder.exists()) {
             folder.mkdirs();
+        }
 
         MultipartFile file = request.getFile("file");
         String fileName = file.getOriginalFilename();
@@ -50,16 +49,8 @@ public class ImageService {
 
         imageRepository.save(image);
 
-//
-//
-//        s3Config.amazonS3Client().putObject(new PutObjectRequest(bucket, uuidFileName, localFile).withCannedAcl(CannedAccessControlList.PublicRead));
-//        String s3Url = s3Config.amazonS3Client().getUrl(bucket, uuidFileName).toString();
-//
-//        localFile.delete();
-//
-//        return s3Url;
-
-        return localFile.getAbsolutePath() + "" + localFile.getName();
+        return localFile.getAbsolutePath();
     }
+
 
 }
