@@ -36,6 +36,9 @@ public class Teacher {
     @Column(name = "teacher_tel")
     private String teacherTel;
 
+    @Column(name = "teacher_profile")
+    private String teacherProfile;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumns({
             @JoinColumn(name = "kindergarten_class_id", referencedColumnName = "kindergarten_class_id", nullable = false),

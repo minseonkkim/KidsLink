@@ -35,6 +35,9 @@ public class Parent {
     @Column(name = "parent_email")
     private String parentEmail;
 
+    @Column(name = "parent_profile")
+    private String parentProfile;
+
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Child> children;
 
