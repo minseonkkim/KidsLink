@@ -37,10 +37,11 @@ import Join from "./pages/common/Join";
 import TeacherOurClass from "./pages/teacher/TeacherOurClass";
 
 import TeacherSchedule from "./pages/teacher/TeacherSchedule";
-import JoinDetailsWrapper from "./pages/common/JoinDetailWrapper";
+import JoinDetails from "./pages/common/JoinDetails";
+// import JoinDetailsWrapper from "./pages/member/JoinDetailWrapper";
 
 const App: React.FC = () => {
-  const userType: string = "teacher"; // 'teacher' or 'parent', 실제로는 사용자 인증 상태에서 가져와야 합니다.
+  const userType: string = ""; // 'teacher' or 'parent', 실제로는 사용자 인증 상태에서 가져와야 합니다.
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -90,10 +91,7 @@ const App: React.FC = () => {
           <>
             <Route path="/login" element={<Login />} />
             <Route path="/join" element={<Join />} />
-            <Route
-              path="/join/details/:role"
-              element={<JoinDetailsWrapper />}
-            />
+            <Route path="/join/details" element={<JoinDetails />} />
           </>
         )}
       </Routes>
