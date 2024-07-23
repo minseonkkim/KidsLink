@@ -40,8 +40,7 @@ public class ParentService {
         parent.setParentNickname(joinDTO.getNickname());
         parent.setParentTel(joinDTO.getTel());
         parent.setParentUsername(joinDTO.getUsername());
-        parent.setParentPwd(bCryptPasswordEncoder.encode(joinDTO.getPassword()));
-
+        parent.setParentPassword(bCryptPasswordEncoder.encode(joinDTO.getPassword()));
         Parent savedParent = parentRepository.save(parent);
 
         Child child = new Child();

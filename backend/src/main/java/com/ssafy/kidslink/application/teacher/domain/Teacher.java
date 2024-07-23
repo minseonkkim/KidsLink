@@ -24,8 +24,8 @@ public class Teacher {
     @Column(name = "teacher_username")
     private String teacherUsername;
 
-    @Column(name = "teacher_pwd")
-    private String teacherPwd;
+    @Column(name = "teacher_password")
+    private String teacherPassword;
 
     @Column(name = "teacher_nickname")
     private String teacherNickname;
