@@ -40,7 +40,6 @@ public class ParentService {
         ImageDTO imageDTO;
         try {
             imageDTO = imageService.storeFile(joinDTO.getProfile());
-            System.out.println(imageDTO.getPath());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

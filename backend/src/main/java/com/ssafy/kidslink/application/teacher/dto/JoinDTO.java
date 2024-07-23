@@ -3,6 +3,7 @@ package com.ssafy.kidslink.application.teacher.dto;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Setter
@@ -17,4 +18,5 @@ public class JoinDTO {
     private String tel;
     private String kindergartenName;
     private String kindergartenClassName;
+    private MultipartFile profile;
 }
