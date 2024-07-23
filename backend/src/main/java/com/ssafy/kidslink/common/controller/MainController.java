@@ -5,6 +5,7 @@ import com.ssafy.kidslink.common.dto.APIError;
 import com.ssafy.kidslink.common.dto.APIResponse;
 import com.ssafy.kidslink.common.jwt.JWTUtil;
 import com.ssafy.kidslink.application.image.service.ImageService;
+import com.ssafy.kidslink.common.service.InitialDataService;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -33,6 +34,7 @@ public class MainController {
 
     private final JWTUtil jwtUtil;
     private final ImageService imageService;
+    private final InitialDataService initialDataService;
 
     @PostMapping("/upload/photos")
     public ResponseEntity<APIResponse<Map<String, Object>>> uploadPhotos(MultipartRequest request) throws IOException {
@@ -113,4 +115,11 @@ public class MainController {
 
         return new ResponseEntity<>(responseData, HttpStatus.OK);
     }
+
+    @PostMapping("/data/initialize")
+    public String initializeData() {
+        initialDataService.initializeData();
+        return "Initial data setup completed!";
+    }
+
 }
