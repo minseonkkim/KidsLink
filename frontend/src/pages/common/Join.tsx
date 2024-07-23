@@ -25,7 +25,7 @@ export default function Join() {
     <div className="min-h-screen flex flex-col items-center">
       <JoinHeader />
       <div className="w-full flex flex-col items-center my-16 flex-grow">
-          <p className="w-[412px] text-[35px] font-bold text-center text-[#363636] mb-5 mt-14">
+          <p className="w-[412px] text-[35px] font-bold text-center text-[#363636] mb-5 mt-10">
             회원가입
           </p>
           <p className="text-[20px] font-medium text-center text-[#363636] mb-10">
