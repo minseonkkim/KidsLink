@@ -3,6 +3,7 @@ import TeacherHeader from "../../components/teacher/common/TeacherHeader";
 import Title from "../../components/teacher/common/Title";
 import { useState, ChangeEvent } from "react";
 import { FiUpload } from "react-icons/fi";
+import { FaTrash } from "react-icons/fa";
 
 export default function TeacherAlbum() {
   const [images, setImages] = useState<string[]>([]);
@@ -11,6 +12,10 @@ export default function TeacherAlbum() {
     const files = Array.from(event.target.files || []);
     const newImages = files.map(file => URL.createObjectURL(file));
     setImages(prevImages => [...prevImages, ...newImages]);
+  };
+
+  const handleDeleteImage = (index: number) => {
+    setImages(prevImages => prevImages.filter((_, i) => i !== index));
   };
 
   return (
@@ -31,8 +36,14 @@ export default function TeacherAlbum() {
             <div className="flex flex-col justify-center items-center mt-8">
               <div className="grid grid-cols-5 gap-4 overflow-y-auto h-[442px] border-[#B2D170] border-[1px] mt-10 rounded-[10px] content-start p-3">
                 {images.map((image, index) => (
-                  <div key={index} className="w-32 h-32">
+                  <div key={index} className="relative w-32 h-32">
                     <img src={image} alt={`upload-${index}`} className="object-cover w-full h-full rounded-md" />
+                    <button 
+                      onClick={() => handleDeleteImage(index)} 
+                      className="absolute top-1 right-1 bg-red-600 text-white p-1 rounded-full"
+                    >
+                      <FaTrash />
+                    </button>
                   </div>
                 ))}
               </div>
