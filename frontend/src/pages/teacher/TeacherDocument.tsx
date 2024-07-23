@@ -7,6 +7,8 @@ import DosageDocument from '../../components/teacher/document/DosageDocument';
 import AbsentDocument from '../../components/teacher/document/AbsentDocument';
 import DocumentChild from '../../components/teacher/document/DocumentChild';
 
+
+
 export default function TeacherDocument(){
   return (
     <>
