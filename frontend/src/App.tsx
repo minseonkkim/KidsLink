@@ -5,6 +5,7 @@ import {
   Route,
   useNavigate,
 } from "react-router-dom";
+import { useUserStore, UserState } from "./stores/store";  // UserState 인터페이스 import
 import ParentHome from "./pages/parent/ParentHome";
 import ParentDocument from "./pages/parent/ParentDocument";
 import ParentDocumentSubmit from "./pages/parent/ParentDoocumentSubmit";
@@ -18,11 +19,8 @@ import ParentBus from "./pages/parent/ParentBus";
 import ParentMeeting from "./pages/parent/ParentMeeting";
 import ParentMeetingSubmit from "./pages/parent/ParentMeetingSubmit";
 import ParentMeetingRoom from "./pages/parent/ParentMeetingRoom";
-
 import ParentSchedule from "./pages/parent/ParentSchedule";
-
 import Footer from "./components/parent/common/Footer";
-
 import TeacherDocument from "./pages/teacher/TeacherDocument";
 import TeacherNotice from "./pages/teacher/TeacherNotice";
 import TeacherAlbum from "./pages/teacher/TeacherAlbum";
@@ -31,30 +29,26 @@ import TeacherMeeting from "./pages/teacher/TeacherMeeting";
 import TeacherBus from "./pages/teacher/TeacherBus";
 import TeacherHome from "./pages/teacher/TeacherHome";
 import TeacherReservation from "./pages/teacher/TeacherReservation";
-
 import Login from "./pages/common/Login";
 import Join from "./pages/common/Join";
 import TeacherOurClass from "./pages/teacher/TeacherOurClass";
-
 import TeacherSchedule from "./pages/teacher/TeacherSchedule";
 import JoinDetails from "./pages/common/JoinDetails";
-// import JoinDetailsWrapper from "./pages/member/JoinDetailWrapper";
 
 const App: React.FC = () => {
-  const userType: string = ""; // 'teacher' or 'parent', 실제로는 사용자 인증 상태에서 가져와야 합니다.
+  const userType = useUserStore((state: UserState) => state.userType); // UserState 타입 지정
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (userType !== "parent" && userType !== "teacher") {
-      // 회원가입 창으로 이동하기 위해 주석처리
-      // navigate("/login");
+    if (userType !== "ROLE_PARENT" && userType !== "ROLE_TEACHER") {
+      navigate("/login");
     }
   }, [userType, navigate]);
 
   return (
     <>
       <Routes>
-        {userType === "parent" ? (
+        {userType === "ROLE_PARENT" ? (
           <>
             <Route path="/" element={<ParentHome />} />
             <Route path="/document" element={<ParentDocument />} />
@@ -71,7 +65,7 @@ const App: React.FC = () => {
             <Route path="/meeting/:id" element={<ParentMeetingRoom />} />
             <Route path="/ParentSchedule" element={<ParentSchedule />} />
           </>
-        ) : userType === "teacher" ? (
+        ) : userType === "ROLE_TEACHER" ? (
           <>
             <Route path="/" element={<TeacherHome />} />
             <Route path="/document" element={<TeacherDocument />} />
@@ -79,10 +73,7 @@ const App: React.FC = () => {
             <Route path="/album" element={<TeacherAlbum />} />
             <Route path="/growth" element={<TeacherGrowth />} />
             <Route path="/meeting" element={<TeacherMeeting />} />
-            <Route
-              path="/meeting/reservation"
-              element={<TeacherReservation />}
-            />
+            <Route path="/meeting/reservation" element={<TeacherReservation />} />
             <Route path="/bus" element={<TeacherBus />} />
             <Route path="/ourclass" element={<TeacherOurClass />} />
             <Route path="/schedule" element={<TeacherSchedule />} />
@@ -95,7 +86,7 @@ const App: React.FC = () => {
           </>
         )}
       </Routes>
-      {userType === "parent" && <Footer />}
+      {userType === "ROLE_PARENT" && <Footer />}
     </>
   );
 };
