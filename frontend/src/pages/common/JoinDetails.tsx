@@ -1,6 +1,7 @@
 import { useParams } from 'react-router-dom';
 import CommonContent from './JoinCommon';
 import ParentHeader from '../../components/parent/common/HomeHeader';
+import JoinHeader from '../../components/join/JoinHeader';
 
 interface JoinDetailsProps {
     role: string;
@@ -40,7 +41,7 @@ export default function JoinDetails({ role }: JoinDetailsProps) {
 
     return (
         <div className="max-w-full h-full min-h-screen bg-white flex flex-col items-center py-25">
-            <ParentHeader />
+            <JoinHeader />
             <CommonContent role={role}/>
             {renderContent()}
 
