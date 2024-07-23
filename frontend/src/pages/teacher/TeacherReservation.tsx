@@ -77,7 +77,7 @@ export default function TeacherReservation() {
                     />
 
                     <div className="w-[637px]">
-                        <div className="flex flex-row justify-between mb-2">
+                        <div className="flex flex-row justify-between">
                             <div className="text-[22px] flex flex-row items-center h-[22px] font-bold text-[#8CAD1E] my-5">
                                 <FaRegCalendar className="mr-3"/>
                                 {formatDate(date)}
@@ -85,38 +85,41 @@ export default function TeacherReservation() {
                             {isEditing ? (
                                 <div>
                                     <button 
-                                        className="h-[40px] border-2 border-[#7C7C7C] bg-[#E3EEFF] px-3 py-1 font-bold rounded-[10px] hover:bg-[#D4DDEA] mr-2"
-                                        onClick={handleSelectAllClick}
-                                    >
-                                        {selectedTimes.length === allTimes.length ? "전체 해제" : "전체 선택"}
-                                    </button>
-                                    <button 
-                                        className="h-[40px] border-2 border-[#7C7C7C] bg-[#E3EEFF] px-3 py-1 font-bold rounded-[10px] hover:bg-[#D4DDEA]"
+                                        className="mt-2 h-[40px] border-2 border-[#7C7C7C] bg-[#E3EEFF] px-3 py-1 font-bold rounded-[10px] hover:bg-[#D4DDEA]"
                                         onClick={handleSaveClick}
                                     >
-                                        수정 완료
+                                        수정완료
                                     </button>
                                 </div>
                             ) : (
                                 <button 
-                                    className="h-[40px] border-2 border-[#7C7C7C] bg-[#E3EEFF] px-3 py-1 font-bold rounded-[10px] hover:bg-[#D4DDEA]"
+                                    className="mt-2 h-[40px] border-2 border-[#7C7C7C] bg-[#E3EEFF] px-3 py-1 font-bold rounded-[10px] hover:bg-[#D4DDEA]"
                                     onClick={handleEditClick}
                                 >
                                     수정하기
                                 </button>
                             )}
                         </div>
-
-                        <p className="mb-3 font-bold text-[18px]">오전</p>
-                        <div className="flex flex-row flex-wrap">
-                            {allTimes.slice(0, 6).map((time) => (
-                                <ReservationTime 
-                                    key={time} 
-                                    time={time} 
-                                    isActive={selectedTimes.includes(time)}
-                                    onClick={() => handleTimeClick(time)}
-                                />
-                            ))}
+                        <div className="flex justify-between">
+                            <div></div>
+                            {isEditing && 
+                            <label htmlFor="chk">
+                                <input type="checkbox" id="chk" onClick={handleSelectAllClick}/>
+                                <i className="circle mr-2"></i>
+                                <span className="text">{selectedTimes.length === allTimes.length ? "전체 해제" : "전체 선택"}</span>
+                          </label>}
+                            </div>
+                            <p className="mb-3 font-bold text-[18px]">오전</p>
+                            <div className="flex flex-row flex-wrap">
+                                {allTimes.slice(0, 6).map((time) => (
+                                    <ReservationTime 
+                                        key={time} 
+                                        time={time} 
+                                        isActive={selectedTimes.includes(time)}
+                                        onClick={() => handleTimeClick(time)}
+                                    />
+                                ))}
+                        
                         </div>
                         <p className="mt-5 mb-3 font-bold text-[18px]">오후</p>
                         <div className="flex flex-row flex-wrap">

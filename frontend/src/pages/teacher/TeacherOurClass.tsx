@@ -16,6 +16,7 @@ const ourClassChild = [
 export default function TeacherOurClass() {
     const absentCount = ourClassChild.filter(child => child.childAbsent).length;
     const dosageCount = ourClassChild.filter(child => child.childDosage).length;
+
     return (
         <>
             <TeacherHeader />
@@ -31,7 +32,7 @@ export default function TeacherOurClass() {
                 </div>
                 <span className="absolute top-[125px] right-[250px] px-3 py-2 flex flex-row items-center text-xl font-bold">{dosageCount}명</span>
 
-                <div className="flex justify-start flex-wrap gap-4">
+                <div className="grid gap-4 w-full" style={{gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))'}}>
                     {ourClassChild.map((child, index) => (
                         <ChildCard 
                             key={index}
@@ -48,3 +49,4 @@ export default function TeacherOurClass() {
         </>
     );
 }
+
