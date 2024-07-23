@@ -25,6 +25,31 @@ body {
     -webkit-text-fill-color: transparent;
 }
 
+.circle{
+    display: inline-block; /* 영역적용가능해짐 */
+    width: 17px; height: 17px;
+    border: 2px solid #666;
+    box-sizing: border-box;
+    border-radius: 10px; /* 모서리둥글게 처리 */
+    position: relative; top: 4px;
+    cursor: pointer; /* 마우스 올렸을때 손모양 처리 */
+  
+    background-image: url(https://blog.kakaocdn.net/dn/XTnSL/btrhtUIVtpB/5FungHN6IXVXG8bLbhE9Dk/img.png);
+    background-size: 70%;
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+  
+  #chk:checked + .circle{
+    background-color: navy;
+    border-color: navy;
+    background-image: url(https://blog.kakaocdn.net/dn/t7a2D/btrhtVgLYmG/dUxzAkBy9hIZ4gHmyllQrk/img.png);
+  }
+  
+  
+  /* 체크박스는 display:none;을 주면 데이터 처리가 안됨 */
+  #chk{ position: absolute; left: -999em; }
+
 
 
 /* custom-scrollbar 클래스 정의 */

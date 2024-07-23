@@ -5,11 +5,11 @@
     align-items: center;
     font-family: 'font-KoPubDotum';
     width: 450px;
-    padding: 20px;
+    padding: 30px;
     max-width: 100%;
     background-color: #fff;
     color: #222;
-    border-width: 1px;
+    border-width: 2px;
     border-radius: 10px;
     line-height: 1.125em;
 }
