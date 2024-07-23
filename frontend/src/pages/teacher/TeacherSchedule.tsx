@@ -7,9 +7,9 @@ import moment from "moment";
 import { FaRegCalendar } from "react-icons/fa6";
 
 const scheduleItem = [
-    {content: "08:30 등원 및 인사", completed: true},
-    {content: "09:00 김여준 학부모 상담", completed: false},
-    {content: "10:00 블록놀이", completed: false},
+    {id: 1, content: "08:30 등원 및 인사", completed: true},
+    {id: 2, content: "09:00 김여준 학부모 상담", completed: false},
+    {id: 3, content: "10:00 블록놀이", completed: false},
 ]
 
 export default function TeacherSchedule(){
@@ -48,17 +48,21 @@ export default function TeacherSchedule(){
                         </div>
                         <div className="p-3 border-[2px] border-[#8CAD1E] rounded-[10px] h-[330px]">
                             {
-                                scheduleItem.map(({content, completed}) => (
-                                    <div className="flex flex-row m-2 items-center">
-                                        <input type="checkbox" className="mr-2 w-[19px] h-[19px]" checked={completed === true} 
+                                scheduleItem.map(({id, content, completed}) => (
+                                    <div key={id} className="flex flex-row m-2 items-center">
+                                        <input 
+                                            type="checkbox" 
+                                            className="mr-2 w-[19px] h-[19px]" 
+                                            checked={completed === true} 
                                         />
-                                        <p className="text-[18px]">{ content }</p>
+                                        <p className="text-[18px]">{content}</p>
                                     </div>
                                 ))
                             }
                         </div>
                         <div className="flex flex-row justify-between items-center mt-3">
-                            <input className="border w-[580px] rounded-[10px] h-[40px] bg-[#F8F8F8] border-[2px] border-[#B8B8B8]"/>
+                            <input className="border w-[150px] h-[40px] border-[2px] border-[#B8B8B8] mr-1 rounded-[10px] p-1" type="time"/>
+                            <input className="border w-[580px] h-[40px] h-[40px] bg-[#F8F8F8] border-[2px] rounded-[10px] border-[#B8B8B8] mr-1 p-1"/>
                             <button className="font-bold border-[2px] border-[#B8B8B8] text-[#B8B8B8] w-[50px] h-[40px] rounded-[10px]">추가</button>
                         </div>
                         
