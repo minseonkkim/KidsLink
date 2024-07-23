@@ -28,12 +28,12 @@ export default function Join() {
           <p className="w-[412px] text-[35px] font-bold text-center text-[#363636] mb-5 mt-10">
             회원가입
           </p>
-          <p className="text-[20px] font-medium text-center text-[#363636] mb-10">
+          <p className="text-[20px] font-medium text-center text-[#363636] mb-8">
             본인의 역할을 정확하게 선택해 주세요.
           </p>
           <div className="flex flex-col items-center text-[35px] font-bold text-center text-[#363636] mb-5 mt-10">
             {members.map((item, index) => (
-                <div key={index} className="w-[300px] mb-10">
+                <div key={index} className="w-[300px] mb-8">
                   <MemberCard
                     role={item.role}
                     img={item.img}

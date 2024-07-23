@@ -1,24 +1,25 @@
-import { ChangeEvent, useState, useEffect } from 'react';
+import { ChangeEvent, useState, useEffect, FormEvent } from 'react'
 import { teacherSignup } from '../../api/Member'
-import { CiCamera } from 'react-icons/ci';
-import UserInfoForm from './UserInfoForm';
+import { CiCamera } from 'react-icons/ci'
+import UserInfoForm from './UserInfoForm'
 
 interface TeacherData {
   username: string;
-  email: string;
+  name: string;
   password: string;
   passwordConfirm: string;
-  name: string;
-  nickname: string;
-  tel: string;
   kindergartenName: string;
   kindergartenClassName: string;
+  email?: string;
+  profile?: File;
+  nickname?: string;
+  tel?: string;
 }
 
 const kindergartens = [
-  { name: "사랑 유치원", classes: ["사랑반", "기쁨반"] },
-  { name: "희망 유치원", classes: ["꿈나무반", "햇살반"] },
-  { name: "기쁨 유치원", classes: ["별빛반", "달빛반"] }
+  { name: "햇살 유치원", classes: ["햇살반", "별빛반", "꿈나무반"] },
+  { name: "별빛 유치원", classes: ["햇살반", "별빛반", "꿈나무반"] },
+  { name: "꿈나무 유치원", classes: ["햇살반", "별빛반", "꿈나무반"] },
 ];
 
 export default function TeacherForm() {
@@ -32,40 +33,43 @@ export default function TeacherForm() {
     tel: "",
     kindergartenName: "",
     kindergartenClassName: "",
-  });
+    profile: undefined
+  })
 
-  const [image, setImage] = useState<string | null>(null);
-  const [classOptions, setClassOptions] = useState<string[]>([]);
+  const [imagePreview, setImagePreview] = useState<string | null>(null)
+  const [classOptions, setClassOptions] = useState<string[]>([])
 
   useEffect(() => {
-    const selectedKindergarten = kindergartens.find(kg => kg.name === formData.kindergartenName);
+    const selectedKindergarten = kindergartens.find(kg => kg.name === formData.kindergartenName)
     if (selectedKindergarten) {
-      setClassOptions(selectedKindergarten.classes);
+      setClassOptions(selectedKindergarten.classes)
     } else {
-      setClassOptions([]);
+      setClassOptions([])
     }
-  }, [formData.kindergartenName]);
+  }, [formData.kindergartenName])
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    const { name, value } = e.target
+    setFormData({ ...formData, [name]: value })
   };
 
   const handleImageUpload = (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
+    const file = event.target.files?.[0]
     if (file) {
-      const newImage = URL.createObjectURL(file);
-      setImage(newImage);
+      const newImage = URL.createObjectURL(file)
+      setImagePreview(newImage)
+      setFormData({ ...formData, profile: file })
     }
-  };
+  }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault()
+
     try {
-      const response = await teacherSignup(formData);
-      console.log('Teacher registration successful', response);
+      const response = await teacherSignup(formData)
+      console.log('Teacher registration successful', response)
     } catch (error) {
-      console.error('Error during teacher registration', error);
+      console.error('Error during teacher registration', error)
     }
   };
 
@@ -75,17 +79,17 @@ export default function TeacherForm() {
         <div className="space-y-12">
           <div className="mt-10 flex justify-center">
             <label
-              className="flex flex-col items-center justify-center bg-[#FFF9D7] border-[#FFE96F] border-[1px] w-[200px] h-[200px] rounded-full p-6 cursor-pointer"
+              className="flex flex-col items-center justify-center bg-[#F4F4F4] border-[#363636] border-[1px] w-[200px] h-[200px] rounded-full p-6 cursor-pointer"
               style={{
-                backgroundImage: image ? `url(${image})` : 'none',
+                backgroundImage: imagePreview ? `url(${imagePreview})` : 'none',
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
               }}
             >
-              {!image && (
+              {!imagePreview && (
                 <>
                   <CiCamera className="text-[70px] mb-5" />
-                  <span className="text-[20px] font-bold">사진 등록</span>
+                  <span className="text-[20px] font-bold">프로필 등록</span>
                 </>
               )}
               <input type="file" className="hidden" onChange={handleImageUpload} />
@@ -148,5 +152,5 @@ export default function TeacherForm() {
         </div>
       </form>
     </div>
-  );
+  )
 }

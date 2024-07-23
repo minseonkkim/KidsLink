@@ -3,17 +3,18 @@ import { ChangeEvent } from 'react';
 interface UserInfoFormProps {
   formData: {
     username: string;
-    email: string;
     password: string;
     passwordConfirm: string;
     name: string;
-    nickname: string;
-    tel: string;
+    email?: string;
+    nickname?: string;
+    tel?: string;
   };
   handleChange: (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
 }
 
-function UserInfoForm({ formData, handleChange }: UserInfoFormProps) {
+
+export default function UserInfoForm({ formData, handleChange }: UserInfoFormProps) {
   return (
     <div>
       <div className="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
@@ -133,7 +134,5 @@ function UserInfoForm({ formData, handleChange }: UserInfoFormProps) {
         </div>
       </div>
     </div>
-  );
+  )
 }
-
-export default UserInfoForm;
