@@ -1,18 +1,24 @@
 package com.ssafy.kidslink.common.service;
 
+import com.ssafy.kidslink.application.child.domain.Child;
+import com.ssafy.kidslink.application.child.repository.ChildRepository;
 import com.ssafy.kidslink.application.kindergarten.domain.Kindergarten;
 import com.ssafy.kidslink.application.kindergarten.repository.KindergartenRepository;
 import com.ssafy.kidslink.application.kindergartenclass.domain.KindergartenClass;
 import com.ssafy.kidslink.application.kindergartenclass.repository.KindergartenClassRepository;
+import com.ssafy.kidslink.application.noticeboard.domain.NoticeBoard;
+import com.ssafy.kidslink.application.noticeboard.repository.NoticeBoardRepository;
 import com.ssafy.kidslink.application.parent.domain.Parent;
 import com.ssafy.kidslink.application.parent.repository.ParentRepository;
 import com.ssafy.kidslink.application.teacher.domain.Teacher;
 import com.ssafy.kidslink.application.teacher.repository.TeacherRepository;
+import com.ssafy.kidslink.common.enums.Gender;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -27,6 +33,8 @@ public class InitialDataService {
     private final ParentRepository parentRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final TeacherRepository teacherRepository;
+    private final ChildRepository childRepository;
+    private final NoticeBoardRepository noticeBoardRepository;
 
     @Transactional
     public String initializeData() {
@@ -42,14 +50,17 @@ public class InitialDataService {
         kindergartenClassRepository.saveAll(kindergartenClasses);
 
         // TODO #3 부모님 데이터 삽입
-        parentRepository.saveAll(getParents());
+        List<Parent> parents = getParents();
+        parentRepository.saveAll(parents);
 
         // TODO #4 선생님 데이터 삽입
         teacherRepository.saveAll(getTeachers(kindergartenClasses));
 
         // TODO #5 유치원생 데이터 삽입
+        childRepository.saveAll(getChildren(parents, kindergartenClasses));
 
         // TODO #6 알림장 데이터 삽입
+        noticeBoardRepository.saveAll(getNoticeBoards(kindergartenClasses.get(0)));
 
         // TODO #7 성장일지 데이터 삽입
 
@@ -88,10 +99,12 @@ public class InitialDataService {
     }
 
     private void deleteAll(){
-        kindergartenRepository.deleteAll();
-        kindergartenClassRepository.deleteAll();
+        noticeBoardRepository.deleteAll();
+        childRepository.deleteAll();
         parentRepository.deleteAll();
         teacherRepository.deleteAll();
+        kindergartenClassRepository.deleteAll();
+        kindergartenRepository.deleteAll();
     }
 
     private static List<String> getKindergartenClassNames() {
@@ -156,6 +169,50 @@ public class InitialDataService {
         }
 
         return teachers;
+    }
+
+    private List<Child> getChildren(List<Parent> parents, List<KindergartenClass> kindergartenClasses) {
+        List<Child> children = new ArrayList<>();
+        String[] childNames = {"김하늘", "이민호", "박서연", "최우진", "장예빈", "강지후", "오수아", "윤도현", "정수지", "한지우"};
+        Gender[] genders = {Gender.F, Gender.M, Gender.F, Gender.M, Gender.F, Gender.M, Gender.F, Gender.M, Gender.F, Gender.F};
+        String[] births = {"2015-05-01", "2016-08-15", "2014-11-20", "2015-01-30", "2016-02-14", "2015-07-07", "2016-09-09", "2014-12-25", "2015-04-04", "2016-03-03"};
+//        String[] profiles = {"child1.jpg", "child2.jpg", "child3.jpg", "child4.jpg", "child5.jpg", "child6.jpg", "child7.jpg", "child8.jpg", "child9.jpg", "child10.jpg"};
+
+        for (int i = 0; i < parents.size(); i++) {
+            Child child = new Child();
+            child.setChildName(childNames[i]);
+            child.setChildGender(genders[i]);
+            child.setChildBirth(births[i]);
+//            child.setChildProfile(profiles[i]);
+            child.setParent(parents.get(i));
+            child.setKindergartenClass(kindergartenClasses.get(i % kindergartenClasses.size())); // 유치원 반을 순환하며 할당
+            children.add(child);
+        }
+
+        return children;
+    }
+
+    private List<NoticeBoard> getNoticeBoards(KindergartenClass kindergartenClass) {
+        List<NoticeBoard> noticeBoards = new ArrayList<>();
+        String[] titles = {"유치원 행사 안내", "여름 방학 일정", "가을 소풍 안내", "학부모 상담 일정", "어린이날 행사"};
+        String[] contents = {
+                "다음 주에는 유치원에서 작은 행사가 열립니다. 많은 참여 부탁드립니다.",
+                "이번 여름 방학 일정은 7월 20일부터 8월 20일까지입니다.",
+                "가을 소풍은 10월 첫째 주에 진행됩니다. 자세한 사항은 추후 공지하겠습니다.",
+                "학부모 상담 일정이 잡혔습니다. 각 반별로 시간표를 확인해 주세요.",
+                "어린이날을 맞아 다양한 행사가 준비되어 있습니다. 많은 참여 바랍니다."
+        };
+
+        for (int i = 0; i < titles.length; i++) {
+            NoticeBoard noticeBoard = new NoticeBoard();
+            noticeBoard.setNoticeBoardTitle(titles[i]);
+            noticeBoard.setNoticeBoardContent(contents[i]);
+            noticeBoard.setNoticeBoardDate(LocalDate.now().plusDays(i));
+            noticeBoard.setKindergartenClass(kindergartenClass); // 유치원 반을 순환하며 할당
+            noticeBoards.add(noticeBoard);
+        }
+
+        return noticeBoards;
     }
 
 }
