@@ -1,16 +1,17 @@
+DROP DATABASE IF EXISTS `kidslink`;
 CREATE SCHEMA `kidslink` ;
 USE `kidslink`;
 
 CREATE TABLE `kindergarten` (
     `kindergarten_id` INT NOT NULL AUTO_INCREMENT,
-    `kindergarten_name` VARCHAR(25) NULL,
+    `kindergarten_name` VARCHAR(25) NOT NULL,
     PRIMARY KEY (`kindergarten_id`)
 );
 
 CREATE TABLE `kindergarten_class` (
     `kindergarten_class_id` INT NOT NULL AUTO_INCREMENT,
     `kindergarten_id` INT NOT NULL,
-    `kindergarten_class_name` VARCHAR(100) NULL,
+    `kindergarten_class_name` VARCHAR(100) NOT NULL,
     PRIMARY KEY (`kindergarten_class_id`, `kindergarten_id`),
     FOREIGN KEY (`kindergarten_id`) REFERENCES `kindergarten`(`kindergarten_id`)
 );
@@ -39,10 +40,11 @@ CREATE TABLE `parent` (
     `parent_id` INT NOT NULL AUTO_INCREMENT,
     `parent_username` VARCHAR(100) NULL,
     `parent_name` VARCHAR(25) NULL,
-    `parent_pwd` VARCHAR(100) NULL,
+    `parent_password` VARCHAR(100) NULL,
     `parent_nickname` VARCHAR(100) NULL,
     `parent_tel` VARCHAR(25) NULL,
     `parent_email` VARCHAR(100) NULL,
+    `parent_profile` VARCHAR(255) NULL,
     PRIMARY KEY (`parent_id`)
 );
 
@@ -51,6 +53,7 @@ CREATE TABLE `child` (
     `child_name` VARCHAR(100) NULL,
     `child_gender` ENUM('F', 'M') NULL,
     `child_birth` VARCHAR(100) NULL,
+    `child_profile` VARCHAR(255) NULL,
     `kindergarten_class_id` INT NOT NULL,
     `kindergarten_id` INT NOT NULL,
     `parent_id` INT NOT NULL,
@@ -59,17 +62,15 @@ CREATE TABLE `child` (
     FOREIGN KEY (`parent_id`) REFERENCES `parent`(`parent_id`)
 );
 
-ALTER TABLE `child`
-ADD COLUMN `child_image` VARCHAR(255) NULL;
-
 CREATE TABLE `teacher` (
     `teacher_id` INT NOT NULL AUTO_INCREMENT,
     `teacher_name` VARCHAR(25) NULL,
     `teacher_username` VARCHAR(100) NULL,
-    `teacher_pwd` VARCHAR(100) NULL,
+    `teacher_password` VARCHAR(100) NULL,
     `teacher_nickname` VARCHAR(100) NULL,
     `teacher_email` VARCHAR(100) NULL,
     `teacher_tel` VARCHAR(25) NULL,
+    `teacher_profile` VARCHAR(255) NULL,
     `kindergarten_class_id` INT NOT NULL,
     `kindergarten_id` INT NOT NULL,
     PRIMARY KEY (`teacher_id`),
@@ -108,16 +109,15 @@ CREATE TABLE `absent` (
     `absent_enddate` DATE NULL,
     `absent_reason` VARCHAR(1000) NULL,
     `absent_details` VARCHAR(1000) NULL,
+    `confirmation_status` ENUM('T', 'F') DEFAULT 'F',
     `child_id` INT NOT NULL,
     PRIMARY KEY (`absent_id`),
     FOREIGN KEY (`child_id`) REFERENCES `child`(`child_id`)
 );
 
-ALTER TABLE `absent`
-ADD COLUMN `confirmation_status` ENUM('T', 'F') DEFAULT 'F';
-
 CREATE TABLE `dosage` (
     `dosage_id` INT NOT NULL AUTO_INCREMENT,
+    `dosage_name` VARCHAR(500) NULL,
     `dosage_startdate` DATE NULL,
     `dosage_enddate` DATE NULL,
     `dosage_volume` VARCHAR(500) NULL,
@@ -125,16 +125,11 @@ CREATE TABLE `dosage` (
     `dosage_time` VARCHAR(500) NULL,
     `dosage_store` VARCHAR(500) NULL,
     `dosage_details` VARCHAR(1000) NULL,
+    `confirmation_status` ENUM('T', 'F') DEFAULT 'F',
     `child_id` INT NOT NULL,
     PRIMARY KEY (`dosage_id`),
     FOREIGN KEY (`child_id`) REFERENCES `child`(`child_id`)
 );
-
-ALTER TABLE `dosage`
-ADD COLUMN `confirmation_status` ENUM('T', 'F') DEFAULT 'F';
-
-ALTER TABLE `dosage`
-ADD COLUMN `dosage_name` VARCHAR(500) NULL AFTER `dosage_id`;
 
 CREATE TABLE `bus_stop` (
     `bus_stop_id` INT NOT NULL AUTO_INCREMENT,
@@ -157,6 +152,7 @@ CREATE TABLE `parent_notification` (
     `parent_id` INT NOT NULL,
     `code` ENUM('dosage','absent','meeting') NULL,
     `parent_notification_text` VARCHAR(100) NULL,
+    `confirmation_status` ENUM('T', 'F') DEFAULT 'F',
     PRIMARY KEY (`parent_notification_id`),
     FOREIGN KEY (`parent_id`) REFERENCES `parent`(`parent_id`)
 );
@@ -166,17 +162,10 @@ CREATE TABLE `teacher_notification` (
     `teacher_id` INT NOT NULL,
     `code` VARCHAR(50) NULL,
     `teacher_notification_text` VARCHAR(100) NULL,
+    `confirmation_status` ENUM('T', 'F') DEFAULT 'F',
     PRIMARY KEY (`teacher_notification_id`),
     FOREIGN KEY (`teacher_id`) REFERENCES `teacher`(`teacher_id`)
 );
--- Add confirmation_status column to parent_notification table
-ALTER TABLE `parent_notification`
-ADD COLUMN `confirmation_status` ENUM('T', 'F') DEFAULT 'F';
-
--- Add confirmation_status column to teacher_notification table
-ALTER TABLE `teacher_notification`
-ADD COLUMN `confirmation_status` ENUM('T', 'F') DEFAULT 'F';
-
 
 CREATE TABLE `meeting_time` (
     `meeting_time_id` INT NOT NULL AUTO_INCREMENT,
@@ -202,8 +191,6 @@ CREATE TABLE `image_album` (
     FOREIGN KEY (`image_id`) REFERENCES `image`(`image_id`),
     FOREIGN KEY (`album_id`) REFERENCES `album`(`album_id`)
 );
-
-
 
 CREATE TABLE `bus_stop_child` (
     `child_id` INT NOT NULL,

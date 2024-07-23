@@ -7,7 +7,6 @@ import com.ssafy.kidslink.application.image.dto.ImageDTO;
 import com.ssafy.kidslink.application.kindergartenclass.domain.KindergartenClass;
 import com.ssafy.kidslink.application.teacher.repository.TeacherRepository;
 import com.ssafy.kidslink.common.dto.User;
-import com.ssafy.kidslink.common.security.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;
@@ -32,7 +31,7 @@ public class AlbumService {
         KindergartenClass kindergartenClass = teacherRepository.findByTeacherUsername("kimteacher").getKindergartenClass();
         List<Child> children = childRepository.findByKindergartenClassKindergartenClassIdAndKindergartenClassKindergartenId(kindergartenClass.getKindergartenId(), kindergartenClass.getKindergartenClassId());
 
-        List<String> childImages = children.stream().map(Child::getChildImage)
+        List<String> childImages = children.stream().map(Child::getChildProfile)
                 .collect(Collectors.toList());
 
         // Prepare the payload
