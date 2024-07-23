@@ -2,7 +2,6 @@
 @layer;
 @import "//cdn.jsdelivr.net/npm/font-kopub@1.0/kopubdotum.min.css";
 
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -93,6 +92,71 @@ body {
 
 
 /* 확인 */
+@layer utilities {
+  @media (max-width: 768px) {
+    .container {
+      padding: 1.25rem;
+    }
+    .progress-text {
+      font-size: 0.75rem;
+    }
+    .input-title {
+      font-size: 1rem;
+    }
+    .input-description {
+      font-size: 0.625rem;
+    }
+    .input-label {
+      font-size: 0.75rem;
+    }
+    .buttons {
+      flex-direction: column;
+      align-items: center;
+    }
+    .buttons button {
+      width: 80%;
+      margin-bottom: 0.625rem;
+    }
+    .email-inputs .input-box,
+    .phone-inputs .phone-number {
+      width: calc(50% - 0.3125rem);
+    }
+  }
+
+  @media (max-width: 480px) {
+    .title {
+      font-size: 1.25rem;
+    }
+    .signup {
+      font-size: 1.25rem;
+    }
+    .progress-text {
+      font-size: 0.625rem;
+    }
+    .input-title {
+      font-size: 0.875rem;
+    }
+    .input-description {
+      font-size: 0.5625rem;
+    }
+    .input-label {
+      font-size: 0.625rem;
+    }
+    .buttons {
+      flex-direction: column;
+      align-items: center;
+    }
+    .buttons button {
+      width: 100%;
+      margin-bottom: 0.625rem;
+    }
+    .email-inputs .input-box,
+    .phone-inputs .phone-number {
+      width: calc(50% - 0.3125rem);
+    }
+  }
+}
+
 .shadow-top {
 box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.1), 0 -10px 15px rgba(0, 0, 0, 0.1);
 }

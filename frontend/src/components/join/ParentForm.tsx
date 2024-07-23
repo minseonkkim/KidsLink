@@ -1,263 +1,108 @@
-import { ChangeEvent, useState, useEffect, FormEvent } from "react";
-import { parentSignup } from "../../api/member/member";
-import { CiCamera } from "react-icons/ci";
-import UserInfoForm from "./UserInfoForm";
-
-interface Child {
-  name?: string;
-  kindergartenClassName?: string;
-  kindergartenName?: string;
-  gender?: string;
-  birth?: string;
-}
-
-interface ParentData {
-  username: string;
-  name: string;
-  password: string;
-  passwordConfirm: string;
-  email?: string;
-  profile?: File;
-  nickname?: string;
-  tel?: string;
-  child?: Child;
-}
-
-const kindergartens = [
-  { name: "햇살 유치원", classes: ["햇살반", "별빛반", "꿈나무반"] },
-  { name: "별빛 유치원", classes: ["햇살반", "별빛반", "꿈나무반"] },
-  { name: "꿈나무 유치원", classes: ["햇살반", "별빛반", "꿈나무반"] },
-];
-
-export default function ParentForm() {
-  const [formData, setFormData] = useState<ParentData>({
-    username: "",
-    email: "",
-    password: "",
-    passwordConfirm: "",
-    name: "",
-    nickname: "",
-    tel: "",
-    child: {
-      name: "",
-      kindergartenClassName: "",
-      kindergartenName: "",
-      gender: "",
-      birth: "",
-    },
-    profile: undefined,
-  });
-
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [classOptions, setClassOptions] = useState<string[]>([]);
-
-  useEffect(() => {
-    const selectedKindergarten = kindergartens.find(
-      (kg) => kg.name === formData.child?.kindergartenName
-    );
-    if (selectedKindergarten) {
-      setClassOptions(selectedKindergarten.classes);
-    } else {
-      setClassOptions([]);
-    }
-  }, [formData.child?.kindergartenName]);
-
-  const handleChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    const { name, value } = e.target;
-    if (name.startsWith("child.")) {
-      const childName = name.split(".")[1];
-      setFormData({
-        ...formData,
-        child: { ...formData.child, [childName]: value },
-      });
-    } else {
-      setFormData({ ...formData, [name]: value });
-    }
-  };
-
-  const handleImageUpload = (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const newImage = URL.createObjectURL(file);
-      setImagePreview(newImage);
-      setFormData({ ...formData, profile: file });
-    }
-  };
-
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-
-    try {
-      const response = await parentSignup(formData);
-      console.log("Parent registration successful", response);
-    } catch (error) {
-      console.error("Error during parent registration", error);
-    }
-  };
-
+export default function SignupPage() {
   return (
-    <div className="container mx-auto p-4">
-      <form onSubmit={handleSubmit}>
-        <div className="space-y-12">
-          <div className="mt-10 flex justify-center">
-            <label
-              className="flex flex-col items-center justify-center bg-[#F4F4F4] border-[#363636] border-[1px] w-[200px] h-[200px] rounded-full p-6 cursor-pointer"
-              style={{
-                backgroundImage: imagePreview ? `url(${imagePreview})` : "none",
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-              }}
-            >
-              {!imagePreview && (
-                <>
-                  <CiCamera className="text-[70px] mb-5" />
-                  <span className="text-[20px] font-bold">프로필 등록</span>
-                </>
-              )}
-              <input
-                type="file"
-                className="hidden"
-                onChange={handleImageUpload}
-              />
-            </label>
-          </div>
-
-          <UserInfoForm formData={formData} handleChange={handleChange} />
-
-          <div className="border-t border-gray-900/10 pb-5">
-            <h1 className="mt-5 text-base font-semibold leading-7 text-gray-900">
-              자녀 등록하기
-            </h1>
-            <div className="mt-5 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-              <div className="sm:col-span-2">
-                <label
-                  htmlFor="child.name"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  자녀 이름
-                </label>
-                <div className="mt-2">
-                  <input
-                    id="child.name"
-                    name="child.name"
-                    type="text"
-                    value={formData.child?.name || ""}
-                    onChange={handleChange}
-                    className="block w-full rounded-md border-0 py-1.5 pl-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#B2D170] sm:text-sm sm:leading-6"
-                  />
-                </div>
-              </div>
-              <div className="sm:col-span-2">
-                <label
-                  htmlFor="child.gender"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  자녀 성별
-                </label>
-                <div className="mt-2">
-                  <select
-                    id="child.gender"
-                    name="child.gender"
-                    value={formData.child?.gender || ""}
-                    onChange={handleChange}
-                    className="block w-full rounded-md border-0 py-1.5 pl-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#B2D170] sm:max-w-xs sm:text-sm sm:leading-6"
-                  >
-                    <option value="" disabled>
-                      성별을 선택해주세요
-                    </option>
-                    <option value="M">남자</option>
-                    <option value="F">여자</option>
-                  </select>
-                </div>
-              </div>
-              <div className="sm:col-span-2">
-                <label
-                  htmlFor="child.birth"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  자녀 생일
-                </label>
-                <div className="mt-2">
-                  <input
-                    type="date"
-                    id="child.birth"
-                    name="child.birth"
-                    value={formData.child?.birth || ""}
-                    onChange={handleChange}
-                    className="block w-full rounded-md border-0 py-1.5 pl-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#B2D170] sm:text-sm sm:leading-6"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-5 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-              <div className="sm:col-span-3">
-                <label
-                  htmlFor="child.kindergartenName"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  유치원 선택
-                </label>
-                <div className="mt-2">
-                  <select
-                    id="child.kindergartenName"
-                    name="child.kindergartenName"
-                    value={formData.child?.kindergartenName || ""}
-                    onChange={handleChange}
-                    className="block w-full rounded-md border-0 py-1.5 pl-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#B2D170] sm:max-w-xs sm:text-sm sm:leading-6"
-                  >
-                    <option value="" disabled>
-                      유치원을 선택해주세요
-                    </option>
-                    {kindergartens.map((kg) => (
-                      <option key={kg.name} value={kg.name}>
-                        {kg.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-              <div className="sm:col-span-3">
-                <label
-                  htmlFor="child.kindergartenClassName"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  유치원 반 이름
-                </label>
-                <div className="mt-2">
-                  <select
-                    id="child.kindergartenClassName"
-                    name="child.kindergartenClassName"
-                    value={formData.child?.kindergartenClassName || ""}
-                    onChange={handleChange}
-                    className="block w-full rounded-md border-0 py-1.5 pl-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#B2D170] sm:max-w-xs sm:text-sm sm:leading-6"
-                  >
-                    <option value="" disabled>
-                      반 이름을 선택해주세요
-                    </option>
-                    {classOptions.map((className) => (
-                      <option key={className} value={className}>
-                        {className}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
+    <>
+      {/* 회원가입 진행률 */}
+      <div className="relative flex items-center h-[62px] mx-3 mt-6">
+        <div className="flex-1 relative">
+          <div className="border-t-2 border-[#D9D9D9] absolute left-[25px] right-0 transform -translate-y-1/2"></div>
+          <div className="absolute left-[25px] top-[-12px] flex items-center justify-center w-6 h-6 bg-[#F8DE56] rounded-full">
+            <div className="flex items-center justify-center w-4 h-4 bg-white rounded-full">
+              <div className="w-2 h-2 bg-[#F8DE56] rounded-full"></div>
             </div>
           </div>
+          <p className="mt-6 text-sm font-normal text-left text-black">부모정보입력</p>
         </div>
+        <div className="flex-1 relative">
+          <div className="border-t-2 border-[#D9D9D9] absolute left-0 right-0 transform -translate-y-1/2"></div>
+          <div className="absolute left-1/2 transform -translate-x-1/2 top-[-6px] flex items-center justify-center w-3 h-3 bg-gray-300 rounded-full"></div>
+          <p className="mt-6 text-sm font-light text-center text-[#B8B8B8]">자녀정보입력</p>
+        </div>
+        <div className="flex-1 relative">
+          <div className="border-t-2 border-[#D9D9D9] absolute left-0 right-[15px] transform -translate-y-1/2"></div>
+          <div className="absolute right-[15px] top-[-6px] flex items-center justify-center w-3 h-3 bg-gray-300 rounded-full"></div>
+          <p className="mt-6 text-sm font-light text-right text-[#B8B8B8]">가입완료</p>
+        </div>
+      </div>
 
-        <div className="flex justify-center my-10">
-          <button
-            type="submit"
-            className="bg-[#B2D170] text-white py-2 px-4 rounded"
-          >
-            회원가입
+      {/* 1단계 */}
+      <p className="mt-5 text-base font-bold">부모 정보입력</p>
+      <p className="mt-1 text-xs font-normal text-gray-400">학부모 서비스에 필요한 정보를 입력합니다.</p>
+      <div className="mt-5">
+        <label className="block text-sm font-medium text-gray-400">
+          아이디 <span className="text-red-600">*</span>
+        </label>
+        <div className="relative mt-2 flex">
+          <input type="text" className="flex-1 border border-gray-400 rounded-md p-1" />
+          <button className="ml-2 w-20 bg-[#363636] text-white text-xs font-bold rounded-md">
+            중복확인
           </button>
         </div>
-      </form>
-    </div>
-  );
+      </div>
+      <div className="mt-3">
+        <label className="block text-sm font-medium text-gray-400">
+          비밀번호 <span className="text-red-600">*</span>
+        </label>
+        <input
+          type="password"
+          className="mt-2 border border-gray-400 rounded-md p-1 w-full"
+        />
+      </div>
+      <div className="mt-3">
+        <label className="block text-sm font-medium text-gray-400">
+          비밀번호 확인 <span className="text-red-600">*</span>
+        </label>
+        <input
+          type="password"
+          className="mt-2 border border-gray-400 rounded-md p-1 w-full"
+        />
+      </div>
+      <div className="mt-3">
+        <label className="block text-sm font-medium text-gray-400">
+          이름 <span className="text-red-600">*</span>
+        </label>
+        <input
+          type="text"
+          className="mt-2 border border-gray-400 rounded-md p-1 w-full"
+        />
+      </div>
+      <div className="mt-3">
+        <label className="block text-sm font-medium text-gray-400">닉네임</label>
+        <input
+          type="text"
+          className="mt-2 border border-gray-400 rounded-md p-1 w-full"
+        />
+      </div>
+      <div className="mt-3">
+        <label className="block text-sm font-medium text-gray-400">이메일</label>
+        <div className="flex mt-2 space-x-2">
+          <input type="text" className="flex-grow border border-gray-400 rounded-md p-1" />
+          <span className="self-center text-base font-medium text-gray-400">@</span>
+          <input type="text" className="w-28 border border-gray-400 rounded-md p-1" />
+        </div>
+      </div>
+      <div className="mt-3">
+        <label className="block text-sm font-medium text-gray-400">휴대폰 번호</label>
+        <div className="flex mt-2">
+          <input
+            type="text"
+            className="w-20 border border-gray-400 rounded-md p-1"
+          />
+          <input
+            type="text"
+            className="flex-1 border border-gray-400 rounded-md p-1 ml-2"
+          />
+        </div>
+      </div>
+
+      <div className="border-b-2 border-[#757575] mt-8"></div>
+      <div className="flex justify-end my-5">
+        <button className="w-24 h-9 bg-[#757575] text-white font-bold rounded-md mr-2">
+          취소
+        </button>
+        <button className="w-24 h-9 bg-[#F8DE56] text-gray-800 font-bold rounded-md">
+          다음
+        </button>
+      </div>
+    </>
+  )
 }

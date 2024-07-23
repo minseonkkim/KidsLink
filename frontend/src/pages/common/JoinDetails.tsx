@@ -1,4 +1,5 @@
-import { useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom"
+import JoinHeader from "../../components/join/JoinHeader"
 import ParentForm from "../../components/join/ParentForm"
 import TeacherForm from "../../components/join/TeacherForm"
 
@@ -11,12 +12,16 @@ export default function JoinDetails() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center">
-      <h1 className="text-[35px] font-bold text-center text-[#363636] mb-5 mt-14">
-        {role === "학부모" ? "학부모 회원가입" : "선생님 회원가입"}
-      </h1>
-      {role === "학부모" && <ParentForm />}
-      {role === "선생님" && <TeacherForm />}
+    <div className="min-h-screen flex flex-col">
+      <JoinHeader />
+      
+      <div className="max-w-screen-xl mx-auto mt-24 p-4">
+        <p className="text-2xl font-bold">회원가입</p>
+        <div className="border-b-2 border-black my-3"></div>
+
+        {role === "학부모" && <ParentForm />}
+        {role === "선생님" && <TeacherForm />}
+      </div>
     </div>
   )
 }
