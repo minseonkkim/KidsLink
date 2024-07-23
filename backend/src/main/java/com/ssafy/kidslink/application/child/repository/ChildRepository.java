@@ -10,4 +10,6 @@ public interface ChildRepository extends JpaRepository<Child, Integer> {
     Optional<Child> findByChildName(String username);
     List<Child> findByKindergartenClassKindergartenClassIdAndKindergartenClassKindergartenId(
             Integer kindergartenClassId, Integer kindergartenId);
+
+    List<Child> findByKindergartenClassKindergartenClassId(Integer kindergartenId);
 }

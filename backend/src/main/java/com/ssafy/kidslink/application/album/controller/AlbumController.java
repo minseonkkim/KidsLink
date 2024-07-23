@@ -21,9 +21,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartRequest;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -41,12 +43,11 @@ public class AlbumController {
         if (principal instanceof CustomUserDetails) {
             CustomUserDetails userDetails = (CustomUserDetails) principal;
             user.setUsername(userDetails.getUsername());
-
-
         }
 
-        List<ImageDTO> paths = imageService.imageUpload(request);
-        ClassifyImageDTO classifyImageDTO = albumService.classifyImages(user, paths);
+        List<ClassifyImageDTO> classifyImages = albumService.classifyImages(user, request);
+        System.out.println(classifyImages);
+
 
 //            APIResponse<ParentDTO> responseData = new APIResponse<>(
 //                    "success",
