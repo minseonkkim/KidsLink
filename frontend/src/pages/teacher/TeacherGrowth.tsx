@@ -146,7 +146,7 @@ export default function TeacherGrowth() {
           <div className="rounded-[10px] bg-[#f4f4f4] w-[380px] h-[520px] p-[10px]">
             <div className="bg-[#fff] h-[53px] rounded-[10px] flex items-center p-3 mx-2 my-3">
               <IoSearch className="text-[25px] mr-3" />
-              <input type="text" className="focus:outline-none text-[18px]" value={searchChild} onChange={handleSearchChange} />
+              <input type="text" className="focus:outline-none text-[18px]" value={searchChild} onChange={handleSearchChange} placeholder="이름으로 검색하세요" />
             </div>
             <div className="flex flex-wrap w-[360px] h-[420px] overflow-y-auto custom-scrollbar">
               {filteredChildren.map((child) => (
