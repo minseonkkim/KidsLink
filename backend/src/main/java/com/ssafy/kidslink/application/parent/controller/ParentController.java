@@ -24,7 +24,7 @@ public class ParentController {
     private final ParentMapper parentMapper;
 
     @PostMapping("")
-    public ResponseEntity<APIResponse<Void>> joinProcess(@RequestBody JoinDTO joinDTO) {
+    public ResponseEntity<APIResponse<Void>> joinProcess(@ModelAttribute JoinDTO joinDTO) {
         log.info("joinDTO : {}", joinDTO);
 
         parentService.joinProcess(joinDTO);
