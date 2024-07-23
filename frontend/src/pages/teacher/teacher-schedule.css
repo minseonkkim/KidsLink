@@ -57,13 +57,15 @@
     justify-content: center;
 }
 
-.react-calendar__month-view__days__day--weekend {
+.react-calendar__month-view__days__day {
     color: #fff;
     font-size: 18px;
     font-weight: bold;
     width: 44px;
     height: 44px;
     text-align: center;
+    margin: 0;
+    padding: 0;
   }
 
   .react-calendar__month-view__weekdays {
@@ -80,7 +82,16 @@
   
 /* 이번 달 일자 */
 .react-calendar__tile{
-    font-family: 'font-KoPubDotum';
+    color: #000;
+    font-size: 18px;
+    font-weight: bold;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.react-calendar__tile--weekend{
     color: #000;
     font-size: 18px;
     font-weight: bold;
