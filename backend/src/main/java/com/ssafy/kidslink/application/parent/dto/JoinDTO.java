@@ -4,6 +4,7 @@ import com.ssafy.kidslink.application.child.dto.ChildDTO;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Setter
@@ -17,4 +18,5 @@ public class JoinDTO {
     private String nickname;
     private String tel;
     private ChildDTO child;
+    private MultipartFile profile;
 }
