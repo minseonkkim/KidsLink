@@ -1,5 +1,6 @@
 package com.ssafy.kidslink.common.controller;
 
+import com.ssafy.kidslink.application.image.dto.ImageDTO;
 import com.ssafy.kidslink.common.dto.APIError;
 import com.ssafy.kidslink.common.dto.APIResponse;
 import com.ssafy.kidslink.common.jwt.JWTUtil;
@@ -37,7 +38,7 @@ public class MainController {
     public ResponseEntity<APIResponse<Map<String, Object>>> uploadPhotos(MultipartRequest request) throws IOException {
         // 테스트
         // curl -X POST -F "file=@test_image.jpg" http://localhost:8080/upload/photos
-        List<String> path = imageService.imageUpload(request);
+        List<ImageDTO> path = imageService.imageUpload(request);
 
         System.out.println(path);
         return null;

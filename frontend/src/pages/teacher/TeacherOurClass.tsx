@@ -9,7 +9,7 @@ const ourClassChild = [
     {childName: "김범수", childGender: "남자", childAge: 5, childAbsent: true, childDosage: false, childProfileImg: ProfileImg},
     {childName: "김여준", childGender: "남자", childAge: 6, childAbsent: false, childDosage: true, childProfileImg: ProfileImg},
     {childName: "김지원", childGender: "여자", childAge: 5, childAbsent: false, childDosage: false, childProfileImg: ProfileImg},
-    {childName: "이상민", childGender: "남자", childAge: 4, childAbsent: false, childDosage: false, childProfileImg: ProfileImg},
+    {childName: "이상민", childGender: "남자", childAge: 4, childAbsent: false, childDosage: false, childProfileImg: ProfileImg},    
     {childName: "정현수", childGender: "여자", childAge: 5, childAbsent: false, childDosage: false, childProfileImg: ProfileImg}
 ];
 
@@ -31,7 +31,7 @@ export default function TeacherOurClass() {
                 </div>
                 <span className="absolute top-[125px] right-[250px] px-3 py-2 flex flex-row items-center text-xl font-bold">{dosageCount}명</span>
 
-                <div className="flex justify-center flex-wrap gap-4">
+                <div className="flex justify-start flex-wrap gap-4">
                     {ourClassChild.map((child, index) => (
                         <ChildCard 
                             key={index}

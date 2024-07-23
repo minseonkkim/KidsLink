@@ -32,12 +32,12 @@ import TeacherBus from "./pages/teacher/TeacherBus";
 import TeacherHome from "./pages/teacher/TeacherHome";
 import TeacherReservation from "./pages/teacher/TeacherReservation";
 
-import Login from "./pages/member/Login";
-import Join from "./pages/member/Join";
+import Login from "./pages/common/Login";
+import Join from "./pages/common/Join";
 import TeacherOurClass from "./pages/teacher/TeacherOurClass";
 
 import TeacherSchedule from "./pages/teacher/TeacherSchedule";
-import JoinDetails from "./pages/member/JoinDetails";
+import JoinDetails from "./pages/common/JoinDetails";
 // import JoinDetailsWrapper from "./pages/member/JoinDetailWrapper";
 
 const App: React.FC = () => {

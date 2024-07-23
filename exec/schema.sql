@@ -59,6 +59,9 @@ CREATE TABLE `child` (
     FOREIGN KEY (`parent_id`) REFERENCES `parent`(`parent_id`)
 );
 
+ALTER TABLE `child`
+ADD COLUMN `child_image` VARCHAR(255) NULL;
+
 CREATE TABLE `teacher` (
     `teacher_id` INT NOT NULL AUTO_INCREMENT,
     `teacher_name` VARCHAR(25) NULL,
@@ -72,8 +75,6 @@ CREATE TABLE `teacher` (
     PRIMARY KEY (`teacher_id`),
     FOREIGN KEY (`kindergarten_class_id`, `kindergarten_id`) REFERENCES `kindergarten_class`(`kindergarten_class_id`, `kindergarten_id`)
 );
-
-
 
 CREATE TABLE `teacher_schedule` (
     `teacher_schedule_id` INT NOT NULL AUTO_INCREMENT,
@@ -131,6 +132,9 @@ CREATE TABLE `dosage` (
 
 ALTER TABLE `dosage`
 ADD COLUMN `confirmation_status` ENUM('T', 'F') DEFAULT 'F';
+
+ALTER TABLE `dosage`
+ADD COLUMN `dosage_name` VARCHAR(500) NULL AFTER `dosage_id`;
 
 CREATE TABLE `bus_stop` (
     `bus_stop_id` INT NOT NULL AUTO_INCREMENT,
@@ -209,5 +213,3 @@ CREATE TABLE `bus_stop_child` (
     FOREIGN KEY (`child_id`) REFERENCES `child`(`child_id`),
     FOREIGN KEY (`bus_stop_id`) REFERENCES `bus_stop`(`bus_stop_id`)
 );
-ALTER TABLE `dosage`
-ADD COLUMN `dosage_name` VARCHAR(500) NULL AFTER `dosage_id`;

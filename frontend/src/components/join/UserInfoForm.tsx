@@ -13,7 +13,7 @@ interface UserInfoFormProps {
   handleChange: (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
 }
 
-export default function UserInfoForm({ formData, handleChange }: UserInfoFormProps) {
+function UserInfoForm({ formData, handleChange }: UserInfoFormProps) {
   return (
     <div>
       <div className="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
@@ -133,5 +133,7 @@ export default function UserInfoForm({ formData, handleChange }: UserInfoFormPro
         </div>
       </div>
     </div>
-  )
+  );
 }
+
+export default UserInfoForm;

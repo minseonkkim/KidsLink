@@ -1,7 +1,7 @@
-import { ChangeEvent, useState } from 'react'
-import parentApi from '../../api/join/ParentApi'
-import { CiCamera } from 'react-icons/ci'
-import UserInfoForm from './UserInfoForm'
+import { ChangeEvent, useState, useEffect } from 'react';
+import { parentSignup } from '../../api/Member';
+import { CiCamera } from 'react-icons/ci';
+import UserInfoForm from './UserInfoForm';
 
 interface Child {
   name: string;
@@ -22,6 +22,12 @@ interface ParentData {
   child: Child;
 }
 
+const kindergartens = [
+  { name: "사랑 유치원", classes: ["사랑반", "기쁨반"] },
+  { name: "희망 유치원", classes: ["꿈나무반", "햇살반"] },
+  { name: "기쁨 유치원", classes: ["별빛반", "달빛반"] },
+];
+
 export default function ParentForm() {
   const [formData, setFormData] = useState<ParentData>({
     username: "",
@@ -38,19 +44,34 @@ export default function ParentForm() {
       gender: "",
       birth: "",
     }
-  })
+  });
 
-  const [image, setImage] = useState<string | null>(null)
+  const [image, setImage] = useState<string | null>(null);
+  const [classOptions, setClassOptions] = useState<string[]>([]);
+
+  useEffect(() => {
+    const selectedKindergarten = kindergartens.find(kg => kg.name === formData.child.kindergartenName);
+    if (selectedKindergarten) {
+      setClassOptions(selectedKindergarten.classes);
+    } else {
+      setClassOptions([]);
+    }
+  }, [formData.child.kindergartenName]);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target
-    if (name in formData.child) {
+    const { name, value } = e.target;
+    if (name.startsWith('child.')) {
+      const childName = name.split('.')[1];
+      let newValue = value;
+      if (childName === "birth") {
+        newValue = value.replace(/-/g, ""); // birth 필드에서 '-' 제거
+      }
       setFormData({
         ...formData,
-        child: { ...formData.child, [name]: value },
+        child: { ...formData.child, [childName]: newValue },
       });
     } else {
-      setFormData({ ...formData, [name]: value })
+      setFormData({ ...formData, [name]: value });
     }
   };
 
@@ -58,19 +79,20 @@ export default function ParentForm() {
     const file = event.target.files?.[0];
     if (file) {
       const newImage = URL.createObjectURL(file);
-      setImage(newImage)
+      setImage(newImage);
     }
-  }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await parentApi.register(formData)
-      console.log('Parent registration successful', response)
+      console.log("Submitting form data: ", formData); // 폼 데이터 출력
+      const response = await parentSignup(formData);
+      console.log('Parent registration successful', response);
     } catch (error) {
-      console.error('Error during parent registration', error)
+      console.error('Error during parent registration', error);
     }
-  }
+  };
 
   return (
     <div className="container mx-auto p-4">
@@ -95,20 +117,19 @@ export default function ParentForm() {
             </label>
           </div>
 
-
           <UserInfoForm formData={formData} handleChange={handleChange} />
 
           <div className="border-t border-gray-900/10 pb-5">
             <h1 className="mt-5 text-base font-semibold leading-7 text-gray-900">자녀 등록하기</h1>
             <div className="mt-5 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
               <div className="sm:col-span-2">
-                <label htmlFor="childName" className="block text-sm font-medium leading-6 text-gray-900">
+                <label htmlFor="child.name" className="block text-sm font-medium leading-6 text-gray-900">
                   자녀 이름
                 </label>
                 <div className="mt-2">
                   <input
-                    id="childName"
-                    name="name"
+                    id="child.name"
+                    name="child.name"
                     type="text"
                     value={formData.child.name}
                     onChange={handleChange}
@@ -117,32 +138,32 @@ export default function ParentForm() {
                 </div>
               </div>
               <div className="sm:col-span-2">
-                <label htmlFor="gender" className="block text-sm font-medium leading-6 text-gray-900">
+                <label htmlFor="child.gender" className="block text-sm font-medium leading-6 text-gray-900">
                   자녀 성별
                 </label>
                 <div className="mt-2">
                   <select
-                    id="gender"
-                    name="gender"
+                    id="child.gender"
+                    name="child.gender"
                     value={formData.child.gender}
                     onChange={handleChange}
                     className="block w-full rounded-md border-0 py-1.5 pl-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#B2D170] sm:max-w-xs sm:text-sm sm:leading-6"
                   >
                     <option value="" disabled>성별을 선택해주세요</option>
-                    <option value="male">남자</option>
-                    <option value="female">여자</option>
+                    <option value="M">남자</option>
+                    <option value="F">여자</option>
                   </select>
                 </div>
               </div>
               <div className="sm:col-span-2">
-                <label htmlFor="birth" className="block text-sm font-medium leading-6 text-gray-900">
+                <label htmlFor="child.birth" className="block text-sm font-medium leading-6 text-gray-900">
                   자녀 생일
                 </label>
                 <div className="mt-2">
                   <input
                     type="date"
-                    id="birth"
-                    name="birth"
+                    id="child.birth"
+                    name="child.birth"
                     value={formData.child.birth}
                     onChange={handleChange}
                     className="block w-full rounded-md border-0 py-1.5 pl-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#B2D170] sm:text-sm sm:leading-6"
@@ -153,36 +174,43 @@ export default function ParentForm() {
 
             <div className="mt-5 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
               <div className="sm:col-span-3">
-                <label htmlFor="kindergartenName" className="block text-sm font-medium leading-6 text-gray-900">
+                <label htmlFor="child.kindergartenName" className="block text-sm font-medium leading-6 text-gray-900">
                   유치원 선택
                 </label>
                 <div className="mt-2">
                   <select
-                    id="kindergartenName"
-                    name="kindergartenName"
+                    id="child.kindergartenName"
+                    name="child.kindergartenName"
                     value={formData.child.kindergartenName}
                     onChange={handleChange}
                     className="block w-full rounded-md border-0 py-1.5 pl-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#B2D170] sm:max-w-xs sm:text-sm sm:leading-6"
                   >
                     <option value="" disabled>유치원을 선택해주세요</option>
-                    <option value="Canada">Canada</option>
-                    <option value="Mexico">Mexico</option>
+                    {kindergartens.map(kg => (
+                      <option key={kg.name} value={kg.name}>{kg.name}</option>
+                    ))}
                   </select>
                 </div>
               </div>
               <div className="sm:col-span-3">
-                <label htmlFor="kindergartenClassName" className="block text-sm font-medium leading-6 text-gray-900">
+                <label htmlFor="child.kindergartenClassName" className="block text-sm font-medium leading-6 text-gray-900">
                   유치원 반 이름
                 </label>
                 <div className="mt-2">
-                  <input
-                    id="kindergartenClassName"
-                    name="kindergartenClassName"
-                    type="text"
+                  <select
+                    id="child.kindergartenClassName"
+                    name="child.kindergartenClassName"
                     value={formData.child.kindergartenClassName}
                     onChange={handleChange}
-                    className="block w-full rounded-md border-0 py-1.5 pl-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#B2D170] sm:text-sm sm:leading-6"
-                  />
+                    className="block w-full rounded-md border-0 py-1.5 pl-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#B2D170] sm:max-w-xs sm:text-sm sm:leading-6"
+                  >
+                    <option value="" disabled>반 이름을 선택해주세요</option>
+                    {classOptions.map((className) => (
+                      <option key={className} value={className}>
+                        {className}
+                      </option>
+                    ))}
+                  </select>
                 </div>
               </div>
             </div>
@@ -196,5 +224,5 @@ export default function ParentForm() {
         </div>
       </form>
     </div>
-  )
+  );
 }

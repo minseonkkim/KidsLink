@@ -51,8 +51,10 @@ public class TeacherService {
     public TeacherDTO detailProcess(String teacherUsername){
         Teacher teacher = teacherRepository.findByTeacherUsername(teacherUsername);
         return teacherMapper.toDTO(teacher);
+    }
 
-
+    public int getKindergartenClassIdByTeacherUsername(String username) {
+        return teacherRepository.findByTeacherUsername(username).getKindergartenClass().getKindergartenClassId();
     }
 
 }
