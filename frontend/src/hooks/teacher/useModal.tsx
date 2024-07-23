@@ -1,10 +1,13 @@
 import { useState, ReactNode } from "react";
 import ReactModal from "react-modal";
 
+ReactModal.setAppElement('#root')
+
 type UseModalReturn = {
   openModal: (content: ReactNode) => void;
   closeModal: () => void;
   Modal: () => JSX.Element;
+  isModalOpen: boolean;
 };
 
 export default function useModal(): UseModalReturn {
@@ -17,8 +20,8 @@ export default function useModal(): UseModalReturn {
   };
 
   const closeModal = () => {
-    setIsModalOpen(false);
     setModalContent(null);
+    setIsModalOpen(false);
   };
 
   const Modal = () => (
@@ -28,6 +31,7 @@ export default function useModal(): UseModalReturn {
       style={customModalStyles}
       className="modal"
       overlayClassName="modal-overlay"
+      ariaHideApp={false}
     >
       <div className="p-6">
         {modalContent}
@@ -63,5 +67,6 @@ export default function useModal(): UseModalReturn {
     openModal,
     closeModal,
     Modal,
+    isModalOpen
   };
 }

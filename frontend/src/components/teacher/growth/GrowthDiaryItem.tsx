@@ -2,11 +2,14 @@ import React from 'react';
 import useModal from '../../../hooks/teacher/useModal';
 
 interface GrowthDiaryItemProps {
+    id: number;
+    name: string;
     date: string;
     imgPaths: string[];
+    onClick: () => void;
 }
 
-export default function GrowthDiaryItem({ date, imgPaths }:GrowthDiaryItemProps){
+export default function GrowthDiaryItem({ id, name, date, imgPaths, onClick }:GrowthDiaryItemProps){
     const { openModal, Modal } = useModal();
     
     const backgroundImageWrapperStyle: React.CSSProperties = {

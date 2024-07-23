@@ -125,8 +125,8 @@ export default function TeacherBus() {
                 </div>
                 <div className="w-[360px] h-[370px] overflow-auto custom-scrollbar">
                 {
-                  busChildListItems.map(({childName, parentTel, status}) => (
-                   <BusChild childName={childName} parentTel={parentTel} status={status}/>
+                  busChildListItems.map(({childName, parentTel, status}, idx) => (
+                   <BusChild key={idx} childName={childName} parentTel={parentTel} status={status}/>
                   ))
                 }
                 </div>
