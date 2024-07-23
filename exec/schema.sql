@@ -89,6 +89,7 @@ CREATE TABLE `teacher_schedule` (
 CREATE TABLE `album` (
     `album_id` INT NOT NULL AUTO_INCREMENT,
     `album_name` VARCHAR(100) NULL,
+    `album_date` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     `child_id` INT NOT NULL,
     PRIMARY KEY (`album_id`),
     FOREIGN KEY (`child_id`) REFERENCES `child`(`child_id`)

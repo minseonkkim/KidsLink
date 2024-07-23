@@ -38,7 +38,7 @@ public class TeacherService {
         teacher.setTeacherNickname(joinDTO.getNickname());
         teacher.setTeacherTel(joinDTO.getTel());
         teacher.setTeacherUsername(joinDTO.getUsername());
-        teacher.setTeacherPwd(bCryptPasswordEncoder.encode(joinDTO.getPassword()));
+        teacher.setTeacherPassword(bCryptPasswordEncoder.encode(joinDTO.getPassword()));
 
         KindergartenClass kindergartenClass = kindergartenClassRepository.findByKindergartenKindergartenNameAndKindergartenClassName(
                 joinDTO.getKindergartenName(), joinDTO.getKindergartenClassName()

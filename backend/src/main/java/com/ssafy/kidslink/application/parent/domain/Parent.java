@@ -23,8 +23,8 @@ public class Parent {
     @Column(name = "parent_name")
     private String parentName;
 
-    @Column(name = "parent_pwd")
-    private String parentPwd;
+    @Column(name = "parent_password")
+    private String parentPassword;
 
     @Column(name = "parent_nickname")
     private String parentNickname;

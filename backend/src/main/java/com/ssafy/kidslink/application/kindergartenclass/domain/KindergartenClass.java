@@ -9,7 +9,6 @@ import lombok.Setter;
 @Getter
 @Setter
 @Table(name = "kindergarten_class")
-@IdClass(KindergartenClassId.class)
 public class KindergartenClass {
 
     @Id
@@ -17,7 +16,6 @@ public class KindergartenClass {
     @Column(name = "kindergarten_class_id")
     private Integer kindergartenClassId;
 
-    @Id
     @Column(name = "kindergarten_id")
     private Integer kindergartenId;
 

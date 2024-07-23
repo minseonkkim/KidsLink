@@ -22,6 +22,9 @@ public class Album {
     @Column(name = "album_name")
     private String albumName;
 
+    @Column(name = "album_date")
+    private String albumDate;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "child_id", nullable = false)
     private Child child;

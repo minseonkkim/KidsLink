@@ -34,14 +34,14 @@ public class CustomUserDetailsService implements UserDetailsService {
             if (teacher == null) {
                 return null;
             }
-            userData.setPassword(teacher.getTeacherPwd());
+            userData.setPassword(teacher.getTeacherPassword());
             userData.setRole("ROLE_TEACHER");
         } else {
             Parent parent = parentRepository.findByParentUsername(username);
             if (parent == null) {
                 return null;
             }
-            userData.setPassword(parent.getParentPwd());
+            userData.setPassword(parent.getParentPassword());
             userData.setRole("ROLE_PARENT");
         }
         log.info("CustomUserDetailsService.loadUserByUsername userData - {} ", userData);
