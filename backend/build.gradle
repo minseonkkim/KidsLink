@@ -28,9 +28,8 @@ dependencies {
 	implementation 'io.jsonwebtoken:jjwt-impl:0.12.3'
 	implementation 'io.jsonwebtoken:jjwt-jackson:0.12.3'
 
-
+//	Swagger
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
-// https://mvnrepository.com/artifact/io.swagger.core.v3/swagger-annotations
 	implementation group: 'io.swagger.core.v3', name: 'swagger-annotations', version: '2.2.22'
 
 //	S3

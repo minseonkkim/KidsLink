@@ -1,6 +1,8 @@
 package com.ssafy.kidslink.application.meetingtime.service;
 
 import com.ssafy.kidslink.application.meetingschedule.domain.MeetingSchedule;
+import com.ssafy.kidslink.application.meetingschedule.dto.MeetingScheduleDTO;
+import com.ssafy.kidslink.application.meetingschedule.mapper.MeetingScheduleMapper;
 import com.ssafy.kidslink.application.meetingschedule.repository.MeetingScheduleRepository;
 import com.ssafy.kidslink.application.meetingtime.domain.MeetingTime;
 import com.ssafy.kidslink.application.meetingtime.dto.MeetingTimeDTO;
@@ -16,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,6 +32,7 @@ public class MeetingTimeService {
     private final ParentRepository parentRepository;
     private final MeetingTimeMapper meetingTimeMapper;
     private final MeetingScheduleRepository meetingScheduleRepository;
+    private final MeetingScheduleMapper meetingScheduleMapper;
 
     public void openMeetingTimes(String teacherUsername, List<OpenMeetingTimeDTO> openMeetingTimeDTOList) {
         Teacher teacher = teacherRepository.findByTeacherUsername(teacherUsername);
@@ -37,7 +41,7 @@ public class MeetingTimeService {
             for(String time : openMeetingTimeDTO.getTimes()) {
                 MeetingTime meetingTime =  new MeetingTime();
                 meetingTime.setTeacher(teacher);
-                meetingTime.setMeetingDate(openMeetingTimeDTO.getDate());
+                meetingTime.setMeetingDate(LocalDate.parse(openMeetingTimeDTO.getDate()));
                 meetingTime.setMeetingTime(time);
                 meetingTimeRepository.save(meetingTime);
             }
@@ -68,6 +72,23 @@ public class MeetingTimeService {
                 parent.getChildren().stream().findFirst().get().getKindergartenClass()));
         meetingScheduleRepository.save(meetingSchedule);
 
+    }
+
+    public List<MeetingScheduleDTO> getMeetingReservations(String role, String Username) {
+        List<MeetingScheduleDTO> meetingReservations = new ArrayList<>();
+        if(role.equals("ROLE_TEACHER")) {
+            Teacher teacher = teacherRepository.findByTeacherUsername(Username);
+            for(MeetingSchedule meetingSchedule : meetingScheduleRepository.findByTeacher(teacher)){
+                meetingReservations.add(meetingScheduleMapper.toDTO(meetingSchedule));
+            }
+        }
+        else {
+            Parent parent = parentRepository.findByParentUsername(Username);
+            for(MeetingSchedule meetingSchedule : meetingScheduleRepository.findByParent(parent)){
+                meetingReservations.add(meetingScheduleMapper.toDTO(meetingSchedule));
+            }
+        }
+        return meetingReservations;
 
     }
 }
