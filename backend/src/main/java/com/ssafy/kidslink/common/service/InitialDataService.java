@@ -8,6 +8,7 @@ import com.ssafy.kidslink.application.document.domain.Absent;
 import com.ssafy.kidslink.application.document.domain.Dosage;
 import com.ssafy.kidslink.application.document.repository.AbsentRepository;
 import com.ssafy.kidslink.application.document.repository.DosageRepository;
+import com.ssafy.kidslink.application.image.service.ImageService;
 import com.ssafy.kidslink.application.kindergarten.domain.Kindergarten;
 import com.ssafy.kidslink.application.kindergarten.repository.KindergartenRepository;
 import com.ssafy.kidslink.application.kindergartenclass.domain.KindergartenClass;
@@ -45,6 +46,7 @@ public class InitialDataService {
     private final DiaryRepository diaryRepository;
     private final AbsentRepository absentRepository;
     private final DosageRepository dosageRepository;
+    private final ImageService imageService;
 
     @Transactional
     public String initializeData() {
@@ -67,7 +69,7 @@ public class InitialDataService {
         teacherRepository.saveAll(getTeachers(kindergartenClasses));
 
         // TODO #5 유치원생 데이터 삽입
-        List<Child> children = getChildren(parents, kindergartenClasses);
+        List<Child> children = getChildren(parents, kindergartenClasses.get(0));
         childRepository.saveAll(children);
 
         // TODO #6 알림장 데이터 삽입
@@ -194,23 +196,24 @@ public class InitialDataService {
         return teachers;
     }
 
-    private List<Child> getChildren(List<Parent> parents, List<KindergartenClass> kindergartenClasses) {
+    private List<Child> getChildren(List<Parent> parents, KindergartenClass kindergartenClass) {
         List<Child> children = new ArrayList<>();
         String[] childNames = {"김하늘", "이민호", "박서연", "최우진", "장예빈", "강지후", "오수아", "윤도현", "정수지", "한지우"};
         Gender[] genders = {Gender.F, Gender.M, Gender.F, Gender.M, Gender.F, Gender.M, Gender.F, Gender.M, Gender.F, Gender.F};
         String[] births = {"2015-05-01", "2016-08-15", "2014-11-20", "2015-01-30", "2016-02-14", "2015-07-07", "2016-09-09", "2014-12-25", "2015-04-04", "2016-03-03"};
-//        String[] profiles = {"child1.jpg", "child2.jpg", "child3.jpg", "child4.jpg", "child5.jpg", "child6.jpg", "child7.jpg", "child8.jpg", "child9.jpg", "child10.jpg"};
+        String[] profiles = {"child1.jpg", "child2.jpg", "child3.jpg", "child4.jpg", "child5.jpg", "child6.jpg", "child7.jpg", "child8.jpg", "child9.jpg", "child10.jpg"};
 
         for (int i = 0; i < parents.size(); i++) {
             Child child = new Child();
             child.setChildName(childNames[i]);
             child.setChildGender(genders[i]);
             child.setChildBirth(births[i]);
-//            child.setChildProfile(profiles[i]);
+            child.setChildProfile("http://localhost:8080/api/image/" + profiles[i]);
             child.setParent(parents.get(i));
-            child.setKindergartenClass(kindergartenClasses.get(i % kindergartenClasses.size())); // 유치원 반을 순환하며 할당
+            child.setKindergartenClass(kindergartenClass); // 유치원 반을 순환하며 할당
             children.add(child);
         }
+
 
         return children;
     }
