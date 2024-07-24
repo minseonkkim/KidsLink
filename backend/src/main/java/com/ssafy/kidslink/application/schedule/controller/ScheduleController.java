@@ -1,7 +1,7 @@
 package com.ssafy.kidslink.application.schedule.controller;
 
-import com.ssafy.kidslink.application.schedule.dto.KindergartenScheduleDTO;
 import com.ssafy.kidslink.application.schedule.dto.AllTeacherScheduleDTO;
+import com.ssafy.kidslink.application.schedule.dto.KindergartenScheduleDTO;
 import com.ssafy.kidslink.application.schedule.service.ScheduleService;
 import com.ssafy.kidslink.common.dto.APIError;
 import com.ssafy.kidslink.common.dto.APIResponse;
@@ -79,5 +79,29 @@ public class ScheduleController {
         return new ResponseEntity<>(responseData, HttpStatus.BAD_REQUEST);
     }
 
-
+//    @PostMapping
+//    public ResponseEntity<APIResponse<Void>> addSchedule(@AuthenticationPrincipal Object principal, @RequestBody ScheduleDTO requestDTO){
+//        if(principal instanceof CustomUserDetails){
+//            CustomUserDetails userDetails = (CustomUserDetails) principal;
+//
+//            scheduleService.addSchedule(userDetails.getUsername(), requestDTO);
+//            APIResponse<Void> responseData = new APIResponse<>(
+//                    "success",
+//                    null,
+//                    "일정 등록에 성공하였습니다.",
+//                    null
+//            );
+//            return new ResponseEntity<>(responseData, HttpStatus.OK);
+//        }
+//        APIError apiError = new APIError("UNAUTHORIZED", "유효한 JWT 토큰이 필요합니다.");
+//
+//        APIResponse<Void> responseData = new APIResponse<>(
+//                "success",
+//                null,
+//                "일정 등록을 실패했습니다.",
+//                apiError
+//        );
+//
+//        return new ResponseEntity<>(responseData, HttpStatus.BAD_REQUEST);
+//    }
 }

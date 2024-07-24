@@ -17,6 +17,8 @@ import com.ssafy.kidslink.application.schedule.repository.ScheduleRepository;
 import com.ssafy.kidslink.application.schedule.repository.TeacherScheduleRepository;
 import com.ssafy.kidslink.application.teacher.domain.Teacher;
 import com.ssafy.kidslink.application.teacher.repository.TeacherRepository;
+import com.ssafy.kidslink.application.teacherschedule.domain.TeacherSchedule;
+import com.ssafy.kidslink.application.teacherschedule.repository.TeacherScheduleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -32,6 +34,8 @@ public class ScheduleService {
 
     private final TeacherRepository teacherRepository;
     private final ScheduleRepository scheduleRepository;
+    private final TeacherScheduleRepository teacherScheduleRepository;
+
     private final ParentRepository parentRepository;
     private final TeacherScheduleRepository teacherScheduleRepository;
     private final ScheduleMapper scheduleMapper;
@@ -74,5 +78,14 @@ public class ScheduleService {
         }
 
         return schedules;
+    }
+
+    public void addSchedule(String teacherUserName, ScheduleDTO scheduleDTO) {
+        Teacher teacher = teacherRepository.findByTeacherUsername(teacherUserName);
+        TeacherSchedule teacherSchedule = new TeacherSchedule();
+        teacherSchedule.setTeacher(teacher);
+        teacherSchedule.setTeacherScheduleDate(scheduleDTO.getDate());
+        teacherSchedule.setTeacherScheduleContents(scheduleDTO.getContent());
+        teacherScheduleRepository.save(teacherSchedule);
     }
 }
