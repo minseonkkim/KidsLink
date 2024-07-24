@@ -12,6 +12,6 @@ import java.time.LocalDate;
 @ToString
 public class ScheduleDTO {
     private int id;
-    private String Content;
+    private String content;
     private LocalDate date;
 }
