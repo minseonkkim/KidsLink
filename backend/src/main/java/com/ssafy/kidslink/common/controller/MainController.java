@@ -30,7 +30,7 @@ import static com.ssafy.kidslink.common.util.CookieUtil.createCookie;
 @RequestMapping("/api")
 @RequiredArgsConstructor
 @Slf4j
-public class MainController {
+public class MainController implements SwaggerApiMain{
 
     private final JWTUtil jwtUtil;
     private final ImageService imageService;
