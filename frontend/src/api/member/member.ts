@@ -115,6 +115,7 @@ export async function login(user: LoginData) {
 
 // 학부모 회원가입 함수
 export async function parentSignup(user: ParentSignupData) {
+  console.log("user: ", user)
   const formData = new FormData();
   formData.append('username', user.username);
   formData.append('email', user.email || '');

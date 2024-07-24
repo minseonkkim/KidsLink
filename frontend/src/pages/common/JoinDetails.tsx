@@ -1,49 +1,48 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import JoinHeader from "../../components/join/JoinHeader";
 import ParentFormStep1 from "../../components/join/ParentFormStep1";
 import ParentFormStep2 from "../../components/join/ParentFormStep2";
 import ParentFormStep3 from "../../components/join/ParentFormStep3";
-import TeacherFormStep1 from "../../components/join/TeacherFormStep1";
-import TeacherFormStep2 from "../../components/join/TeacherFormStep2";
-import TeacherFormStep3 from "../../components/join/TeacherFormStep3";
+import TeacherFormStep1 from "../../components/join/TeacherFormStep1"; // 임시 
+import TeacherFormStep2 from "../../components/join/TeacherFormStep2"; // 임시 
+import TeacherFormStep3 from "../../components/join/TeacherFormStep3"; // 임시 
 
-export default function JoinDetails() {
-  const { role } = useParams<{ role: string }>(); // URL에서 role 파라미터 추출
+const JoinDetails = () => {
+  const { role } = useParams<{ role: string }>(); // Extract 'role' from URL parameters
   const navigate = useNavigate();
-  const [step, setStep] = useState<number>(1); // 기본 단계는 1로 설정
+  const [step, setStep] = useState<number>(1); // Set the default step to 1
 
   const handleNextStep = () => setStep((prevStep) => prevStep + 1);
   const handlePrevStep = () => setStep((prevStep) => prevStep - 1);
   const handleComplete = () => navigate("/");
 
-  let FormComponent;
+  let FormComponent: JSX.Element | null = null;
 
   if (role === "parent") {
     if (step === 1) {
       FormComponent = <ParentFormStep1 onNext={handleNextStep} />;
     } else if (step === 2) {
-      FormComponent = <ParentFormStep2 onNext={handleNextStep} onBack={handlePrevStep} />;
+      FormComponent = <ParentFormStep2 onNext={handleNextStep} onBack={handlePrevStep} onComplete={handleComplete} />;
     } else if (step === 3) {
-      FormComponent = <ParentFormStep3 onComplete={handleComplete} onBack={handlePrevStep} />;
+      FormComponent = <ParentFormStep3 onComplete={handleComplete} />;
     } else {
-      return <p>잘못된 단계입니다.</p>;
+      FormComponent = <p>잘못된 단계입니다.</p>;
     }
   } else if (role === "teacher") {
     if (step === 1) {
       FormComponent = <TeacherFormStep1 onNext={handleNextStep} />;
     } else if (step === 2) {
-      FormComponent = <TeacherFormStep2 onNext={handleNextStep} onBack={handlePrevStep} />;
+      FormComponent = <TeacherFormStep2 onNext={handleNextStep} onBack={handlePrevStep} onComplete={handleComplete} />;
     } else if (step === 3) {
-      FormComponent = <TeacherFormStep3 onComplete={handleComplete} onBack={handlePrevStep} />;
+      FormComponent = <TeacherFormStep3 onComplete={handleComplete} />;
     } else {
-      return <p>잘못된 단계입니다.</p>;
+      FormComponent = <p>잘못된 단계입니다.</p>;
     }
   } else if (role === "director") {
-    // 여기에 원장님 관련 로직을 추가
-    return <p>원장님 관련 단계는 아직 구현되지 않았습니다.</p>;
+    FormComponent = <p>원장님 관련 단계는 아직 구현되지 않았습니다.</p>;
   } else {
-    return <p>잘못된 역할입니다.</p>;
+    FormComponent = <p>잘못된 역할입니다.</p>;
   }
 
   return (
@@ -57,3 +56,5 @@ export default function JoinDetails() {
     </div>
   );
 }
+
+export default JoinDetails;

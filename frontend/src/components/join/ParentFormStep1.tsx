@@ -1,6 +1,8 @@
 import { ChangeEvent, FC, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { CiCamera } from "react-icons/ci";
+import { useAppStore } from "../../stores/store";
+import defaultProfileImg from "../../assets/join/default-profile.png";
 
 interface ParentFormStep1Props {
   onNext: () => void;
@@ -8,18 +10,61 @@ interface ParentFormStep1Props {
 
 const ParentFormStep1: FC<ParentFormStep1Props> = ({ onNext }) => {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [emailLocal, setEmailLocal] = useState<string>("");
+  const [emailDomain, setEmailDomain] = useState<string>("");
   const navigate = useNavigate();
+  const {
+    username,
+    password,
+    setUsername,
+    setPassword,
+    name,
+    nickname,
+    tel,
+    passwordConfirm,
+    setEmail,
+    setName,
+    setNickname,
+    setTel,
+    setPasswordConfirm,
+    setProfile,
+    profile,
+  } = useAppStore();
 
   const handleImageUpload = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       const newImage = URL.createObjectURL(file);
       setImagePreview(newImage);
+      setProfile(file);
     }
   };
 
   const handleCancel = () => {
     navigate("/join");
+  };
+
+  const handleNext = async () => {
+    if (username && password && password === passwordConfirm) {
+      if (!profile) {
+        const response = await fetch(defaultProfileImg);
+        const blob = await response.blob();
+        const defaultProfileFile = new File([blob], "default-profile.png", { type: "image/png" });
+        setProfile(defaultProfileFile);
+      }
+      onNext();
+    } else {
+      if (password !== passwordConfirm) {
+        alert('비밀번호가 일치하지 않습니다.');
+      } else {
+        alert('유효한 아이디와 비밀번호를 입력해주세요.');
+      }
+    }
+  };
+
+  const handleEmailChange = () => {
+    const combinedEmail = `${emailLocal}@${emailDomain}`;
+    setEmail(combinedEmail);
   };
 
   return (
@@ -82,7 +127,12 @@ const ParentFormStep1: FC<ParentFormStep1Props> = ({ onNext }) => {
           아이디 <span className="text-red-600">*</span>
         </label>
         <div className="relative mt-2 flex">
-          <input type="text" className="flex-1 border border-gray-400 rounded-md p-1" />
+          <input 
+            type="text" 
+            className="flex-1 border border-gray-400 rounded-md p-1" 
+            value={username} 
+            onChange={(e) => setUsername(e.target.value)} 
+          />
           <button className="ml-2 w-20 bg-[#363636] text-white text-xs font-bold rounded-md">
             중복확인
           </button>
@@ -95,6 +145,8 @@ const ParentFormStep1: FC<ParentFormStep1Props> = ({ onNext }) => {
         <input
           type="password"
           className="mt-2 border border-gray-400 rounded-md p-1 w-full"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
         />
       </div>
       <div className="mt-6">
@@ -104,6 +156,8 @@ const ParentFormStep1: FC<ParentFormStep1Props> = ({ onNext }) => {
         <input
           type="password"
           className="mt-2 border border-gray-400 rounded-md p-1 w-full"
+          value={passwordConfirm}
+          onChange={(e) => setPasswordConfirm(e.target.value)}
         />
       </div>
       <div className="mt-6">
@@ -113,6 +167,8 @@ const ParentFormStep1: FC<ParentFormStep1Props> = ({ onNext }) => {
         <input
           type="text"
           className="mt-2 border border-gray-400 rounded-md p-1 w-full"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
         />
       </div>
       <div className="mt-6">
@@ -120,26 +176,36 @@ const ParentFormStep1: FC<ParentFormStep1Props> = ({ onNext }) => {
         <input
           type="text"
           className="mt-2 border border-gray-400 rounded-md p-1 w-full"
+          value={nickname}
+          onChange={(e) => setNickname(e.target.value)}
         />
       </div>
       <div className="mt-6">
         <label className="block text-sm font-medium text-gray-400">이메일</label>
         <div className="flex mt-2 space-x-2">
-          <input type="text" className="flex-grow border border-gray-400 rounded-md p-1" />
+          <input 
+            type="text" 
+            className="flex-grow border border-gray-400 rounded-md p-1"
+            value={emailLocal}
+            onChange={(e) => { setEmailLocal(e.target.value); handleEmailChange(); }} 
+          />
           <span className="self-center text-base font-medium text-gray-400">@</span>
-          <input type="text" className="w-28 border border-gray-400 rounded-md p-1" />
+          <input 
+            type="text" 
+            className="w-28 border border-gray-400 rounded-md p-1" 
+            value={emailDomain}
+            onChange={(e) => { setEmailDomain(e.target.value); handleEmailChange(); }} 
+          />
         </div>
       </div>
       <div className="mt-6">
         <label className="block text-sm font-medium text-gray-400">휴대폰 번호</label>
-        <div className="flex mt-2">
+        <div className="flex mt-2 space-x-2">
           <input
             type="text"
-            className="w-20 border border-gray-400 rounded-md p-1"
-          />
-          <input
-            type="text"
-            className="flex-1 border border-gray-400 rounded-md p-1 ml-2"
+            className="flex-1 border border-gray-400 rounded-md p-1"
+            value={tel}
+            onChange={(e) => setTel(e.target.value)}
           />
         </div>
       </div>
@@ -153,7 +219,7 @@ const ParentFormStep1: FC<ParentFormStep1Props> = ({ onNext }) => {
           취소
         </button>
         <button
-          onClick={onNext}
+          onClick={handleNext}
           className="w-24 h-9 bg-[#F8DE56] text-gray-800 font-bold rounded-md"
         >
           다음

@@ -1,13 +1,22 @@
 import { FC } from "react";
 import { FaCheck } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 import daramgi from "../../assets/join/joinResultDaramgi.png";
+import { useAppStore } from "../../stores/store"
 
 interface ParentFormStep3Props {
   onComplete: () => void;
-  onBack: () => void;
 }
 
-const ParentFormStep3: FC<ParentFormStep3Props> = ({ onComplete }) => {
+const ParentFormStep3: FC<ParentFormStep3Props> = () => {
+  const navigate = useNavigate();
+  const { login } = useAppStore();
+
+  const handleLogin = () => {
+    login();
+    navigate('/');
+  };
+
   return (
     <div className="max-w-lg mx-auto p-6">
       {/* 회원가입 진행률 */}
@@ -50,7 +59,7 @@ const ParentFormStep3: FC<ParentFormStep3Props> = ({ onComplete }) => {
         </p>
         <div className="mt-8">
           <button
-            onClick={onComplete}
+            onClick={handleLogin}
             className="w-[93px] h-10 bg-[#F8DE56] rounded-[5px] text-sm font-bold text-center text-[#363636]"
           >
             로그인

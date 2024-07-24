@@ -3,7 +3,7 @@ import {
   Routes,
   Route,
 } from "react-router-dom";
-import { useUserStore, UserState } from "./stores/store";  // UserState 인터페이스 import
+import { useAppStore, UserState } from "./stores/store";  // UserState 인터페이스 import
 import ParentHome from "./pages/parent/ParentHome";
 import ParentDocument from "./pages/parent/ParentDocument";
 import ParentDocumentSubmit from "./pages/parent/ParentDocumentSubmit";
@@ -35,7 +35,7 @@ import JoinDetails from "./pages/common/JoinDetails";
 import TeacherAlbumFinish from "./pages/teacher/TeacherAlbumFinish";
 
 const App: React.FC = () => {
-  const userType = useUserStore((state: UserState) => state.userType); // UserState 타입 지정
+  const userType = useAppStore((state: UserState) => state.userType); // UserState 타입 지정
 
   return (
     <>

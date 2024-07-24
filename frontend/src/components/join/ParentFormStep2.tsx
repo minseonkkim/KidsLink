@@ -1,16 +1,62 @@
-import { ChangeEvent, FC, useState } from "react";
+import { ChangeEvent, FC, useState, useEffect } from "react";
 import { FaCheck } from "react-icons/fa";
+import { useAppStore } from "../../stores/store";
+import { parentSignup } from '../../api/member/member';
 
 interface ParentFormStep2Props {
   onNext: () => void;
   onBack: () => void;
+  onComplete: () => void;
 }
 
-const ParentFormStep2: FC<ParentFormStep2Props> = ({ onNext, onBack }) => {
-  const [selectedGender, setSelectedGender] = useState<string | null>(null);
+const ParentFormStep2: FC<ParentFormStep2Props> = ({ onBack, onComplete }) => {
+  const {
+    gender, setGender,
+    childName, setChildName,
+    birth, setBirth,
+    kindergartenName, setKindergartenName,
+    className, setClassName,
+    username, password, passwordConfirm, email, name, nickname, tel, profile,
+  } = useAppStore();
+
+  const [birthYear, setBirthYear] = useState(birth.slice(0, 4) || '');
+  const [birthMonth, setBirthMonth] = useState(birth.slice(5, 7) || '');
+  const [birthDay, setBirthDay] = useState(birth.slice(8, 10) || '');
+
+  useEffect(() => {
+    const combinedBirth = `${birthYear}-${birthMonth}-${birthDay}`;
+    setBirth(combinedBirth);
+  }, [birthYear, birthMonth, birthDay, setBirth]);
 
   const handleGenderChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setSelectedGender(event.target.value);
+    setGender(event.target.value);
+  };
+
+  const handleSignup = async () => {
+    const parentData = {
+      username,
+      name,
+      password,
+      passwordConfirm,
+      email,
+      profile,
+      nickname,
+      tel,
+      child: {
+        name: childName,
+        kindergartenClassName: className,
+        kindergartenName,
+        gender,
+        birth,
+      },
+    };
+
+    try {
+      await parentSignup(parentData);
+      onComplete(); // Call the complete handler to move to the next step
+    } catch (error) {
+      console.error("Signup failed", error);
+    }
   };
 
   return (
@@ -50,14 +96,15 @@ const ParentFormStep2: FC<ParentFormStep2Props> = ({ onNext, onBack }) => {
           <input
             type="radio"
             name="gender"
-            value="male"
+            value="M"
             id="genderMale"
             className="hidden"
+            checked={gender === 'M'}
             onChange={handleGenderChange}
           />
           <label htmlFor="genderMale" className="flex items-center cursor-pointer ml-2 relative">
-            <div className={`w-4 h-4 mr-2 rounded-full border-2 ${selectedGender === 'male' ? 'border-[#F8DE56]' : 'border-gray-400'} flex items-center justify-center`}>
-              <div className={`w-2 h-2 rounded-full ${selectedGender === 'male' ? 'bg-[#F8DE56]' : ''}`}></div>
+            <div className={`w-4 h-4 mr-2 rounded-full border-2 ${gender === 'M' ? 'border-[#F8DE56]' : 'border-gray-400'} flex items-center justify-center`}>
+              <div className={`w-2 h-2 rounded-full ${gender === 'M' ? 'bg-[#F8DE56]' : ''}`}></div>
             </div>
             <p className="text-base font-medium">남성</p>
           </label>
@@ -65,14 +112,15 @@ const ParentFormStep2: FC<ParentFormStep2Props> = ({ onNext, onBack }) => {
           <input
             type="radio"
             name="gender"
-            value="female"
+            value="F"
             id="genderFemale"
             className="hidden"
+            checked={gender === 'F'}
             onChange={handleGenderChange}
           />
           <label htmlFor="genderFemale" className="flex items-center cursor-pointer ml-8 relative">
-            <div className={`w-4 h-4 mr-2 rounded-full border-2 ${selectedGender === 'female' ? 'border-[#F8DE56]' : 'border-gray-400'} flex items-center justify-center`}>
-              <div className={`w-2 h-2 rounded-full ${selectedGender === 'female' ? 'bg-[#F8DE56]' : ''}`}></div>
+            <div className={`w-4 h-4 mr-2 rounded-full border-2 ${gender === 'F' ? 'border-[#F8DE56]' : 'border-gray-400'} flex items-center justify-center`}>
+              <div className={`w-2 h-2 rounded-full ${gender === 'F' ? 'bg-[#F8DE56]' : ''}`}></div>
             </div>
             <p className="text-base font-medium">여성</p>
           </label>
@@ -84,6 +132,8 @@ const ParentFormStep2: FC<ParentFormStep2Props> = ({ onNext, onBack }) => {
         <input
           type="text"
           className="mt-2 w-full border border-gray-400 rounded-md p-1"
+          value={childName}
+          onChange={(e) => setChildName(e.target.value)}
         />
       </div>
 
@@ -95,18 +145,24 @@ const ParentFormStep2: FC<ParentFormStep2Props> = ({ onNext, onBack }) => {
             placeholder="년(4자)"
             className="w-1/3 border border-gray-400 rounded-md p-1"
             maxLength={4}
+            value={birthYear}
+            onChange={(e) => setBirthYear(e.target.value)}
           />
           <input
             type="text"
             placeholder="월"
             className="w-1/3 border border-gray-400 rounded-md p-1"
             maxLength={2}
+            value={birthMonth}
+            onChange={(e) => setBirthMonth(e.target.value)}
           />
           <input
             type="text"
             placeholder="일"
             className="w-1/3 border border-gray-400 rounded-md p-1"
             maxLength={2}
+            value={birthDay}
+            onChange={(e) => setBirthDay(e.target.value)}
           />
         </div>
       </div>
@@ -118,11 +174,15 @@ const ParentFormStep2: FC<ParentFormStep2Props> = ({ onNext, onBack }) => {
             type="text"
             placeholder="유치원 이름"
             className="w-1/2 border border-gray-400 rounded-md p-1"
+            value={kindergartenName}
+            onChange={(e) => setKindergartenName(e.target.value)}
           />
           <input
             type="text"
             placeholder="반 이름"
             className="w-1/2 border border-gray-400 rounded-md p-1"
+            value={className}
+            onChange={(e) => setClassName(e.target.value)}
           />
         </div>
       </div>
@@ -136,7 +196,7 @@ const ParentFormStep2: FC<ParentFormStep2Props> = ({ onNext, onBack }) => {
           뒤로
         </button>
         <button
-          onClick={onNext}
+          onClick={handleSignup}
           className="w-24 h-9 bg-[#F8DE56] text-gray-800 font-bold rounded-md"
         >
           다음

@@ -3,14 +3,14 @@ import LoginHeader from "../../components/login/LoginHeader";
 import mainImg from "../../assets/teacher/main_img.png";
 import { Link, useNavigate } from "react-router-dom";
 import { login as loginAPI } from "../../api/member/member";
-import { useUserStore } from "../../stores/store";
+import { useAppStore } from "../../stores/store"; // Update import here
 
 export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
-  const setUserType = useUserStore((state) => state.setUserType);
+  const setUserType = useAppStore((state) => state.setUserType); // Update here
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
