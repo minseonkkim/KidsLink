@@ -21,7 +21,7 @@ public class TeacherController {
     private final TeacherService teacherService;
 
     @PostMapping("")
-    public ResponseEntity joinProcess(@RequestBody JoinDTO joinDTO) {
+    public ResponseEntity joinProcess(@ModelAttribute JoinDTO joinDTO) {
         log.info("joinDTO : {}", joinDTO);
         teacherService.joinProcess(joinDTO);
         APIResponse<Void> responseData = new APIResponse<>(

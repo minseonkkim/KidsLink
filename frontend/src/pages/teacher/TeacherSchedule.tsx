@@ -31,9 +31,10 @@ interface ScheduleItemProps {
     index: number;
     moveItem: (fromIndex: number, toIndex: number) => void;
     deleteItem: (id: number) => void;
+    toggleComplete: (id: number) => void;
 }
 
-const ScheduleItem: React.FC<ScheduleItemProps> = ({ id, content, completed, index, moveItem, deleteItem }) => {
+const ScheduleItem: React.FC<ScheduleItemProps> = ({ id, content, completed, index, moveItem, deleteItem, toggleComplete }) => {
     const ref = useRef<HTMLDivElement>(null);
     const [, drop] = useDrop({
         accept: ItemType.SCHEDULE_ITEM,
@@ -64,7 +65,7 @@ const ScheduleItem: React.FC<ScheduleItemProps> = ({ id, content, completed, ind
                 type="checkbox"
                 className="mr-2 w-[19px] h-[19px] accent-[#757575]"
                 checked={completed === true}
-                readOnly
+                onChange={() => toggleComplete(id)}
             />
             <p className={`${completed ? 'text-[#B8B8B8]' : ''} text-[18px] flex-grow`}>{content}</p>
             <button onClick={() => deleteItem(id)} className="text-red-500 hover:text-red-700">
@@ -79,6 +80,8 @@ type ValuePiece = Date | null;
 const TeacherSchedule: React.FC = () => {
     const [date, setDate] = useState<ValuePiece | [ValuePiece, ValuePiece]>(new Date());
     const [scheduleItems, setScheduleItems] = useState<ScheduleItemType[]>(initialScheduleItems);
+    const [time, setTime] = useState('');
+    const [todo, setTodo] = useState('');
 
     const formatDate = (date: ValuePiece | [ValuePiece, ValuePiece]): string => {
         if (date instanceof Date) {
@@ -99,6 +102,25 @@ const TeacherSchedule: React.FC = () => {
         updatedItems.splice(toIndex, 0, movedItem);
         setScheduleItems(updatedItems);
     }, [scheduleItems]);
+
+    const handleAddScheduleItem = () => {
+        if (todo) {
+            const newScheduleItem = {
+                id: scheduleItems.length + 1,
+                content: `${time} ${todo}`,
+                completed: false,
+            };
+            setScheduleItems([...scheduleItems, newScheduleItem]);
+            setTime('');
+            setTodo('');
+        }
+    };
+
+    const toggleComplete = (id: number) => {
+        setScheduleItems(scheduleItems.map(item =>
+            item.id === id ? { ...item, completed: !item.completed } : item
+        ));
+    };
 
     return (
         <div className="mt-[120px]">
@@ -141,6 +163,42 @@ const TeacherSchedule: React.FC = () => {
                             <input className="border w-[580px] h-[40px] bg-[#F8F8F8] border-[2px] rounded-[10px] border-[#B8B8B8] mr-1 p-1" />
                             <button className="font-bold border-[2px] border-[#B8B8B8] text-[#B8B8B8] w-[65px] h-[40px] rounded-[10px]">추가</button>
                         </div>
+                    </div>
+                    <div className="p-3 border-[2px] border-[#8CAD1E] rounded-[10px] h-[330px] overflow-y-auto">
+                        {
+                            scheduleItems.map(({ id, content, completed }, index) => (
+                                <ScheduleItem
+                                    key={id}
+                                    id={id}
+                                    content={content}
+                                    completed={completed}
+                                    index={index}
+                                    moveItem={moveItem}
+                                    deleteItem={deleteItem}
+                                    toggleComplete={toggleComplete}
+                                />
+                            ))
+                        }
+                    </div>
+                    <div className="flex flex-row justify-between items-center mt-3">
+                        <input
+                            className="border w-[150px] h-[40px] border-[2px] border-[#B8B8B8] mr-1 rounded-[10px] p-1"
+                            type="time"
+                            value={time}
+                            onChange={(e) => setTime(e.target.value)}
+                        />
+                        <input
+                            className="border w-[580px] h-[40px] bg-[#F8F8F8] border-[2px] rounded-[10px] border-[#B8B8B8] mr-1 p-1"
+                            type="text"
+                            value={todo}
+                            onChange={(e) => setTodo(e.target.value)}
+                        />
+                        <button
+                            className="font-bold border-[2px] border-[#B8B8B8] text-[#B8B8B8] w-[65px] h-[40px] rounded-[10px] hover:bg-[#F3F3F3]"
+                            onClick={handleAddScheduleItem}
+                        >
+                            추가
+                        </button>
                     </div>
                 </div>
             </DndProvider>
