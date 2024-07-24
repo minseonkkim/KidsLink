@@ -91,12 +91,41 @@ export default function TeacherNotice() {
     return (
         <>
             <TeacherHeader />
-            <div className="px-[150px] flex flex-col items-center">
+            <div className="mt-[85px] px-[150px] flex flex-col items-center">
                 <NavigateBack backPage="홈" backLink='/' />
                 <Title title="알림장" />
                 <button onClick={openCreateModal} className="absolute top-[125px] right-[150px] border-[2px] border-[#7C7C7C] bg-[#E3EEFF] px-3 py-1 font-bold rounded-[10px] hover:bg-[#D4DDEA] flex flex-row items-center">
                     <LuPencilLine className="mr-2" />알림장 작성하기
                 </button>
+                <div className="flex justify-center w-full mt-[5px]">
+                    <div className="w-1/2 p-0 flex">
+                        <select
+                            value={searchType}
+                            onChange={handleSearchTypeChange}
+                            className="w-1/4 border-2 border-[#f4f4f4] focus:outline-none text-lg rounded-[8px] px-2 py-1"
+                        >
+                            <option value="title">제목 검색</option>
+                            <option value="date">날짜 검색</option>
+                        </select>
+                        {searchType === "title" ? (
+                            <input
+                                type="text"
+                                placeholder="제목 검색"
+                                value={searchTitle}
+                                onChange={handleSearchTitleChange}
+                                className="w-3/4 border-2 border-[#f4f4f4] focus:outline-none text-lg ml-2 custom-placeholder::placeholder px-2 py-1 rounded-[8px]"
+                            />
+                        ) : (
+                            <input
+                                type="date"
+                                value={searchDate}
+                                onChange={handleSearchDateChange}
+                                className="w-3/4 border-2 border-[#f4f4f4] focus:outline-none text-lg ml-2 custom-placeholder::placeholder px-2 py-1 rounded-[8px]"
+                                max="9999-12-31"
+                            />
+                        )}
+                    </div>
+                </div>
                 <div>
                     {displayedItems.map((item, index) => (
                         <NoticeItem
@@ -109,35 +138,7 @@ export default function TeacherNotice() {
                     ))}
                 </div>
                 
-                <div className="flex justify-center w-full mb-4">
-                    <div className="w-1/2 p-0 flex">
-                        <select
-                            value={searchType}
-                            onChange={handleSearchTypeChange}
-                            className="w-1/4 border-b-2 border-gray-300 focus:outline-none text-lg custom-border-color"
-                        >
-                            <option value="title">제목 검색</option>
-                            <option value="date">날짜 검색</option>
-                        </select>
-                        {searchType === "title" ? (
-                            <input
-                                type="text"
-                                placeholder="제목 검색"
-                                value={searchTitle}
-                                onChange={handleSearchTitleChange}
-                                className="w-3/4 border-b-2 border-gray-300 focus:outline-none text-lg ml-2 custom-placeholder::placeholder custom-border-color"
-                            />
-                        ) : (
-                            <input
-                                type="date"
-                                value={searchDate}
-                                onChange={handleSearchDateChange}
-                                className="w-3/4 border-b-2 border-gray-300 focus:outline-none text-lg ml-2 custom-placeholder::placeholder custom-border-color"
-                                max="9999-12-31"
-                            />
-                        )}
-                    </div>
-                </div>
+                
                 
                 <div className="flex justify-center w-full">
                     <nav>
