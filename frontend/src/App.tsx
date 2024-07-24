@@ -37,13 +37,13 @@ import JoinDetails from "./pages/common/JoinDetails";
 
 const App: React.FC = () => {
   const userType = useUserStore((state: UserState) => state.userType); // UserState 타입 지정
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
-  useEffect(() => {
-    if (userType !== "ROLE_PARENT" && userType !== "ROLE_TEACHER") {
-      navigate("/login");
-    }
-  }, [userType, navigate]);
+  // useEffect(() => {
+  //   if (userType !== "ROLE_PARENT" && userType !== "ROLE_TEACHER") {
+  //     navigate("/login");
+  //   }
+  // }, [userType, navigate]);
 
   return (
     <>
