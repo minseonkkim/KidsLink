@@ -1,10 +1,10 @@
 package com.ssafy.kidslink.common.controller;
 
 import com.ssafy.kidslink.application.image.dto.ImageDTO;
+import com.ssafy.kidslink.application.image.service.ImageService;
 import com.ssafy.kidslink.common.dto.APIError;
 import com.ssafy.kidslink.common.dto.APIResponse;
 import com.ssafy.kidslink.common.jwt.JWTUtil;
-import com.ssafy.kidslink.application.image.service.ImageService;
 import com.ssafy.kidslink.common.service.InitialDataService;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.Cookie;
@@ -118,8 +118,7 @@ public class MainController {
 
     @PostMapping("/data/initialize")
     public String initializeData() {
-        initialDataService.initializeData();
-        return "Initial data setup completed!";
+        return initialDataService.initializeData();
     }
 
 }
