@@ -2,6 +2,7 @@ package com.ssafy.kidslink.application.schedule.controller;
 
 import com.ssafy.kidslink.application.schedule.dto.AllTeacherScheduleDTO;
 import com.ssafy.kidslink.application.schedule.dto.KindergartenScheduleDTO;
+import com.ssafy.kidslink.application.schedule.dto.TeacherScheduleDTO;
 import com.ssafy.kidslink.application.schedule.service.ScheduleService;
 import com.ssafy.kidslink.common.dto.APIError;
 import com.ssafy.kidslink.common.dto.APIResponse;
@@ -11,10 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -79,29 +77,29 @@ public class ScheduleController {
         return new ResponseEntity<>(responseData, HttpStatus.BAD_REQUEST);
     }
 
-//    @PostMapping
-//    public ResponseEntity<APIResponse<Void>> addSchedule(@AuthenticationPrincipal Object principal, @RequestBody ScheduleDTO requestDTO){
-//        if(principal instanceof CustomUserDetails){
-//            CustomUserDetails userDetails = (CustomUserDetails) principal;
-//
-//            scheduleService.addSchedule(userDetails.getUsername(), requestDTO);
-//            APIResponse<Void> responseData = new APIResponse<>(
-//                    "success",
-//                    null,
-//                    "일정 등록에 성공하였습니다.",
-//                    null
-//            );
-//            return new ResponseEntity<>(responseData, HttpStatus.OK);
-//        }
-//        APIError apiError = new APIError("UNAUTHORIZED", "유효한 JWT 토큰이 필요합니다.");
-//
-//        APIResponse<Void> responseData = new APIResponse<>(
-//                "success",
-//                null,
-//                "일정 등록을 실패했습니다.",
-//                apiError
-//        );
-//
-//        return new ResponseEntity<>(responseData, HttpStatus.BAD_REQUEST);
-//    }
+    @PostMapping("/teacher")
+    public ResponseEntity<APIResponse<Void>> addSchedule(@AuthenticationPrincipal Object principal, @RequestBody TeacherScheduleDTO requestDTO){
+        if(principal instanceof CustomUserDetails){
+            CustomUserDetails userDetails = (CustomUserDetails) principal;
+
+            scheduleService.addSchedule(userDetails.getUsername(), requestDTO);
+            APIResponse<Void> responseData = new APIResponse<>(
+                    "success",
+                    null,
+                    "일정 등록에 성공하였습니다.",
+                    null
+            );
+            return new ResponseEntity<>(responseData, HttpStatus.OK);
+        }
+        APIError apiError = new APIError("UNAUTHORIZED", "유효한 JWT 토큰이 필요합니다.");
+
+        APIResponse<Void> responseData = new APIResponse<>(
+                "success",
+                null,
+                "일정 등록을 실패했습니다.",
+                apiError
+        );
+
+        return new ResponseEntity<>(responseData, HttpStatus.BAD_REQUEST);
+    }
 }
