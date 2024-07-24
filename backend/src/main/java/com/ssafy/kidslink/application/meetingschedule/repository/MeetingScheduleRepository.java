@@ -6,10 +6,12 @@ import com.ssafy.kidslink.application.teacher.domain.Teacher;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Repository
 public interface MeetingScheduleRepository extends JpaRepository<MeetingSchedule, Long> {
     List<MeetingSchedule> findByTeacher(Teacher teahcer);
     List<MeetingSchedule> findByParent(Parent parent);
+    List<MeetingSchedule> findByTeacherAndMeetingScheduleDate(Teacher teacher, LocalDate date);
 }

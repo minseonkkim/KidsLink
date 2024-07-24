@@ -10,7 +10,7 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @ToString
-public class ScheduleDTO {
+public class KindergartenScheduleDTO {
     private int id;
     private String Content;
     private LocalDate date;
