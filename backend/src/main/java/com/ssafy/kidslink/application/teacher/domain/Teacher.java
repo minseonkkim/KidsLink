@@ -1,7 +1,7 @@
 package com.ssafy.kidslink.application.teacher.domain;
 
 import com.ssafy.kidslink.application.kindergartenclass.domain.KindergartenClass;
-import com.ssafy.kidslink.application.teacherschedule.domain.TeacherSchedule;
+import com.ssafy.kidslink.application.schedule.domain.TeacherSchedule;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

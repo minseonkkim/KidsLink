@@ -6,6 +6,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDate;
+
 @Entity
 @Getter
 @Setter
@@ -17,7 +19,7 @@ public class MeetingSchedule {
     private Integer meetingScheduleId;
 
     @Column(name = "meeting_schedule_date")
-    private String meetingScheduleDate;
+    private LocalDate meetingScheduleDate;
 
     @Column(name = "meeting_schedule_time")
     private String meetingScheduleTime;

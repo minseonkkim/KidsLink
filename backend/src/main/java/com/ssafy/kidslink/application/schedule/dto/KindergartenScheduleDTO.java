@@ -1,4 +1,5 @@
-package com.ssafy.kidslink.application.meetingtime.dto;
+package com.ssafy.kidslink.application.schedule.dto;
+
 
 import lombok.Getter;
 import lombok.Setter;
@@ -9,8 +10,8 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @ToString
-public class MeetingTimeDTO {
-    private int meetingId;
+public class KindergartenScheduleDTO {
+    private int id;
+    private String content;
     private LocalDate date;
-    private String time;
 }

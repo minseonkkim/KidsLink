@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,7 +41,7 @@ public class MeetingTimeService {
             for(String time : openMeetingTimeDTO.getTimes()) {
                 MeetingTime meetingTime =  new MeetingTime();
                 meetingTime.setTeacher(teacher);
-                meetingTime.setMeetingDate(openMeetingTimeDTO.getDate());
+                meetingTime.setMeetingDate(LocalDate.parse(openMeetingTimeDTO.getDate()));
                 meetingTime.setMeetingTime(time);
                 meetingTimeRepository.save(meetingTime);
             }

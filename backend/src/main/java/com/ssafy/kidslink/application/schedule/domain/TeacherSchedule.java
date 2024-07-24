@@ -1,4 +1,4 @@
-package com.ssafy.kidslink.application.teacherschedule.domain;
+package com.ssafy.kidslink.application.schedule.domain;
 
 import com.ssafy.kidslink.application.teacher.domain.Teacher;
 import jakarta.persistence.*;
