@@ -99,6 +99,11 @@ body {
 
 
 /* 확인 */
+.border-custom-gradient {
+  border-image: linear-gradient(to right, #F8DE56 50%, #D9D9D9 50%);
+  border-image-slice: 1;
+}
+
 @layer utilities {
   @media (max-width: 768px) {
     .container {

@@ -1,14 +1,12 @@
-import React from "react";
 import {
   BrowserRouter as Router,
   Routes,
   Route,
-  Navigate,
 } from "react-router-dom";
-import { useUserStore, UserState } from "./stores/store";
+import { useUserStore, UserState } from "./stores/store";  // UserState 인터페이스 import
 import ParentHome from "./pages/parent/ParentHome";
 import ParentDocument from "./pages/parent/ParentDocument";
-import ParentDocumentSubmit from "./pages/parent/ParentDocumentSubmit"
+import ParentDocumentSubmit from "./pages/parent/ParentDocumentSubmit";
 import ParentNotice from "./pages/parent/ParentNotice";
 import ParentNoticeDetail from "./pages/parent/ParentNoticeDetail";
 import ParentAlbum from "./pages/parent/ParentAlbum";
@@ -37,18 +35,12 @@ import JoinDetails from "./pages/common/JoinDetails";
 import TeacherAlbumFinish from "./pages/teacher/TeacherAlbumFinish";
 
 const App: React.FC = () => {
-  const userType = useUserStore((state: UserState) => state.userType);
+  const userType = useUserStore((state: UserState) => state.userType); // UserState 타입 지정
 
   return (
     <>
       <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/join" element={<Join />} />
-        <Route path="/join/parent-step1" element={<JoinDetails role="학부모" />} />
-        <Route path="/join/teacher-step1" element={<JoinDetails role="선생님" />} />
-        <Route path="/join/director-step1" element={<JoinDetails role="원장님" />} />
-
-        {userType === "ROLE_PARENT" && (
+        {userType === "ROLE_PARENT" ? (
           <>
             <Route path="/" element={<ParentHome />} />
             <Route path="/document" element={<ParentDocument />} />
@@ -65,9 +57,7 @@ const App: React.FC = () => {
             <Route path="/meeting/:id" element={<ParentMeetingRoom />} />
             <Route path="/ParentSchedule" element={<ParentSchedule />} />
           </>
-        )}
-
-        {userType === "ROLE_TEACHER" && (
+        ) : userType === "ROLE_TEACHER" ? (
           <>
             <Route path="/" element={<TeacherHome />} />
             <Route path="/document" element={<TeacherDocument />} />
@@ -81,10 +71,13 @@ const App: React.FC = () => {
             <Route path="/ourclass" element={<TeacherOurClass />} />
             <Route path="/schedule" element={<TeacherSchedule />} />
           </>
+        ) : (
+          <>
+            <Route path="/login" element={<Login />} />
+            <Route path="/join" element={<Join />} />
+            <Route path="/join/:role" element={<JoinDetails />} />
+          </>
         )}
-
-        {/* 로그인되지 않은 사용자가 접근 시 로그인 페이지로 리디렉션 */}
-        <Route path="*" element={<Navigate to="/login" />} />
       </Routes>
       {userType === "ROLE_PARENT" && <Footer />}
     </>

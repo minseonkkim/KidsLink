@@ -1,7 +1,12 @@
-import { ChangeEvent, useState } from "react";
-import { FaCheck } from "react-icons/fa6";
+import { ChangeEvent, FC, useState } from "react";
+import { FaCheck } from "react-icons/fa";
 
-export default function SignupPage() {
+interface ParentFormStep2Props {
+  onNext: () => void;
+  onBack: () => void;
+}
+
+const ParentFormStep2: FC<ParentFormStep2Props> = ({ onNext, onBack }) => {
   const [selectedGender, setSelectedGender] = useState<string | null>(null);
 
   const handleGenderChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -13,14 +18,14 @@ export default function SignupPage() {
       {/* 회원가입 진행률 */}
       <div className="relative flex h-[62px] mx-3">
         <div className="flex-1 relative">
-          <div className="border-t-2 border-[#D9D9D9] absolute left-[25px] right-0 transform -translate-y-1/2"></div>
+          <div className="border-t-[3px] border-[#F8DE56] absolute left-[25px] right-0 transform -translate-y-1/2"></div>
           <div className="absolute left-[25px] top-[-12px] flex items-center justify-center w-6 h-6 bg-[#F8DE56] rounded-full">
-            <FaCheck className="w-3 h-3 bg-[#F8DE56]" />
+            <FaCheck className="w-3 h-3 text-white" />
           </div>
           <p className="mt-6 text-sm font-normal text-left text-[#B8B8B8]">부모정보입력</p>
         </div>
         <div className="flex-1 relative">
-          <div className="border-t-2 border-[#D9D9D9] absolute left-0 right-0 transform -translate-y-1/2"></div>
+          <div className="border-t-[3px] border-custom-gradient absolute left-0 right-0 transform -translate-y-1/2"></div>
           <div className="absolute left-1/2 transform -translate-x-[48%] top-[-12px] flex items-center justify-center w-6 h-6 bg-[#F8DE56] rounded-full">
             <div className="flex items-center justify-center w-4 h-4 bg-white rounded-full">
               <div className="w-2 h-2 bg-[#F8DE56] rounded-full"></div>
@@ -29,7 +34,7 @@ export default function SignupPage() {
           <p className="mt-6 text-sm font-light text-center text-black">자녀정보입력</p>
         </div>
         <div className="flex-1 relative">
-          <div className="border-t-2 border-[#D9D9D9] absolute left-0 right-[15px] transform -translate-y-1/2"></div>
+          <div className="border-t-[3px] border-[#D9D9D9] absolute left-0 right-[15px] transform -translate-y-1/2"></div>
           <div className="absolute right-[15px] top-[-6px] flex items-center justify-center w-3 h-3 bg-gray-300 rounded-full"></div>
           <p className="mt-6 text-sm font-light text-right text-[#B8B8B8]">가입완료</p>
         </div>
@@ -124,13 +129,21 @@ export default function SignupPage() {
 
       <div className="border-b-2 border-[#757575] mt-8"></div>
       <div className="flex justify-end my-5">
-        <button className="w-24 h-9 bg-[#757575] text-white font-bold rounded-md mr-2">
+        <button
+          onClick={onBack}
+          className="w-24 h-9 bg-[#757575] text-white font-bold rounded-md mr-2"
+        >
           뒤로
         </button>
-        <button className="w-24 h-9 bg-[#F8DE56] text-gray-800 font-bold rounded-md">
+        <button
+          onClick={onNext}
+          className="w-24 h-9 bg-[#F8DE56] text-gray-800 font-bold rounded-md"
+        >
           다음
         </button>
       </div>
     </div>
   );
-}
+};
+
+export default ParentFormStep2;
