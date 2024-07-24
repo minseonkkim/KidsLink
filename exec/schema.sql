@@ -140,7 +140,8 @@ CREATE TABLE `bus_stop` (
 
 CREATE TABLE `meeting_schedule` (
     `meeting_schedule_id` INT NOT NULL AUTO_INCREMENT,
-    `meeting_schedule_date` DATETIME NULL,
+    `meeting_schedule_date` VARCHAR(25) NULL,
+    `meeting_schedule_time` VARCHAR(25) NULL,
     `teacher_id` INT NOT NULL,
     `parent_id` INT NOT NULL,
     PRIMARY KEY (`meeting_schedule_id`),
