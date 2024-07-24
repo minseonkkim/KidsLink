@@ -8,9 +8,7 @@ interface Child {
   kindergartenClassName?: string;
   kindergartenName?: string;
   gender?: string;
-  birthYear?: string;
-  birthMonth?: string;
-  birthDay?: string;
+  birth?: string;
 }
 
 interface ParentData {
@@ -19,12 +17,9 @@ interface ParentData {
   password: string;
   passwordConfirm: string;
   email?: string;
-  emailDomain?: string;
   profile?: File;
   nickname?: string;
-  tel1?: string;
-  tel2?: string;
-  tel3?: string;
+  tel?: string;
   child?: Child;
 }
 
@@ -38,22 +33,17 @@ export default function ParentForm() {
   const [formData, setFormData] = useState<ParentData>({
     username: "",
     email: "",
-    emailDomain: "naver.com",
     password: "",
     passwordConfirm: "",
     name: "",
     nickname: "",
-    tel1: "",
-    tel2: "",
-    tel3: "",
+    tel: "",
     child: {
       name: "",
       kindergartenClassName: "",
       kindergartenName: "",
       gender: "",
-      birthYear: "",
-      birthMonth: "",
-      birthDay: "",
+      birth: "",
     },
     profile: undefined,
   });
@@ -136,7 +126,7 @@ export default function ParentForm() {
 
           <UserInfoForm formData={formData} handleChange={handleChange} />
 
-          <div className="border-t border-gray-900/10 pt-5">
+          <div className="border-t border-gray-900/10 pb-5">
             <h1 className="mt-5 text-base font-semibold leading-7 text-gray-900">
               자녀 등록하기
             </h1>
@@ -144,7 +134,7 @@ export default function ParentForm() {
               <div className="sm:col-span-2">
                 <label
                   htmlFor="child.name"
-                  className="block text-sm font-medium text-gray-900"
+                  className="block text-sm font-medium leading-6 text-gray-900"
                 >
                   자녀 이름
                 </label>
@@ -155,76 +145,48 @@ export default function ParentForm() {
                     type="text"
                     value={formData.child?.name || ""}
                     onChange={handleChange}
-                    className="block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm"
+                    className="block w-full rounded-md border-0 py-1.5 pl-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#B2D170] sm:text-sm sm:leading-6"
                   />
                 </div>
               </div>
               <div className="sm:col-span-2">
                 <label
                   htmlFor="child.gender"
-                  className="block text-sm font-medium text-gray-900"
+                  className="block text-sm font-medium leading-6 text-gray-900"
                 >
                   자녀 성별
                 </label>
-                <div className="mt-2 flex items-center space-x-4">
-                  <label className="flex items-center">
-                    <input
-                      type="radio"
-                      name="child.gender"
-                      value="M"
-                      checked={formData.child?.gender === "M"}
-                      onChange={handleChange}
-                      className="mr-2"
-                    />
-                    남자
-                  </label>
-                  <label className="flex items-center">
-                    <input
-                      type="radio"
-                      name="child.gender"
-                      value="F"
-                      checked={formData.child?.gender === "F"}
-                      onChange={handleChange}
-                      className="mr-2"
-                    />
-                    여자
-                  </label>
+                <div className="mt-2">
+                  <select
+                    id="child.gender"
+                    name="child.gender"
+                    value={formData.child?.gender || ""}
+                    onChange={handleChange}
+                    className="block w-full rounded-md border-0 py-1.5 pl-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#B2D170] sm:max-w-xs sm:text-sm sm:leading-6"
+                  >
+                    <option value="" disabled>
+                      성별을 선택해주세요
+                    </option>
+                    <option value="M">남자</option>
+                    <option value="F">여자</option>
+                  </select>
                 </div>
               </div>
               <div className="sm:col-span-2">
                 <label
                   htmlFor="child.birth"
-                  className="block text-sm font-medium text-gray-900"
+                  className="block text-sm font-medium leading-6 text-gray-900"
                 >
                   자녀 생일
                 </label>
-                <div className="mt-2 flex space-x-2">
+                <div className="mt-2">
                   <input
-                    type="text"
-                    name="child.birthYear"
-                    value={formData.child?.birthYear || ""}
+                    type="date"
+                    id="child.birth"
+                    name="child.birth"
+                    value={formData.child?.birth || ""}
                     onChange={handleChange}
-                    placeholder="년(4자)"
-                    maxLength={4}
-                    className="block w-1/3 rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm"
-                  />
-                  <input
-                    type="text"
-                    name="child.birthMonth"
-                    value={formData.child?.birthMonth || ""}
-                    onChange={handleChange}
-                    placeholder="월"
-                    maxLength={2}
-                    className="block w-1/3 rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm"
-                  />
-                  <input
-                    type="text"
-                    name="child.birthDay"
-                    value={formData.child?.birthDay || ""}
-                    onChange={handleChange}
-                    placeholder="일"
-                    maxLength={2}
-                    className="block w-1/3 rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm"
+                    className="block w-full rounded-md border-0 py-1.5 pl-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#B2D170] sm:text-sm sm:leading-6"
                   />
                 </div>
               </div>
@@ -234,7 +196,7 @@ export default function ParentForm() {
               <div className="sm:col-span-3">
                 <label
                   htmlFor="child.kindergartenName"
-                  className="block text-sm font-medium text-gray-900"
+                  className="block text-sm font-medium leading-6 text-gray-900"
                 >
                   유치원 선택
                 </label>
@@ -244,7 +206,7 @@ export default function ParentForm() {
                     name="child.kindergartenName"
                     value={formData.child?.kindergartenName || ""}
                     onChange={handleChange}
-                    className="block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm"
+                    className="block w-full rounded-md border-0 py-1.5 pl-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#B2D170] sm:max-w-xs sm:text-sm sm:leading-6"
                   >
                     <option value="" disabled>
                       유치원을 선택해주세요
@@ -260,7 +222,7 @@ export default function ParentForm() {
               <div className="sm:col-span-3">
                 <label
                   htmlFor="child.kindergartenClassName"
-                  className="block text-sm font-medium text-gray-900"
+                  className="block text-sm font-medium leading-6 text-gray-900"
                 >
                   유치원 반 이름
                 </label>
@@ -270,7 +232,7 @@ export default function ParentForm() {
                     name="child.kindergartenClassName"
                     value={formData.child?.kindergartenClassName || ""}
                     onChange={handleChange}
-                    className="block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm"
+                    className="block w-full rounded-md border-0 py-1.5 pl-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#B2D170] sm:max-w-xs sm:text-sm sm:leading-6"
                   >
                     <option value="" disabled>
                       반 이름을 선택해주세요
@@ -290,7 +252,7 @@ export default function ParentForm() {
         <div className="flex justify-center my-10">
           <button
             type="submit"
-            className="bg-[#B2D170] text-white py-2 px-4 rounded-lg"
+            className="bg-[#B2D170] text-white py-2 px-4 rounded"
           >
             회원가입
           </button>

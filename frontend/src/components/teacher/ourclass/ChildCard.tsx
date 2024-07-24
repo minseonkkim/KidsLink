@@ -9,7 +9,7 @@ interface ChildCardProps {
 
 export default function ChildCard({ name, gender, age, absent, dosage, profileImgPath }: ChildCardProps) {
     return (
-        <div className="w-[180px] h-[250px] m-2 relative">
+        <div className="w-[180px] h-[250px] m-2 relative drop-shadow-md">
             <div className="w-[180px] h-[250px] absolute inset-0 rounded-[10px] bg-[#fff9d7]" />
             <p className="w-[90px] absolute left-[45px] top-[170px] text-xl font-bold text-center text-[#363636]">
                 {name}

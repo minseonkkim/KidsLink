@@ -21,7 +21,7 @@ export default function TeacherAlbum() {
   return (
     <>
       <TeacherHeader/>
-      <div className="px-[150px]">
+      <div className="px-[150px] mt-[120px]">
         <NavigateBack backPage="홈" backLink='/'/>
         <Title title="사진분류"/>
         <div className={`h-[470px] flex flex-row items-center ${images.length === 0 ? 'justify-center' : 'justify-between'}`}>

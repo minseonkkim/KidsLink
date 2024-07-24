@@ -1,8 +1,21 @@
+import { ChangeEvent, useState } from "react";
+import { CiCamera } from "react-icons/ci";
+
 export default function SignupPage() {
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+
+  const handleImageUpload = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const newImage = URL.createObjectURL(file);
+      setImagePreview(newImage);
+    }
+  };
+
   return (
-    <>
+    <div className="max-w-lg mx-auto p-6">
       {/* 회원가입 진행률 */}
-      <div className="relative flex items-center h-[62px] mx-3 mt-6">
+      <div className="relative flex h-[62px] mx-3">
         <div className="flex-1 relative">
           <div className="border-t-2 border-[#D9D9D9] absolute left-[25px] right-0 transform -translate-y-1/2"></div>
           <div className="absolute left-[25px] top-[-12px] flex items-center justify-center w-6 h-6 bg-[#F8DE56] rounded-full">
@@ -27,7 +40,34 @@ export default function SignupPage() {
       {/* 1단계 */}
       <p className="mt-5 text-base font-bold">부모 정보입력</p>
       <p className="mt-1 text-xs font-normal text-gray-400">학부모 서비스에 필요한 정보를 입력합니다.</p>
-      <div className="mt-5">
+      
+      {/* 프로필 이미지 업로드 */}
+      <div className="mt-6">
+        <label className="block text-sm font-medium text-gray-400">프로필 이미지</label>
+        <div className="flex flex-col items-center mt-2">
+          <input
+            type="file"
+            accept="image/*"
+            className="hidden"
+            id="profileImage"
+            onChange={handleImageUpload}
+          />
+          <label htmlFor="profileImage" className="cursor-pointer">
+            <div className="flex items-center justify-center w-24 h-24 bg-gray-200 border border-gray-400 rounded-full overflow-hidden">
+              {imagePreview ? (
+                <img src={imagePreview} alt="Profile Preview" className="object-cover w-full h-full" />
+              ) : (
+                <div className="flex flex-col items-center justify-center text-gray-400">
+                  <CiCamera className="text-3xl" />
+                  <span className="text-sm">이미지 업로드</span>
+                </div>
+              )}
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <div className="mt-6">
         <label className="block text-sm font-medium text-gray-400">
           아이디 <span className="text-red-600">*</span>
         </label>
@@ -38,7 +78,7 @@ export default function SignupPage() {
           </button>
         </div>
       </div>
-      <div className="mt-3">
+      <div className="mt-6">
         <label className="block text-sm font-medium text-gray-400">
           비밀번호 <span className="text-red-600">*</span>
         </label>
@@ -47,7 +87,7 @@ export default function SignupPage() {
           className="mt-2 border border-gray-400 rounded-md p-1 w-full"
         />
       </div>
-      <div className="mt-3">
+      <div className="mt-6">
         <label className="block text-sm font-medium text-gray-400">
           비밀번호 확인 <span className="text-red-600">*</span>
         </label>
@@ -56,7 +96,7 @@ export default function SignupPage() {
           className="mt-2 border border-gray-400 rounded-md p-1 w-full"
         />
       </div>
-      <div className="mt-3">
+      <div className="mt-6">
         <label className="block text-sm font-medium text-gray-400">
           이름 <span className="text-red-600">*</span>
         </label>
@@ -65,14 +105,14 @@ export default function SignupPage() {
           className="mt-2 border border-gray-400 rounded-md p-1 w-full"
         />
       </div>
-      <div className="mt-3">
+      <div className="mt-6">
         <label className="block text-sm font-medium text-gray-400">닉네임</label>
         <input
           type="text"
           className="mt-2 border border-gray-400 rounded-md p-1 w-full"
         />
       </div>
-      <div className="mt-3">
+      <div className="mt-6">
         <label className="block text-sm font-medium text-gray-400">이메일</label>
         <div className="flex mt-2 space-x-2">
           <input type="text" className="flex-grow border border-gray-400 rounded-md p-1" />
@@ -80,7 +120,7 @@ export default function SignupPage() {
           <input type="text" className="w-28 border border-gray-400 rounded-md p-1" />
         </div>
       </div>
-      <div className="mt-3">
+      <div className="mt-6">
         <label className="block text-sm font-medium text-gray-400">휴대폰 번호</label>
         <div className="flex mt-2">
           <input
@@ -95,7 +135,7 @@ export default function SignupPage() {
       </div>
 
       <div className="border-b-2 border-[#757575] mt-8"></div>
-      <div className="flex justify-end my-5">
+      <div className="flex justify-end my-6">
         <button className="w-24 h-9 bg-[#757575] text-white font-bold rounded-md mr-2">
           취소
         </button>
@@ -103,6 +143,6 @@ export default function SignupPage() {
           다음
         </button>
       </div>
-    </>
-  )
+    </div>
+  );
 }

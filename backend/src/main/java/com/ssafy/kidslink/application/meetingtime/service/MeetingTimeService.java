@@ -1,10 +1,14 @@
 package com.ssafy.kidslink.application.meetingtime.service;
 
+import com.ssafy.kidslink.application.meetingschedule.domain.MeetingSchedule;
+import com.ssafy.kidslink.application.meetingschedule.repository.MeetingScheduleRepository;
 import com.ssafy.kidslink.application.meetingtime.domain.MeetingTime;
 import com.ssafy.kidslink.application.meetingtime.dto.MeetingTimeDTO;
 import com.ssafy.kidslink.application.meetingtime.dto.OpenMeetingTimeDTO;
+import com.ssafy.kidslink.application.meetingtime.dto.ReserveMeetingDTO;
 import com.ssafy.kidslink.application.meetingtime.mapper.MeetingTimeMapper;
 import com.ssafy.kidslink.application.meetingtime.repository.MeetingTimeRepository;
+import com.ssafy.kidslink.application.parent.domain.Parent;
 import com.ssafy.kidslink.application.parent.repository.ParentRepository;
 import com.ssafy.kidslink.application.teacher.domain.Teacher;
 import com.ssafy.kidslink.application.teacher.repository.TeacherRepository;
@@ -24,6 +28,7 @@ public class MeetingTimeService {
     private final MeetingTimeRepository meetingTimeRepository;
     private final ParentRepository parentRepository;
     private final MeetingTimeMapper meetingTimeMapper;
+    private final MeetingScheduleRepository meetingScheduleRepository;
 
     public void openMeetingTimes(String teacherUsername, List<OpenMeetingTimeDTO> openMeetingTimeDTOList) {
         Teacher teacher = teacherRepository.findByTeacherUsername(teacherUsername);
@@ -49,6 +54,20 @@ public class MeetingTimeService {
         }
 
         return meetingTimes;
+
+    }
+
+    public void reserveMeeting(String parentUsername, ReserveMeetingDTO reserveMeetingDTO) {
+        Parent parent = parentRepository.findByParentUsername(parentUsername);
+
+        MeetingSchedule meetingSchedule = new MeetingSchedule();
+        meetingSchedule.setMeetingScheduleDate(reserveMeetingDTO.getMeetingDate());
+        meetingSchedule.setParent(parent);
+        meetingSchedule.setMeetingScheduleTime(reserveMeetingDTO.getMeetingTime());
+        meetingSchedule.setTeacher(teacherRepository.findByKindergartenClass(
+                parent.getChildren().stream().findFirst().get().getKindergartenClass()));
+        meetingScheduleRepository.save(meetingSchedule);
+
 
     }
 }
