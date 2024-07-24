@@ -63,7 +63,7 @@ export default function TeacherReservation() {
     return (
         <>
             <TeacherHeader />
-            <div className="font-KoPubDotum px-[150px]">
+            <div className="mt-[120px] px-[150px]">
                 <NavigateBack backPage="화상상담" backLink='/meeting' />
                 <Title title="상담가능시간 open" />
 

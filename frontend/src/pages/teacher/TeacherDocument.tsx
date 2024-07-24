@@ -13,7 +13,7 @@ export default function TeacherDocument(){
   return (
     <>
       <TeacherHeader/>
-      <div className="font-KoPubDotum px-[150px]">
+      <div className="mt-[120px] px-[150px]">
         <NavigateBack backPage="홈" backLink='/'/>
         <Title title="문서관리"/>
         <div className="flex flex-row justify-between">

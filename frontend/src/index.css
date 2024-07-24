@@ -18,6 +18,13 @@ body {
     @apply font-KoPubDotum;
   }
 
+.rotate {
+    transform: rotate(7deg);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 
 .gradient-text {
     background: linear-gradient(to right, #F8DE56, #B2D170);

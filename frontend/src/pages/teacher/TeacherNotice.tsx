@@ -91,7 +91,7 @@ export default function TeacherNotice() {
     return (
         <>
             <TeacherHeader />
-            <div className="px-[150px] flex flex-col items-center">
+            <div className="mt-[85px] px-[150px] flex flex-col items-center">
                 <NavigateBack backPage="홈" backLink='/' />
                 <Title title="알림장" />
                 <button onClick={openCreateModal} className="absolute top-[125px] right-[150px] border-[2px] border-[#7C7C7C] bg-[#E3EEFF] px-3 py-1 font-bold rounded-[10px] hover:bg-[#D4DDEA] flex flex-row items-center">

@@ -139,7 +139,7 @@ export default function TeacherGrowth() {
   return (
     <>
       <TeacherHeader />
-      <div className="font-KoPubDotum px-[150px]">
+      <div className="mt-[120px] px-[150px]">
         <NavigateBack backPage="홈" backLink="/" />
         <Title title="성장일지" />
         <div className="flex flex-row justify-between">

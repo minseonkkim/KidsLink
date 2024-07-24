@@ -38,6 +38,7 @@ import TeacherOurClass from "./pages/teacher/TeacherOurClass";
 
 import TeacherSchedule from "./pages/teacher/TeacherSchedule";
 import JoinDetails from "./pages/common/JoinDetails";
+import TeacherAlbumFinish from "./pages/teacher/TeacherAlbumFinish";
 // import JoinDetailsWrapper from "./pages/member/JoinDetailWrapper";
 
 const App: React.FC = () => {
@@ -77,6 +78,7 @@ const App: React.FC = () => {
             <Route path="/document" element={<TeacherDocument />} />
             <Route path="/notice" element={<TeacherNotice />} />
             <Route path="/album" element={<TeacherAlbum />} />
+            <Route path="/album/finish" element={<TeacherAlbumFinish />} />
             <Route path="/growth" element={<TeacherGrowth />} />
             <Route path="/meeting" element={<TeacherMeeting />} />
             <Route
