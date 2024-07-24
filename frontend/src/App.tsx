@@ -44,6 +44,11 @@ const App: React.FC = () => {
   //     navigate("/login");
   //   }
   // }, [userType, navigate]);
+  // useEffect(() => {
+  //   if (userType !== "ROLE_PARENT" && userType !== "ROLE_TEACHER") {
+  //     // navigate("/login");
+  //   }
+  // }, [userType, navigate]);
 
   return (
     <>
