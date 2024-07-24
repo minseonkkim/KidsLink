@@ -7,7 +7,6 @@ import com.ssafy.kidslink.application.parent.service.ParentService;
 import com.ssafy.kidslink.common.dto.APIError;
 import com.ssafy.kidslink.common.dto.APIResponse;
 import com.ssafy.kidslink.common.security.CustomUserDetails;
-import com.ssafy.kidslink.common.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -22,30 +21,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 public class ParentController {
     private final ParentService parentService;
-    private final UserService userService;
     private final ParentMapper parentMapper;
-
-    @PostMapping("")
-    public ResponseEntity<APIResponse<Boolean>> existsUsername(String username) {
-        APIResponse<Boolean> responseData;
-
-        if (userService.isExistUser(username)) {
-            responseData = new APIResponse<>(
-                    "success",
-                    true,
-                    "해당 유저가 존재합니다.",
-                    null
-            );
-        } else {
-            responseData = new APIResponse<>(
-                    "success",
-                    false,
-                    "해당 유저가 존재하지 않습니다.",
-                    null
-            );
-        }
-        return new ResponseEntity<>(responseData, HttpStatus.OK);
-    }
 
     @PostMapping("")
     public ResponseEntity<APIResponse<Void>> joinProcess(@ModelAttribute JoinDTO joinDTO) {

@@ -13,7 +13,7 @@ public class UserService {
     private final ParentRepository parentRepository;
 
     public boolean isExistUser(String username) {
-        return teacherRepository.existsByTeacherUsername(username) && parentRepository.existsByParentUsername(username);
+        return teacherRepository.existsByTeacherUsername(username) || parentRepository.existsByParentUsername(username);
     }
 
     public boolean isExistByUsernameForTeacher(String username) {

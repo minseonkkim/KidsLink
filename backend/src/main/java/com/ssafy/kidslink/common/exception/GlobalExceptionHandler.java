@@ -14,13 +14,11 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @Slf4j
 public class GlobalExceptionHandler {
 
-
-
     @ExceptionHandler(UsernameNotFoundException.class)
     public ResponseEntity<APIResponse<Void>> handleUsernameNotFoundException(UsernameNotFoundException ex) {
         APIError apiError = new APIError("USERNAME_NOT_FOUND", ex.getMessage());
         APIResponse<Void> response = new APIResponse<>(
-                "error",
+                "fail",
                 null,
                 "Username not found",
                 apiError
@@ -53,6 +51,7 @@ public class GlobalExceptionHandler {
         );
         return new ResponseEntity<>(responseData, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<APIResponse<Void>> handleNotFoundException(NotFoundException e) {
         APIError apiError = new APIError("NOT_FOUND", e.getMessage());
@@ -75,5 +74,17 @@ public class GlobalExceptionHandler {
                 apiError
         );
         return new ResponseEntity<>(responseData, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(RequestDataException.class)
+    public ResponseEntity<APIResponse<Void>> handleRequestDataException(RequestDataException e) {
+        APIError apiError = new APIError("REQUEST_DATA_ERROR", e.getMessage());
+        APIResponse<Void> responseData = new APIResponse<>(
+                "fail",
+                null,
+                "요청 데이터 문제 발생",
+                apiError
+        );
+        return new ResponseEntity<>(responseData, HttpStatus.BAD_REQUEST);
     }
 }
