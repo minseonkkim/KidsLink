@@ -144,7 +144,7 @@ const ParentFormStep2: FC<ParentFormStep2Props> = ({ onBack, onNext }) => {
   };
 
   return (
-    <div className="max-w-lg mx-auto p-6">
+    <div className="w-full p-6">
       {/* 회원가입 진행률 */}
       <div className="relative flex h-[62px] mx-3">
         <div className="flex-1 relative">

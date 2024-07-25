@@ -1,5 +1,6 @@
-import { FC } from "react";
+import { useEffect, useState } from "react";
 import { FaCheck } from "react-icons/fa";
+import Confetti from "react-confetti";
 import daramgi from "../../assets/join/joinResultDaramgi.png";
 import { useAppStore } from "../../stores/store";
 import { login as apiLogin } from "../../api/member";
@@ -8,6 +9,14 @@ import { useNavigate } from "react-router-dom";
 const ParentFormStep3: FC = () => {
   const { username, password } = useAppStore();
   const navigate = useNavigate();
+  const [showConfetti, setShowConfetti] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowConfetti(false);
+    }, 5000); // 폭죽 효과가 5초 동안 나타나도록 설정
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleLogin = async () => {
     try {
@@ -21,7 +30,8 @@ const ParentFormStep3: FC = () => {
   };
 
   return (
-    <div className="max-w-lg mx-auto p-6">
+    <div className="w-full p-6">
+      {showConfetti && <Confetti />}
       {/* 회원가입 진행률 */}
       <div className="relative flex h-[62px] mx-3">
         <div className="flex-1 relative">
