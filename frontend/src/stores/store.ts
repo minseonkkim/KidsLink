@@ -12,15 +12,10 @@ interface AuthState {
 }
 
 // UserState interface and state
-export interface UserState {
+interface UserState {
   userType: string;
   setUserType: (userType: string) => void;
 }
-
-export const useUserStore = create<UserState>((set) => ({
-  userType: '',
-  setUserType: (userType: string) => set({ userType }),
-}));
 
 // ParentInfoState interface and state
 interface ParentInfoState {
@@ -52,7 +47,7 @@ interface ChildInfoState {
   setClassName: (className: string) => void;
 }
 
-// AppState interface and state
+// Unified AppState interface
 interface AppState extends AuthState, UserState, ParentInfoState, ChildInfoState {}
 
 export const useAppStore = create<AppState>((set) => ({
@@ -95,4 +90,3 @@ export const useAppStore = create<AppState>((set) => ({
   setKindergartenName: (kindergartenName) => set(() => ({ kindergartenName })),
   setClassName: (className) => set(() => ({ className })),
 }));
-

@@ -1,5 +1,5 @@
 import { ChangeEvent, useState, useEffect, FormEvent } from "react";
-import { teacherSignup } from "../../api/member/member";
+import { teacherSignup } from "../../api/member";
 import { CiCamera } from "react-icons/ci";
 import UserInfoForm from "./UserInfoForm";
 
