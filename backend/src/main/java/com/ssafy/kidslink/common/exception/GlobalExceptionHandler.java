@@ -14,6 +14,17 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @Slf4j
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler(InvalidPrincipalException.class)
+    public ResponseEntity<APIResponse<Object>> handleInvalidPrincipalException(InvalidPrincipalException ex) {
+        APIResponse<Object> response = new APIResponse<>(
+                "error",
+                null,
+                ex.getMessage(),
+                null
+        );
+        return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+    }
+
     @ExceptionHandler(UsernameNotFoundException.class)
     public ResponseEntity<APIResponse<Void>> handleUsernameNotFoundException(UsernameNotFoundException ex) {
         APIError apiError = new APIError("USERNAME_NOT_FOUND", ex.getMessage());

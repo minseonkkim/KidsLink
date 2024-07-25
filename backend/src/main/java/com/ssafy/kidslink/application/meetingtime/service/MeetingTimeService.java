@@ -61,7 +61,7 @@ public class MeetingTimeService {
 
     }
 
-    public void reserveMeeting(String parentUsername, ReserveMeetingDTO reserveMeetingDTO) {
+    public void reserveMeeting(String parentUsername, int id, ReserveMeetingDTO reserveMeetingDTO) {
         Parent parent = parentRepository.findByParentUsername(parentUsername);
 
         MeetingSchedule meetingSchedule = new MeetingSchedule();
@@ -70,7 +70,10 @@ public class MeetingTimeService {
         meetingSchedule.setMeetingScheduleTime(reserveMeetingDTO.getMeetingTime());
         meetingSchedule.setTeacher(teacherRepository.findByKindergartenClass(
                 parent.getChildren().stream().findFirst().get().getKindergartenClass()));
-        meetingScheduleRepository.save(meetingSchedule);
+
+        System.out.println((meetingScheduleRepository.save(meetingSchedule).getMeetingScheduleId()));
+        System.out.println(meetingTimeRepository.findById(id));
+        meetingTimeRepository.deleteById(id);
 
     }
 

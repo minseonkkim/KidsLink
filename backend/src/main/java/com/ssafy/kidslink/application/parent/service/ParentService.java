@@ -2,6 +2,7 @@ package com.ssafy.kidslink.application.parent.service;
 
 import com.ssafy.kidslink.application.child.domain.Child;
 import com.ssafy.kidslink.application.child.dto.ChildDTO;
+import com.ssafy.kidslink.application.child.mapper.ChildMapper;
 import com.ssafy.kidslink.application.child.repository.ChildRepository;
 import com.ssafy.kidslink.application.image.dto.ImageDTO;
 import com.ssafy.kidslink.application.image.service.ImageService;
@@ -21,6 +22,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -33,6 +36,7 @@ public class ParentService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final ImageService imageService;
     private final UserService userService;
+    private final ChildMapper childMapper;
 
     @Transactional
     public void joinProcess(JoinDTO joinDTO) {
@@ -84,5 +88,13 @@ public class ParentService {
 
     public Parent getDetailByUsername(String username) {
         return parentRepository.findByParentUsername(username);
+    }
+
+    public Set<ChildDTO> getMyChildren(String username) {
+        return parentRepository.findByParentUsername(username)
+                .getChildren()
+                .stream()
+                .map(childMapper::toDTO)
+                .collect(Collectors.toSet());
     }
 }

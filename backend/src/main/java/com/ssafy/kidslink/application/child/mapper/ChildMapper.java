@@ -33,8 +33,8 @@ public class ChildMapper {
         childDTO.setName(child.getChildName());
         childDTO.setBirth(child.getChildBirth());
         childDTO.setGender(child.getChildGender().getCode());
-        childDTO.setKindergartenName(childDTO.getKindergartenName());
-        childDTO.setKindergartenClassName(childDTO.getKindergartenClassName());
+        childDTO.setKindergartenName(child.getKindergartenClass().getKindergarten().getKindergartenName());
+        childDTO.setKindergartenClassName(child.getKindergartenClass().getKindergartenClassName());
 
         return childDTO;
     }

@@ -81,8 +81,21 @@ public class ScheduleService {
         return schedules;
     }
 
+    public List<LocalDate> getParentSchedules(String userName, int year, int month){
+        Parent parent = parentRepository.findByParentUsername(userName);
+        List<LocalDate> parentSchedules = new ArrayList<>();
+        for(LocalDate date : scheduleRepository.findScheduleDatesByKindergartenAndYearAndMonth(
+                parent.getChildren().iterator().next().getKindergartenClass().getKindergarten(),year,month)){
+            parentSchedules.add(date);
+        }
+        for(LocalDate date : meetingScheduleRepository.findScheduleDatesByParentAndYearAndMonth(parent,year,month)){
+            parentSchedules.add(date);
+        }
+        return parentSchedules;
 
-    public AllParentScheduleDTO getParentSchedules(String userName, LocalDate date) {
+    }
+
+    public AllParentScheduleDTO getParentDetailSchedules(String userName, LocalDate date) {
         Parent parent = parentRepository.findByParentUsername(userName);
 
         AllParentScheduleDTO schedules = new AllParentScheduleDTO();
