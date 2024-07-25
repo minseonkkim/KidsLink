@@ -15,6 +15,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/schedule")
@@ -50,13 +51,42 @@ public class ScheduleController {
         return new ResponseEntity<>(responseData, HttpStatus.BAD_REQUEST);
     }
 
-
+    //부모님 월별 일정 조회
     @GetMapping("/parent")
-    public ResponseEntity<APIResponse<AllParentScheduleDTO>> getParentSchedules(@AuthenticationPrincipal Object principal,
+    public ResponseEntity<APIResponse<List<LocalDate>>> getParentSchedule(@AuthenticationPrincipal Object principal,
+                                                                        @RequestParam(value = "year", required = true)int year,
+                                                                        @RequestParam(value = "month", required = true)int month) {
+        if(principal instanceof CustomUserDetails){
+            CustomUserDetails userDetails = (CustomUserDetails) principal;
+            List<LocalDate> schedules = scheduleService.getParentSchedules(userDetails.getUsername(),year, month);
+            APIResponse<List<LocalDate>> responseData = new APIResponse<>(
+                    "success",
+                    schedules,
+                    "부모 일정 조회에 성공하였습니다.",
+                    null
+            );
+            return new ResponseEntity<>(responseData, HttpStatus.OK);
+        }
+        APIError apiError = new APIError("UNAUTHORIZED", "유효한 JWT 토큰이 필요합니다.");
+
+        APIResponse<List<LocalDate>> responseData = new APIResponse<>(
+                "success",
+                null,
+                "부모 일정 조회에 실패했습니다.",
+                apiError
+        );
+
+        return new ResponseEntity<>(responseData, HttpStatus.BAD_REQUEST);
+    }
+
+
+    // 부모님 일자별 일정 상세 조회
+    @GetMapping("/parent/detail")
+    public ResponseEntity<APIResponse<AllParentScheduleDTO>> getParentDetailSchedules(@AuthenticationPrincipal Object principal,
                                                                                          @RequestParam(value="date", required = true)String date) {
         if(principal instanceof CustomUserDetails){
             CustomUserDetails userDetails = (CustomUserDetails) principal;
-            AllParentScheduleDTO schedules = scheduleService.getParentSchedules(userDetails.getUsername(),LocalDate.parse(date));
+            AllParentScheduleDTO schedules = scheduleService.getParentDetailSchedules(userDetails.getUsername(),LocalDate.parse(date));
             APIResponse<AllParentScheduleDTO> responseData = new APIResponse<>(
                     "success",
                     schedules,
