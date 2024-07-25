@@ -96,7 +96,7 @@ const ParentFormStep1: FC<ParentFormStep1Props> = ({ onNext }) => {
         setUsernameError("중복된 아이디입니다.");
         setIsUsernameChecked(false);
       } else {
-        setUsernameError("유효한 아이디입니다.");
+        setUsernameError("사용가능한 아이디입니다.");
         setIsUsernameChecked(true);
       }
     } catch (error) {
