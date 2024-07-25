@@ -14,4 +14,5 @@ public interface MeetingScheduleRepository extends JpaRepository<MeetingSchedule
     List<MeetingSchedule> findByTeacher(Teacher teahcer);
     List<MeetingSchedule> findByParent(Parent parent);
     List<MeetingSchedule> findByTeacherAndMeetingScheduleDate(Teacher teacher, LocalDate date);
+    List<MeetingSchedule> findByParentAndMeetingScheduleDate(Parent parent, LocalDate date);
 }

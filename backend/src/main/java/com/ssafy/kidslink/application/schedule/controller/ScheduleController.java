@@ -1,7 +1,7 @@
 package com.ssafy.kidslink.application.schedule.controller;
 
+import com.ssafy.kidslink.application.schedule.dto.AllParentScheduleDTO;
 import com.ssafy.kidslink.application.schedule.dto.AllTeacherScheduleDTO;
-import com.ssafy.kidslink.application.schedule.dto.KindergartenScheduleDTO;
 import com.ssafy.kidslink.application.schedule.dto.TeacherScheduleDTO;
 import com.ssafy.kidslink.application.schedule.service.ScheduleService;
 import com.ssafy.kidslink.common.dto.APIError;
@@ -15,7 +15,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/schedule")
@@ -53,24 +52,25 @@ public class ScheduleController {
 
 
     @GetMapping("/parent")
-    public ResponseEntity<APIResponse<List<KindergartenScheduleDTO>>> getParentSchedules(@AuthenticationPrincipal Object principal) {
+    public ResponseEntity<APIResponse<AllParentScheduleDTO>> getParentSchedules(@AuthenticationPrincipal Object principal,
+                                                                                         @RequestParam(value="date", required = true)String date) {
         if(principal instanceof CustomUserDetails){
             CustomUserDetails userDetails = (CustomUserDetails) principal;
-            List<KindergartenScheduleDTO> schedules = scheduleService.getParentSchedules(userDetails.getUsername());
-            APIResponse<List<KindergartenScheduleDTO>> responseData = new APIResponse<>(
+            AllParentScheduleDTO schedules = scheduleService.getParentSchedules(userDetails.getUsername(),LocalDate.parse(date));
+            APIResponse<AllParentScheduleDTO> responseData = new APIResponse<>(
                     "success",
                     schedules,
-                    "학사 일정 조회에 성공하였습니다.",
+                    "부모 일자별 일정 조회에 성공하였습니다.",
                     null
             );
             return new ResponseEntity<>(responseData, HttpStatus.OK);
         }
         APIError apiError = new APIError("UNAUTHORIZED", "유효한 JWT 토큰이 필요합니다.");
 
-        APIResponse<List<KindergartenScheduleDTO>> responseData = new APIResponse<>(
+        APIResponse<AllParentScheduleDTO> responseData = new APIResponse<>(
                 "success",
                 null,
-                "학사 일정 조회에 실패했습니다.",
+                "부모 일자별 일정 조회에 실패했습니다.",
                 apiError
         );
 
