@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import LoginHeader from "../../components/login/LoginHeader";
 import mainImg from "../../assets/teacher/main_img.png";
 import { Link, useNavigate } from "react-router-dom";
-import { login as loginAPI } from "../../api/member/member";
+import { login as loginAPI } from "../../api/member";
 import { useAppStore } from "../../stores/store"; // Update import here
 
 export default function Login() {
