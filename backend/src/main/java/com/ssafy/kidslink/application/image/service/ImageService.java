@@ -9,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartRequest;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.File;
@@ -19,10 +18,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -38,9 +33,6 @@ public class ImageService {
 
     @Value("${file.max-size}")
     private long maxFileSize;
-
-    @Value("${file.path}")
-    private String LOCAL_LOCATION;
 
     @PostConstruct
     public void init() {
@@ -113,39 +105,6 @@ public class ImageService {
         }
 
         return fileName;
-    }
-
-    public List<ImageDTO> imageUpload(MultipartRequest request) throws IOException {
-        String saveFolder = getSaveFolder();
-
-        File folder = new File(saveFolder);
-        if (!folder.exists()) {
-            folder.mkdirs();
-        }
-
-        List<ImageDTO> savedFilePaths = new ArrayList<>();
-        List<MultipartFile> files = request.getFiles("files");
-
-        for (MultipartFile file : files) {
-            savedFilePaths.add(fileSave(file, folder, saveFolder));
-        }
-        return savedFilePaths;
-    }
-
-    public ImageDTO imageSave(MultipartFile multipartFile) throws IOException {
-        String saveFolder = getSaveFolder();
-
-        File folder = new File(saveFolder);
-        if (!folder.exists()) {
-            folder.mkdirs();
-        }
-
-        return fileSave(multipartFile, folder, saveFolder);
-    }
-
-    private String getSaveFolder() {
-        String today = new SimpleDateFormat("yyMMdd").format(new Date());
-        return LOCAL_LOCATION + File.separator + today;
     }
 
     private ImageDTO fileSave(MultipartFile file, File folder, String saveFolder) throws IOException {

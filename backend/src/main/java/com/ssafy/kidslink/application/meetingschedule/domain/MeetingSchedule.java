@@ -21,6 +21,9 @@ public class MeetingSchedule {
     @Column(name = "meeting_schedule_date")
     private LocalDate meetingScheduleDate;
 
+    @Column(name = "meeting_schedule_time")
+    private String meetingScheduleTime;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "teacher_id", nullable = false)
     private Teacher teacher;

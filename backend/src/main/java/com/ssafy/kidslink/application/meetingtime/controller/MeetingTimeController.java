@@ -1,7 +1,9 @@
 package com.ssafy.kidslink.application.meetingtime.controller;
 
+import com.ssafy.kidslink.application.meetingschedule.dto.MeetingScheduleDTO;
 import com.ssafy.kidslink.application.meetingtime.dto.MeetingTimeDTO;
 import com.ssafy.kidslink.application.meetingtime.dto.OpenMeetingTimeDTO;
+import com.ssafy.kidslink.application.meetingtime.dto.ReserveMeetingDTO;
 import com.ssafy.kidslink.application.meetingtime.service.MeetingTimeService;
 import com.ssafy.kidslink.common.dto.APIError;
 import com.ssafy.kidslink.common.dto.APIResponse;
@@ -73,6 +75,59 @@ public class MeetingTimeController {
 
         return new ResponseEntity<>(responseData, HttpStatus.BAD_REQUEST);
 
+    }
+
+    @PostMapping("")
+    public ResponseEntity<APIResponse<Void>> reserveMeeting(@AuthenticationPrincipal Object principal, @RequestBody ReserveMeetingDTO requestDTO){
+        if(principal instanceof CustomUserDetails){
+            CustomUserDetails userDetails = (CustomUserDetails) principal;
+
+            meetingTimeService.reserveMeeting(userDetails.getUsername(), requestDTO);
+            APIResponse<Void> responseData = new APIResponse<>(
+                    "success",
+                    null,
+                    "상담 일정 예약에 성공하였습니다.",
+                    null
+            );
+            return new ResponseEntity<>(responseData, HttpStatus.OK);
+        }
+        APIError apiError = new APIError("UNAUTHORIZED", "유효한 JWT 토큰이 필요합니다.");
+
+        APIResponse<Void> responseData = new APIResponse<>(
+                "success",
+                null,
+                "상담 일정 예약을 실패했습니다.",
+                apiError
+        );
+
+        return new ResponseEntity<>(responseData, HttpStatus.BAD_REQUEST);
+    }
+
+    @GetMapping("/reservation")
+    public ResponseEntity<APIResponse<List<MeetingScheduleDTO>>> getMeetingReservations(@AuthenticationPrincipal Object principal){
+        if(principal instanceof CustomUserDetails){
+            CustomUserDetails userDetails = (CustomUserDetails) principal;
+            String role = userDetails.getAuthorities().iterator().next().getAuthority();
+
+            List<MeetingScheduleDTO> meetingReservations = meetingTimeService.getMeetingReservations(role,userDetails.getUsername());
+            APIResponse<List<MeetingScheduleDTO>> responseData = new APIResponse<>(
+                    "success",
+                    meetingReservations,
+                    "상담 예약 일정 조회에 성공하였습니다.",
+                    null
+            );
+            return new ResponseEntity<>(responseData, HttpStatus.OK);
+        }
+        APIError apiError = new APIError("UNAUTHORIZED", "유효한 JWT 토큰이 필요합니다.");
+
+        APIResponse<List<MeetingScheduleDTO>> responseData = new APIResponse<>(
+                "success",
+                null,
+                "상담 예약 일정 조회에 실패했습니다.",
+                apiError
+        );
+
+        return new ResponseEntity<>(responseData, HttpStatus.BAD_REQUEST);
 
     }
 }
