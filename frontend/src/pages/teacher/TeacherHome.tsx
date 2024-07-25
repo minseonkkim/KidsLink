@@ -16,7 +16,7 @@ export default function TeacherHome(){
     
     return <>
         <TeacherHeader/>
-        <div className="font-KoPubDotum flex flex-row min-h-[calc(100vh-105px)] h-full items-center justify-between pl-[150px] pr-[35px]">
+        <div className="mt-[85px] flex flex-row min-h-[calc(100vh-105px)] h-full items-center justify-between pl-[150px] pr-[35px]">
             
             <div className="w-[350px] h-[500px] rounded-[20px] bg-[#f4f4f4] flex flex-col items-center py-7 drop-shadow-md">
                 <div className="w-[170px] h-[170px]">

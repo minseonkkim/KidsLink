@@ -1,14 +1,12 @@
-import React, { useEffect } from "react";
 import {
   BrowserRouter as Router,
   Routes,
   Route,
-  useNavigate,
 } from "react-router-dom";
-import { useUserStore, UserState } from "./stores/store";  // UserState 인터페이스 import
+import { useAppStore, UserState } from "./stores/store";  // UserState 인터페이스 import
 import ParentHome from "./pages/parent/ParentHome";
 import ParentDocument from "./pages/parent/ParentDocument";
-import ParentDocumentSubmit from "./pages/parent/ParentDoocumentSubmit";
+import ParentDocumentSubmit from "./pages/parent/ParentDocumentSubmit";
 import ParentNotice from "./pages/parent/ParentNotice";
 import ParentNoticeDetail from "./pages/parent/ParentNoticeDetail";
 import ParentAlbum from "./pages/parent/ParentAlbum";
@@ -34,16 +32,10 @@ import Join from "./pages/common/Join";
 import TeacherOurClass from "./pages/teacher/TeacherOurClass";
 import TeacherSchedule from "./pages/teacher/TeacherSchedule";
 import JoinDetails from "./pages/common/JoinDetails";
+import TeacherAlbumFinish from "./pages/teacher/TeacherAlbumFinish";
 
 const App: React.FC = () => {
-  const userType = useUserStore((state: UserState) => state.userType); // UserState 타입 지정
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (userType !== "ROLE_PARENT" && userType !== "ROLE_TEACHER") {
-      navigate("/login");
-    }
-  }, [userType, navigate]);
+  const userType = useAppStore((state: UserState) => state.userType); // UserState 타입 지정
 
   return (
     <>
@@ -71,6 +63,7 @@ const App: React.FC = () => {
             <Route path="/document" element={<TeacherDocument />} />
             <Route path="/notice" element={<TeacherNotice />} />
             <Route path="/album" element={<TeacherAlbum />} />
+            <Route path="/album/finish" element={<TeacherAlbumFinish />} />
             <Route path="/growth" element={<TeacherGrowth />} />
             <Route path="/meeting" element={<TeacherMeeting />} />
             <Route path="/meeting/reservation" element={<TeacherReservation />} />
@@ -80,9 +73,9 @@ const App: React.FC = () => {
           </>
         ) : (
           <>
-            <Route path="/login" element={<Login />} />
+            <Route path="/" element={<Login />} />
             <Route path="/join" element={<Join />} />
-            <Route path="/join/details" element={<JoinDetails />} />
+            <Route path="/join/:role" element={<JoinDetails />} />
           </>
         )}
       </Routes>

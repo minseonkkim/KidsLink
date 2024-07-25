@@ -92,7 +92,7 @@ export default function TeacherBus() {
   return (
     <>
     <TeacherHeader/>
-    <div className="font-KoPubDotum px-[150px]">
+    <div className="mt-[120px] px-[150px]">
           <NavigateBack backPage="홈" backLink='/'/>
           <Title title="등하원관리"/>
           <div className="absolute top-[180px] left-[150px] rounded-[10px] border-[1px] border-[#7C7C7C] w-[86px]">          

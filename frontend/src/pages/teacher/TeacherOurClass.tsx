@@ -29,7 +29,7 @@ export default function TeacherOurClass() {
     return (
         <>
             <TeacherHeader />
-            <div className="px-[150px] flex flex-col items-center">            
+            <div className="mt-[85px] px-[150px] flex flex-col items-center">            
                 <NavigateBack backPage="홈" backLink='/' />            
                 <Title title="반 이름" />
                 <div className="absolute top-[125px] right-[450px] bg-[#ffdfdf] px-5 py-2 font-bold rounded-[10px] flex flex-row items-center text-xl font-bold">
