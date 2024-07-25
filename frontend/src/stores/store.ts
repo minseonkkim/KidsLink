@@ -6,6 +6,6 @@ export interface UserState {  // UserState 인터페이스를 export
 }
 
 export const useUserStore = create<UserState>((set) => ({
-  userType: '',
+  userType: 'ROLE_TEACHER',
   setUserType: (userType) => set({ userType }),
 }));
