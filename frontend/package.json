@@ -11,10 +11,12 @@
     "gen-pwa": "pwa-assets-generator --preset minimal public/vite.svg"
   },
   "dependencies": {
+    "@livekit/components-react": "^2.3.6",
     "@types/react-modal": "^3.16.3",
     "@types/react-router-dom": "^5.3.3",
     "axios": "^1.7.2",
     "clsx": "^2.1.1",
+    "livekit-client": "^2.4.0",
     "formik": "^2.4.6",
     "moment": "^2.30.1",
     "react": "^18.3.1",
@@ -29,9 +31,11 @@
     "react-router-dom": "^6.25.1",
     "styled-components": "^6.1.12",
     "yup": "^1.4.0",
+    "web-vitals": "^1.1.2",
     "zustand": "^4.5.4"
   },
   "devDependencies": {
+    "@types/node": "^20.14.11",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@typescript-eslint/eslint-plugin": "^7.15.0",

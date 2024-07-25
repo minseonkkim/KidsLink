@@ -4,7 +4,6 @@ import Title from '../../components/teacher/common/Title';
 import NavigateBack from '../../components/teacher/common/NavigateBack';
 import { IoSearch } from "react-icons/io5";
 import DosageDocument from '../../components/teacher/document/DosageDocument';
-import AbsentDocument from '../../components/teacher/document/AbsentDocument';
 import DocumentChild from '../../components/teacher/document/DocumentChild';
 
 
