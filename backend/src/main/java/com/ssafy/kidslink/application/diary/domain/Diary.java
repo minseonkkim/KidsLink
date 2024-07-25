@@ -23,6 +23,9 @@ public class Diary {
     @Column(name = "diary_contents")
     private String diaryContents;
 
+    @Column(name = "diary_thumbnail")
+    private String diaryThumbnail;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "child_id", nullable = false)
     private Child child;
