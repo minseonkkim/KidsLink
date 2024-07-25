@@ -6,10 +6,9 @@ import { parentSignup } from '../../api/member/member';
 interface ParentFormStep2Props {
   onNext: () => void;
   onBack: () => void;
-  onComplete: () => void;
 }
 
-const ParentFormStep2: FC<ParentFormStep2Props> = ({ onBack, onComplete }) => {
+const ParentFormStep2: FC<ParentFormStep2Props> = ({ onBack, onNext }) => {
   const {
     gender, setGender,
     childName, setChildName,
@@ -53,7 +52,7 @@ const ParentFormStep2: FC<ParentFormStep2Props> = ({ onBack, onComplete }) => {
 
     try {
       await parentSignup(parentData);
-      onComplete(); // Call the complete handler to move to the next step
+      onNext(); // 회원가입 성공 후 다음 단계로 이동
     } catch (error) {
       console.error("Signup failed", error);
     }

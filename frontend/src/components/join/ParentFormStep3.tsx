@@ -1,20 +1,26 @@
 import { FC } from "react";
 import { FaCheck } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
 import daramgi from "../../assets/join/joinResultDaramgi.png";
-import { useAppStore } from "../../stores/store"
+import { useAppStore } from "../../stores/store";
+import { login as apiLogin } from "../../api/member/member";
+import { useNavigate } from "react-router-dom";
+import { useUserStore } from "../../stores/store";
 
-interface ParentFormStep3Props {
-  onComplete: () => void;
-}
 
-const ParentFormStep3: FC<ParentFormStep3Props> = () => {
+const ParentFormStep3: FC = () => {
+  const { username, password } = useAppStore();
   const navigate = useNavigate();
-  const { login } = useAppStore();
 
-  const handleLogin = () => {
-    login();
-    navigate('/');
+  const handleLogin = async () => {
+    try {
+      await apiLogin({ username, password });
+      console.log("로그인 체크")
+      console.log(useUserStore.getState().userType)
+      navigate('/'); // 로그인 성공 후 리다이렉션
+
+    } catch (error) {
+      console.error('Login failed:', error);
+    }
   };
 
   return (

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import JoinHeader from "../../components/join/JoinHeader";
 import ParentFormStep1 from "../../components/join/ParentFormStep1";
 import ParentFormStep2 from "../../components/join/ParentFormStep2";
@@ -10,12 +10,10 @@ import TeacherFormStep3 from "../../components/join/TeacherFormStep3"; // 임시
 
 const JoinDetails = () => {
   const { role } = useParams<{ role: string }>(); // Extract 'role' from URL parameters
-  const navigate = useNavigate();
   const [step, setStep] = useState<number>(1); // Set the default step to 1
 
   const handleNextStep = () => setStep((prevStep) => prevStep + 1);
   const handlePrevStep = () => setStep((prevStep) => prevStep - 1);
-  const handleComplete = () => navigate("/");
 
   let FormComponent: JSX.Element | null = null;
 
@@ -23,9 +21,9 @@ const JoinDetails = () => {
     if (step === 1) {
       FormComponent = <ParentFormStep1 onNext={handleNextStep} />;
     } else if (step === 2) {
-      FormComponent = <ParentFormStep2 onNext={handleNextStep} onBack={handlePrevStep} onComplete={handleComplete} />;
+      FormComponent = <ParentFormStep2 onNext={handleNextStep} onBack={handlePrevStep} />;
     } else if (step === 3) {
-      FormComponent = <ParentFormStep3 onComplete={handleComplete} />;
+      FormComponent = <ParentFormStep3 />;
     } else {
       FormComponent = <p>잘못된 단계입니다.</p>;
     }
@@ -33,9 +31,9 @@ const JoinDetails = () => {
     if (step === 1) {
       FormComponent = <TeacherFormStep1 onNext={handleNextStep} />;
     } else if (step === 2) {
-      FormComponent = <TeacherFormStep2 onNext={handleNextStep} onBack={handlePrevStep} onComplete={handleComplete} />;
+      FormComponent = <TeacherFormStep2 onNext={handleNextStep} onBack={handlePrevStep} />;
     } else if (step === 3) {
-      FormComponent = <TeacherFormStep3 onComplete={handleComplete} />;
+      FormComponent = <TeacherFormStep3 />;
     } else {
       FormComponent = <p>잘못된 단계입니다.</p>;
     }

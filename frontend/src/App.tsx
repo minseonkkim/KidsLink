@@ -73,7 +73,7 @@ const App: React.FC = () => {
           </>
         ) : (
           <>
-            <Route path="/login" element={<Login />} />
+            <Route path="/" element={<Login />} />
             <Route path="/join" element={<Join />} />
             <Route path="/join/:role" element={<JoinDetails />} />
           </>

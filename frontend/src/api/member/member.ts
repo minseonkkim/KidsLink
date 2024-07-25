@@ -1,5 +1,6 @@
 import axiosInstance from './axiosInstance'; // Axios 인스턴스 import
 import axios from 'axios'
+import { useUserStore } from '../../stores/store'
 
 const BASE_URL = 'http://localhost:8080/api';
 
@@ -85,18 +86,21 @@ export const fetchAccessToken = async (): Promise<string | undefined> => {
 
 // 로그인 함수
 export async function login(user: LoginData) {
+  const setUserType = useUserStore.getState().setUserType; // 상태 업데이트 함수 가져오기
+
   console.log("Attempting to login with:", user.username); // 민감한 정보를 포함하지 않도록 수정
   try {
-    const response = await axiosInstance.post(`/user/login`, user, {
+    const response = await axiosInstance.post('/user/login', user, {
       headers: {
         'Content-Type': 'application/json',
       },
     });
 
     if (response.data.status === "success") {
-      const { token, expiredAt } = response.data.data;
+      const { token, expiredAt, role } = response.data.data;
       localStorage.setItem('accessToken', token);
       localStorage.setItem('expiredAt', expiredAt.toString());
+      setUserType(role); // 상태 업데이트
       console.log("Login successful:", response.data.data); // 로그인 성공 정보만 출력
       return response.data.data;
     } else {
@@ -111,7 +115,6 @@ export async function login(user: LoginData) {
     throw error;
   }
 }
-
 
 // 학부모 회원가입 함수
 export async function parentSignup(user: ParentSignupData) {

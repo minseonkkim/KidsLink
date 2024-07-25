@@ -17,6 +17,11 @@ export interface UserState {
   setUserType: (userType: string) => void;
 }
 
+export const useUserStore = create<UserState>((set) => ({
+  userType: '',
+  setUserType: (userType: string) => set({ userType }),
+}));
+
 // ParentInfoState interface and state
 interface ParentInfoState {
   email: string;
@@ -61,7 +66,7 @@ export const useAppStore = create<AppState>((set) => ({
   logout: () => set(() => ({ isLoggedIn: false, username: '', password: '' })),
 
   // UserState initial values and methods
-  userType: '',
+  userType: 'none',
   setUserType: (userType) => set(() => ({ userType })),
 
   // ParentInfoState initial values and methods
