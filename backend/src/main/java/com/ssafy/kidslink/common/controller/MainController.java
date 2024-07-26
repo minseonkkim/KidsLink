@@ -1,6 +1,5 @@
 package com.ssafy.kidslink.common.controller;
 
-import com.ssafy.kidslink.application.image.service.ImageService;
 import com.ssafy.kidslink.common.dto.APIError;
 import com.ssafy.kidslink.common.dto.APIResponse;
 import com.ssafy.kidslink.common.jwt.JWTUtil;
@@ -16,9 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartRequest;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,18 +28,7 @@ import static com.ssafy.kidslink.common.util.CookieUtil.createCookie;
 public class MainController {
 
     private final JWTUtil jwtUtil;
-    private final ImageService imageService;
     private final InitialDataService initialDataService;
-
-    @PostMapping("/upload/photos")
-    public ResponseEntity<APIResponse<Map<String, Object>>> uploadPhotos(MultipartRequest request) throws IOException {
-        // 테스트
-        // curl -X POST -F "file=@test_image.jpg" http://localhost:8080/upload/photos
-//        List<ImageDTO> path = imageService.storeFile(request);
-
-//        System.out.println(path);
-        return null;
-    }
 
     @PostMapping("/reissue")
     public ResponseEntity<APIResponse<Map<String, Object>>> generateRefreshToken(HttpServletRequest request, HttpServletResponse response) {

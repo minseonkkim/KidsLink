@@ -99,6 +99,7 @@ CREATE TABLE `diary` (
     `diary_id` INT NOT NULL AUTO_INCREMENT,
     `diary_date` DATE NULL COMMENT 'now()',
     `diary_contents` VARCHAR(2000) NULL,
+    `diary_thumbnail` VARCHAR(255) NULL,
     `child_id` INT NOT NULL,
     PRIMARY KEY (`diary_id`),
     FOREIGN KEY (`child_id`) REFERENCES `child`(`child_id`)
@@ -192,6 +193,14 @@ CREATE TABLE `image_album` (
     PRIMARY KEY (`image_id`, `album_id`),
     FOREIGN KEY (`image_id`) REFERENCES `image`(`image_id`),
     FOREIGN KEY (`album_id`) REFERENCES `album`(`album_id`)
+);
+
+CREATE TABLE `image_diary` (
+    `image_id` INT NOT NULL,
+    `diary_id` INT NOT NULL,
+    PRIMARY KEY (`image_id`, `diary_id`),
+    FOREIGN KEY (`image_id`) REFERENCES `image`(`image_id`),
+    FOREIGN KEY (`diary_id`) REFERENCES `diary`(`diary_id`)
 );
 
 CREATE TABLE `bus_stop_child` (

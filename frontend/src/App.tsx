@@ -33,6 +33,7 @@ import TeacherOurClass from "./pages/teacher/TeacherOurClass";
 import TeacherSchedule from "./pages/teacher/TeacherSchedule";
 import JoinDetails from "./pages/common/JoinDetails";
 import TeacherAlbumFinish from "./pages/teacher/TeacherAlbumFinish";
+// import JoinDetailsWrapper from "./pages/member/JoinDetailWrapper";
 
 const App: React.FC = () => {
   const userType = useAppStore((state: UserState) => state.userType); // UserState 타입 지정

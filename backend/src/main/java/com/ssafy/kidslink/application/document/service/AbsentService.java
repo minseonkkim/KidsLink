@@ -2,16 +2,15 @@ package com.ssafy.kidslink.application.document.service;
 
 import com.ssafy.kidslink.application.child.domain.Child;
 import com.ssafy.kidslink.application.document.domain.Absent;
-import com.ssafy.kidslink.application.document.domain.Dosage;
 import com.ssafy.kidslink.application.document.dto.AbsentDTO;
 import com.ssafy.kidslink.application.document.mapper.AbsentMapper;
 import com.ssafy.kidslink.application.document.repository.AbsentRepository;
 import com.ssafy.kidslink.application.parent.domain.Parent;
 import com.ssafy.kidslink.application.parent.repository.ParentRepository;
+import com.ssafy.kidslink.common.enums.ConfirmationStatus;
 import com.ssafy.kidslink.common.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -55,6 +54,18 @@ public class AbsentService{
             return absentMapper.toDTO(absent.get());
         } else {
             throw new ResourceNotFoundException("absent not found with id " + absentId);
+        }
+    }
+
+    public void updateAbsent(int absentId) {
+        Optional<Absent> absentOptional = absentRepository.findById(absentId);
+
+        if (absentOptional.isPresent()) {
+            Absent absent = absentOptional.get();
+            absent.setConfirmationStatus(ConfirmationStatus.T);
+            absentRepository.save(absent);
+        } else {
+            throw new RuntimeException("Absent not found with id " + absentId);
         }
     }
 
