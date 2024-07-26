@@ -45,4 +45,18 @@ public class NotificationService {
         }
         return notifications;
     }
+
+
+    public int getNotificationCount(String role, String userName){
+        int cnt = 0;
+        if(role.equals("ROLE_TEACHER")){
+            Teacher teacher = teacherRepository.findByTeacherUsername(userName);
+            cnt = teacherNotificationRepository.countByTeacher(teacher);
+        }else{
+            Parent parent = parentRepository.findByParentUsername(userName);
+            cnt = parentNotificationRepository.countByParent(parent);
+        }
+        return cnt;
+    }
+
 }
