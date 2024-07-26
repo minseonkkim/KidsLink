@@ -1,5 +1,5 @@
 # 1단계: 빌드 환경 설정
-FROM node:14 AS build
+FROM node:18 AS build
 
 WORKDIR /app
 
@@ -17,11 +17,12 @@ FROM nginx:alpine
 # 빌드된 파일 복사
 COPY --from=build /app/dist /usr/share/nginx/html
 
-# Nginx 설정 복사 (필요에 따라 설정)
+# Nginx 설정 파일 복사
 COPY nginx.conf /etc/nginx/nginx.conf
 
 # Nginx 실행
 CMD ["nginx", "-g", "daemon off;"]
 
 # 포트 노출
-EXPOSE 5173
+EXPOSE 80
+EXPOSE 443
