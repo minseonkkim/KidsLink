@@ -1,14 +1,13 @@
 package com.ssafy.kidslink.application.document.service;
 
 import com.ssafy.kidslink.application.child.domain.Child;
-import com.ssafy.kidslink.application.document.domain.Absent;
 import com.ssafy.kidslink.application.document.domain.Dosage;
-import com.ssafy.kidslink.application.document.dto.AbsentDTO;
 import com.ssafy.kidslink.application.document.dto.DosageDTO;
 import com.ssafy.kidslink.application.document.mapper.DosageMapper;
 import com.ssafy.kidslink.application.document.repository.DosageRepository;
 import com.ssafy.kidslink.application.parent.domain.Parent;
 import com.ssafy.kidslink.application.parent.repository.ParentRepository;
+import com.ssafy.kidslink.common.enums.ConfirmationStatus;
 import com.ssafy.kidslink.common.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -52,6 +51,18 @@ public class DosageService {
             return dosageMapper.toDTO(dosage.get());
         } else {
             throw new ResourceNotFoundException("Dosage not found with id " + dosageId);
+        }
+    }
+
+    public void updateDosage(int dosageId) {
+        Optional<Dosage> dosageOptional = dosageRepository.findById(dosageId);
+
+        if (dosageOptional.isPresent()) {
+            Dosage dosage = dosageOptional.get();
+            dosage.setConfirmationStatus(ConfirmationStatus.T);
+            dosageRepository.save(dosage);
+        } else {
+            throw new RuntimeException("Dosage not found with id " + dosageId);
         }
     }
 }
