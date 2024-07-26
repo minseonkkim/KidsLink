@@ -1,10 +1,12 @@
-package com.ssafy.kidslink.application.teachernotification.domain;
+package com.ssafy.kidslink.application.notification.domain;
 
 import com.ssafy.kidslink.application.teacher.domain.Teacher;
-import com.ssafy.kidslink.common.enums.ConfirmationStatus;
+import com.ssafy.kidslink.common.enums.NotificationCode;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.Date;
 
 @Entity
 @Getter
@@ -20,13 +22,13 @@ public class TeacherNotification {
     @JoinColumn(name = "teacher_id", nullable = false)
     private Teacher teacher;
 
-    @Column(name = "code")
-    private String code;
+    @Column(name = "teacher_notification_code")
+    private NotificationCode code;
 
     @Column(name = "teacher_notification_text")
     private String teacherNotificationText;
 
-    @Column(name = "confirmation_status")
-    @Enumerated(EnumType.STRING)
-    private ConfirmationStatus confirmationStatus;
+    @Column(name = "teacher_notification_date")
+    private Date teacherNotificationDate;
+
 }
