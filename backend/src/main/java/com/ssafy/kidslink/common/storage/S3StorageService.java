@@ -3,6 +3,7 @@ package com.ssafy.kidslink.common.storage;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.ssafy.kidslink.config.S3Config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Conditional;
@@ -19,9 +20,7 @@ import java.nio.file.Path;
 @Conditional(S3Condition.class)
 @RequiredArgsConstructor
 public class S3StorageService implements StorageService {
-
-    private final AmazonS3 amazonS3;
-
+    private final S3Config s3Config;
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
@@ -29,14 +28,16 @@ public class S3StorageService implements StorageService {
     public String storeFile(MultipartFile file) throws IOException {
         File localFile = convertMultipartFileToFile(file);
         String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
-        amazonS3.putObject(new PutObjectRequest(bucket, fileName, localFile).withCannedAcl(CannedAccessControlList.PublicRead));
+
+        s3Config.amazonS3Client().putObject(new PutObjectRequest(bucket, fileName, localFile).withCannedAcl(CannedAccessControlList.PublicRead));
+        String s3Url = s3Config.amazonS3Client().getUrl(bucket, fileName).toString();
+
         localFile.delete();
-        return amazonS3.getUrl(bucket, fileName).toString();
+        return s3Url;
     }
 
     @Override
     public Path loadFileAsResource(String fileName) {
-        // Not applicable for S3. S3 files are accessed via URL.
         return null;
     }
 

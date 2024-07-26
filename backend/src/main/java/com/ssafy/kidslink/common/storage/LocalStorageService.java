@@ -5,8 +5,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Conditional;
-import org.springframework.context.annotation.Primary;
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -27,16 +25,16 @@ import java.util.zip.ZipOutputStream;
 public class LocalStorageService implements StorageService {
 
     @Value("${file.upload-dir}")
-    private String uploadDir;
+    private String UPLOAD_DIR;
 
     @Value("${file.max-size}")
     private long maxFileSize;
 
     @PostConstruct
     public void init() {
-        log.debug("upload dir: {}", uploadDir);
+        log.debug("upload dir: {}", UPLOAD_DIR);
         try {
-            Path path = Paths.get(uploadDir);
+            Path path = Paths.get(UPLOAD_DIR);
             if (!Files.exists(path)) {
                 Files.createDirectories(path);
             }
@@ -58,19 +56,19 @@ public class LocalStorageService implements StorageService {
 
     @Override
     public Path loadFileAsResource(String fileName) {
-        return Paths.get(uploadDir).toAbsolutePath().normalize().resolve(fileName);
+        return Paths.get(UPLOAD_DIR).toAbsolutePath().normalize().resolve(fileName);
     }
 
     private String storeRegularFile(MultipartFile file) throws IOException {
         String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
-        Path filePath = Paths.get(uploadDir).resolve(fileName);
+        Path filePath = Paths.get(UPLOAD_DIR).resolve(fileName);
         Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
         return fileName;
     }
 
     private String storeCompressedFile(MultipartFile file) throws IOException {
         String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename() + ".zip";
-        Path filePath = Paths.get(uploadDir).resolve(fileName);
+        Path filePath = Paths.get(UPLOAD_DIR).resolve(fileName);
 
         try (ZipOutputStream zipOut = new ZipOutputStream(new FileOutputStream(filePath.toFile()))) {
             zipOut.putNextEntry(new ZipEntry(file.getOriginalFilename()));
