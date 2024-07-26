@@ -3,6 +3,7 @@ package com.ssafy.kidslink.application.diary.service;
 import com.ssafy.kidslink.application.child.repository.ChildRepository;
 import com.ssafy.kidslink.application.diary.domain.Diary;
 import com.ssafy.kidslink.application.diary.domain.ImageDiary;
+import com.ssafy.kidslink.application.diary.dto.DiaryDTO;
 import com.ssafy.kidslink.application.diary.dto.DiaryRequestDTO;
 import com.ssafy.kidslink.application.diary.repository.DiaryRepository;
 import com.ssafy.kidslink.application.diary.repository.ImageDiaryRepository;
@@ -17,6 +18,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -55,5 +57,23 @@ public class DiaryService {
                 imageDiaryRepository.save(imageDiary);
             }
         }
+    }
+
+    public List<DiaryDTO> getAllDiary(int childId) {
+        List<Diary> diaries = diaryRepository.findByChildChildId(childId);
+        List<DiaryDTO> diaryDTOs = new ArrayList<>();
+        for (Diary diary : diaries) {
+            DiaryDTO diaryDTO = new DiaryDTO();
+            diaryDTO.setCreateDate(diary.getDiaryDate());
+            diaryDTO.setContent(diary.getDiaryContents());
+            diaryDTO.setImages(diary.getImages().stream().map(image -> {
+                ImageDTO imageDTO = new ImageDTO();
+                imageDTO.setImageId(image.getImageId());
+                imageDTO.setPath(ImageService.getUriString(image.getSaveFile()));
+                return imageDTO;
+            }).collect(Collectors.toSet()));
+            diaryDTOs.add(diaryDTO);
+        }
+        return diaryDTOs;
     }
 }
