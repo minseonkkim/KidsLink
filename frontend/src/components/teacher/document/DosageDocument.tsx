@@ -1,4 +1,3 @@
-import { ImCheckboxChecked } from "react-icons/im";
 import DocumentItem from "./DocumentItem";
 
 export default function DosageDocument(){
@@ -7,7 +6,10 @@ export default function DosageDocument(){
             <div className="flex flex-row justify-between">
                 <span className="rounded-[10px] bg-[#E7DFFF] flex items-center justify-center w-[75px] h-[40px] font-bold text-[20px]">투약</span>
                 <div className="flex flex-row items-center h-[30px]">
-                    <ImCheckboxChecked/>
+                    <input
+                        type="checkbox"
+                        className="mx-[3px] w-[20px] h-[20px] accent-[#363636]"
+                    />
                     <span className="font-bold text-[18px] mx-3">확인완료</span>
                 </div>
             </div>

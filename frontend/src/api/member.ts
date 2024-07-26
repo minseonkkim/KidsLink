@@ -1,7 +1,8 @@
-import axiosInstance from './axiosInstance'; // Axios 인스턴스 import
-import axios from 'axios'
+import axiosInstance, { setAxiosInterceptors } from './axiosInstance';
+import axios from 'axios';
+import { useAppStore } from '../stores/store'
 
-const BASE_URL = 'http://localhost:8080/api';
+const BASE_URL = import.meta.env.VITE_API_KEY;
 
 interface LoginData {
   username: string;
@@ -39,27 +40,28 @@ interface TeacherSignupData {
   tel?: string;
 }
 
-
 // 토큰 만료 확인 및 재발급 함수
-export const fetchAccessToken = async (): Promise<string | undefined> => {
+const fetchAccessToken = async (): Promise<string | undefined> => {
   const accessToken: string | null = localStorage.getItem('accessToken');
   const expiredAt: string | null = localStorage.getItem('expiredAt');
+  const refreshToken: string | null = localStorage.getItem('refreshToken');
+
+  if (!refreshToken) {
+    return;
+  }
 
   if (accessToken != null && expiredAt != null) {    const nowDate: number = new Date().getTime();
 
-    // 토큰 만료시간이 지났다면
     if (parseInt(expiredAt) < nowDate) {
       try {
-        // 리프레쉬 토큰 발급 서버 요청
         const { data } = await axios({
           url: `${BASE_URL}/reissue`,
           method: 'POST',
           headers: {
-            'x-refresh-token': localStorage.getItem('refreshToken') || '',
+            'x-refresh-token': refreshToken,
           },
         });
 
-        // 엑세스 토큰 갱신 후 로컬 스토리지에 저장
         localStorage.setItem('accessToken', data.data.accessToken);
         localStorage.setItem('expiredAt', data.data.expiredAt.toString());
         return data.data.accessToken;
@@ -72,31 +74,35 @@ export const fetchAccessToken = async (): Promise<string | undefined> => {
         return;
       }
     } else {
-      // 유효기간이 남아 있을 때
       return accessToken;
     }
   } else {
-    // 토큰 또는 만료 시간이 null일 때
     return;
   }
 }
 
-
 // 로그인 함수
 export async function login(user: LoginData) {
-  console.log("Attempting to login with:", user.username); // 민감한 정보를 포함하지 않도록 수정
+  const setUserType = useAppStore.getState().setUserType;
+
   try {
-    const response = await axiosInstance.post(`/user/login`, user, {
+    const response = await axiosInstance.post('/user/login', user, {
       headers: {
         'Content-Type': 'application/json',
       },
     });
 
     if (response.data.status === "success") {
-      const { token, expiredAt } = response.data.data;
+      const { token, expiredAt, role, refreshToken } = response.data.data;
       localStorage.setItem('accessToken', token);
       localStorage.setItem('expiredAt', expiredAt.toString());
-      console.log("Login successful:", response.data.data); // 로그인 성공 정보만 출력
+      localStorage.setItem('refreshToken', refreshToken);
+      setUserType(role);
+
+      // 로그인 성공 후 인터셉터 설정
+      setAxiosInterceptors(fetchAccessToken);
+
+      console.log("Login successful:", response.data.data);
       return response.data.data;
     } else {
       throw new Error('Login failed: ' + response.data.message);
@@ -111,7 +117,6 @@ export async function login(user: LoginData) {
   }
 }
 
-
 // 학부모 회원가입 함수
 export async function parentSignup(user: ParentSignupData) {
   const formData = new FormData();
@@ -120,7 +125,7 @@ export async function parentSignup(user: ParentSignupData) {
   formData.append('password', user.password);
   formData.append('passwordConfirm', user.passwordConfirm);
   formData.append('name', user.name);
-  formData.append('nickname', user.nickname || user.name); // nickname이 없으면 name으로 설정
+  formData.append('nickname', user.nickname || user.name);
   formData.append('tel', user.tel || '');
   if (user.child) {
     formData.append('child.name', user.child.name || '');
@@ -139,14 +144,14 @@ export async function parentSignup(user: ParentSignupData) {
         'Content-Type': 'multipart/form-data',
       },
     });
-    console.log("Parent signup successful:", response.data); // 회원가입 성공 정보만 출력
+    console.log(user)
+    console.log("Parent signup successful:", response.data);
     return response.data;
   } catch (error) {
     console.error('Error signing up parent:', error);
     throw error;
   }
 }
-
 
 // 선생님 회원가입 함수
 export async function teacherSignup(user: TeacherSignupData) {
@@ -156,7 +161,7 @@ export async function teacherSignup(user: TeacherSignupData) {
   formData.append('password', user.password);
   formData.append('passwordConfirm', user.passwordConfirm);
   formData.append('name', user.name);
-  formData.append('nickname', user.nickname || user.name); // nickname이 없으면 name으로 설정
+  formData.append('nickname', user.nickname || user.name);
   formData.append('tel', user.tel || '');
   formData.append('kindergartenName', user.kindergartenName);
   formData.append('kindergartenClassName', user.kindergartenClassName);
@@ -170,10 +175,34 @@ export async function teacherSignup(user: TeacherSignupData) {
         'Content-Type': 'multipart/form-data',
       },
     });
-    console.log("Teacher signup successful:", response.data); // 회원가입 성공 정보만 출력
+    console.log("Teacher signup successful:", response.data);
     return response.data;
   } catch (error) {
     console.error('Error signing up teacher:', error);
+    throw error;
+  }
+}
+
+// 아이디 중복 검사 함수
+export async function checkUsernameExists(username: string): Promise<boolean> {
+  try {
+    const response = await axiosInstance.post('/user/exists', { username }, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (response.data.status === "success") {
+      return response.data.data;
+    } else {
+      throw new Error('Failed to check username: ' + response.data.message);
+    }
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.error('Axios error:', error.toJSON());
+    } else {
+      console.error('Unexpected error:', error);
+    }
     throw error;
   }
 }
