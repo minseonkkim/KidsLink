@@ -15,4 +15,5 @@ public interface AbsentRepository extends JpaRepository<Absent, Integer> {
     List<Absent> findByChildChildId(int childId);
     @Query("SELECT a FROM Absent a WHERE a.child = :child AND :date BETWEEN a.absentStartdate AND a.absentEnddate")
     List<Absent> findByChildAndDateBetween(@Param("child") Child child, @Param("date") LocalDate date);
+    List<Absent> findByChild(Child child);
 }

@@ -1,5 +1,7 @@
 package com.ssafy.kidslink.application.document.service;
 
+import com.ssafy.kidslink.application.child.domain.Child;
+import com.ssafy.kidslink.application.child.repository.ChildRepository;
 import com.ssafy.kidslink.application.document.domain.Absent;
 import com.ssafy.kidslink.application.document.domain.Dosage;
 import com.ssafy.kidslink.application.document.dto.DocumentDTO;
@@ -7,12 +9,14 @@ import com.ssafy.kidslink.application.document.mapper.AbsentMapper;
 import com.ssafy.kidslink.application.document.mapper.DosageMapper;
 import com.ssafy.kidslink.application.document.repository.AbsentRepository;
 import com.ssafy.kidslink.application.document.repository.DosageRepository;
+import com.ssafy.kidslink.application.kindergartenclass.domain.KindergartenClass;
+import com.ssafy.kidslink.application.teacher.repository.TeacherRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -21,11 +25,17 @@ public class DocumentService {
     private final DosageRepository dosageRepository;
     private final AbsentMapper absentMapper;
     private final DosageMapper dosageMapper;
+    private final TeacherRepository teacherRepository;
+    private final ChildRepository childRepository;
 
-    public List<DocumentDTO> getAllDocuments() {
-        List<Absent> absents = absentRepository.findAll();
-        List<Dosage> dosages = dosageRepository.findAll();
-        return mergeAndSortDocuments(absents, dosages);
+    public List<DocumentDTO> getAllDocuments(String teacherUsername) {
+        KindergartenClass kindergartenClass = teacherRepository.findByTeacherUsername(teacherUsername).getKindergartenClass();
+        List<Child> children = childRepository.findByKindergartenClass(kindergartenClass);
+
+        return children.stream()
+                .flatMap(child -> getAllDocumentsByChild(child.getChildId()).stream())
+                .sorted((d1, d2) -> d1.getDate().compareTo(d2.getDate()))
+                .collect(Collectors.toList());
     }
 
     public List<DocumentDTO> getAllDocumentsByChild(int childId) {
@@ -53,7 +63,7 @@ public class DocumentService {
             allDocuments.add(document);
         }
 
-        Collections.sort(allDocuments, (d1, d2) -> d1.getDate().compareTo(d2.getDate()));
+        allDocuments.sort((d1, d2) -> d1.getDate().compareTo(d2.getDate()));
         return allDocuments;
     }
 }
