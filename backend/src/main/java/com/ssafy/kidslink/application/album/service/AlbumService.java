@@ -5,7 +5,7 @@ import com.ssafy.kidslink.application.child.domain.Child;
 import com.ssafy.kidslink.application.child.repository.ChildRepository;
 import com.ssafy.kidslink.application.image.dto.ImageDTO;
 import com.ssafy.kidslink.application.image.service.ImageService;
-import com.ssafy.kidslink.application.kindergartenclass.domain.KindergartenClass;
+import com.ssafy.kidslink.application.kindergarten.domain.KindergartenClass;
 import com.ssafy.kidslink.application.teacher.repository.TeacherRepository;
 import com.ssafy.kidslink.common.dto.User;
 import lombok.RequiredArgsConstructor;
