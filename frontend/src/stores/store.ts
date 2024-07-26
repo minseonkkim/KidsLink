@@ -61,7 +61,7 @@ export const useAppStore = create<AppState>((set) => ({
   logout: () => set(() => ({ isLoggedIn: false, username: '', password: '' })),
 
   // UserState initial values and methods
-  userType: 'ROLE_PARENT',
+  userType: '',
   setUserType: (userType) => set(() => ({ userType })),
 
   // ParentInfoState initial values and methods
