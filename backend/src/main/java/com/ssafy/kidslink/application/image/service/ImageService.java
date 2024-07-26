@@ -78,13 +78,6 @@ public class ImageService {
         return Paths.get(uploadDir).toAbsolutePath().normalize().resolve(fileName);
     }
 
-    public static String getUriString(String fileName) {
-        return ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/api/image/")
-                .path(fileName)
-                .toUriString();
-    }
-
     private String storeRegularFile(MultipartFile file) throws IOException {
         String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
         Path filePath = Paths.get(uploadDir).resolve(fileName);
@@ -107,6 +100,13 @@ public class ImageService {
 
     public Image getImageById(int imageId) {
         return imageRepository.findById(imageId).orElseThrow();
+    }
+
+    public static String getUriString(String fileName) {
+        return ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/api/image/")
+                .path(fileName)
+                .toUriString();
     }
 
 }

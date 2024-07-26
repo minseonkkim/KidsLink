@@ -12,7 +12,8 @@ import java.util.Set;
 @Setter
 @ToString
 public class DiaryDTO {
+    private int diaryId;
     private LocalDate createDate;
     private String content;
-    Set<ImageDTO> images;
+    private Set<ImageDTO> images;
 }
