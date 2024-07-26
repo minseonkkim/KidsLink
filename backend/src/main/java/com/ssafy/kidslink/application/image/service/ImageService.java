@@ -78,7 +78,7 @@ public class ImageService {
         return Paths.get(uploadDir).toAbsolutePath().normalize().resolve(fileName);
     }
 
-    private static String getUriString(String fileName) {
+    public static String getUriString(String fileName) {
         return ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/api/image/")
                 .path(fileName)
