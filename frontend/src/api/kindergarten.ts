@@ -1,6 +1,4 @@
-import axios from 'axios';
-
-const API_BASE_URL = import.meta.env.VITE_API_KEY;
+import noAuthAxios from './token/noAuthAxios'
 
 interface Kindergarten {
   kindergartenId: number;
@@ -12,32 +10,25 @@ interface KindergartenClass {
   kindergartenClassName: string;
 }
 
-const getAllKindergartens = (): Promise<Kindergarten[]> => {
-  return axios.get(`${API_BASE_URL}/kindergarten`, {
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json'
-    }
-  })
-  .then(response => response.data.data)
-  .catch(error => {
-    console.error('Error fetching kindergartens:', error);
+// 모든 유치원 조회
+export async function getAllKindergartens(): Promise<Kindergarten[]> {
+  try {
+    const response = await noAuthAxios.get('/kindergarten')
+    return response.data.data;
+  } catch (error) {
+    console.error(error)
     throw error;
-  });
+  }
 }
 
-const getKindergartenClasses = (kindergartenId: number): Promise<KindergartenClass[]> => {
-  return axios.get(`${API_BASE_URL}/kindergarten/${kindergartenId}`, {
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json'
-    }
-  })
-  .then(response => response.data.data)
-  .catch(error => {
-    console.error(`Error fetching classes for kindergarten ${kindergartenId}:`, error);
-    throw error;
-  });
+// 특정 유치원의 반 조회
+export async function getKindergartenClasses(kindergartenId: number): Promise<KindergartenClass[]> {
+  try {
+    const response = await noAuthAxios.get(`/kindergarten/${kindergartenId}`)
+    return response.data.data
+  } catch (error) {
+    console.error(error)
+    throw error
+  }
 }
 
-export { getAllKindergartens, getKindergartenClasses };

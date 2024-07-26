@@ -2,10 +2,13 @@ import { ChangeEvent, FC, useState, useEffect } from "react";
 import { FaCheck } from "react-icons/fa";
 import { useAppStore } from "../../stores/store";
 import { parentSignup } from "../../api/member";
+import { CiCamera } from "react-icons/ci";
 import {
   getAllKindergartens,
   getKindergartenClasses,
 } from "../../api/kindergarten";
+
+
 
 interface ParentFormStep2Props {
   onNext: () => void;
@@ -24,6 +27,8 @@ interface KindergartenClass {
 
 const ParentFormStep2: FC<ParentFormStep2Props> = ({ onBack, onNext }) => {
   const {
+    childProfile,
+    setChildProfile,
     gender,
     setGender,
     childName,
@@ -44,6 +49,7 @@ const ParentFormStep2: FC<ParentFormStep2Props> = ({ onBack, onNext }) => {
     profile,
   } = useAppStore();
 
+  const [childProfilePreview, setChildProfilePreview] = useState<string | null>(null);
   const [kindergartens, setKindergartens] = useState<Kindergarten[]>([]);
   const [classes, setClasses] = useState<KindergartenClass[]>([]);
   const [selectedKindergartenId, setSelectedKindergartenId] = useState<
@@ -52,6 +58,15 @@ const ParentFormStep2: FC<ParentFormStep2Props> = ({ onBack, onNext }) => {
   const [birthYear, setBirthYear] = useState<string>("");
   const [birthMonth, setBirthMonth] = useState<string>("");
   const [birthDay, setBirthDay] = useState<string>("");
+
+  const handleImageUpload = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const newImage = URL.createObjectURL(file);
+      setChildProfilePreview(newImage);
+      setChildProfile(file);
+    }
+  }
 
   useEffect(() => {
     const fetchKindergartens = async () => {
@@ -105,6 +120,7 @@ const ParentFormStep2: FC<ParentFormStep2Props> = ({ onBack, onNext }) => {
 
   const handleSignup = async () => {
     if (
+      !childProfile ||
       !childName ||
       !kindergartenName ||
       !className ||
@@ -127,6 +143,7 @@ const ParentFormStep2: FC<ParentFormStep2Props> = ({ onBack, onNext }) => {
       nickname,
       tel,
       child: {
+        childProfile,
         name: childName,
         kindergartenClassName: className,
         kindergartenName,
@@ -181,6 +198,38 @@ const ParentFormStep2: FC<ParentFormStep2Props> = ({ onBack, onNext }) => {
       <p className="mt-1 text-xs font-normal text-gray-400">
         학부모 서비스에 필요한 정보를 입력합니다.
       </p>
+
+      {/* 프로필 이미지 업로드 */}
+      <div className="mt-6">
+        <label className="block text-sm font-medium text-gray-400">
+          프로필 이미지 <span className="text-red-600">*</span>
+        </label>
+        <div className="flex flex-col items-center mt-2">
+          <input
+            type="file"
+            accept="image/*"
+            className="hidden"
+            id="childProfileImage"
+            onChange={handleImageUpload}
+          />
+          <label htmlFor="childProfileImage" className="cursor-pointer">
+            <div className="flex items-center justify-center w-24 h-24 bg-gray-200 border border-gray-400 rounded-full overflow-hidden">
+              {childProfilePreview ? (
+                <img
+                  src={childProfilePreview}
+                  alt="childProfile Preview"
+                  className="object-cover w-full h-full"
+                />
+              ) : (
+                <div className="flex flex-col items-center justify-center text-gray-400">
+                  <CiCamera className="text-3xl" />
+                  <span className="text-sm">이미지 업로드</span>
+                </div>
+              )}
+            </div>
+          </label>
+        </div>
+      </div>
 
       <div className="mt-8">
         <label className="block text-sm font-medium text-gray-400">

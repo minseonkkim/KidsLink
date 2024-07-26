@@ -7,12 +7,12 @@ interface Notification {
   content: string;
 }
 
-interface NotificationBellProps {
+interface AlaramBellProps {
   notificationCount: number;
   notifications: Notification[];
 }
 
-const NotificationBell: React.FC<NotificationBellProps> = ({ notificationCount, notifications: initialNotifications }) => {
+const AlaramBell: React.FC<AlaramBellProps> = ({ notificationCount, notifications: initialNotifications }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [notifications, setNotifications] = useState(initialNotifications);
 
@@ -55,4 +55,4 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ notificationCount, 
   );
 };
 
-export default NotificationBell;
+export default AlaramBell;

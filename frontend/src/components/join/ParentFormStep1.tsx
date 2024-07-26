@@ -5,6 +5,7 @@ import { useAppStore } from "../../stores/store";
 import { checkUsernameExists } from "../../api/member"; // 아이디 중복 검사 함수 import
 import defaultProfileImg from "../../assets/join/default-profile.png";
 
+
 interface ParentFormStep1Props {
   onNext: () => void;
 }
@@ -43,7 +44,7 @@ const ParentFormStep1: FC<ParentFormStep1Props> = ({ onNext }) => {
       setImagePreview(newImage);
       setProfile(file);
     }
-  };
+  }
 
   const handleCancel = () => {
     navigate("/join");
@@ -74,8 +75,20 @@ const ParentFormStep1: FC<ParentFormStep1Props> = ({ onNext }) => {
       setProfile(defaultProfileFile);
     }
 
-    const combinedTel = `${telFirst}-${telSecond}-${telThird}`;
-    setTel(combinedTel);
+    if (!nickname) {
+      setNickname(name);
+    }
+
+    if (telFirst && telSecond && telThird) {
+      const combinedTel = `${telFirst}-${telSecond}-${telThird}`;
+      setTel(combinedTel);
+    } else if (telFirst || telSecond || telThird) {
+      alert("휴대폰번호를 정확히 입력해 주세요.");
+      return;
+    } else {
+      setTel("");
+    }
+
     onNext();
   };
 
@@ -107,7 +120,7 @@ const ParentFormStep1: FC<ParentFormStep1Props> = ({ onNext }) => {
   };
 
   return (
-    <div className="w-full p-6">
+    <div className="w-full p-6 mx-auto">
       {/* 회원가입 진행률 */}
       <div className="relative flex h-[62px] mx-3">
         <div className="flex-1 relative">
@@ -118,7 +131,7 @@ const ParentFormStep1: FC<ParentFormStep1Props> = ({ onNext }) => {
             </div>
           </div>
           <p className="mt-6 text-sm font-normal text-left text-black">
-            부모정보입력
+            학부모정보입력
           </p>
         </div>
         <div className="flex-1 relative">
