@@ -3,7 +3,9 @@ package com.ssafy.kidslink.application.teacher.service;
 import com.ssafy.kidslink.application.child.repository.ChildRepository;
 import com.ssafy.kidslink.application.image.service.ImageService;
 import com.ssafy.kidslink.application.kindergarten.domain.KindergartenClass;
+import com.ssafy.kidslink.application.kindergarten.dto.ResponseClassInfoDTO;
 import com.ssafy.kidslink.application.kindergarten.repository.KindergartenClassRepository;
+import com.ssafy.kidslink.application.kindergarten.service.KindergartenService;
 import com.ssafy.kidslink.application.teacher.domain.Teacher;
 import com.ssafy.kidslink.application.teacher.dto.JoinDTO;
 import com.ssafy.kidslink.application.teacher.dto.TeacherDTO;
@@ -30,6 +32,8 @@ public class TeacherService {
 
     private final JWTUtil jwtUtil;
     private final TeacherMapper teacherMapper;
+    private final KindergartenService kindergartenService;
+
     // 선생님 회원가입
     public void joinProcess(JoinDTO joinDTO){
         if(!joinDTO.getPassword().equals(joinDTO.getPasswordConfirm())){
@@ -68,4 +72,8 @@ public class TeacherService {
         return teacherRepository.findByTeacherUsername(username).getKindergartenClass().getKindergartenClassId();
     }
 
+    public ResponseClassInfoDTO getMyClassInfo(String teacherUsername) {
+        Teacher teacher = teacherRepository.findByTeacherUsername(teacherUsername);
+        return kindergartenService.getClassInfo(teacher.getKindergartenClass().getKindergartenClassId());
+    }
 }
