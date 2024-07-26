@@ -123,7 +123,7 @@ export async function teacherSignup(user: TeacherSignupData) {
   }
 
   try {
-    const response = await axiosInstance.post('/teacher', formData, {
+    const response = await axios.post(`${API_BASE_URL}/teacher`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -157,21 +157,21 @@ export async function logout() {
   const setUserType = useAppStore.getState().setUserType
 
   try {
-    const response = await axiosInstance.post('user/logout')
+    const response = await axios.post('user/logout')
 
     if (response.data.status === "success") {
-      setUserType("")
       if (localStorage.getItem("accessToken") || localStorage.getItem('expiredAt')) {
         localStorage.removeItem("accessToken")
         localStorage.removeItem("expiredAt")    
       }
+      setUserType("")
       console.log("Logout successful:", response.data.data)
       return response.data.data
     } else {
-      throw new Error('Login failed: ' + response.data.message)
+      throw new Error('Logout failed: ' + response.data.message)
     }
   } catch (error) {
-    console.error('Error logging in:', error)
+    console.error('Error logging out:', error)
     throw error
   }
 }
