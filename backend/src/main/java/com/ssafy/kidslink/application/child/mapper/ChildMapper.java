@@ -24,6 +24,7 @@ public class ChildMapper {
         child.setKindergartenClass(kindergartenClass);
 
         child.setParent(child.getParent());
+        child.setChildProfile(childDTO.getProfile());
         return child;
     }
 
@@ -35,7 +36,7 @@ public class ChildMapper {
         childDTO.setGender(child.getChildGender().getCode());
         childDTO.setKindergartenName(child.getKindergartenClass().getKindergarten().getKindergartenName());
         childDTO.setKindergartenClassName(child.getKindergartenClass().getKindergartenClassName());
-
+        childDTO.setProfile(child.getChildProfile());
         return childDTO;
     }
 }

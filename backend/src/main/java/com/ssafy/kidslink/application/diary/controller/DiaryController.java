@@ -23,7 +23,7 @@ public class DiaryController {
 
     private final DiaryService diaryService;
 
-    @PostMapping("/{childId}")
+    @PostMapping("/child/{childId}")
     public ResponseEntity<APIResponse<Void>> createDiary(@AuthenticationPrincipal Object principal, @PathVariable("childId") int childId, @ModelAttribute DiaryRequestDTO request) {
         if(principal instanceof UserDetails) {
             UserDetails userDetails = (UserDetails) principal;
@@ -40,13 +40,29 @@ public class DiaryController {
         throw new InvalidPrincipalException("Invalid principal type.");
     }
 
-    @GetMapping("/{childId}")
+    @GetMapping("/child/{childId}")
     public ResponseEntity<APIResponse<List<DiaryDTO>>> getAllDiary(@AuthenticationPrincipal Object principal, @PathVariable("childId") int childId) {
         if(principal instanceof UserDetails) {
             List<DiaryDTO> diaries = diaryService.getAllDiary(childId);
             APIResponse<List<DiaryDTO>> responseData = new APIResponse<>(
                     "success",
                     diaries,
+                    "성장일지를 성공적으로 조회했습니다.",
+                    null
+            );
+            return new ResponseEntity<>(responseData, HttpStatus.OK);
+        }
+        throw new InvalidPrincipalException("Invalid principal type.");
+    }
+
+    @GetMapping("{diaryId}")
+    public ResponseEntity<APIResponse<DiaryDTO>> getDiary(@AuthenticationPrincipal Object principal, @PathVariable("diaryId") int diaryId) {
+        if(principal instanceof UserDetails) {
+            DiaryDTO diary = diaryService.getDiary(diaryId);
+
+            APIResponse<DiaryDTO> responseData = new APIResponse<>(
+                    "success",
+                    diary,
                     "성장일지를 성공적으로 조회했습니다.",
                     null
             );
