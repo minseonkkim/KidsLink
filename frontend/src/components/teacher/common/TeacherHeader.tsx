@@ -1,55 +1,88 @@
+// TeacherHeader.tsx
 import { CgProfile } from "react-icons/cg";
 import { BiBell } from "react-icons/bi";
 import { Link } from "react-router-dom";
-import useModal from "../../../hooks/teacher/useModal";
 import { FaXmark } from "react-icons/fa6";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
+import useModalStore from "../../../stores/teacher/ModalStore";
+import ModalComponent from "../../../components/teacher/common/ModalComponent";
 
-export default function TeacherHeader(){
-    const {openModal, Modal} = useModal();
-    const [alerts, setAlerts] = useState([
-        { id: 1, alertCategory: "버스", content: "버스 도착", isChecked: false },
-        { id: 2, alertCategory: "상담", content: "김민선 학부모와 상담", isChecked: false },
-        { id: 3, alertCategory: "버스", content: "버스 도착", isChecked: true }
-    ]);
+interface Alert {
+    time: string;
+    title: string;
+    content: string;
+    isChecked: boolean;
+}
 
-    const deleteItem = (id: number) => {
-        console.log(id)
-        setAlerts(alerts.filter(alert => alert.id !== id));
+const initialAlerts: Alert[] = [
+    { time: '오후 2:21', title: "버스", content: "버스 도착", isChecked: false },
+    { time: '오후 2:21', title: "상담", content: "김민선 학부모와 상담", isChecked: false },
+    { time: '오후 2:21', title: "버스", content: "버스 도착", isChecked: false }
+];
+
+export default function TeacherHeader() {
+    const { openModal, closeModal } = useModalStore();
+    const [alertList, setAlertList] = useState<Alert[]>(initialAlerts);
+    const location = useLocation();
+
+    const deleteItem = (index: number) => {
+        setAlertList(prevList => prevList.filter((_, i) => i !== index));
     };
-
 
     const openCreateModal = () => {
         openModal(
             <div className="w-[500px]">
                 <h2 className="text-xl font-bold mb-4">알림 목록</h2>
-                <ul>
-                {alerts.map(alert => (
-                    <li key={alert.id} className={`mb-2 p-2 border rounded ${alert.isChecked ? "bg-[#e2e8f0]" : "bg-transparent"}`}>
-                    <p className="font-bold">{alert.alertCategory}</p>
-                    <p>{alert.content}</p>
-                    <p>{alert.isChecked ? '확인됨' : '미확인'}</p>
-                    <button onClick={() => deleteItem(alert.id)} className="text-red-500 hover:text-red-700">
-                        <FaXmark />
-                    </button>
-                  </li>
-                ))}
-                </ul>
+                {alertList.length > 0 ? (
+                    <ul>
+                        {alertList.map((alert, index) => (
+                            <div
+                            key={index}
+                            className="flex flex-col mb-1 p-4 rounded-2xl bg-white shadow-lg transition-transform duration-200 cursor-pointer"
+                            onClick={() => deleteItem(index)}
+                            style={{ boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)' }}
+                          >
+                            <div className="flex justify-between items-center mb-2">
+                              <span className="font-bold text-gray-800">{alert.title}</span>
+                              <span className="text-xs text-gray-600">{alert.time}</span>
+                            </div>
+                            <p className="text-gray-700">{alert.content}</p>
+                          </div>
+                        ))}
+                    </ul>
+                ) : (
+                    <p>알림이 없습니다.</p>
+                )}
             </div>
         );
     };
 
-    return <>
-        <header className="z-10 fixed top-0 w-full flex items-center justify-between h-[85px] bg-[#ffffff] shadow-md">
-            <Link to='/'><p className="max-sm:ml-[30px] ml-[150px] text-[40px] font-bold text-left font-Cafe24Ssurround gradient-text cursor-pointer">키즈링크</p></Link>
-            <div className="flex flex-row">
-                <CgProfile className="w-[30px] h-[30px] mr-8 cursor-pointer" style={{ color: '#363636' }} />
-                <div className="relative max-sm:mr-[30px] mr-[150px]" onClick={openCreateModal}>
-                    <BiBell className="w-[30px] h-[30px] cursor-pointer" style={{ color: '#363636' }} />
-                    <span className="absolute top-0 right-0 w-4 h-4 bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center">2</span>
+    // useEffect를 사용하여 alertList 변경 시 모달 내용 업데이트
+    useEffect(() => {
+        openCreateModal();
+    }, [alertList]);
+
+    // 페이지 이동 시 모달 닫기
+    useEffect(() => {
+        closeModal(); // 페이지 이동 시 모달 닫기
+    }, [location, closeModal]);
+
+    return (
+        <>
+            <header className="z-10 fixed top-0 w-full flex items-center justify-between h-[85px] bg-[#ffffff] shadow-md">
+                <Link to='/'><p className="max-sm:ml-[30px] ml-[150px] text-[40px] font-bold text-left font-Cafe24Ssurround gradient-text cursor-pointer">키즈링크</p></Link>
+                <div className="flex flex-row">
+                    <CgProfile className="w-[30px] h-[30px] mr-8 cursor-pointer" style={{ color: '#363636' }} />
+                    <div className="relative max-sm:mr-[30px] mr-[150px]" onClick={openCreateModal}>
+                        <BiBell className="w-[30px] h-[30px] cursor-pointer" style={{ color: '#363636' }} />
+                        <span className="absolute top-0 right-0 w-4 h-4 bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center">
+                            {alertList.filter(alert => !alert.isChecked).length}
+                        </span>
+                    </div>
                 </div>
-            </div>
-        </div>
-        <Modal />
-    </>
+                <ModalComponent />
+            </header>
+        </>
+    );
 }
