@@ -1,5 +1,5 @@
-import { AudioConference, CameraDisabledIcon, ControlBar, DisconnectButton, LiveKitRoom, RoomAudioRenderer } from '@livekit/components-react';
-import * as React from 'react';
+import { ControlBar, LiveKitRoom } from '@livekit/components-react';
+
 
 const MyLiveKit = () => {
   const serverUrl = '';
