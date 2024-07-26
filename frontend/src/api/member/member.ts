@@ -45,8 +45,7 @@ export const fetchAccessToken = async (): Promise<string | undefined> => {
   const accessToken: string | null = localStorage.getItem('accessToken');
   const expiredAt: string | null = localStorage.getItem('expiredAt');
 
-  if (accessToken != null && expiredAt != null) {
-    const nowDate: number = new Date().getTime();
+  if (accessToken != null && expiredAt != null) {    const nowDate: number = new Date().getTime();
 
     // 토큰 만료시간이 지났다면
     if (parseInt(expiredAt) < nowDate) {
