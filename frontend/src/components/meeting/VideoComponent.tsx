@@ -1,7 +1,7 @@
 import { LocalVideoTrack, RemoteVideoTrack } from "livekit-client";
 import "./VideoComponent.css";
 import { useEffect, useRef } from "react";
-import { ControlBar } from "@livekit/components-react";
+
 
 interface VideoComponentProps {
     track: LocalVideoTrack | RemoteVideoTrack;
@@ -9,13 +9,6 @@ interface VideoComponentProps {
     local?: boolean;
 }
 
-const styles = {
-    customize: {
-      display: "flex",
-      zIndex: 999,
-      justifyContent: "center"
-    } as React.CSSProperties,
-  }
 
 function VideoComponent({ track, participantIdentity, local = false }: VideoComponentProps) {
     const videoElement = useRef<HTMLVideoElement | null>(null);

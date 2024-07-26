@@ -2,11 +2,12 @@ package com.ssafy.kidslink.application.parent.service;
 
 import com.ssafy.kidslink.application.child.domain.Child;
 import com.ssafy.kidslink.application.child.dto.ChildDTO;
+import com.ssafy.kidslink.application.child.mapper.ChildMapper;
 import com.ssafy.kidslink.application.child.repository.ChildRepository;
 import com.ssafy.kidslink.application.image.dto.ImageDTO;
 import com.ssafy.kidslink.application.image.service.ImageService;
-import com.ssafy.kidslink.application.kindergartenclass.domain.KindergartenClass;
-import com.ssafy.kidslink.application.kindergartenclass.repository.KindergartenClassRepository;
+import com.ssafy.kidslink.application.kindergarten.domain.KindergartenClass;
+import com.ssafy.kidslink.application.kindergarten.repository.KindergartenClassRepository;
 import com.ssafy.kidslink.application.parent.domain.Parent;
 import com.ssafy.kidslink.application.parent.dto.JoinDTO;
 import com.ssafy.kidslink.application.parent.repository.ParentRepository;
@@ -21,6 +22,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -33,10 +36,11 @@ public class ParentService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final ImageService imageService;
     private final UserService userService;
+    private final ChildMapper childMapper;
 
     @Transactional
     public void joinProcess(JoinDTO joinDTO) {
-        log.info("joinDTO : {}", joinDTO);
+        log.debug("joinDTO : {}", joinDTO);
 
         if (userService.isExistUser(joinDTO.getUsername())) {
             throw new RuntimeException("이미 존재하는 아이디 입니다.");
@@ -69,6 +73,13 @@ public class ParentService {
         child.setChildGender(Gender.fromCode(childDTO.getGender()));
         child.setChildName(childDTO.getName());
         child.setChildBirth(childDTO.getBirth());
+        if (childDTO.getChildProfile() != null) {
+            try {
+                child.setChildProfile(imageService.storeFile(childDTO.getChildProfile()).getPath());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
 
         KindergartenClass kindergartenClass =
                 kindergartenClassRepository
@@ -84,5 +95,13 @@ public class ParentService {
 
     public Parent getDetailByUsername(String username) {
         return parentRepository.findByParentUsername(username);
+    }
+
+    public Set<ChildDTO> getMyChildren(String username) {
+        return parentRepository.findByParentUsername(username)
+                .getChildren()
+                .stream()
+                .map(childMapper::toDTO)
+                .collect(Collectors.toSet());
     }
 }

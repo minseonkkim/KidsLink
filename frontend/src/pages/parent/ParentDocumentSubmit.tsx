@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, } from 'react';
 import DatePicker from 'react-datepicker';
 import './parent-schedule.css';
 import CommonHeader from '../../components/parent/common/CommonHeader';
@@ -6,19 +6,19 @@ import daramgi from '../../assets/parent/document-daramgi.png';
 
 const ParentDocument: React.FC = () => {
   const [selectedOption, setSelectedOption] = useState<string>('med');
-  const [startDate, setStartDate] = useState<Date | null>(new Date());
-  const [endDate, setEndDate] = useState<Date | null>(new Date());
+  const [startDate, setStartDate] = useState<Date | undefined>(undefined);
+  const [endDate, setEndDate] = useState<Date | undefined>(undefined);
   const [isOpen, setIsOpen] = useState<boolean>(false);
+
 
   const handleOptionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedOption(event.target.value);
   };
 
-  const handleDateChange = (dates: [Date | null, Date | null]) => {
-    const [start, end] = dates;
-    setStartDate(start);
-    setEndDate(end);
-
+  const handleDateChange = (update: [Date | null, Date | null]) => {
+    const [start, end] = update;
+    setStartDate(start||undefined);
+    setEndDate(end||undefined);
     if (end) {
       setIsOpen(false);
     }

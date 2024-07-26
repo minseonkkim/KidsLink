@@ -13,7 +13,7 @@ interface AuthState {
 }
 
 // UserState interface and state
-interface UserState {
+export interface UserState {
   userType: string;
   setUserType: (userType: string) => void;
 }
