@@ -14,7 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @ToString
 public class ResponseClassInfoDTO {
-    KindergartenClassDTO kindergartenClassDTO;
+    KindergartenClassDTO kindergartenClass;
     TeacherDTO teacher;
     List<ChildDTO> children;
 }

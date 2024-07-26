@@ -33,7 +33,7 @@ dependencies {
 	implementation group: 'io.swagger.core.v3', name: 'swagger-annotations', version: '2.2.22'
 
 //	S3
-//	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
@@ -56,3 +56,30 @@ tasks.withType(JavaCompile) {
 	options.compilerArgs << "-parameters"
 }
 
+//// Environment profile configuration
+//ext {
+//	profile = project.hasProperty('profile') ? project.getProperty('profile') : 'dev'
+//}
+//
+//processResources {
+//	filesMatching('application.properties') {
+//		expand(profile: profile)
+//	}
+//}
+//
+//bootRun {
+//	systemProperties = System.properties
+//	systemProperty 'spring.profiles.active', profile
+//}
+//
+//task printProfile {
+//	doLast {
+//		println "Active profile: ${profile}"
+//	}
+//}
+//
+//// Custom task for building with different profiles
+//task buildWithProd(type: GradleBuild) {
+//	tasks = ['build']
+//	startParameter.projectProperties = ['profile': 'prod']
+//}

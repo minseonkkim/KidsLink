@@ -183,7 +183,7 @@ CREATE TABLE `image` (
     `image_id` INT NOT NULL AUTO_INCREMENT,
     `save_folder` VARCHAR(200) NULL,
     `original_file` VARCHAR(50) NULL,
-    `save_file` VARCHAR(50) NULL,
+    `save_file` VARCHAR(255) NULL,
     PRIMARY KEY (`image_id`)
 );
 

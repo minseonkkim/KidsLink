@@ -1,6 +1,7 @@
 package com.ssafy.kidslink.application.image.controller;
 
 import com.ssafy.kidslink.application.image.service.ImageService;
+import com.ssafy.kidslink.common.storage.StorageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -20,12 +21,12 @@ import java.nio.file.Path;
 @RequiredArgsConstructor
 public class ImageController {
 
-    private final ImageService imageService;
+    private final StorageService storageService;
 
     @GetMapping("/{fileName}")
-    public ResponseEntity<Resource> getImage(@PathVariable("fileName") String fileName) {
+    public ResponseEntity<Resource> getLocalImage(@PathVariable("fileName") String fileName) {
         try {
-            Path filePath = imageService.loadFileAsResource(fileName);
+            Path filePath = storageService.loadFileAsResource(fileName);
             Resource resource = new UrlResource(filePath.toUri());
             if (!resource.exists()) {
                 return ResponseEntity.notFound().build();
