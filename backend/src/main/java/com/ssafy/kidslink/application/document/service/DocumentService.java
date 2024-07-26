@@ -9,7 +9,7 @@ import com.ssafy.kidslink.application.document.mapper.AbsentMapper;
 import com.ssafy.kidslink.application.document.mapper.DosageMapper;
 import com.ssafy.kidslink.application.document.repository.AbsentRepository;
 import com.ssafy.kidslink.application.document.repository.DosageRepository;
-import com.ssafy.kidslink.application.kindergartenclass.domain.KindergartenClass;
+import com.ssafy.kidslink.application.kindergarten.domain.KindergartenClass;
 import com.ssafy.kidslink.application.teacher.repository.TeacherRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

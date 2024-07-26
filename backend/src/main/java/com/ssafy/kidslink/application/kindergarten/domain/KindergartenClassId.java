@@ -1,4 +1,4 @@
-package com.ssafy.kidslink.application.kindergartenclass.domain;
+package com.ssafy.kidslink.application.kindergarten.domain;
 
 import java.io.Serializable;
 import java.util.Objects;
