@@ -50,8 +50,7 @@ const fetchAccessToken = async (): Promise<string | undefined> => {
     return;
   }
 
-  if (accessToken != null && expiredAt != null) {
-    const nowDate: number = new Date().getTime();
+  if (accessToken != null && expiredAt != null) {    const nowDate: number = new Date().getTime();
 
     if (parseInt(expiredAt) < nowDate) {
       try {

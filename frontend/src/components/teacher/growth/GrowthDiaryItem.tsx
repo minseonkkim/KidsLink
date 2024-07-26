@@ -9,7 +9,7 @@ interface GrowthDiaryItemProps {
     onClick: () => void;
 }
 
-export default function GrowthDiaryItem({ id, name, date, imgPaths, onClick }:GrowthDiaryItemProps){
+export default function GrowthDiaryItem({ date, imgPaths }:GrowthDiaryItemProps){
     const { openModal, Modal } = useModal();
     
     const backgroundImageWrapperStyle: React.CSSProperties = {
