@@ -102,6 +102,34 @@ public class DocumentController {
 
         return ResponseEntity.status(HttpStatus.OK).body(responseData);
     }
+
+    @PutMapping("/absent/{absentId}")
+    public ResponseEntity<APIResponse<Void>> updateAbsent(@PathVariable int absentId) {
+        absentService.updateAbsent(absentId);
+        APIResponse<Void> responseData = new APIResponse<>(
+                "success",
+                null,
+                "결석 이슈를 승인했습니다.",
+                null
+
+        );
+        return new ResponseEntity<>(responseData, HttpStatus.OK);
+
+    }
+
+    @PutMapping("/dosage/{dosageId}")
+    public ResponseEntity<APIResponse<Void>> updateDosage(@PathVariable int dosageId) {
+        dosageService.updateDosage(dosageId);
+        APIResponse<Void> responseData = new APIResponse<>(
+                "success",
+                null,
+                "투약 이슈를 승인했습니다.",
+                null
+
+        );
+        return new ResponseEntity<>(responseData, HttpStatus.OK);
+    }
+
     private String getUsernameFromPrincipal(Object principal) {
         String username = null;
         if (principal instanceof CustomUserDetails) {

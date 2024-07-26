@@ -1,7 +1,9 @@
+import React, { useEffect } from "react";
 import {
   BrowserRouter as Router,
   Routes,
   Route,
+  useNavigate,
 } from "react-router-dom";
 import { useAppStore, UserState } from "./stores/store";  // UserState 인터페이스 import
 import ParentHome from "./pages/parent/ParentHome";
@@ -33,6 +35,7 @@ import TeacherOurClass from "./pages/teacher/TeacherOurClass";
 import TeacherSchedule from "./pages/teacher/TeacherSchedule";
 import JoinDetails from "./pages/common/JoinDetails";
 import TeacherAlbumFinish from "./pages/teacher/TeacherAlbumFinish";
+// import JoinDetailsWrapper from "./pages/member/JoinDetailWrapper";
 
 const App: React.FC = () => {
   const userType = useAppStore((state: UserState) => state.userType); // UserState 타입 지정

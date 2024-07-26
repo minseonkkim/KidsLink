@@ -8,7 +8,7 @@ import './parent-schedule.css'; // 커스텀 CSS 파일
 export default function ParentSchedule() {
   const [value, onChange] = useState(new Date()) // 초기값은 현재 날짜
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
-  const [activeMonth, setActiveMonth] = useState(moment(value).format('YYYY-MM'));
+  const [ activeMonth,setActiveMonth] = useState<string>(moment(value).format('YYYY-MM'));
 
   const scheduleData: { [key: string]: { type: string; title: string }[] } = {
     '2024-07-01': [{ type: '투약', title: '감기약' }, { type: '결석', title: '불국사 견학' }, { type: '상담', title: '개나리반 교사와의 상담' }],
@@ -18,7 +18,8 @@ export default function ParentSchedule() {
     // 추가 데이터
   };
 
-  const handleDateClick = (date: Date) => {
+  const handleDateClick = (value: Date | Date[]) => {
+    const date = Array.isArray(value) ? value[0] : value;
     setSelectedDate(moment(date).format('YYYY-MM-DD'));
     onChange(date);
   }
@@ -46,7 +47,7 @@ export default function ParentSchedule() {
               value={value}
               next2Label={null}
               prev2Label={null}
-              formatDay={(locale, date) => moment(date).format('D')}
+              formatDay={(locale: string,date) => moment(date).format('D')}
               tileContent={addContent}
               showNeighboringMonth={false}
               onActiveStartDateChange={({ activeStartDate }) => getActiveMonth(activeStartDate!)}
