@@ -71,7 +71,7 @@ export default function TeacherReservation() {
                     <Calendar 
                         value={date}
                         onChange={(value) => setDate(value as Date)}
-                        formatDay={(locale: any, date: Date) => date.toLocaleString("en", {day: "numeric"})}
+                        formatDay={(locale: string, date: Date) => date.toLocaleString("en", {day: "numeric"})}
                         next2Label={null}
                         prev2Label={null}
                     />

@@ -87,7 +87,7 @@ export default function ParentDocument() {
             />
           </div>
           <div className={`space-y-6 ${scroll ? 'overflow-y-auto' : 'overflow-hidden'}`} style={{ maxHeight: scroll ? 'calc(100vh - 200px)' : 'auto', paddingBottom: '100px', scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-            {filteredDocuments.map((doc, index) => (
+            {filteredDocuments.map((doc) => (
               <div
                 key={doc.id}
                 className={`flex flex-col p-4 rounded-2xl bg-[#FFF9D7] hover:bg-[#ffec8a] transition-colors duration-200`}

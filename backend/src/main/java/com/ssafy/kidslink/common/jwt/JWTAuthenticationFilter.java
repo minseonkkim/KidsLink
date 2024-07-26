@@ -47,13 +47,13 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        log.info("JwtAuthenticationTokenFilter.doFilter");
+        log.debug("JwtAuthenticationTokenFilter.doFilter");
         super.doFilter(request, response, chain);
     }
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-        log.info("JwtAuthenticationTokenFilter.attemptAuthentication");
+        log.debug("JwtAuthenticationTokenFilter.attemptAuthentication");
         LoginDTO loginDTO;
 
         try {
@@ -68,18 +68,14 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         String username = loginDTO.getUsername();
         String password = loginDTO.getPassword();
 
-        log.info("username - {}", username);
-        log.info("password - {}", password);
-
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(username, password);
 
-        log.info("authToken - {}", authToken.toString());
         return authenticationManager.authenticate(authToken);
     }
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
-        log.info("JwtAuthenticationTokenFilter.successfulAuthentication");
+        log.debug("JwtAuthenticationTokenFilter.successfulAuthentication");
         String username = authResult.getName();
 
         Collection<? extends GrantedAuthority> collection = authResult.getAuthorities();
@@ -118,7 +114,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
-        log.info("JwtAuthenticationTokenFilter.unsuccessfulAuthentication");
+        log.debug("JwtAuthenticationTokenFilter.unsuccessfulAuthentication");
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
 
         APIError apiError = new APIError("UNAUTHORIZED", "유효한 JWT 토큰이 필요합니다.");

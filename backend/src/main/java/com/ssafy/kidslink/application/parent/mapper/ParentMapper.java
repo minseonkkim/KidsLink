@@ -27,6 +27,7 @@ public class ParentMapper {
         parent.setParentTel(parentDTO.getTel());
         Child child = childMapper.toEntity(parentDTO.getChild());
         parent.setChildren(Set.of(child));
+        parent.setParentProfile(parentDTO.getProfile());
 
         return parent;
     }
@@ -49,6 +50,7 @@ public class ParentMapper {
             log.info("Child: {}", child);
             parentDTO.setChild(childMapper.toDTO(child));
         }
+        parentDTO.setProfile(parent.getParentProfile());
 
         return parentDTO;
     }

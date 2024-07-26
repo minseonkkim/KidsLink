@@ -3,8 +3,8 @@ package com.ssafy.kidslink.application.teacher.controller;
 import com.ssafy.kidslink.application.teacher.dto.JoinDTO;
 import com.ssafy.kidslink.application.teacher.dto.TeacherDTO;
 import com.ssafy.kidslink.application.teacher.service.TeacherService;
-import com.ssafy.kidslink.common.dto.APIError;
 import com.ssafy.kidslink.common.dto.APIResponse;
+import com.ssafy.kidslink.common.exception.InvalidPrincipalException;
 import com.ssafy.kidslink.common.security.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,26 +21,22 @@ public class TeacherController {
     private final TeacherService teacherService;
 
     @PostMapping("")
-    public ResponseEntity joinProcess(@ModelAttribute JoinDTO joinDTO) {
-        log.info("joinDTO : {}", joinDTO);
+    public ResponseEntity<APIResponse<Void>> joinProcess(@ModelAttribute JoinDTO joinDTO) {
+        log.debug("joinDTO : {}", joinDTO);
         teacherService.joinProcess(joinDTO);
         APIResponse<Void> responseData = new APIResponse<>(
-                "sucess",
+                "success",
                 null,
                 "선생님 회원 가입 성공",
                 null
         );
 
         return new ResponseEntity<>(responseData, HttpStatus.OK);
-
     }
 
     @GetMapping("")
     public ResponseEntity<APIResponse<TeacherDTO>> getProcess(@AuthenticationPrincipal Object principal) {
-
-        if (principal instanceof CustomUserDetails) {
-            CustomUserDetails userDetails = (CustomUserDetails) principal;
-
+        if (principal instanceof CustomUserDetails userDetails) {
             TeacherDTO teacherDTO = teacherService.detailProcess(userDetails.getUsername());
             APIResponse<TeacherDTO> responseData = new APIResponse<>(
                     "success",
@@ -51,15 +47,6 @@ public class TeacherController {
             return new ResponseEntity<>(responseData, HttpStatus.OK);
 
         }
-        APIError apiError = new APIError("UNAUTHORIZED", "유효한 JWT 토큰이 필요합니다.");
-
-        APIResponse<TeacherDTO> responseData = new APIResponse<>(
-                "success",
-                null,
-                "선생님의 정보 조회를 실패했습니다.",
-                apiError
-        );
-
-        return new ResponseEntity<>(responseData, HttpStatus.BAD_REQUEST);
+        throw new InvalidPrincipalException("Invalid user principal");
     }
 }

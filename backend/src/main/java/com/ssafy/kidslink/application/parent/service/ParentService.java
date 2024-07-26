@@ -40,7 +40,7 @@ public class ParentService {
 
     @Transactional
     public void joinProcess(JoinDTO joinDTO) {
-        log.info("joinDTO : {}", joinDTO);
+        log.debug("joinDTO : {}", joinDTO);
 
         if (userService.isExistUser(joinDTO.getUsername())) {
             throw new RuntimeException("이미 존재하는 아이디 입니다.");
@@ -73,6 +73,13 @@ public class ParentService {
         child.setChildGender(Gender.fromCode(childDTO.getGender()));
         child.setChildName(childDTO.getName());
         child.setChildBirth(childDTO.getBirth());
+        if (childDTO.getChildProfile() != null) {
+            try {
+                child.setChildProfile(imageService.storeFile(childDTO.getChildProfile()).getPath());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
 
         KindergartenClass kindergartenClass =
                 kindergartenClassRepository
