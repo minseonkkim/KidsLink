@@ -2,11 +2,21 @@ package com.ssafy.kidslink.application.diary.service;
 
 import com.ssafy.kidslink.application.child.repository.ChildRepository;
 import com.ssafy.kidslink.application.diary.domain.Diary;
-import com.ssafy.kidslink.application.diary.dto.DiaryDTO;
+import com.ssafy.kidslink.application.diary.domain.ImageDiary;
+import com.ssafy.kidslink.application.diary.dto.DiaryRequestDTO;
 import com.ssafy.kidslink.application.diary.repository.DiaryRepository;
+import com.ssafy.kidslink.application.diary.repository.ImageDiaryRepository;
+import com.ssafy.kidslink.application.image.dto.ImageDTO;
+import com.ssafy.kidslink.application.image.service.ImageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -15,15 +25,35 @@ public class DiaryService {
 
     private final ChildRepository childRepository;
     private final DiaryRepository diaryRepository;
+    private final ImageService imageService;
+    private final ImageDiaryRepository imageDiaryRepository;
 
-    public void createDiary(int id, DiaryDTO diaryDTO){
+    public void createDiary(int childId, String teacherUsername, DiaryRequestDTO request) {
         Diary diary = new Diary();
-        diary.setDiaryDate(diaryDTO.getCreateDate());
-        diary.setDiaryContents(diaryDTO.getContent());
-        diary.setChild(childRepository.findById(id).get());
 
-        diaryRepository.save(diary);
+        List<MultipartFile> files = request.getFiles();
+        List<ImageDTO> images = new ArrayList<>();
+        for (MultipartFile file : files) {
+            try {
+                images.add(imageService.storeFile(file));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        diary.setDiaryContents(request.getContent());
+        diary.setDiaryDate(LocalDate.parse(request.getDiaryDate()));
+        diary.setChild(childRepository.findById(childId).orElseThrow());
+        Diary savedDiary = diaryRepository.save(diary);
 
+        if (images.size() > 0) {
+            diary.setDiaryThumbnail(images.get(0).getPath());
+            for (ImageDTO image : images) {
+                ImageDiary imageDiary = new ImageDiary();
+                imageDiary.setDiary(savedDiary);
+                imageDiary.setImage(imageService.getImageById(image.getImageId()));
+
+                imageDiaryRepository.save(imageDiary);
+            }
+        }
     }
-
 }
