@@ -29,9 +29,9 @@ const JoinDetails = () => {
     }
   } else if (role === "teacher") {
     if (step === 1) {
-      FormComponent = <TeacherFormStep1 onNext={handleNextStep} />;
+      //FormComponent = <TeacherFormStep1 onNext={handleNextStep} />;
     } else if (step === 2) {
-      FormComponent = <TeacherFormStep2 onNext={handleNextStep} onBack={handlePrevStep} />;
+      //FormComponent = <TeacherFormStep2 onNext={handleNextStep} onBack={handlePrevStep} />;
     } else if (step === 3) {
       FormComponent = <TeacherFormStep3 />;
     } else {
