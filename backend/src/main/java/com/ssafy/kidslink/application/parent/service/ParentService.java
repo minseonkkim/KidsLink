@@ -73,6 +73,13 @@ public class ParentService {
         child.setChildGender(Gender.fromCode(childDTO.getGender()));
         child.setChildName(childDTO.getName());
         child.setChildBirth(childDTO.getBirth());
+        if (childDTO.getChildProfile() != null) {
+            try {
+                child.setChildProfile(imageService.storeFile(childDTO.getChildProfile()).getPath());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
 
         KindergartenClass kindergartenClass =
                 kindergartenClassRepository

@@ -8,6 +8,7 @@ import com.ssafy.kidslink.application.diary.dto.DiaryRequestDTO;
 import com.ssafy.kidslink.application.diary.repository.DiaryRepository;
 import com.ssafy.kidslink.application.diary.repository.ImageDiaryRepository;
 import com.ssafy.kidslink.application.image.dto.ImageDTO;
+import com.ssafy.kidslink.application.image.mapper.ImageMapper;
 import com.ssafy.kidslink.application.image.service.ImageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +30,7 @@ public class DiaryService {
     private final DiaryRepository diaryRepository;
     private final ImageService imageService;
     private final ImageDiaryRepository imageDiaryRepository;
+    private final ImageMapper imageMapper;
 
     public void createDiary(int childId, String teacherUsername, DiaryRequestDTO request) {
         Diary diary = new Diary();
@@ -47,7 +49,7 @@ public class DiaryService {
         diary.setChild(childRepository.findById(childId).orElseThrow());
         Diary savedDiary = diaryRepository.save(diary);
 
-        if (images.size() > 0) {
+        if (!images.isEmpty()) {
             diary.setDiaryThumbnail(images.get(0).getPath());
             for (ImageDTO image : images) {
                 ImageDiary imageDiary = new ImageDiary();
@@ -64,6 +66,7 @@ public class DiaryService {
         List<DiaryDTO> diaryDTOs = new ArrayList<>();
         for (Diary diary : diaries) {
             DiaryDTO diaryDTO = new DiaryDTO();
+            diaryDTO.setDiaryId(diary.getDiaryId());
             diaryDTO.setCreateDate(diary.getDiaryDate());
             diaryDTO.setContent(diary.getDiaryContents());
             diaryDTO.setImages(diary.getImages().stream().map(image -> {
@@ -76,4 +79,16 @@ public class DiaryService {
         }
         return diaryDTOs;
     }
+
+    public DiaryDTO getDiary(int diaryId) {
+        return diaryRepository.findById(diaryId).map(diary -> {
+            DiaryDTO diaryDTO = new DiaryDTO();
+            diaryDTO.setDiaryId(diary.getDiaryId());
+            diaryDTO.setCreateDate(diary.getDiaryDate());
+            diaryDTO.setContent(diary.getDiaryContents());
+            diaryDTO.setImages(diary.getImages().stream().map(imageMapper::toDTO).collect(Collectors.toSet()));
+            return diaryDTO;
+        }).orElseThrow();
+    }
+
 }
