@@ -25,7 +25,7 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        log.info("JWT Authorization Filter");
+        log.debug("JWT Authorization Filter");
         String authorization = request.getHeader("Authorization");
         String token = null;
         if(authorization != null && authorization.startsWith("Bearer ")) {
@@ -51,8 +51,6 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
         // token category confirm
         String category = jwtUtil.getCategory(token);
 
-        log.info("category - {}", category);
-
         if (!"access".equals(category)) {
             filterChain.doFilter(request, response);
             return;
@@ -68,7 +66,6 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
             UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            log.info("user - {}", userDetails.getUsername());
         }
         filterChain.doFilter(request, response);
     }

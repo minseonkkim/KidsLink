@@ -1,6 +1,7 @@
 package com.ssafy.kidslink.application.image.domain;
 
 import com.ssafy.kidslink.application.album.domain.Album;
+import com.ssafy.kidslink.application.diary.domain.Diary;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,6 +27,9 @@ public class Image {
 
     @Column(name = "save_file")
     private String saveFile;
+
+    @ManyToMany(mappedBy = "images")
+    private Set<Diary> diaries;
 
     @ManyToMany(mappedBy = "images")
     private Set<Album> albums;
