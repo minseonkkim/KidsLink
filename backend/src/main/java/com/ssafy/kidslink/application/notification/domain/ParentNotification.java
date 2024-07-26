@@ -1,10 +1,12 @@
-package com.ssafy.kidslink.application.parentnotification.domain;
+package com.ssafy.kidslink.application.notification.domain;
 
 import com.ssafy.kidslink.application.parent.domain.Parent;
-import com.ssafy.kidslink.common.enums.ConfirmationStatus;
+import com.ssafy.kidslink.common.enums.NotificationCode;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.Date;
 
 @Entity
 @Getter
@@ -20,18 +22,15 @@ public class ParentNotification {
     @JoinColumn(name = "parent_id", nullable = false)
     private Parent parent;
 
-    @Column(name = "code")
+    @Column(name = "teacher_notification_code")
     @Enumerated(EnumType.STRING)
     private NotificationCode code;
 
     @Column(name = "parent_notification_text")
     private String parentNotificationText;
 
-    @Column(name = "confirmation_status")
-    @Enumerated(EnumType.STRING)
-    private ConfirmationStatus confirmationStatus;
+    @Column(name = "parent_notification_date")
+    private Date parentNotificationDate;
 
-    public enum NotificationCode {
-        dosage, absent, meeting
-    }
+
 }
