@@ -40,7 +40,7 @@ public class ParentService {
 
     @Transactional
     public void joinProcess(JoinDTO joinDTO) {
-        log.info("joinDTO : {}", joinDTO);
+        log.debug("joinDTO : {}", joinDTO);
 
         if (userService.isExistUser(joinDTO.getUsername())) {
             throw new RuntimeException("이미 존재하는 아이디 입니다.");

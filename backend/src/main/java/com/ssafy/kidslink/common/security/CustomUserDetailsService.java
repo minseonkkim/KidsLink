@@ -25,7 +25,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        log.info("CustomUserDetailsService.loadUserByUsername username - {} ", username);
+        log.debug("CustomUserDetailsService.loadUserByUsername username - {} ", username);
 
         User userData = new User();
         userData.setUsername(username);
@@ -44,7 +44,7 @@ public class CustomUserDetailsService implements UserDetailsService {
             userData.setPassword(parent.getParentPassword());
             userData.setRole("ROLE_PARENT");
         }
-        log.info("CustomUserDetailsService.loadUserByUsername userData - {} ", userData);
+        log.debug("CustomUserDetailsService.loadUserByUsername userData - {} ", userData);
 
         return new CustomUserDetails(userData);
     }

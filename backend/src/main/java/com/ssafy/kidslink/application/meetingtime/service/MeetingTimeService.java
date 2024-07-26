@@ -71,8 +71,6 @@ public class MeetingTimeService {
         meetingSchedule.setTeacher(teacherRepository.findByKindergartenClass(
                 parent.getChildren().stream().findFirst().get().getKindergartenClass()));
 
-        System.out.println((meetingScheduleRepository.save(meetingSchedule).getMeetingScheduleId()));
-        System.out.println(meetingTimeRepository.findById(id));
         meetingTimeRepository.deleteById(id);
 
     }
