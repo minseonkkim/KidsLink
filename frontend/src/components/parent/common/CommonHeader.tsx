@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { FaArrowLeft } from 'react-icons/fa';
-import NotificationBell from './NotificationBell';
+import AlaramBell from './AlaramBell';
 
 interface CommonHeaderProps {
   title: string;
@@ -50,7 +50,7 @@ const CommonHeader: React.FC<CommonHeaderProps> = ({ title }) => {
       <p className="text-[22px] font-bold text-[#212121]">
         {title}
       </p>
-      <NotificationBell notificationCount={notificationCount} notifications={notifications} />
+      <AlaramBell notificationCount={notificationCount} notifications={notifications} />
     </div>
   );
 };
