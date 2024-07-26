@@ -2,8 +2,10 @@ package com.ssafy.kidslink.application.diary.service;
 
 import com.ssafy.kidslink.application.child.repository.ChildRepository;
 import com.ssafy.kidslink.application.diary.domain.Diary;
+import com.ssafy.kidslink.application.diary.domain.ImageDiary;
 import com.ssafy.kidslink.application.diary.dto.DiaryRequestDTO;
 import com.ssafy.kidslink.application.diary.repository.DiaryRepository;
+import com.ssafy.kidslink.application.diary.repository.ImageDiaryRepository;
 import com.ssafy.kidslink.application.image.dto.ImageDTO;
 import com.ssafy.kidslink.application.image.service.ImageService;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +26,7 @@ public class DiaryService {
     private final ChildRepository childRepository;
     private final DiaryRepository diaryRepository;
     private final ImageService imageService;
+    private final ImageDiaryRepository imageDiaryRepository;
 
     public void createDiary(int childId, String teacherUsername, DiaryRequestDTO request) {
         Diary diary = new Diary();
@@ -37,12 +40,20 @@ public class DiaryService {
                 throw new RuntimeException(e);
             }
         }
-        if (images.size() > 0) {
-            diary.setDiaryThumbnail(images.get(0).getPath());
-        }
         diary.setDiaryContents(request.getContent());
         diary.setDiaryDate(LocalDate.parse(request.getDiaryDate()));
         diary.setChild(childRepository.findById(childId).orElseThrow());
-        diaryRepository.save(diary);
+        Diary savedDiary = diaryRepository.save(diary);
+
+        if (images.size() > 0) {
+            diary.setDiaryThumbnail(images.get(0).getPath());
+            for (ImageDTO image : images) {
+                ImageDiary imageDiary = new ImageDiary();
+                imageDiary.setDiary(savedDiary);
+                imageDiary.setImage(imageService.getImageById(image.getImageId()));
+
+                imageDiaryRepository.save(imageDiary);
+            }
+        }
     }
 }
