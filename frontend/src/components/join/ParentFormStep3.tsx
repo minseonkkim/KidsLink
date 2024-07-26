@@ -2,10 +2,8 @@ import { FC } from "react";
 import { FaCheck } from "react-icons/fa";
 import daramgi from "../../assets/join/joinResultDaramgi.png";
 import { useAppStore } from "../../stores/store";
-import { login as apiLogin } from "../../api/member/member";
+import { login as apiLogin } from "../../api/member";
 import { useNavigate } from "react-router-dom";
-import { useUserStore } from "../../stores/store";
-
 
 const ParentFormStep3: FC = () => {
   const { username, password } = useAppStore();
@@ -14,12 +12,11 @@ const ParentFormStep3: FC = () => {
   const handleLogin = async () => {
     try {
       await apiLogin({ username, password });
-      console.log("로그인 체크")
-      console.log(useUserStore.getState().userType)
-      navigate('/'); // 로그인 성공 후 리다이렉션
-
+      console.log("로그인 체크");
+      console.log(useAppStore.getState().userType);
+      navigate("/"); // 로그인 성공 후 리다이렉션
     } catch (error) {
-      console.error('Login failed:', error);
+      console.error("Login failed:", error);
     }
   };
 
@@ -32,14 +29,18 @@ const ParentFormStep3: FC = () => {
           <div className="absolute left-[25px] top-[-12px] flex items-center justify-center w-6 h-6 bg-[#F8DE56] rounded-full">
             <FaCheck className="w-3 h-3 text-white" />
           </div>
-          <p className="mt-6 text-sm font-normal text-left text-[#B8B8B8]">부모정보입력</p>
+          <p className="mt-6 text-sm font-normal text-left text-[#B8B8B8]">
+            부모정보입력
+          </p>
         </div>
         <div className="flex-1 relative">
           <div className="border-t-[3px] border-[#F8DE56] absolute left-0 right-0 transform -translate-y-1/2"></div>
           <div className="absolute left-1/2 transform -translate-x-[48%] top-[-12px] flex items-center justify-center w-6 h-6 bg-[#F8DE56] rounded-full">
             <FaCheck className="w-3 h-3 text-white" />
           </div>
-          <p className="mt-6 text-sm font-light text-center text-[#B8B8B8]">자녀정보입력</p>
+          <p className="mt-6 text-sm font-light text-center text-[#B8B8B8]">
+            자녀정보입력
+          </p>
         </div>
         <div className="flex-1 relative">
           <div className="border-t-[3px] border-[#F8DE56] absolute left-0 right-[15px] transform -translate-y-1/2"></div>
@@ -48,7 +49,9 @@ const ParentFormStep3: FC = () => {
               <div className="w-2 h-2 bg-[#F8DE56] rounded-full"></div>
             </div>
           </div>
-          <p className="mt-6 text-sm font-light text-right text-black">가입완료</p>
+          <p className="mt-6 text-sm font-light text-right text-black">
+            가입완료
+          </p>
         </div>
       </div>
 
