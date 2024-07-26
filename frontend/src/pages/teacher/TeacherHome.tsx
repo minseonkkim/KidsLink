@@ -8,8 +8,12 @@ import busBtnImg from "../../assets/teacher/bus_btn_img.png";
 import consultingBtnImg from "../../assets/teacher/consulting_btn_img.png";
 import TeacherHeader from '../../components/teacher/common/TeacherHeader';
 import { Link } from "react-router-dom";
+import useModal from '../../hooks/teacher/useModal';
+
+
 
 export default function TeacherHome(){
+    
     return <>
         <TeacherHeader/>
         <div className="mt-[85px] flex flex-row min-h-[calc(100vh-105px)] h-full items-center justify-between pl-[150px] pr-[35px]">

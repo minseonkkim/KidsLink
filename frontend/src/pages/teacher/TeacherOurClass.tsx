@@ -4,7 +4,16 @@ import Title from "../../components/teacher/common/Title";
 import ChildCard from "../../components/teacher/ourclass/ChildCard";
 import ProfileImg from "../../assets/teacher/profile_img.jpg";
 
-const ourClassChild = [
+interface OurClassChildType {
+    childName: string;
+    childGender: string;
+    childAge: number;
+    childAbsent: boolean;
+    childDosage: boolean;
+    childProfileImg: string;
+}
+
+const ourClassChild: OurClassChildType[] = [
     {childName: "김민선", childGender: "여자", childAge: 4, childAbsent: true, childDosage: true, childProfileImg: ProfileImg},
     {childName: "김범수", childGender: "남자", childAge: 5, childAbsent: true, childDosage: false, childProfileImg: ProfileImg},
     {childName: "김여준", childGender: "남자", childAge: 6, childAbsent: false, childDosage: true, childProfileImg: ProfileImg},
