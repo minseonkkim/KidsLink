@@ -3,16 +3,20 @@ package com.ssafy.kidslink.application.album.controller;
 import com.ssafy.kidslink.application.album.service.AlbumService;
 import com.ssafy.kidslink.application.image.service.ImageService;
 import com.ssafy.kidslink.common.dto.User;
+import com.ssafy.kidslink.common.exception.InvalidPrincipalException;
 import com.ssafy.kidslink.common.security.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartRequest;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/album")
@@ -24,13 +28,14 @@ public class AlbumController {
 
     @PostMapping("/classify")
 //    @Secured("ROLE_TEACHER")
-    public String classifyImages(@AuthenticationPrincipal Object principal, MultipartRequest request) throws IOException {
-        User user = new User();
-        if (principal instanceof CustomUserDetails) {
-            CustomUserDetails userDetails = (CustomUserDetails) principal;
-            user.setUsername(userDetails.getUsername());
+    public String classifyImages(@AuthenticationPrincipal Object principal,  @RequestParam("classifyImages") List<MultipartFile> classifyImages) throws IOException {
+        if (principal instanceof CustomUserDetails userDetails) {
+            String teacherUsername = userDetails.getUsername();
+            log.info("classifyImages {}", teacherUsername);
+            String json = albumService.classifyImages(teacherUsername, classifyImages);
+
+            return json;
         }
-            String json = albumService.classifyImages(user, request);
 //        List<ClassifyImageDTO> classifyImages = albumService.classifyImages(user, request);
 //        log.info(classifyImages.toString());
 
@@ -42,7 +47,6 @@ public class AlbumController {
 //            );
 //            return new ResponseEntity<>(responseData, HttpStatus.OK);
 
-
-        return json;
+        throw new InvalidPrincipalException("Invalid user principal");
     }
 }

@@ -9,6 +9,7 @@ import com.ssafy.kidslink.common.repository.RefreshTokenRepository;
 import com.ssafy.kidslink.common.security.CustomUserDetailsService;
 import com.ssafy.kidslink.common.service.RefreshTokenService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -36,6 +37,10 @@ import static org.springframework.http.HttpMethod.POST;
 @EnableMethodSecurity(securedEnabled = true)
 @RequiredArgsConstructor
 public class SecurityConfig {
+    @Value("${spring.profiles.active}")
+    private String activeProfile;
+    @Value("${frontend.server.url}")
+    private String frontendServerUrl;
 
     private final JWTUtil jwtUtil;
     private final AuthenticationConfiguration authenticationConfiguration;
@@ -79,7 +84,7 @@ public class SecurityConfig {
 
     private CorsConfigurationSource apiConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:5173"));
+        configuration.setAllowedOrigins(List.of(frontendServerUrl));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
