@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import NavigateBack from "../../components/teacher/common/NavigateBack";
 import TeacherHeader from "../../components/teacher/common/TeacherHeader";
 import Title from "../../components/teacher/common/Title";
@@ -9,10 +9,10 @@ import GrowthDiaryItem from "../../components/teacher/growth/GrowthDiaryItem";
 import { FiPlusCircle } from "react-icons/fi";
 import ExampleImg from "../../assets/teacher/example_img_1.jpg";
 import useModal from "../../hooks/teacher/useModal.tsx";
+import { FaTrash } from "react-icons/fa";
 
 export default function TeacherGrowth() {
-  const { openModal, Modal, isModalOpen } = useModal();
-  console.log('모달 상태', isModalOpen);
+  const { openModal, Modal, isModalOpen, closeModal } = useModal();
   const [searchChild, setSearchChild] = useState<string>('');
   const [selectedImages, setSelectedImages] = useState<string[]>([]);
   const [growthChildListItems, setGrowthChildListItems] = useState([
@@ -62,9 +62,9 @@ export default function TeacherGrowth() {
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchChild(event.target.value);
-  }
+  };
 
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePlusImage = (event: React.ChangeEvent<HTMLInputElement>) => {
     try {
       const files = Array.from(event.target.files || []);
       if (files.length === 0) return; // If no files were selected, exit the function
@@ -74,6 +74,10 @@ export default function TeacherGrowth() {
     } catch (error) {
       console.error("Error selecting images:", error);
     }
+  };
+
+  const handleRemoveImage = (index: number) => {
+    setSelectedImages((prevImages) => prevImages.filter((_, i) => i !== index));
   };
 
   const filteredChildren = growthChildListItems.filter((child) =>
@@ -100,39 +104,69 @@ export default function TeacherGrowth() {
     );
   };
 
+  const renderModalContent = () => (
+    <div className="w-[500px]">
+    <form>
+      <div className="mb-4 flex flex-row items-center">
+        <label className="block mr-3 mb-1 font-bold whitespace-nowrap text-[18px]">날짜</label>
+        <input
+          type="date"
+          className="w-full p-2 border-b-2 border-gray-300 focus:outline-none focus:border-[#FDDA6E]"
+        />
+      </div>
+      <div className="mb-4 flex flex-row">
+        <label className="block mr-3 mb-1 font-bold whitespace-nowrap text-[18px]">사진</label>
+        <label htmlFor="photo">
+          <div className="cursor-pointer bg-[#f4f4f4] w-[100px] h-[100px] rounded-[10px] flex items-center justify-center border-[1px]">
+            <IoCameraOutline className="text-[40px]" />
+          </div>
+        </label>
+        <input type="file" id="photo" className="hidden" onChange={handlePlusImage} multiple />
+        <div className="w-full h-[120px] ml-2 flex flex-row overflow-x-auto whitespace-nowrap custom-x-scrollbar">
+          {selectedImages.map((imgSrc, index) => (
+            <div key={index} className="w-[100px] h-[100px] relative mr-2 flex-shrink-0">
+              <img
+                src={imgSrc}
+                alt={`Selected ${index}`}
+                className="object-cover w-[100px] h-[100px] rounded-[10px] border-[1px]"
+              />
+              <button
+                type="button"
+                onClick={() => handleRemoveImage(index)}
+                className="p-1 absolute top-1 right-1 bg-red-600 text-white rounded-full w-5 h-5 flex items-center justify-center"
+              >
+                <FaTrash/>
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className="mb-4 flex flex-row">
+        <label className="block mr-3 mb-1 font-bold whitespace-nowrap text-[18px]">기록</label>
+        <textarea
+          className="border border-gray-300 p-2 rounded w-full"
+          rows={8}
+        ></textarea>
+      </div>
+      <div className="flex items-center justify-center">
+        <button className="w-[70px] h-[38px] border-[2px] border-[#7C7C7C] bg-[#E3EEFF] px-3 py-1 font-bold rounded-[8px] hover:bg-[#D4DDEA]">
+          등록
+        </button>
+      </div>
+    </form>
+  </div>
+  );
+
+  useEffect(() => {
+    if (isModalOpen) {
+      closeModal();
+      openModal(renderModalContent());
+    }
+  }, [selectedImages]);
+
   const openCreateModal = () => {
     if (!isModalOpen) { // Check if the modal is already open
-      openModal(
-        <div className="w-[500px]">
-          <form>
-            <div className="mb-4 flex flex-row items-center">
-              <label className="block mr-3 mb-1 font-bold whitespace-nowrap text-[18px]">날짜</label>
-              <input type="date" className="w-full p-2 border-b-2 border-gray-300 focus:outline-none focus:border-[#FDDA6E]" />
-            </div>
-            <div className="mb-4 flex flex-row">
-              <label className="block mr-3 mb-1 font-bold whitespace-nowrap text-[18px]">사진</label>
-              <label htmlFor="photo">
-                <div className="cursor-pointer bg-[#f4f4f4] w-[100px] h-[100px] rounded-[10px] flex items-center justify-center border-[1px]">
-                  <IoCameraOutline className="text-[40px]" />
-                </div>
-              </label>
-              <input type="file" id="photo" className="hidden" onChange={handleImageChange} multiple />
-              <div className="ml-2 flex space-x-2">
-                {selectedImages.map((imgSrc, index) => (
-                  <img key={index} src={imgSrc} alt={`Selected ${index}`} className="w-[100px] h-[100px] rounded-[10px] border-[1px]" />
-                ))}
-              </div>
-            </div>
-            <div className="mb-4 flex flex-row">
-              <label className="block mr-3 mb-1 font-bold whitespace-nowrap text-[18px]">기록</label>
-              <textarea className="border border-gray-300 p-2 rounded w-full" rows={8}></textarea>
-            </div>
-            <div className="flex items-center justify-center">
-              <button className="w-[70px] h-[38px] border-[2px] border-[#7C7C7C] bg-[#E3EEFF] px-3 py-1 font-bold rounded-[8px] hover:bg-[#D4DDEA]">등록</button>
-            </div>
-          </form>
-        </div>
-      );
+      openModal(renderModalContent());
     }
   };
 

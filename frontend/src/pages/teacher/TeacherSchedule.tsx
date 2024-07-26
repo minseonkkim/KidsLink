@@ -123,12 +123,12 @@ const TeacherSchedule: React.FC = () => {
     };
 
     return (
-        <div className="mt-[120px]">
-            <DndProvider backend={HTML5Backend}>
-                <TeacherHeader />
+        <DndProvider backend={HTML5Backend}>
+            <TeacherHeader />
+            <div className="flex flex-col mt-[80px]">
                 <NavigateBack backPage="홈" backLink='/' />
                 <Title title="일정" />
-                <div className="px-[150px] mt-10 flex flex-row justify-between">
+                <div className="px-[150px] mt-5 flex flex-row justify-between">
                     <Calendar
                         onChange={setDate}
                         value={date}
@@ -138,7 +138,7 @@ const TeacherSchedule: React.FC = () => {
                     />
                     <div className="w-[637px]">
                         <div className="flex flex-row justify-between mb-2">
-                            <div className="text-[22px] flex flex-row items-center h-[22px] font-bold text-[#8CAD1E] my-3">
+                            <div className="text-[22px] flex flex-row items-center h-[22px] font-bold text-[#8CAD1E] my-2">
                                 <FaRegCalendar className="mr-3" />
                                 {formatDate(date)}
                             </div>
@@ -160,50 +160,29 @@ const TeacherSchedule: React.FC = () => {
                             }
                         </div>
                         <div className="flex flex-row justify-between items-center mt-3">
-                            <input className="border w-[150px] h-[40px] border-[2px] border-[#B8B8B8] mr-1 rounded-[10px] p-1" type="time" />
-                            <input className="border w-[580px] h-[40px] bg-[#F8F8F8] border-[2px] rounded-[10px] border-[#B8B8B8] mr-1 p-1" />
-                            <button className="font-bold border-[2px] border-[#B8B8B8] text-[#B8B8B8] w-[65px] h-[40px] rounded-[10px]">추가</button>
+                            <input
+                                className="border w-[150px] h-[40px] border-[2px] border-[#B8B8B8] mr-1 rounded-[10px] p-1"
+                                type="time"
+                                value={time}
+                                onChange={(e) => setTime(e.target.value)}
+                            />
+                            <input
+                                className="border w-[580px] h-[40px] bg-[#F8F8F8] border-[2px] rounded-[10px] border-[#B8B8B8] mr-1 p-1"
+                                type="text"
+                                value={todo}
+                                onChange={(e) => setTodo(e.target.value)}
+                            />
+                            <button
+                                className="font-bold border-[2px] border-[#B8B8B8] text-[#B8B8B8] w-[65px] h-[40px] rounded-[10px] hover:bg-[#F3F3F3]"
+                                onClick={handleAddScheduleItem}
+                            >
+                                추가
+                            </button>
                         </div>
                     </div>
-                    <div className="p-3 border-[2px] border-[#8CAD1E] rounded-[10px] h-[330px] overflow-y-auto">
-                        {
-                            scheduleItems.map(({ id, content, completed }, index) => (
-                                <ScheduleItem
-                                    key={id}
-                                    id={id}
-                                    content={content}
-                                    completed={completed}
-                                    index={index}
-                                    moveItem={moveItem}
-                                    deleteItem={deleteItem}
-                                    toggleComplete={toggleComplete}
-                                />
-                            ))
-                        }
-                    </div>
-                    <div className="flex flex-row justify-between items-center mt-3">
-                        <input
-                            className="border w-[150px] h-[40px] border-[2px] border-[#B8B8B8] mr-1 rounded-[10px] p-1"
-                            type="time"
-                            value={time}
-                            onChange={(e) => setTime(e.target.value)}
-                        />
-                        <input
-                            className="border w-[580px] h-[40px] bg-[#F8F8F8] border-[2px] rounded-[10px] border-[#B8B8B8] mr-1 p-1"
-                            type="text"
-                            value={todo}
-                            onChange={(e) => setTodo(e.target.value)}
-                        />
-                        <button
-                            className="font-bold border-[2px] border-[#B8B8B8] text-[#B8B8B8] w-[65px] h-[40px] rounded-[10px] hover:bg-[#F3F3F3]"
-                            onClick={handleAddScheduleItem}
-                        >
-                            추가
-                        </button>
-                    </div>
                 </div>
-            </DndProvider>
-        </div>
+            </div>
+        </DndProvider>
     );
 };
 

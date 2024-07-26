@@ -45,7 +45,7 @@
 
 /* 요일 */
 .react-calendar__month-view__weekdays__weekday{
-    border-bottom: none !important;
+    border-bottom: none;
     font-family: 'font-KoPubDotum';
     padding: 8px !important;
     color: #000;
@@ -128,8 +128,8 @@
 
 /* 오늘 날짜 */
 .react-calendar__tile--now {
-background-color: #f6f6f6 !important;
-color: #363636 !important;
+background-color: #f6f6f6;
+color: #363636;
 border-radius: 20%;
 }
 
@@ -141,16 +141,16 @@ border-radius: 20%;
 
 /* 선택된 날짜의 배경색 변경 */
 .react-calendar__tile--active {
-border: 2px solid #8CAD1E !important;
-background-color: #D2E591 !important;
+border: 2px solid #8CAD1E;
+background-color: #D2E591;
 color: #000000;
 border-radius: 20%;
 }
 
 .react-calendar__tile--active:enabled:hover,
 .react-calendar__tile--active:enabled:focus {
-border: 2px solid #8CAD1E !important;
-background-color: #D2E591 !important;
+border: 2px solid #8CAD1E;
+background-color: #D2E591;
 color: #000000;
 border-radius: 20%;
 
