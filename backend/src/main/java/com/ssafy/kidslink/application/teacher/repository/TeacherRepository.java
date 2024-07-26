@@ -1,6 +1,6 @@
 package com.ssafy.kidslink.application.teacher.repository;
 
-import com.ssafy.kidslink.application.kindergartenclass.domain.KindergartenClass;
+import com.ssafy.kidslink.application.kindergarten.domain.KindergartenClass;
 import com.ssafy.kidslink.application.teacher.domain.Teacher;
 import org.springframework.data.jpa.repository.JpaRepository;
 
