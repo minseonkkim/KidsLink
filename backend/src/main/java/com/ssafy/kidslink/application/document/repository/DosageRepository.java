@@ -16,4 +16,5 @@ public interface DosageRepository extends JpaRepository<Dosage,Integer> {
     List<Dosage> findByChildChildId(int childId);
     @Query("SELECT a FROM Dosage a WHERE a.child = :child AND :date BETWEEN a.dosageStartdate AND a.dosageEnddate")
     List<Dosage> findByChildAndDateBetween(@Param("child") Child child, @Param("date") LocalDate date);
+    List<Dosage> findByChild(Child child);
 }
