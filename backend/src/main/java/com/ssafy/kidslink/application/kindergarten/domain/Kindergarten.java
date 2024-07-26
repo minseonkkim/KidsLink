@@ -1,12 +1,9 @@
 package com.ssafy.kidslink.application.kindergarten.domain;
 
-import com.ssafy.kidslink.application.kindergartenclass.domain.KindergartenClass;
-import com.ssafy.kidslink.application.schedule.domain.Schedule;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.List;
 import java.util.Set;
 
 @Entity

@@ -9,6 +9,7 @@ import GrowthDiaryItem from "../../components/teacher/growth/GrowthDiaryItem";
 import { FiPlusCircle } from "react-icons/fi";
 import ExampleImg from "../../assets/teacher/example_img_1.jpg";
 import useModal from "../../hooks/teacher/useModal.tsx";
+import { FaTrash } from "react-icons/fa";
 
 export default function TeacherGrowth() {
   const { openModal, Modal, isModalOpen, closeModal } = useModal();
@@ -121,20 +122,20 @@ export default function TeacherGrowth() {
           </div>
         </label>
         <input type="file" id="photo" className="hidden" onChange={handlePlusImage} multiple />
-        <div className="w-full h-[120px] ml-2 flex flex-row overflow-x-auto whitespace-nowrap">
+        <div className="w-full h-[120px] ml-2 flex flex-row overflow-x-auto whitespace-nowrap custom-x-scrollbar">
           {selectedImages.map((imgSrc, index) => (
             <div key={index} className="w-[100px] h-[100px] relative mr-2 flex-shrink-0">
               <img
                 src={imgSrc}
                 alt={`Selected ${index}`}
-                className="w-[100px] h-[100px] rounded-[10px] border-[1px]"
+                className="object-cover w-[100px] h-[100px] rounded-[10px] border-[1px]"
               />
               <button
                 type="button"
                 onClick={() => handleRemoveImage(index)}
-                className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center"
+                className="p-1 absolute top-1 right-1 bg-red-600 text-white rounded-full w-5 h-5 flex items-center justify-center"
               >
-                &times;
+                <FaTrash/>
               </button>
             </div>
           ))}

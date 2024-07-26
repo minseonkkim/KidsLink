@@ -8,6 +8,7 @@ import com.ssafy.kidslink.application.meetingtime.service.MeetingTimeService;
 import com.ssafy.kidslink.common.dto.APIError;
 import com.ssafy.kidslink.common.dto.APIResponse;
 import com.ssafy.kidslink.common.security.CustomUserDetails;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -77,12 +78,12 @@ public class MeetingTimeController {
 
     }
 
-    @PostMapping("")
-    public ResponseEntity<APIResponse<Void>> reserveMeeting(@AuthenticationPrincipal Object principal, @RequestBody ReserveMeetingDTO requestDTO){
+    @PostMapping("/{id}")
+    public ResponseEntity<APIResponse<Void>> reserveMeeting(@AuthenticationPrincipal Object principal, @Parameter(description = "상담일정 ID") @PathVariable int id, @RequestBody ReserveMeetingDTO requestDTO){
         if(principal instanceof CustomUserDetails){
             CustomUserDetails userDetails = (CustomUserDetails) principal;
 
-            meetingTimeService.reserveMeeting(userDetails.getUsername(), requestDTO);
+            meetingTimeService.reserveMeeting(userDetails.getUsername(), id, requestDTO);
             APIResponse<Void> responseData = new APIResponse<>(
                     "success",
                     null,

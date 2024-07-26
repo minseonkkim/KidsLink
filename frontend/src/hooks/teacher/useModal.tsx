@@ -1,7 +1,8 @@
-import { useState, ReactNode } from "react";
+import { useState, ReactNode, useEffect } from "react";
 import ReactModal from "react-modal";
+import { useLocation } from "react-router-dom";
 
-ReactModal.setAppElement('#root')
+ReactModal.setAppElement('#root');
 
 type UseModalReturn = {
   openModal: (content: ReactNode) => void;
@@ -13,6 +14,7 @@ type UseModalReturn = {
 export default function useModal(): UseModalReturn {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState<ReactNode>(null);
+  const location = useLocation();
 
   const openModal = (content: ReactNode) => {
     setModalContent(content);
@@ -23,6 +25,11 @@ export default function useModal(): UseModalReturn {
     setModalContent(null);
     setIsModalOpen(false);
   };
+
+  // Close the modal when the route changes
+  useEffect(() => {
+    closeModal();
+  }, [location]);
 
   const Modal = () => (
     <ReactModal
@@ -52,12 +59,12 @@ export default function useModal(): UseModalReturn {
     content: {
       zIndex: "150",
       position: "absolute",
-      top: "50%",
-      left: "50%",
-      transform: "translate(-50%, -50%)",
+      top: "200px",
+      left: "500px",
       borderRadius: "10px",
       boxShadow: "2px 2px 2px rgba(0, 0, 0, 0.25)",
       backgroundColor: "white",
+      display: "flex",
       justifyContent: "center",
       overflow: "auto",
     },

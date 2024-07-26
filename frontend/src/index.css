@@ -17,6 +17,20 @@ body {
     @apply font-KoPubDotum;
   }
 
+
+  @keyframes grow {
+    from {
+      transform: scale(0.7);
+    }
+    to {
+      transform: scale(1);
+    }
+  }
+
+  .grow-animation {
+    animation: grow 4s forwards;
+  }
+
 .rotate {
     transform: rotate(7deg);
     display: flex;
@@ -86,13 +100,52 @@ body {
 
 /* hover 효과 */
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background-color: #DAEBA2;
-    transition: all 0.2s; /* 호버 효과에 전환 추가 */
+  background-color: #DAEBA2;
+  transition: all 0.2s; /* 호버 효과에 전환 추가 */
 }
 
 /* 코너에 라운드 효과 */
 .custom-scrollbar::-webkit-scrollbar-track,
 .custom-scrollbar::-webkit-scrollbar-thumb {
+  border-radius: 5px;
+}
+
+/* custom-scrollbar 클래스 정의 */
+.custom-x-scrollbar {
+  padding: 0.5em 0;
+  /* max-width: 360px; */
+  overflow: auto;
+  overflow-y: hidden; /* 가로 스크롤만 허용 */
+  overflow-x: auto; /* 세로 스크롤 숨기기 */
+  cursor: pointer;
+}
+
+.custom-x-scrollbar::-webkit-scrollbar {
+  height: 8px;
+}
+
+.custom-x-scrollbar::-webkit-scrollbar-track {
+  background-color: #f4f4f4;
+}
+
+.custom-x-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #e7e7e7;
+}
+
+.custom-x-scrollbar::-webkit-scrollbar-button {
+  display: none;
+}
+
+
+/* hover 효과 */
+.custom-x-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: #DAEBA2;
+    transition: all 0.2s; /* 호버 효과에 전환 추가 */
+}
+
+/* 코너에 라운드 효과 */
+.custom-x-scrollbar::-webkit-scrollbar-track,
+.custom-x-scrollbar::-webkit-scrollbar-thumb {
     border-radius: 5px;
 }
 

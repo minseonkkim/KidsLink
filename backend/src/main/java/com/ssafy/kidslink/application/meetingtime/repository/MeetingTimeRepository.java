@@ -9,7 +9,8 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface MeetingTimeRepository extends JpaRepository<MeetingTime, Long> {
+public interface MeetingTimeRepository extends JpaRepository<MeetingTime, Integer> {
     @Query("SELECT mt FROM MeetingTime mt WHERE mt.teacher.kindergartenClass.kindergartenClassId = :classId")
     List<MeetingTime> findByClassId(@Param("classId") int classId);
+
 }

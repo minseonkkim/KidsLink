@@ -1,6 +1,6 @@
 package com.ssafy.kidslink.application.child.domain;
 
-import com.ssafy.kidslink.application.kindergartenclass.domain.KindergartenClass;
+import com.ssafy.kidslink.application.kindergarten.domain.KindergartenClass;
 import com.ssafy.kidslink.application.parent.domain.Parent;
 import com.ssafy.kidslink.common.enums.Gender;
 import jakarta.persistence.*;

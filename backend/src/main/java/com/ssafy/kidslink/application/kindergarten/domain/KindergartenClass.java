@@ -1,6 +1,5 @@
-package com.ssafy.kidslink.application.kindergartenclass.domain;
+package com.ssafy.kidslink.application.kindergarten.domain;
 
-import com.ssafy.kidslink.application.kindergarten.domain.Kindergarten;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

@@ -1,11 +1,13 @@
 package com.ssafy.kidslink.application.parent.controller;
 
+import com.ssafy.kidslink.application.child.dto.ChildDTO;
 import com.ssafy.kidslink.application.parent.dto.JoinDTO;
 import com.ssafy.kidslink.application.parent.dto.ParentDTO;
 import com.ssafy.kidslink.application.parent.mapper.ParentMapper;
 import com.ssafy.kidslink.application.parent.service.ParentService;
 import com.ssafy.kidslink.common.dto.APIError;
 import com.ssafy.kidslink.common.dto.APIResponse;
+import com.ssafy.kidslink.common.exception.InvalidPrincipalException;
 import com.ssafy.kidslink.common.security.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +16,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/parent")
@@ -60,13 +64,34 @@ public class ParentController {
         APIError apiError = new APIError("UNAUTHORIZED", "유효한 JWT 토큰이 필요합니다.");
 
         APIResponse<ParentDTO> responseData = new APIResponse<>(
-                "success",
+                "fail",
                 null,
                 "부모님의 정보 조회를 실패했습니다.",
                 apiError
         );
 
         return new ResponseEntity<>(responseData, HttpStatus.BAD_REQUEST);
+    }
+
+    @GetMapping("/children")
+    public ResponseEntity<APIResponse<Set<ChildDTO>>> getMyChildren(@AuthenticationPrincipal Object principal) {
+        String username = null;
+        if (principal instanceof CustomUserDetails) {
+            CustomUserDetails userDetails = (CustomUserDetails) principal;
+            username = userDetails.getUsername();
+
+            Set<ChildDTO> childrenSet = parentService.getMyChildren(username);
+
+            APIResponse<Set<ChildDTO>> responseData = new APIResponse<>(
+                    "success",
+                    childrenSet,
+                    "부모님이 소유한 아이들의 정보를 성공적으로 조회했습니다.",
+                    null
+            );
+
+            return new ResponseEntity<>(responseData, HttpStatus.OK);
+        }
+        throw new InvalidPrincipalException("Invalid user principal");
     }
 
 }

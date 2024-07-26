@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -79,17 +78,9 @@ public class ImageService {
         return Paths.get(uploadDir).toAbsolutePath().normalize().resolve(fileName);
     }
 
-    private static String getUriString(String fileName) {
-        return ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/api/image/")
-                .path(fileName)
-                .toUriString();
-    }
-
     private String storeRegularFile(MultipartFile file) throws IOException {
         String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
         Path filePath = Paths.get(uploadDir).resolve(fileName);
-        System.out.println(filePath);
         Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
         return fileName;
     }
@@ -107,32 +98,15 @@ public class ImageService {
         return fileName;
     }
 
-    private ImageDTO fileSave(MultipartFile file, File folder, String saveFolder) throws IOException {
-        String fileName = file.getOriginalFilename();
-        String ext = fileName.substring(fileName.lastIndexOf("."));
+    public Image getImageById(int imageId) {
+        return imageRepository.findById(imageId).orElseThrow();
+    }
 
-        String saveFileName = UUID.randomUUID() + ext;
-
-        File localFile = new File(folder, saveFileName);
-        file.transferTo(localFile);
-
-        Image image = new Image();
-        image.setSaveFolder(saveFolder);
-        image.setOriginalFile(fileName);
-        image.setSaveFile(saveFileName);
-
-        Image savedImage = imageRepository.save(image);
-
-        // If you want to upload to S3
-        // s3Config.amazonS3Client().putObject(new PutObjectRequest(bucket, saveFileName, localFile).withCannedAcl(CannedAccessControlList.PublicRead));
-        // String s3Url = s3Config.amazonS3Client().getUrl(bucket, saveFileName).toString();
-        // savedFilePaths.add(s3Url);
-
-        ImageDTO imageDTO = new ImageDTO();
-        imageDTO.setImageId(savedImage.getImageId());
-        imageDTO.setPath(localFile.getAbsolutePath());
-
-        return imageDTO;
+    public static String getUriString(String fileName) {
+        return ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/api/image/")
+                .path(fileName)
+                .toUriString();
     }
 
 }
