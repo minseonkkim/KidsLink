@@ -1,5 +1,4 @@
 import DocumentItem from "./DocumentItem";
-import { ImCheckboxChecked } from "react-icons/im";
 
 export default function AbsentDocument(){
     return <>
@@ -7,7 +6,10 @@ export default function AbsentDocument(){
             <div className="flex flex-row justify-between">
                 <span className="rounded-[10px] bg-[#FFDFDF] flex items-center justify-center w-[75px] h-[40px] font-bold text-[20px]">결석</span>
                 <div className="flex flex-row items-center h-[30px]">
-                    <ImCheckboxChecked/>
+                    <input
+                        type="checkbox"
+                        className="mx-[3px] w-[20px] h-[20px] accent-[#363636]"
+                    />
                     <span className="font-bold text-[18px] mx-3">확인완료</span>
                 </div>
             </div>
