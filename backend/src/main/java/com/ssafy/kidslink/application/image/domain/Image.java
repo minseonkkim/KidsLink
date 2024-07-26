@@ -27,10 +27,4 @@ public class Image {
 
     @Column(name = "save_file")
     private String saveFile;
-
-    @ManyToMany(mappedBy = "images")
-    private Set<Diary> diaries;
-
-    @ManyToMany(mappedBy = "images")
-    private Set<Album> albums;
 }
