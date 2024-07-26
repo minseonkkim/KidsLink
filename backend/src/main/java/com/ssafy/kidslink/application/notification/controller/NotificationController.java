@@ -57,4 +57,38 @@ public class NotificationController {
 
         return new ResponseEntity<>(responseData, HttpStatus.BAD_REQUEST);
     }
+
+    @GetMapping("/count")
+    public ResponseEntity<APIResponse<Integer>> getNotificationCount(@AuthenticationPrincipal Object principal){
+        if (principal instanceof CustomUserDetails) {
+            CustomUserDetails userDetails = (CustomUserDetails) principal;
+
+            Collection<? extends GrantedAuthority> collection = userDetails.getAuthorities();
+            Iterator<? extends GrantedAuthority> it = collection.iterator();
+            GrantedAuthority auth = it.next();
+            String role = auth.getAuthority();
+
+            int cnt = notificationService.getNotificationCount(role, userDetails.getUsername());
+            APIResponse<Integer> responseData = new APIResponse<>(
+                    "success",
+                    cnt,
+                    "알림 개수 조회에 성공했습니다.",
+                    null
+            );
+
+            return new ResponseEntity<>(responseData, HttpStatus.OK);
+        }
+        APIError apiError = new APIError("UNAUTHORIZED", "유효한 JWT 토큰이 필요합니다.");
+
+        APIResponse<Integer> responseData = new APIResponse<>(
+                "fail",
+                null,
+                "알림 개수 조회에 실패했습니다.",
+                apiError
+        );
+
+        return new ResponseEntity<>(responseData, HttpStatus.BAD_REQUEST);
+
+
+    }
 }
