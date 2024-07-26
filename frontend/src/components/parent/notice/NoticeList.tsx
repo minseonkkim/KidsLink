@@ -1,9 +1,9 @@
-import NoticeItem from './NoticeItem'
+import NoticeItem from './NoticeItem';
 
 interface NoticeListProps {
   notices: {
-    id: number;
-    date: string;
+    noticeBoardId: number;
+    noticeBoardDate: string; // date를 createDate로 변경
     title: string;
   }[];
   handleNoticeClick: (id: number) => void;
@@ -14,8 +14,8 @@ export default function NoticeList({ notices, handleNoticeClick, scroll }: Notic
   return (
     <div className={`space-y-6 ${scroll ? 'overflow-y-auto' : 'overflow-hidden'}`} style={{ maxHeight: scroll ? 'calc(100vh - 200px)' : 'auto', paddingBottom: '100px', scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
       {notices.map(notice => (
-        <NoticeItem key={notice.id} notice={notice} handleClick={handleNoticeClick} />
+        <NoticeItem key={notice.noticeBoardId} notice={notice} handleClick={handleNoticeClick} />
       ))}
     </div>
-  )
+  );
 }

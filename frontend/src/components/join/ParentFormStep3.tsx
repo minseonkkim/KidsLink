@@ -6,7 +6,7 @@ import { useAppStore } from "../../stores/store";
 import { login as apiLogin } from "../../api/member";
 import { useNavigate } from "react-router-dom";
 
-const ParentFormStep3: FC = () => {
+const ParentFormStep3 = () => {
   const { username, password } = useAppStore();
   const navigate = useNavigate();
   const [showConfetti, setShowConfetti] = useState(true);
@@ -31,7 +31,16 @@ const ParentFormStep3: FC = () => {
 
   return (
     <div className="w-full p-6">
-      {showConfetti && <Confetti />}
+      {showConfetti && (
+        <Confetti
+          numberOfPieces={500}
+          gravity={0.5}
+          initialVelocityX={10}
+          initialVelocityY={20}
+          wind={0}
+          recycle={false}
+        />
+      )}
       {/* 회원가입 진행률 */}
       <div className="relative flex h-[62px] mx-3">
         <div className="flex-1 relative">

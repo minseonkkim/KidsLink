@@ -1,4 +1,5 @@
-import create from 'zustand';
+// 여기 수정 필요
+import { create } from 'zustand';
 
 // AuthState interface and state
 interface AuthState {
@@ -40,11 +41,13 @@ interface ChildInfoState {
   birth: string;
   kindergartenName: string;
   className: string;
+  childProfile: File | undefined;
   setGender: (gender: string) => void;
   setChildName: (childName: string) => void;
   setBirth: (birth: string) => void;
   setKindergartenName: (kindergartenName: string) => void;
   setClassName: (className: string) => void;
+  setChildProfile: (childProfile: File | undefined) => void;
 }
 
 // Unified AppState interface
@@ -61,7 +64,7 @@ export const useAppStore = create<AppState>((set) => ({
   logout: () => set(() => ({ isLoggedIn: false, username: '', password: '' })),
 
   // UserState initial values and methods
-  userType: 'none',
+  userType: '',
   setUserType: (userType) => set(() => ({ userType })),
 
   // ParentInfoState initial values and methods
@@ -84,9 +87,12 @@ export const useAppStore = create<AppState>((set) => ({
   birth: '',
   kindergartenName: '',
   className: '',
+  childProfile: undefined,
   setGender: (gender) => set(() => ({ gender })),
   setChildName: (childName) => set(() => ({ childName })),
   setBirth: (birth) => set(() => ({ birth })),
   setKindergartenName: (kindergartenName) => set(() => ({ kindergartenName })),
   setClassName: (className) => set(() => ({ className })),
+  setChildProfile: (childProfile) => set(() => ({ childProfile })),
 }));
+
