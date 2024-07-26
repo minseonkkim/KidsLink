@@ -7,6 +7,7 @@ import com.ssafy.kidslink.application.document.service.AbsentService;
 import com.ssafy.kidslink.application.document.service.DocumentService;
 import com.ssafy.kidslink.application.document.service.DosageService;
 import com.ssafy.kidslink.common.dto.APIResponse;
+import com.ssafy.kidslink.common.exception.InvalidPrincipalException;
 import com.ssafy.kidslink.common.security.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,20 +29,25 @@ public class DocumentController {
     private final DosageService dosageService;
     private final DocumentService documentService;
 
-    @GetMapping
-    public ResponseEntity<APIResponse<List<DocumentDTO>>> getAllDocuments() {
-        List<DocumentDTO> allDocuments = documentService.getAllDocuments();
+    @GetMapping("")
+    public ResponseEntity<APIResponse<List<DocumentDTO>>> getAllDocuments(@AuthenticationPrincipal Object principal) {
+        if (principal instanceof CustomUserDetails userDetails) {
 
-        APIResponse<List<DocumentDTO>> responseData = new APIResponse<>(
-                "success",
-                allDocuments,
-                "모든 문서를 날짜순으로 가져왔습니다.",
-                null
-        );
+            String username = userDetails.getUsername();
+            List<DocumentDTO> allDocuments = documentService.getAllDocuments(username);
 
-        return ResponseEntity.status(HttpStatus.OK).body(responseData);
+            APIResponse<List<DocumentDTO>> responseData = new APIResponse<>(
+                    "success",
+                    allDocuments,
+                    "모든 문서를 날짜순으로 가져왔습니다.",
+                    null
+            );
+
+            return ResponseEntity.status(HttpStatus.OK).body(responseData);
+        }
+        throw new InvalidPrincipalException("Invalid user principal");
     }
-    @GetMapping("/{childId}")
+    @GetMapping("/child/{childId}")
     public ResponseEntity<APIResponse<List<DocumentDTO>>> getAllDocumentsByChild(@PathVariable int childId) {
         List<DocumentDTO> allDocumentsByChild = documentService.getAllDocumentsByChild(childId);
 
@@ -132,11 +138,9 @@ public class DocumentController {
 
     private String getUsernameFromPrincipal(Object principal) {
         String username = null;
-        if (principal instanceof CustomUserDetails) {
-            CustomUserDetails userDetails = (CustomUserDetails) principal;
+        if (principal instanceof CustomUserDetails userDetails) {
             username = userDetails.getUsername();
-        } else if (principal instanceof OAuth2User) {
-            OAuth2User oAuth2User = (OAuth2User) principal;
+        } else if (principal instanceof OAuth2User oAuth2User) {
             username =  oAuth2User.getAttribute("email"); // OAuth는 이메일이 username
         }
         return username;
