@@ -157,7 +157,7 @@ export async function logout() {
   const setUserType = useAppStore.getState().setUserType
 
   try {
-    const response = await axios.post('user/logout')
+    const response = await axiosInstance.post('user/logout')
 
     if (response.data.status === "success") {
       if (localStorage.getItem("accessToken") || localStorage.getItem('expiredAt')) {
