@@ -1,5 +1,7 @@
 package com.ssafy.kidslink.application.teacher.controller;
 
+import com.ssafy.kidslink.application.kindergarten.dto.ResponseClassInfoDTO;
+import com.ssafy.kidslink.application.kindergarten.service.KindergartenService;
 import com.ssafy.kidslink.application.teacher.dto.JoinDTO;
 import com.ssafy.kidslink.application.teacher.dto.TeacherDTO;
 import com.ssafy.kidslink.application.teacher.service.TeacherService;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 public class TeacherController {
     private final TeacherService teacherService;
+    private final KindergartenService kindergartenService;
 
     @PostMapping("")
     public ResponseEntity<APIResponse<Void>> joinProcess(@ModelAttribute JoinDTO joinDTO) {
@@ -46,6 +49,24 @@ public class TeacherController {
             );
             return new ResponseEntity<>(responseData, HttpStatus.OK);
 
+        }
+        throw new InvalidPrincipalException("Invalid user principal");
+    }
+
+    @GetMapping("/class")
+    public ResponseEntity<APIResponse<ResponseClassInfoDTO>> getMyClassInfo(@AuthenticationPrincipal Object principal) {
+        if (principal instanceof CustomUserDetails userDetails) {
+            String teacherUsername = userDetails.getUsername();
+
+            ResponseClassInfoDTO responseClassInfoDTO = teacherService.getMyClassInfo(teacherUsername);
+            APIResponse<ResponseClassInfoDTO> responseData = new APIResponse<>(
+                    "success",
+                    responseClassInfoDTO,
+                    "우리반 정보 조회 성공",
+                    null
+            );
+
+            return ResponseEntity.status(HttpStatus.OK).body(responseData);
         }
         throw new InvalidPrincipalException("Invalid user principal");
     }
