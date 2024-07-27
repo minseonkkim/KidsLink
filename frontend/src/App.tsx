@@ -18,6 +18,7 @@ import ParentMeeting from "./pages/parent/ParentMeeting";
 import ParentMeetingSubmit from "./pages/parent/ParentMeetingSubmit";
 import ParentMeetingRoom from "./pages/parent/ParentMeetingRoom";
 import ParentSchedule from "./pages/parent/ParentSchedule";
+import ParentMyPage from "./pages/parent/ParentMyPage";
 import Footer from "./components/parent/common/Footer";
 import TeacherDocument from "./pages/teacher/TeacherDocument";
 import TeacherNotice from "./pages/teacher/TeacherNotice";
@@ -33,6 +34,7 @@ import TeacherOurClass from "./pages/teacher/TeacherOurClass";
 import TeacherSchedule from "./pages/teacher/TeacherSchedule";
 import JoinDetails from "./pages/common/JoinDetails";
 import TeacherAlbumFinish from "./pages/teacher/TeacherAlbumFinish";
+import TeacherMyPage from "./pages/teacher/TeacherMyPage";
 
 const App: React.FC = () => {
   const userType = useAppStore((state: UserState) => state.userType); // UserState 타입 지정
@@ -56,6 +58,7 @@ const App: React.FC = () => {
             <Route path="/meeting/submit" element={<ParentMeetingSubmit />} />
             <Route path="/meeting/:id" element={<ParentMeetingRoom />} />
             <Route path="/ParentSchedule" element={<ParentSchedule />} />
+            <Route path="/mypage" element={<ParentMyPage/>}/>
           </>
         ) : userType === "ROLE_TEACHER" ? (
           <>
@@ -70,6 +73,7 @@ const App: React.FC = () => {
             <Route path="/bus" element={<TeacherBus />} />
             <Route path="/ourclass" element={<TeacherOurClass />} />
             <Route path="/schedule" element={<TeacherSchedule />} />
+            <Route path="/mypage" element={<TeacherMyPage />}/>
           </>
         ) : (
           <>
