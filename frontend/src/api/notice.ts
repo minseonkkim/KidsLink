@@ -1,18 +1,20 @@
 import axiosInstance from './token/axiosInstance'
+import { useNoticeStore } from '../stores/noticeStore'
 
 interface Notice {
   noticeBoardId: number;
   teacherName: string;
   title: string;
   content: string;
-  noticeBoardDate: string; 
+  noticeBaordDate: string; // 데이터 오타로 옴
 }
 
 interface NoticeDetail {
+  noticeBoardId: number;
   teacherName: string;
   title: string;
   content: string;
-  noticeBoardDate: string; 
+  noticeBaordDate: string; 
 }
 
 interface NoticeData {
@@ -27,7 +29,12 @@ export async function getAllNotices(): Promise<Notice[]> {
 
     if (response.data.status === 'success') {
       console.log(response.data.data) // 확인 후 삭제
-      return response.data.data
+
+      const notices: Notice[] = response.data.data;
+      const setNotices = useNoticeStore.getState().setNotices;
+      setNotices(notices) // zustand 스토어 업데이트
+
+      return notices
     } else {
       throw new Error('Failed to fetch notices')
     }
@@ -38,7 +45,7 @@ export async function getAllNotices(): Promise<Notice[]> {
 }
 
 // 알림장 상세 조회
-export async function getNoticeDetail(noticeBoardId: number): Promise<NoticeDetail[]> {
+export async function getNoticeDetail(noticeBoardId: number): Promise<NoticeDetail> {
   try {
     const response = await axiosInstance.get(`/noticeboard/${noticeBoardId}`)
 
