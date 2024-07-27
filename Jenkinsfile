@@ -46,7 +46,7 @@ pipeline {
                 script {
                     sshagent([SSH_KEY_ID]) {
                         sh """
-                        ssh -o StrictHostKeyChecking=no ec2-user@${EC2_IP} 'cd /home/minsun && docker-compose pull && docker-compose up -d'
+                        ssh -o StrictHostKeyChecking=no minsun@${EC2_IP} 'cd /home/minsun && docker-compose pull && docker-compose up -d'
                         """
                     }
                 }
