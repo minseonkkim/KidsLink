@@ -6,8 +6,8 @@ import com.ssafy.kidslink.application.child.mapper.ChildMapper;
 import com.ssafy.kidslink.application.child.repository.ChildRepository;
 import com.ssafy.kidslink.application.image.dto.ImageDTO;
 import com.ssafy.kidslink.application.image.service.ImageService;
-import com.ssafy.kidslink.application.kindergartenclass.domain.KindergartenClass;
-import com.ssafy.kidslink.application.kindergartenclass.repository.KindergartenClassRepository;
+import com.ssafy.kidslink.application.kindergarten.domain.KindergartenClass;
+import com.ssafy.kidslink.application.kindergarten.repository.KindergartenClassRepository;
 import com.ssafy.kidslink.application.parent.domain.Parent;
 import com.ssafy.kidslink.application.parent.dto.JoinDTO;
 import com.ssafy.kidslink.application.parent.repository.ParentRepository;
@@ -40,7 +40,7 @@ public class ParentService {
 
     @Transactional
     public void joinProcess(JoinDTO joinDTO) {
-        log.info("joinDTO : {}", joinDTO);
+        log.debug("joinDTO : {}", joinDTO);
 
         if (userService.isExistUser(joinDTO.getUsername())) {
             throw new RuntimeException("이미 존재하는 아이디 입니다.");
@@ -73,6 +73,13 @@ public class ParentService {
         child.setChildGender(Gender.fromCode(childDTO.getGender()));
         child.setChildName(childDTO.getName());
         child.setChildBirth(childDTO.getBirth());
+        if (childDTO.getChildProfile() != null) {
+            try {
+                child.setChildProfile(imageService.storeFile(childDTO.getChildProfile()).getPath());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
 
         KindergartenClass kindergartenClass =
                 kindergartenClassRepository

@@ -15,4 +15,5 @@ public class ParentDTO {
     private String nickname;
     private String tel;
     private ChildDTO child;
+    private String profile;
 }

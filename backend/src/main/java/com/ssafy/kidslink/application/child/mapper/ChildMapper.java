@@ -2,8 +2,8 @@ package com.ssafy.kidslink.application.child.mapper;
 
 import com.ssafy.kidslink.application.child.domain.Child;
 import com.ssafy.kidslink.application.child.dto.ChildDTO;
-import com.ssafy.kidslink.application.kindergartenclass.domain.KindergartenClass;
-import com.ssafy.kidslink.application.kindergartenclass.repository.KindergartenClassRepository;
+import com.ssafy.kidslink.application.kindergarten.domain.KindergartenClass;
+import com.ssafy.kidslink.application.kindergarten.repository.KindergartenClassRepository;
 import com.ssafy.kidslink.common.enums.Gender;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -24,6 +24,7 @@ public class ChildMapper {
         child.setKindergartenClass(kindergartenClass);
 
         child.setParent(child.getParent());
+        child.setChildProfile(childDTO.getProfile());
         return child;
     }
 
@@ -35,7 +36,7 @@ public class ChildMapper {
         childDTO.setGender(child.getChildGender().getCode());
         childDTO.setKindergartenName(child.getKindergartenClass().getKindergarten().getKindergartenName());
         childDTO.setKindergartenClassName(child.getKindergartenClass().getKindergartenClassName());
-
+        childDTO.setProfile(child.getChildProfile());
         return childDTO;
     }
 }

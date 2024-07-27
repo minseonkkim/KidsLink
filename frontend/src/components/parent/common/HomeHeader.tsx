@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import NotificationBell from './NotificationBell';
+import AlaramBell from './AlaramBell';
 
 const HomeHeader: React.FC = () => {
   const navigate = useNavigate();
@@ -46,7 +46,7 @@ const HomeHeader: React.FC = () => {
       >
         키즈링크
       </p>
-      <NotificationBell notificationCount={notificationCount} notifications={notifications} />
+      <AlaramBell notificationCount={notificationCount} notifications={notifications} />
     </header>
   );
 };

@@ -1,10 +1,11 @@
 package com.ssafy.kidslink.application.teacher.service;
 
 import com.ssafy.kidslink.application.child.repository.ChildRepository;
-import com.ssafy.kidslink.application.image.dto.ImageDTO;
 import com.ssafy.kidslink.application.image.service.ImageService;
-import com.ssafy.kidslink.application.kindergartenclass.domain.KindergartenClass;
-import com.ssafy.kidslink.application.kindergartenclass.repository.KindergartenClassRepository;
+import com.ssafy.kidslink.application.kindergarten.domain.KindergartenClass;
+import com.ssafy.kidslink.application.kindergarten.dto.ResponseClassInfoDTO;
+import com.ssafy.kidslink.application.kindergarten.repository.KindergartenClassRepository;
+import com.ssafy.kidslink.application.kindergarten.service.KindergartenService;
 import com.ssafy.kidslink.application.teacher.domain.Teacher;
 import com.ssafy.kidslink.application.teacher.dto.JoinDTO;
 import com.ssafy.kidslink.application.teacher.dto.TeacherDTO;
@@ -31,17 +32,12 @@ public class TeacherService {
 
     private final JWTUtil jwtUtil;
     private final TeacherMapper teacherMapper;
+    private final KindergartenService kindergartenService;
+
     // 선생님 회원가입
     public void joinProcess(JoinDTO joinDTO){
         if(!joinDTO.getPassword().equals(joinDTO.getPasswordConfirm())){
             throw new PasswordMismatchException("비밀번호와 비밀번호 확인이 다릅니다.");
-        }
-
-        ImageDTO imageDTO;
-        try {
-            imageDTO = imageService.storeFile(joinDTO.getProfile());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
 
         Teacher teacher = new Teacher();
@@ -51,7 +47,13 @@ public class TeacherService {
         teacher.setTeacherTel(joinDTO.getTel());
         teacher.setTeacherUsername(joinDTO.getUsername());
         teacher.setTeacherPassword(bCryptPasswordEncoder.encode(joinDTO.getPassword()));
-        teacher.setTeacherProfile(imageDTO.getPath());
+        if (joinDTO.getProfile() != null) {
+            try {
+                teacher.setTeacherProfile(imageService.storeFile(joinDTO.getProfile()).getPath());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
 
         KindergartenClass kindergartenClass = kindergartenClassRepository.findByKindergartenKindergartenNameAndKindergartenClassName(
                 joinDTO.getKindergartenName(), joinDTO.getKindergartenClassName()
@@ -70,4 +72,8 @@ public class TeacherService {
         return teacherRepository.findByTeacherUsername(username).getKindergartenClass().getKindergartenClassId();
     }
 
+    public ResponseClassInfoDTO getMyClassInfo(String teacherUsername) {
+        Teacher teacher = teacherRepository.findByTeacherUsername(teacherUsername);
+        return kindergartenService.getClassInfo(teacher.getKindergartenClass().getKindergartenClassId());
+    }
 }

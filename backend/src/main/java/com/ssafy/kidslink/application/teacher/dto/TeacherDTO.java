@@ -1,6 +1,5 @@
 package com.ssafy.kidslink.application.teacher.dto;
 
-import com.ssafy.kidslink.application.kindergartenclass.domain.KindergartenClass;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -16,4 +15,5 @@ public class TeacherDTO {
     private String tel;
     private String kindergartenName;
     private String kindergartenClassName;
+    private String profile;
 }
