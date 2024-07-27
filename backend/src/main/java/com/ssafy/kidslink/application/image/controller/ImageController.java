@@ -21,23 +21,18 @@ import java.nio.file.Path;
 @RequiredArgsConstructor
 public class ImageController {
 
-    private final StorageService storageService;
+    private final ImageService imageService;
 
     @GetMapping("/{fileName}")
     public ResponseEntity<Resource> getLocalImage(@PathVariable("fileName") String fileName) {
-        try {
-            Path filePath = storageService.loadFileAsResource(fileName);
-            Resource resource = new UrlResource(filePath.toUri());
-            if (!resource.exists()) {
-                return ResponseEntity.notFound().build();
-            }
-            String contentType = "image/jpeg"; // 필요에 따라 contentType을 결정합니다.
-            return ResponseEntity.ok()
-                    .contentType(MediaType.parseMediaType(contentType))
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
-                    .body(resource);
-        } catch (MalformedURLException e) {
-            throw new RuntimeException("Failed to load file", e);
+        Resource resource = imageService.loadFileAsResourceByLocalStorage(fileName);
+        if (!resource.exists()) {
+            return ResponseEntity.notFound().build();
         }
+        String contentType = "image/jpeg"; // 필요에 따라 contentType을 결정합니다.
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(contentType))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
+                .body(resource);
     }
 }

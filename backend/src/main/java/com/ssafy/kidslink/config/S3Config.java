@@ -4,8 +4,10 @@ import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.ssafy.kidslink.common.storage.S3Condition;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
@@ -16,7 +18,9 @@ public class S3Config {
     private String secretKey;
     @Value("${cloud.aws.region.static}")
     private String region;
+
     @Bean
+    @Conditional(S3Condition.class)
     public AmazonS3Client amazonS3Client() {
 
         BasicAWSCredentials awsCredentials = new BasicAWSCredentials(accessKey, secretKey);

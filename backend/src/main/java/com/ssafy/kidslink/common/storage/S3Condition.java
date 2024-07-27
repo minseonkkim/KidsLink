@@ -7,8 +7,10 @@ import org.springframework.core.type.AnnotatedTypeMetadata;
 public class S3Condition implements Condition {
     @Override
     public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
-        // S3 사용 여부를 결정하는 로직을 작성합니다.
-        // 예를 들어, 환경 변수를 체크하여 S3 사용 여부를 결정할 수 있습니다.
-        return "true".equals(context.getEnvironment().getProperty("use.s3"));
+        String useS3 = context.getEnvironment().getProperty("use.s3");
+        String accessKey = context.getEnvironment().getProperty("cloud.aws.credentials.access-key");
+        String secretKey = context.getEnvironment().getProperty("cloud.aws.credentials.secret-key");
+        String region = context.getEnvironment().getProperty("cloud.aws.region.static");
+        return "true".equals(useS3) && accessKey != null && secretKey != null && region != null;
     }
 }
