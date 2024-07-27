@@ -59,8 +59,9 @@ export default function useModal(): UseModalReturn {
     content: {
       zIndex: "150",
       position: "absolute",
-      top: "200px",
-      left: "500px",
+      top: "50%",
+      left: "50%",
+      transform: "translate(-50%, -50%)",
       borderRadius: "10px",
       boxShadow: "2px 2px 2px rgba(0, 0, 0, 0.25)",
       backgroundColor: "white",
