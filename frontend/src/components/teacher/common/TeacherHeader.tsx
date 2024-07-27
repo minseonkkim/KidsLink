@@ -2,7 +2,6 @@ import { CgProfile } from "react-icons/cg";
 import { BiBell } from "react-icons/bi";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
 import useModal from "../../../hooks/teacher/useModal";
 import { FaRegTrashAlt } from "react-icons/fa";
 
@@ -21,7 +20,6 @@ const initialAlerts: Alert[] = [
 export default function TeacherHeader() {
     const { openModal, closeModal, Modal, isModalOpen } = useModal();
     const [alertList, setAlertList] = useState<Alert[]>(initialAlerts);
-    const location = useLocation();
 
     const deleteItem = (index: number) => {
         setAlertList(prevList => prevList.filter((_, i) => i !== index));
@@ -88,7 +86,6 @@ export default function TeacherHeader() {
         <>
             <header className="z-10 fixed top-0 w-full flex items-center justify-between h-[85px] bg-[#ffffff] shadow-md">
                 <Link to='/'><p className="max-sm:ml-[30px] ml-[150px] text-[40px] font-bold text-left font-Cafe24Ssurround gradient-text cursor-pointer">키즈링크</p></Link>
-                <LogoutButton /> 
                 <div className="flex flex-row">
                     <Link to='/mypage'><CgProfile className="w-[30px] h-[30px] mr-8 cursor-pointer" style={{ color: '#363636' }} /></Link>
                     <div className="relative max-sm:mr-[30px] mr-[150px]" onClick={openCreateModal}>
