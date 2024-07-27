@@ -1,10 +1,17 @@
 package com.ssafy.kidslink.application.diary.dto;
 
-import java.time.LocalDate;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
+@Getter
+@Setter
+@RequiredArgsConstructor
 public class DiaryRequestDTO {
-    private String thumbnail_url;
+    private List<MultipartFile> files;
     private String content;
-    private LocalDate diaryDate;
-
+    private String diaryDate;
 }

@@ -2,7 +2,8 @@ package com.ssafy.kidslink.application.kindergarten.controller;
 
 import com.ssafy.kidslink.application.kindergarten.dto.KindergartenDTO;
 import com.ssafy.kidslink.application.kindergarten.service.KindergartenService;
-import com.ssafy.kidslink.application.kindergartenclass.dto.KindergartenClassDTO;
+import com.ssafy.kidslink.application.kindergarten.dto.KindergartenClassDTO;
+import com.ssafy.kidslink.application.kindergarten.dto.ResponseClassInfoDTO;
 import com.ssafy.kidslink.common.dto.APIResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -42,6 +43,20 @@ public class KindergartenController {
                 "success",
                 classes,
                 "반 조회 성공",
+                null
+        );
+
+        return new ResponseEntity<>(responseData, HttpStatus.OK);
+    }
+
+    @GetMapping("/class/{classId}")
+    public ResponseEntity<APIResponse<ResponseClassInfoDTO>> getClassInfo(@PathVariable int classId) {
+        ResponseClassInfoDTO responseClassInfoDTO = kindergartenService.getClassInfo(classId);
+
+        APIResponse<ResponseClassInfoDTO> responseData = new APIResponse<>(
+                "success",
+                responseClassInfoDTO,
+                "반 정보 조회에 성공했습니다.",
                 null
         );
 

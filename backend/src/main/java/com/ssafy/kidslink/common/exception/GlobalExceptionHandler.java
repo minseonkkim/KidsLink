@@ -98,4 +98,28 @@ public class GlobalExceptionHandler {
         );
         return new ResponseEntity<>(responseData, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(JwtAuthenticationException.class)
+    public ResponseEntity<APIResponse<Void>> handleAuthenticationException(JwtAuthenticationException e) {
+        APIError apiError = new APIError("AUTHENTICATION_ERROR", e.getMessage());
+        APIResponse<Void> responseData = new APIResponse<>(
+                "fail",
+                null,
+                "인증 오류가 발생했습니다.",
+                apiError
+        );
+        return new ResponseEntity<>(responseData, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(JwtAuthorizationException.class)
+    public ResponseEntity<APIResponse<Void>> handleAuthorizationException(JwtAuthorizationException e) {
+        APIError apiError = new APIError("AUTHORIZATION_ERROR", e.getMessage());
+        APIResponse<Void> responseData = new APIResponse<>(
+                "fail",
+                null,
+                "권한 오류가 발생했습니다.",
+                apiError
+        );
+        return new ResponseEntity<>(responseData, HttpStatus.FORBIDDEN);
+    }
 }

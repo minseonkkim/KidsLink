@@ -1,45 +1,49 @@
-import { useEffect, useRef, useState } from "react"
-import { useNavigate } from "react-router-dom"
-import CommonHeader from "../../components/parent/common/CommonHeader"
-import InfoSection from "../../components/parent/common/InfoSection"
-import SearchBar from "../../components/parent/common/SearchTitleBar"
-import NoticeList from "../../components/parent/notice/NoticeList"
-import daramgi from "../../assets/parent/notice-daramgi.png"
-import { useNoticeStore } from "../../stores/parent/noticeStore"
+import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import CommonHeader from "../../components/parent/common/CommonHeader";
+import InfoSection from "../../components/parent/common/InfoSection";
+import SearchBar from "../../components/parent/common/SearchTitleBar";
+import NoticeList from "../../components/parent/notice/NoticeList";
+import daramgi from "../../assets/parent/notice-daramgi.png";
+import { useNoticeStore } from "../../stores/noticeStore";
 
 export default function ParentNotice() {
-  const navigate = useNavigate()
-  const { filteredNotices, searchTitle, setSearchTitle, filterNotices } = useNoticeStore()
-  const [scroll, setScroll] = useState(false)
-  const divRef = useRef<HTMLDivElement>(null)
+  const navigate = useNavigate();
+  const { filteredNotices, searchTitle, setSearchTitle, filterNotices, loadNotices } = useNoticeStore();
+  const [scroll, setScroll] = useState(false);
+  const divRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    filterNotices()
-  }, [searchTitle, filterNotices])
+    loadNotices();
+  }, [loadNotices]);
+
+  useEffect(() => {
+    filterNotices();
+  }, [searchTitle, filterNotices]);
 
   useEffect(() => {
     const handleScroll = () => {
       if (divRef.current) {
-        const topPosition = divRef.current.getBoundingClientRect().top
+        const topPosition = divRef.current.getBoundingClientRect().top;
         if (topPosition <= 200) {
-          setScroll(true)
+          setScroll(true);
         } else {
-          setScroll(false)
+          setScroll(false);
         }
       }
-    }
+    };
 
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const handleNoticeClick = (id: number) => {
-    navigate(`/notice/${id}`)
-  }
+    navigate(`/noticeboard/${id}`);
+  };
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTitle(e.target.value)
-  }
+    setSearchTitle(e.target.value);
+  };
 
   return (
     <div className="min-h-screen flex flex-col items-center bg-[#FFEC8A]">
@@ -64,5 +68,5 @@ export default function ParentNotice() {
         </div>
       </div>
     </div>
-  )
+  );
 }

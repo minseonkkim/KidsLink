@@ -1,5 +1,9 @@
 package com.ssafy.kidslink.common.jwt;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ssafy.kidslink.common.dto.APIError;
+import com.ssafy.kidslink.common.dto.APIResponse;
+import com.ssafy.kidslink.common.exception.JwtAuthenticationException;
 import com.ssafy.kidslink.common.security.CustomUserDetailsService;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
@@ -25,7 +29,7 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        log.info("JWT Authorization Filter");
+        log.debug("JWT Authorization Filter");
         String authorization = request.getHeader("Authorization");
         String token = null;
         if(authorization != null && authorization.startsWith("Bearer ")) {
@@ -41,17 +45,12 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
         try {
             jwtUtil.isExpired(token);
         } catch (ExpiredJwtException e) {
-            PrintWriter writer = response.getWriter();
-
-            writer.print("access token expired");
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            handleException(response, "ACCESS 토큰 만료", "AUTHENTICATION_ERROR", HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
 
         // token category confirm
         String category = jwtUtil.getCategory(token);
-
-        log.info("category - {}", category);
 
         if (!"access".equals(category)) {
             filterChain.doFilter(request, response);
@@ -68,8 +67,25 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
             UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            log.info("user - {}", userDetails.getUsername());
         }
         filterChain.doFilter(request, response);
+    }
+
+    private void handleException(HttpServletResponse response, String message, String code, int status) throws IOException {
+        APIError apiError = new APIError(code, message);
+        APIResponse<Void> responseData = new APIResponse<>(
+                "fail",
+                null,
+                message,
+                apiError
+        );
+
+        response.setStatus(status);
+        response.setContentType("application/json;charset=UTF-8");
+        response.setCharacterEncoding("UTF-8");
+        PrintWriter writer = response.getWriter();
+        ObjectMapper objectMapper = new ObjectMapper();
+        writer.write(objectMapper.writeValueAsString(responseData));
+        writer.flush();
     }
 }
