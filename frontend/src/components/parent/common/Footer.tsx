@@ -13,6 +13,10 @@ const Footer: React.FC = () => {
     navigate('/');
   };
 
+  const handleMyPageClick = () => {
+    navigate('/mypage');
+  }
+
   return (
     <div className="z-40 footer fixed bottom-0 w-full bg-white text-gray-700 h-[66px] flex justify-around items-center shadow-md">
       <div className="footer-item flex flex-col items-center" onClick={handleHomeClick}>
@@ -24,7 +28,7 @@ const Footer: React.FC = () => {
       <div className="footer-item flex flex-col items-center" onClick={handleScheduleClick}>
         <AiOutlineCalendar className="w-8 h-8" />
       </div>
-      <div className="footer-item flex flex-col items-center">
+      <div className="footer-item flex flex-col items-center" onClick={handleMyPageClick}>
         <AiOutlineUser className="w-8 h-8" />
       </div>
     </div>
