@@ -23,10 +23,8 @@ import java.util.zip.ZipOutputStream;
 @RequiredArgsConstructor
 @Slf4j
 public class LocalStorageService implements StorageService {
-
     @Value("${file.upload-dir}")
     private String UPLOAD_DIR;
-
     @Value("${file.max-size}")
     private long maxFileSize;
 
