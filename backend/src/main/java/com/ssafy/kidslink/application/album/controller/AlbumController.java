@@ -28,11 +28,11 @@ public class AlbumController {
 
     @PostMapping("/classify")
 //    @Secured("ROLE_TEACHER")
-    public String classifyImages(@AuthenticationPrincipal Object principal,  @RequestParam("classifyImages") List<MultipartFile> classifyImages) throws IOException {
+    public String classifyImages(@AuthenticationPrincipal Object principal, MultipartRequest request) throws IOException {
         if (principal instanceof CustomUserDetails userDetails) {
             String teacherUsername = userDetails.getUsername();
             log.info("classifyImages {}", teacherUsername);
-            String json = albumService.classifyImages(teacherUsername, classifyImages);
+            String json = albumService.classifyImages(teacherUsername, request);
 
             return json;
         }

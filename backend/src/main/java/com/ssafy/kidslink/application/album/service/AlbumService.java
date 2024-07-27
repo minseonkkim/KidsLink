@@ -36,9 +36,9 @@ public class AlbumService {
     private final RestTemplate restTemplate;
     private final ImageService imageService;
 
-    public String classifyImages(String teacherUsername, List<MultipartFile> classifyImages) {
+    public String classifyImages(String teacherUsername, MultipartRequest request) {
         Teacher teacher = teacherRepository.findByTeacherUsername(teacherUsername);
-        log.info("classifyImages: {}", classifyImages);
+        List<MultipartFile> classifyImages = request.getFiles("classifyImages");
 
         // 사진 데이터 저장 후 저장되는 DTO
         List<ImageDTO> classifies = new ArrayList<>();

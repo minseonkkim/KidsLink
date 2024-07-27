@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 
 @RestControllerAdvice
@@ -121,5 +122,17 @@ public class GlobalExceptionHandler {
                 apiError
         );
         return new ResponseEntity<>(responseData, HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<APIResponse<Void>> handleMaxSizeException(MaxUploadSizeExceededException exc) {
+        APIError apiError = new APIError("UPLOAD_ERROR", "File size exceeds the maximum limit!");
+        APIResponse<Void> responseData = new APIResponse<>(
+                "fail",
+                null,
+                "파일 크기가 최대 한도를 초과했습니다.",
+                apiError
+        );
+        return new ResponseEntity<>(responseData, HttpStatus.BAD_REQUEST);
     }
 }
