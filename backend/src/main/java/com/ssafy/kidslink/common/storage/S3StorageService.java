@@ -1,6 +1,7 @@
 package com.ssafy.kidslink.common.storage;
 
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.ssafy.kidslink.config.S3Config;
@@ -20,7 +21,7 @@ import java.nio.file.Path;
 @Conditional(S3Condition.class)
 @RequiredArgsConstructor
 public class S3StorageService implements StorageService {
-    private final S3Config s3Config;
+    private final AmazonS3Client amazonS3Client;
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
@@ -29,8 +30,9 @@ public class S3StorageService implements StorageService {
         File localFile = convertMultipartFileToFile(file);
         String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
 
-        s3Config.amazonS3Client().putObject(new PutObjectRequest(bucket, fileName, localFile).withCannedAcl(CannedAccessControlList.PublicRead));
-        String s3Url = s3Config.amazonS3Client().getUrl(bucket, fileName).toString();
+        amazonS3Client.putObject(new PutObjectRequest(bucket, fileName, localFile)
+                .withCannedAcl(CannedAccessControlList.PublicRead));
+        String s3Url = amazonS3Client.getUrl(bucket, fileName).toString();
 
         localFile.delete();
         return s3Url;
