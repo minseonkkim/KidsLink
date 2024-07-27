@@ -10,9 +10,9 @@ import { FiPlusCircle } from "react-icons/fi";
 import ExampleImg from "../../assets/teacher/example_img_1.jpg";
 import useModal from "../../hooks/teacher/useModal.tsx";
 import { FaTrash } from "react-icons/fa";
+import ToastNotification, { showToast, showToastError } from '../../components/teacher/common/ToastNotification.tsx';
 
-// 동명이인을 고려해서, childId로 필터
-const growthDiaryData = [
+const initialGrowthDiaryData = [
   { id: 1, childId: 1, name: "김민선", date: "2024.07.10", imgPaths: [ExampleImg] },
   { id: 2, childId: 1, name: "김민선", date: "2024.07.10", imgPaths: [ExampleImg] },
   { id: 3, childId: 1, name: "김민선", date: "2024.07.10", imgPaths: [] },
@@ -24,7 +24,8 @@ export default function TeacherGrowth() {
   const { openModal, Modal, isModalOpen, closeModal } = useModal();
   const [searchChild, setSearchChild] = useState<string>('');
   const [selectedImages, setSelectedImages] = useState<string[]>([]);
-  const [selectedChildId, setSelectedChildId] = useState<number>(0);
+  const [selectedChildId, setSelectedChildId] = useState<number | null>(null);
+  const [growthDiaryData, setGrowthDiaryData] = useState(initialGrowthDiaryData);
   const [growthChildListItems, setGrowthChildListItems] = useState([
     {
       id: 1,
@@ -35,7 +36,7 @@ export default function TeacherGrowth() {
     },
     {
       id: 2,
-      currentChild: true,
+      currentChild: false,
       name: "김범수",
       profileImgPath: ProfileImg,
       completed: false,
@@ -43,14 +44,14 @@ export default function TeacherGrowth() {
     {
       id: 3,
       currentChild: false,
-      name: "김지원",
+      name: "김여준",
       profileImgPath: ProfileImg,
       completed: false,
     },
     {
       id: 4,
       currentChild: false,
-      name: "김여준",
+      name: "김지원",
       profileImgPath: ProfileImg,
       completed: false,
     },
@@ -66,9 +67,31 @@ export default function TeacherGrowth() {
       currentChild: false,
       name: "정현수",
       profileImgPath: ProfileImg,
-      completed: true,
+      completed: false,
     },
   ]);
+
+  useEffect(() => {
+    // 매일 자정 completed 상태 초기화
+    const resetCompletedStatus = () => {
+      setGrowthChildListItems(prevItems =>
+        prevItems.map(child => ({ ...child, completed: false }))
+      );
+    };
+
+    const now = new Date();
+    const midnight = new Date(now.setHours(24, 0, 0, 0)).getTime();
+    const timeToMidnight = midnight - Date.now();
+
+    // 자정에 한 번 실행한 후, 매일 자정에 실행
+    const initialTimeout = setTimeout(() => {
+      resetCompletedStatus();
+      setInterval(resetCompletedStatus, 24 * 60 * 60 * 1000); // 24시간마다 실행
+    }, timeToMidnight);
+
+    // 컴포넌트 언마운트 시 타이머 정리
+    return () => clearTimeout(initialTimeout);
+  }, []);
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchChild(event.target.value);
@@ -110,16 +133,54 @@ export default function TeacherGrowth() {
   }, [selectedChildId]);
 
   const handleDiaryItemClick = (id: number) => {
-    setSelectedChildId(id); // 선택된 아이디 저장
+    if (selectedChildId === null) {
+      showToast('아이를 선택해주세요');
+    } else {
+      // 다른 로직 수행
+      setSelectedChildId(id); // 선택된 아이디 저장
+    }
+  };
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (selectedChildId === null) {
+      showToastError('아이를 선택해주세요');
+      return;
+    }
+
+    const selectedChild = growthChildListItems.find((child) => child.id === selectedChildId);
+    if (!selectedChild) return;
+
+    const form = event.target as HTMLFormElement;
+    const dateValue = form.date.value;
+    if (!dateValue) {
+      showToastError('날짜를 선택해주세요');
+      return;
+    }
+
+    console.log(event.target);
+    const newDiaryEntry = {
+      id: growthDiaryData.length + 1,
+      childId: selectedChildId,
+      name: selectedChild.name,
+      date: dateValue,
+      imgPaths: selectedImages,
+    };
+    selectedChild.completed = true;
+
+    setGrowthDiaryData((prevData) => [...prevData, newDiaryEntry]);
+    setSelectedImages([]);
+    closeModal();
   };
 
   const renderModalContent = () => (
     <div className="w-[500px]">
-      <form>
+      <form onSubmit={handleSubmit}>
         <div className="mb-4 flex flex-row items-center">
           <label className="block mr-3 mb-1 font-bold whitespace-nowrap text-[18px]">날짜</label>
           <input
             type="date"
+            name="date"
             className="w-full p-2 border-b-2 border-gray-300 focus:outline-none focus:border-[#FDDA6E]"
           />
         </div>
@@ -153,6 +214,7 @@ export default function TeacherGrowth() {
         <div className="mb-4 flex flex-row">
           <label className="block mr-3 mb-1 font-bold whitespace-nowrap text-[18px]">기록</label>
           <textarea
+            name="record"
             className="border border-gray-300 p-2 rounded w-full"
             rows={8}
           ></textarea>
@@ -174,7 +236,9 @@ export default function TeacherGrowth() {
   }, [selectedImages]);
 
   const openCreateModal = () => {
-    if (!isModalOpen) {
+    if (selectedChildId === null) {
+      showToastError('아이를 선택해주세요');
+    } else if (!isModalOpen) {
       openModal(renderModalContent());
     }
   };
@@ -226,6 +290,7 @@ export default function TeacherGrowth() {
         </div>
       </div>
       <Modal />
+      <ToastNotification />
     </>
   );
 }
