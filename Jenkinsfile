@@ -12,6 +12,8 @@ pipeline {
             steps {
                 script {
                     dir('backend') {
+                        // gradlew 파일에 실행 권한을 부여합니다.
+                        sh 'chmod +x ./gradlew'
                         // Gradle을 사용하여 JAR 파일을 빌드합니다.
                         sh './gradlew clean build -x test'
 
