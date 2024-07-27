@@ -9,7 +9,7 @@ import com.ssafy.kidslink.application.diary.repository.DiaryRepository;
 import com.ssafy.kidslink.application.diary.repository.ImageDiaryRepository;
 import com.ssafy.kidslink.application.image.dto.ImageDTO;
 import com.ssafy.kidslink.application.image.mapper.ImageMapper;
-import com.ssafy.kidslink.application.image.service.ImageService;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -28,7 +28,7 @@ public class DiaryService {
 
     private final ChildRepository childRepository;
     private final DiaryRepository diaryRepository;
-    private final ImageService imageService;
+    //private final ImageService imageService;
     private final ImageDiaryRepository imageDiaryRepository;
     private final ImageMapper imageMapper;
 
@@ -36,29 +36,29 @@ public class DiaryService {
         Diary diary = new Diary();
 
         List<MultipartFile> files = request.getFiles();
-        List<ImageDTO> images = new ArrayList<>();
-        for (MultipartFile file : files) {
-            try {
-                images.add(imageService.storeFile(file));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
+//        List<ImageDTO> images = new ArrayList<>();
+//        for (MultipartFile file : files) {
+//            try {
+//                images.add(imageService.storeFile(file));
+//            } catch (IOException e) {
+//                throw new RuntimeException(e);
+//            }
+//        }
         diary.setDiaryContents(request.getContent());
         diary.setDiaryDate(LocalDate.parse(request.getDiaryDate()));
         diary.setChild(childRepository.findById(childId).orElseThrow());
         Diary savedDiary = diaryRepository.save(diary);
 
-        if (!images.isEmpty()) {
-            diary.setDiaryThumbnail(images.get(0).getPath());
-            for (ImageDTO image : images) {
-                ImageDiary imageDiary = new ImageDiary();
-                imageDiary.setDiary(savedDiary);
-                imageDiary.setImage(imageService.getImageById(image.getImageId()));
-
-                imageDiaryRepository.save(imageDiary);
-            }
-        }
+//        if (!images.isEmpty()) {
+//            diary.setDiaryThumbnail(images.get(0).getPath());
+//            for (ImageDTO image : images) {
+//                ImageDiary imageDiary = new ImageDiary();
+//                imageDiary.setDiary(savedDiary);
+//                imageDiary.setImage(imageService.getImageById(image.getImageId()));
+//
+//                imageDiaryRepository.save(imageDiary);
+//            }
+//        }
     }
 
     public List<DiaryDTO> getAllDiary(int childId) {
@@ -72,7 +72,7 @@ public class DiaryService {
             diaryDTO.setImages(diary.getImages().stream().map(image -> {
                 ImageDTO imageDTO = new ImageDTO();
                 imageDTO.setImageId(image.getImageId());
-                imageDTO.setPath(ImageService.getUriString(image.getSaveFile()));
+//                imageDTO.setPath(ImageService.getUriString(image.getSaveFile()));
                 return imageDTO;
             }).collect(Collectors.toSet()));
             diaryDTOs.add(diaryDTO);
