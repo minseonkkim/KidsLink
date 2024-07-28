@@ -2,7 +2,6 @@ pipeline {
     agent any
 
     environment {
-        EC2_IP = '52.78.118.241'  // Jenkins 시스템 설정에서 가져오지 않을 경우 직접 정의
         SSH_KEY_ID = 'ssh-key'
         DOCKER_HUB_REPO = 'sangmin0806'
     }
@@ -12,12 +11,9 @@ pipeline {
             steps {
                 script {
                     dir('backend') {
-                        // gradlew 파일에 실행 권한을 부여합니다.
                         sh 'chmod +x ./gradlew'
-                        // Gradle을 사용하여 JAR 파일을 빌드합니다.
                         sh './gradlew clean build -x test'
 
-                        // Docker 이미지를 빌드하고 푸시합니다.
                         withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', passwordVariable: 'DOCKER_HUB_PASS', usernameVariable: 'DOCKER_HUB_USER')]) {
                             sh "docker build -t ${DOCKER_HUB_REPO}/backend ."
                             sh "echo \$DOCKER_HUB_PASS | docker login -u \$DOCKER_HUB_USER --password-stdin"
@@ -31,7 +27,7 @@ pipeline {
             steps {
                 script {
                     dir('frontend') {
-                        // Docker 이미지를 빌드하고 푸시합니다.
+
                         withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', passwordVariable: 'DOCKER_HUB_PASS', usernameVariable: 'DOCKER_HUB_USER')]) {
                             sh "docker build -t ${DOCKER_HUB_REPO}/frontend ."
                             sh "echo \$DOCKER_HUB_PASS | docker login -u \$DOCKER_HUB_USER --password-stdin"
