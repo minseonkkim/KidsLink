@@ -75,12 +75,8 @@ public class ParentController {
 
     @GetMapping("/children")
     public ResponseEntity<APIResponse<Set<ChildDTO>>> getMyChildren(@AuthenticationPrincipal Object principal) {
-        String username = null;
-        if (principal instanceof CustomUserDetails) {
-            CustomUserDetails userDetails = (CustomUserDetails) principal;
-            username = userDetails.getUsername();
-
-            Set<ChildDTO> childrenSet = parentService.getMyChildren(username);
+        if (principal instanceof CustomUserDetails userDetails) {
+            Set<ChildDTO> childrenSet = parentService.getMyChildren(userDetails.getUsername());
 
             APIResponse<Set<ChildDTO>> responseData = new APIResponse<>(
                     "success",
