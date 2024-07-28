@@ -35,12 +35,17 @@ import TeacherSchedule from "./pages/teacher/TeacherSchedule";
 import JoinDetails from "./pages/common/JoinDetails";
 import TeacherAlbumFinish from "./pages/teacher/TeacherAlbumFinish";
 import TeacherMyPage from "./pages/teacher/TeacherMyPage";
+import { Theme } from "./components/openvidu/Theme";
+import { ChakraProvider } from "@chakra-ui/react";
+import OpenViduComponent from "./components/openvidu/OpenviduComponent";
+import Broadcast from "./pages/teacher/TeacherBroadcast";
 
 const App: React.FC = () => {
   const userType = useAppStore((state: UserState) => state.userType); // UserState 타입 지정
 
   return (
     <>
+    
       <Routes>
         {userType === "ROLE_PARENT" ? (
           <>
@@ -74,6 +79,7 @@ const App: React.FC = () => {
             <Route path="/ourclass" element={<TeacherOurClass />} />
             <Route path="/schedule" element={<TeacherSchedule />} />
             <Route path="/mypage" element={<TeacherMyPage />}/>
+            <Route path="live/broadcast/" element={<Broadcast />} />
           </>
         ) : (
           <>
@@ -89,9 +95,11 @@ const App: React.FC = () => {
 };
 
 const AppWrapper: React.FC = () => (
+  <ChakraProvider theme={Theme}>
   <Router>
     <App />
   </Router>
+  </ChakraProvider>
 );
 
 export default AppWrapper;
