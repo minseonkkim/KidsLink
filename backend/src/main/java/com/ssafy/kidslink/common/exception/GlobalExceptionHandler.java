@@ -100,8 +100,8 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(responseData, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(JwtAuthenticationException.class)
-    public ResponseEntity<APIResponse<Void>> handleAuthenticationException(JwtAuthenticationException e) {
+    @ExceptionHandler(JWTAuthenticationException.class)
+    public ResponseEntity<APIResponse<Void>> handleAuthenticationException(JWTAuthenticationException e) {
         APIError apiError = new APIError("AUTHENTICATION_ERROR", e.getMessage());
         APIResponse<Void> responseData = new APIResponse<>(
                 "fail",
@@ -112,8 +112,8 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(responseData, HttpStatus.UNAUTHORIZED);
     }
 
-    @ExceptionHandler(JwtAuthorizationException.class)
-    public ResponseEntity<APIResponse<Void>> handleAuthorizationException(JwtAuthorizationException e) {
+    @ExceptionHandler(JWTAuthorizationException.class)
+    public ResponseEntity<APIResponse<Void>> handleAuthorizationException(JWTAuthorizationException e) {
         APIError apiError = new APIError("AUTHORIZATION_ERROR", e.getMessage());
         APIResponse<Void> responseData = new APIResponse<>(
                 "fail",
