@@ -5,7 +5,9 @@ import com.ssafy.kidslink.application.parent.domain.Parent;
 import com.ssafy.kidslink.common.dto.APIError;
 import com.ssafy.kidslink.common.dto.APIResponse;
 import com.ssafy.kidslink.common.dto.LoginDTO;
+import com.ssafy.kidslink.common.redis.RefreshToken;
 import com.ssafy.kidslink.common.repository.RefreshTokenRepository;
+import com.ssafy.kidslink.common.service.RefreshTokenService;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -20,6 +22,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.util.StreamUtils;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.HashMap;
@@ -35,13 +38,12 @@ import static com.ssafy.kidslink.common.util.CookieUtil.createCookie;
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authenticationManager;
     private final JWTUtil jwtUtil;
-    private final RefreshTokenRepository refreshTokenRepository;
+    private final RefreshTokenService refreshTokenService;
 
-    public JWTAuthenticationFilter(AuthenticationManager authenticationManager, JWTUtil jwtUtil, RefreshTokenRepository refreshTokenRepository) {
+    public JWTAuthenticationFilter(AuthenticationManager authenticationManager, JWTUtil jwtUtil, RefreshTokenService refreshTokenService) {
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
-        this.refreshTokenRepository = refreshTokenRepository;
-        // refresh repository 추가
+        this.refreshTokenService = refreshTokenService;
         setFilterProcessesUrl("/api/user/login");
     }
 
@@ -90,6 +92,9 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         String access = jwtToken.getAccess();
         String refresh = jwtToken.getRefresh();
 
+        // refresh save
+        refreshTokenService.saveTokenInfo(username, access, refresh);
+
         response.setHeader("access", access);
         response.addCookie(createCookie("refresh", refresh));
         response.setStatus(HttpStatus.OK.value());
@@ -115,18 +120,24 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
         log.debug("JwtAuthenticationTokenFilter.unsuccessfulAuthentication");
-        response.setStatus(HttpStatus.UNAUTHORIZED.value());
+        handleException(response, "유효한 JWT 토큰 필요", "UNAUTHORIZED_ERROR", HttpServletResponse.SC_UNAUTHORIZED);
+    }
 
-        APIError apiError = new APIError("UNAUTHORIZED", "유효한 JWT 토큰이 필요합니다.");
-        APIResponse<Parent> responseData = new APIResponse<>(
-                "error",
+    private void handleException(HttpServletResponse response, String message, String code, int status) throws IOException {
+        APIError apiError = new APIError(code, message);
+        APIResponse<Void> responseData = new APIResponse<>(
+                "fail",
                 null,
-                "사용자의 정보 조회를 실패했습니다.",
+                message,
                 apiError
         );
 
-        ObjectMapper objectMapper = new ObjectMapper();
+        response.setStatus(status);
         response.setContentType("application/json;charset=UTF-8");
-        response.getWriter().write(objectMapper.writeValueAsString(responseData));
+        response.setCharacterEncoding("UTF-8");
+        PrintWriter writer = response.getWriter();
+        ObjectMapper objectMapper = new ObjectMapper();
+        writer.write(objectMapper.writeValueAsString(responseData));
+        writer.flush();
     }
 }

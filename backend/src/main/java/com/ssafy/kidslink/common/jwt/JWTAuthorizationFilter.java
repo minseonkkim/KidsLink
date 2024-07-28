@@ -3,7 +3,6 @@ package com.ssafy.kidslink.common.jwt;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.kidslink.common.dto.APIError;
 import com.ssafy.kidslink.common.dto.APIResponse;
-import com.ssafy.kidslink.common.exception.JwtAuthenticationException;
 import com.ssafy.kidslink.common.security.CustomUserDetailsService;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
