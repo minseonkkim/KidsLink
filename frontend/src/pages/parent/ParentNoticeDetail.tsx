@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import CommonHeader from "../../components/parent/common/CommonHeader";
 import profileImg from "../../assets/parent/notice-daramgi.png";
@@ -49,7 +49,7 @@ export default function ParentNoticeDetail() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col justify-between bg-white">
+    <div className="min-h-[100dvh] flex flex-col justify-between bg-white">
       <CommonHeader title="알림장" />
       <div className="flex flex-1 flex-col my-16 items-center px-6">
         <div className="relative w-full mt-4 mb-12">

@@ -1,3 +1,4 @@
+// 토큰 필요한 함수인 경우
 import axios from 'axios';
 
 const BASE_URL = import.meta.env.VITE_API_KEY;
