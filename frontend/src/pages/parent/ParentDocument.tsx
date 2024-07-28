@@ -60,7 +60,7 @@ export default function ParentDocument() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center bg-[#FFEC8A]">
+    <div className="min-h-[100dvh] flex flex-col items-center bg-[#FFEC8A]">
       <CommonHeader title="서류" />
 
       <div className="w-full flex flex-col items-center mt-16 flex-grow">
@@ -90,13 +90,7 @@ export default function ParentDocument() {
             {filteredDocuments.map((doc) => (
               <div
                 key={doc.id}
-                className={`flex flex-col p-4 rounded-2xl bg-[#FFF9D7] hover:bg-[#ffec8a] transition-colors duration-200`}
-                style={{
-                  boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
-                  transform: 'rotateX(10deg)',
-                  perspective: '1000px',
-                  border: '2px solid #FFEC8A',
-                }}
+                className={`flex flex-col p-4 rounded-2xl bg-[#FFF9D7] border-1 border-[#FFEC8A] hover:bg-[#ffec8a] transition-colors duration-200`}
               >
                 <div className="flex items-center">
                   <img

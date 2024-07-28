@@ -6,7 +6,7 @@ import daramgi from "../../assets/parent/bus-daramgi.png"
 export default function ParentBus() {
 
   return (
-    <div className="min-h-screen flex flex-col items-center bg-[#FFEC8A]">
+    <div className="min-h-[100dvh] flex flex-col items-center bg-[#FFEC8A]">
       <CommonHeader title="버스" />
 
       <div className="w-full flex flex-col items-center mt-16 flex-grow">
