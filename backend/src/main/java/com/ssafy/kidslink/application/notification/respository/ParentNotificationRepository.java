@@ -9,8 +9,9 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface ParentNotificationRepository extends JpaRepository<ParentNotification, Long> {
+public interface ParentNotificationRepository extends JpaRepository<ParentNotification, Integer> {
     List<ParentNotification> findByParent(Parent parent);
     @Query("SELECT COUNT(tn) FROM ParentNotification tn WHERE tn.parent = :parent")
     int countByParent(Parent parent);
+    void deleteByParent(Parent parent);
 }
