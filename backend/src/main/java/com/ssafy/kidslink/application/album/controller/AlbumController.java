@@ -1,12 +1,17 @@
 package com.ssafy.kidslink.application.album.controller;
 
+import com.ssafy.kidslink.application.album.dto.ClassifyImageDTO;
 import com.ssafy.kidslink.application.album.service.AlbumService;
 import com.ssafy.kidslink.application.image.service.ImageService;
+import com.ssafy.kidslink.application.parent.dto.ParentDTO;
+import com.ssafy.kidslink.common.dto.APIResponse;
 import com.ssafy.kidslink.common.dto.User;
 import com.ssafy.kidslink.common.exception.InvalidPrincipalException;
 import com.ssafy.kidslink.common.security.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,25 +33,19 @@ public class AlbumController {
 
     @PostMapping("/classify")
 //    @Secured("ROLE_TEACHER")
-    public String classifyImages(@AuthenticationPrincipal Object principal, MultipartRequest request) throws IOException {
+    public ResponseEntity<APIResponse<List<ClassifyImageDTO>>> classifyImages(@AuthenticationPrincipal Object principal, MultipartRequest request) throws IOException {
         if (principal instanceof CustomUserDetails userDetails) {
             String teacherUsername = userDetails.getUsername();
             log.info("classifyImages {}", teacherUsername);
-            String json = albumService.classifyImages(teacherUsername, request);
-
-            return json;
+            List<ClassifyImageDTO> classifiedImages = albumService.classifyImages(teacherUsername, request);
+            APIResponse<List<ClassifyImageDTO>> responseData = new APIResponse<>(
+                    "success",
+                    classifiedImages,
+                    "앨범을 성공적으로 분류하였습니다.",
+                    null
+            );
+            return new ResponseEntity<>(responseData, HttpStatus.OK);
         }
-//        List<ClassifyImageDTO> classifyImages = albumService.classifyImages(user, request);
-//        log.info(classifyImages.toString());
-
-//            APIResponse<ParentDTO> responseData = new APIResponse<>(
-//                    "success",
-//                    parentDTO,
-//                    "부모님의 정보를 성공적으로 조회했습니다.",
-//                    null
-//            );
-//            return new ResponseEntity<>(responseData, HttpStatus.OK);
-
         throw new InvalidPrincipalException("Invalid user principal");
     }
 }

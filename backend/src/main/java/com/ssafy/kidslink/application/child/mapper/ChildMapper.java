@@ -31,6 +31,7 @@ public class ChildMapper {
     public ChildDTO toDTO(final Child child) {
         ChildDTO childDTO = new ChildDTO();
 
+        childDTO.setChildId(child.getChildId());
         childDTO.setName(child.getChildName());
         childDTO.setBirth(child.getChildBirth());
         childDTO.setGender(child.getChildGender().getCode());

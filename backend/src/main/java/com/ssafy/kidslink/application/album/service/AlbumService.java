@@ -1,8 +1,13 @@
 package com.ssafy.kidslink.application.album.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ssafy.kidslink.application.album.dto.ClassifyImageDTO;
 import com.ssafy.kidslink.application.album.dto.ReferenceImageDTO;
 import com.ssafy.kidslink.application.child.domain.Child;
-import com.ssafy.kidslink.application.child.repository.ChildRepository;
+import com.ssafy.kidslink.application.child.dto.ChildDTO;
+import com.ssafy.kidslink.application.child.service.ChildService;
 import com.ssafy.kidslink.application.image.dto.ImageDTO;
 import com.ssafy.kidslink.application.image.service.ImageService;
 import com.ssafy.kidslink.application.kindergarten.domain.KindergartenClass;
@@ -32,11 +37,11 @@ public class AlbumService {
     private String aiServerUrl;
 
     private final TeacherRepository teacherRepository;
-    private final ChildRepository childRepository;
     private final RestTemplate restTemplate;
     private final ImageService imageService;
+    private final ChildService childService;
 
-    public String classifyImages(String teacherUsername, MultipartRequest request) {
+    public List<ClassifyImageDTO> classifyImages(String teacherUsername, MultipartRequest request) {
         Teacher teacher = teacherRepository.findByTeacherUsername(teacherUsername);
         List<MultipartFile> classifyImages = request.getFiles("classifyImages");
 
@@ -51,11 +56,10 @@ public class AlbumService {
                 throw new RuntimeException(e);
             }
         }
-        log.info("classifies: {}", classifies);
 
         // 기본 어린이 프로필 가져오기(존재하는 어린이 프로필만 가져오기)
         KindergartenClass kindergartenClass = teacher.getKindergartenClass();
-        List<Child> children = childRepository.findByKindergartenClass(kindergartenClass);
+        List<Child> children = childService.findChildrenByKindergartenClass(kindergartenClass);
         List<ReferenceImageDTO> referenceImages = new ArrayList<>();
 
         for (Child child : children) {
@@ -88,8 +92,47 @@ public class AlbumService {
                 String.class
         );
 
-        log.info("response - {}", response.getBody());
+        // Parse the response and transform to the desired DTO
+        ObjectMapper objectMapper = new ObjectMapper();
+        List<Map<String, Object>> responseList;
+        try {
+            responseList = objectMapper.readValue(response.getBody(), new TypeReference<List<Map<String, Object>>>() {
+            });
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
 
-        return response.getBody();
+        // Grouping results
+        Map<String, List<Integer>> groupedResults = new HashMap<>();
+        List<Integer> unknownList = new ArrayList<>();
+
+        for (Map<String, Object> result : responseList) {
+            String bestMatchReference = (String) result.get("best_match_reference");
+            Integer classifyImageId = (Integer) result.get("classify_image_id");
+            Boolean verified = (Boolean) result.get("verified");
+
+            if (!verified) {
+                unknownList.add(classifyImageId);
+            } else {
+                groupedResults.computeIfAbsent(bestMatchReference, k -> new ArrayList<>()).add(classifyImageId);
+            }
+        }
+
+        List<ClassifyImageDTO> classifyImageDTOs = new ArrayList<>();
+
+        // Convert grouped results to DTOs
+        for (Map.Entry<String, List<Integer>> entry : groupedResults.entrySet()) {
+            String[] parts = entry.getKey().split(":");
+            int childId = Integer.parseInt(parts[1]);
+            ChildDTO childDTO = childService.getChildInfo(childId);
+            List<Integer> images = entry.getValue();
+            classifyImageDTOs.add(new ClassifyImageDTO(childDTO, images.size(), images));
+        }
+
+        // Add unknown group if there are any
+        if (!unknownList.isEmpty()) {
+            classifyImageDTOs.add(new ClassifyImageDTO(null, unknownList.size(), unknownList)); // -1 or any other identifier for unknown
+        }
+        return classifyImageDTOs;
     }
 }

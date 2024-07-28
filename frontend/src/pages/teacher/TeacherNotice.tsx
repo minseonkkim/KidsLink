@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import NavigateBack from "../../components/teacher/common/NavigateBack";
 import TeacherHeader from "../../components/teacher/common/TeacherHeader";
 import Title from "../../components/teacher/common/Title";
@@ -6,30 +6,37 @@ import { LuPencilLine } from "react-icons/lu";
 import NoticeItem from "../../components/teacher/notice/NoticeItem";
 import { MdOutlineNavigateBefore, MdOutlineNavigateNext } from "react-icons/md";
 import useModal from "../../hooks/teacher/useModal.tsx";
-
-const noticeItems = [
-    { id: 6, title: "딸기농장 현장실습", date: "2024-07-15", content: "안녕하세요. 이번주 금요일에 아이들이 기다리던 딸기 농장으로 현장학습을 갑니다.\n아래의 일정을 참고해주시고, 필요한 준비물을 챙겨주세요.\n\n일시: 이번주 금요일, 7월 19일\n장소: 딸기 농장" },
-    { id: 5, title: "동물원 현장학습 안내", date: "2024-07-15", content: "안녕하세요. 이번주 금요일에 아이들이 기다리던 딸기 농장으로 현장학습을 갑니다.\n아래의 일정을 참고해주시고, 필요한 준비물을 챙겨주세요.\n\n일시: 이번주 금요일, 7월 19일\n장소: 딸기 농장" },
-    { id: 4, title: "공원에서의 자연 놀이", date: "2024-07-11", content: "안녕하세요. 이번주 금요일에 아이들이 기다리던 딸기 농장으로 현장학습을 갑니다.\n아래의 일정을 참고해주시고, 필요한 준비물을 챙겨주세요.\n\n일시: 이번주 금요일, 7월 19일\n장소: 딸기 농장" },
-    { id: 3, title: "딸기농장 현장실습", date: "2024-07-15", content: "안녕하세요. 이번주 금요일에 아이들이 기다리던 딸기 농장으로 현장학습을 갑니다.\n아래의 일정을 참고해주시고, 필요한 준비물을 챙겨주세요.\n\n일시: 이번주 금요일, 7월 19일\n장소: 딸기 농장" },
-    { id: 2, title: "산책로 걷기", date: "2024-07-10", content: "안녕하세요. 이번주 금요일에 아이들이 기다리던 산책로 걷기 행사가 있습니다.\n아래의 일정을 참고해주시고, 필요한 준비물을 챙겨주세요.\n\n일시: 이번주 금요일, 7월 19일\n장소: 산책로" },
-    { id: 1, title: "미술관 방문", date: "2024-07-08", content: "안녕하세요. 이번주 금요일에 아이들이 기다리던 미술관 방문이 예정되어 있습니다.\n아래의 일정을 참고해주시고, 필요한 준비물을 챙겨주세요.\n\n일시: 이번주 금요일, 7월 19일\n장소: 미술관" }
-];
+import { getAllNotices, createNotice } from '../../api/notice.ts'; // Combined import
 
 const ITEMS_PER_PAGE = 4;
 
 export default function TeacherNotice() {
-    const { openModal, Modal } = useModal();
+    const { openModal, closeModal, Modal } = useModal();
     const [currentPage, setCurrentPage] = useState(1);
     const [searchType, setSearchType] = useState("title");
     const [searchTitle, setSearchTitle] = useState("");
     const [searchDate, setSearchDate] = useState("");
+    const [notices, setNotices] = useState([]);
 
-    const filteredItems = noticeItems.filter(item => {
+    useEffect(() => {
+        const fetchNotices = async () => {
+            try {
+                const fetchedNotices = await getAllNotices();
+                const sortedNotices = fetchedNotices.sort((a, b) => b.noticeBoardId - a.noticeBoardId);
+                setNotices(sortedNotices);
+            } catch (error) {
+                console.error('Failed to fetch notices:', error);
+            }
+        };
+
+        fetchNotices();
+    }, []);
+
+    const filteredItems = notices.filter(item => {
         if (searchType === "title") {
             return item.title.includes(searchTitle);
         } else if (searchType === "date") {
-            return searchDate === "" || item.date === searchDate;
+            return searchDate === "" || item.noticeBaordDate === searchDate;
         }
         return true;
     });
@@ -52,40 +59,27 @@ export default function TeacherNotice() {
 
     const handleSearchTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearchTitle(e.target.value);
-        setCurrentPage(1); // 검색 시 페이지를 첫 페이지로 리셋
+        setCurrentPage(1);
     };
 
     const handleSearchDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearchDate(e.target.value);
-        setCurrentPage(1); // 검색 시 페이지를 첫 페이지로 리셋
+        setCurrentPage(1);
     };
 
     const handleSearchTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         setSearchType(e.target.value);
         setSearchTitle("");
         setSearchDate("");
-        setCurrentPage(1); // 검색 유형 변경 시 페이지를 첫 페이지로 리셋
+        setCurrentPage(1);
     };
 
+    const renderModalContent = () => (
+        <CreateNoticeForm closeModal={closeModal} setNotices={setNotices} />
+    );
+
     const openCreateModal = () => {
-        openModal(
-            <div className="w-[500px]">
-                <form>
-                    <div className="mb-4 flex flex-row">
-                        <label className="block mr-3 mb-1 font-bold whitespace-nowrap text-[18px]">제목</label>
-                        <input className="border border-gray-300 p-2 rounded w-full" />
-                    </div>
-                    
-                    <div className="mb-4 flex flex-row">
-                        <label className="block mr-3 mb-1 font-bold whitespace-nowrap text-[18px]">내용</label>
-                        <textarea className="border border-gray-300 p-2 rounded w-full" rows={10}></textarea>
-                    </div>
-                    <div className="flex items-center justify-center">
-                        <button className="w-[70px] h-[38px] border-[2px] border-[#7C7C7C] bg-[#E3EEFF] px-3 py-1 font-bold rounded-[8px] hover:bg-[#D4DDEA]">등록</button>
-                    </div>
-                </form>
-            </div>
-        );
+        openModal(renderModalContent());
     };
 
     return (
@@ -130,15 +124,13 @@ export default function TeacherNotice() {
                     {displayedItems.map((item, index) => (
                         <NoticeItem
                             key={index}
-                            id={item.id}
+                            id={item.noticeBoardId}
                             title={item.title}
-                            date={item.date}
+                            date={item.noticeBaordDate}
                             content={item.content}
                         />
                     ))}
                 </div>
-                
-                
                 
                 <div className="flex justify-center w-full">
                     <nav>
@@ -175,7 +167,68 @@ export default function TeacherNotice() {
                     </nav>
                 </div>
             </div>
-            <Modal/>
+            <Modal />
         </>
+    );
+}
+
+function CreateNoticeForm({ closeModal, setNotices }) {
+    const [newNoticeTitle, setNewNoticeTitle] = useState("");
+    const [newNoticeContent, setNewNoticeContent] = useState("");
+
+    const handleCreateNotice = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        const noticeData = {
+            title: newNoticeTitle,
+            content: newNoticeContent,
+            noticeBaordDate: new Date().toISOString().split('T')[0]
+        };
+
+        try {
+            await createNotice(noticeData);
+            // Reload notices after creating a new one
+            const fetchedNotices = await getAllNotices();
+            const sortedNotices = fetchedNotices.sort((a, b) => b.noticeBoardId - a.noticeBoardId);
+            setNotices(sortedNotices);
+            setNewNoticeTitle("");
+            setNewNoticeContent("");
+            closeModal(); // Close the modal after successful creation
+        } catch (error) {
+            console.error('Failed to create notice:', error);
+        }
+    };
+
+    return (
+        <div className="w-[500px]">
+            <form onSubmit={handleCreateNotice}>
+                <div className="mb-4 flex flex-row">
+                    <label className="block mr-3 mb-1 font-bold whitespace-nowrap text-[18px]">제목</label>
+                    <input
+                        className="border border-gray-300 p-2 rounded w-full"
+                        value={newNoticeTitle}
+                        onChange={(e) => setNewNoticeTitle(e.target.value)}
+                    />
+                </div>
+                
+                <div className="mb-4 flex flex-row">
+                    <label className="block mr-3 mb-1 font-bold whitespace-nowrap text-[18px]">내용</label>
+                    <textarea
+                        className="border border-gray-300 p-2 rounded w-full"
+                        rows={10}
+                        value={newNoticeContent}
+                        onChange={(e) => setNewNoticeContent(e.target.value)}
+                    ></textarea>
+                </div>
+                <div className="flex items-center justify-center">
+                    <button
+                        type="submit"
+                        className="w-[70px] h-[38px] border-[2px] border-[#7C7C7C] bg-[#E3EEFF] px-3 py-1 font-bold rounded-[8px] hover:bg-[#D4DDEA]"
+                    >
+                        등록
+                    </button>
+                </div>
+            </form>
+        </div>
     );
 }

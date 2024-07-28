@@ -79,12 +79,12 @@ const DesktopComponent = () => {
             </button>
           </form>
           {error && (
-            <p className="text-[22px] font-medium text-left text-red-500">
+            <p className="text-[16px] font-medium text-left text-red-500 mb-2">
               {error}
             </p>
           )}
           <Link to="/join">
-            <p className="text-[22px] font-medium text-left text-[#363636]">
+            <p className="text-[21px] font-medium text-left text-[#363636]">
               키즈링크가 처음이라면?
             </p>
           </Link>

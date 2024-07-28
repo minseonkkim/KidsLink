@@ -3,7 +3,9 @@ package com.ssafy.kidslink.common.controller;
 import com.ssafy.kidslink.common.dto.APIError;
 import com.ssafy.kidslink.common.dto.APIResponse;
 import com.ssafy.kidslink.common.jwt.JWTUtil;
+import com.ssafy.kidslink.common.redis.RefreshToken;
 import com.ssafy.kidslink.common.service.InitialDataService;
+import com.ssafy.kidslink.common.service.RefreshTokenService;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,6 +31,7 @@ public class MainController {
 
     private final JWTUtil jwtUtil;
     private final InitialDataService initialDataService;
+    private final RefreshTokenService refreshTokenService;
 
     @PostMapping("/reissue")
     public ResponseEntity<APIResponse<Map<String, Object>>> generateRefreshToken(HttpServletRequest request, HttpServletResponse response) {
@@ -40,10 +43,12 @@ public class MainController {
         String refresh = null;
 
         Cookie[] cookies = request.getCookies();
-        for (Cookie cookie : cookies) {
-            if (cookie.getName().equals("refresh")) {
-                refresh = cookie.getValue();
-                break;
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("refresh")) {
+                    refresh = cookie.getValue();
+                    break;
+                }
             }
         }
 
@@ -81,13 +86,13 @@ public class MainController {
         String role = jwtUtil.getRole(refresh);
         Boolean oauth2 = jwtUtil.isOAuth2(refresh);
 
-        String newAccess = jwtUtil.createJwt("access", oauth2, username, role, JWTUtil.ACCESS_TOKEN_VALIDITY_SECONDS);
-        String newRefresh = jwtUtil.createJwt("refresh", oauth2, username, role, JWTUtil.REFRESH_TOKEN_VALIDITY_SECONDS);
+        RefreshToken token = refreshTokenService.refreshAccessToken(refresh);
+
+        String newAccess = token.getAccessToken();
+        String newRefresh = token.getRefreshToken();
 
         response.setHeader("access", newAccess);
         response.addCookie(createCookie("refresh", newRefresh));
-
-        // TODO #1. refresh token Redis 삭제 및 저장
 
         responseData.setStatus("success");
         responseData.setMessage("JWT 재발급 성공");

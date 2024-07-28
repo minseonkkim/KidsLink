@@ -5,7 +5,6 @@ import com.ssafy.kidslink.application.busstop.repository.BusStopRepository;
 import com.ssafy.kidslink.application.busstopchild.domain.BusStopChild;
 import com.ssafy.kidslink.application.busstopchild.dto.BusStopChildDTO;
 import com.ssafy.kidslink.application.busstopchild.repository.BusStopChildRepository;
-import com.ssafy.kidslink.application.child.repository.ChildRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,7 +20,6 @@ import static com.ssafy.kidslink.application.busstopchild.domain.BusStopChild.Bo
 public class BusStopService {
     private final BusStopRepository busStopRepository;
     private final BusStopChildRepository busStopChildRepository;
-    private final ChildRepository childRepository;
 
     public List<BusStop> getAllBusStops() {
         return busStopRepository.findAll();
