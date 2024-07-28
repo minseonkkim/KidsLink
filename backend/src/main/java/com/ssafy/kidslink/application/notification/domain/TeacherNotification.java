@@ -6,7 +6,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @Entity
 @Getter
@@ -29,6 +29,6 @@ public class TeacherNotification {
     private String teacherNotificationText;
 
     @Column(name = "teacher_notification_date")
-    private Date teacherNotificationDate;
+    private LocalDate teacherNotificationDate;
 
 }

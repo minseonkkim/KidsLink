@@ -59,4 +59,21 @@ public class NotificationService {
         return cnt;
     }
 
+    public void deleteAllNotifications(String role, String userName){
+        if(role.equals("ROLE_TEACHER")){
+            Teacher teacher = teacherRepository.findByTeacherUsername(userName);
+            teacherNotificationRepository.deleteByTeacher(teacher);
+        }else{
+            Parent parent = parentRepository.findByParentUsername(userName);
+            parentNotificationRepository.deleteByParent(parent);
+        }
+    }
+
+    public void deleteNotification(String role, int id){
+        if(role.equals("ROLE_TEACHER")){
+            teacherNotificationRepository.deleteById(id);
+        }else{
+            parentNotificationRepository.deleteById(id);
+        }
+    }
 }

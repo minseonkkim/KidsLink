@@ -9,9 +9,11 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface TeacherNotificationRepository extends JpaRepository<TeacherNotification, Long> {
+public interface TeacherNotificationRepository extends JpaRepository<TeacherNotification, Integer> {
     List<TeacherNotification> findByTeacher(Teacher teacher);
     @Query("SELECT COUNT(tn) FROM TeacherNotification tn WHERE tn.teacher = :teacher")
     int countByTeacher(Teacher teacher);
+
+    void deleteByTeacher(Teacher teacher);
 
 }
