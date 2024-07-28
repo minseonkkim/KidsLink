@@ -11,8 +11,8 @@ import java.util.Date;
 
 @Component
 public class JWTUtil {
-    public static final long ACCESS_TOKEN_VALIDITY_SECONDS = 60 * 60 * 24L;
-    public static final long REFRESH_TOKEN_VALIDITY_SECONDS = 60 * 60 * 24 * 7L;
+    public static final long ACCESS_TOKEN_VALIDITY_SECONDS = 1000 * 60 * 60 * 24L;
+    public static final long REFRESH_TOKEN_VALIDITY_SECONDS = 1000 * 60 * 60 * 24 * 7L;
 
     private final SecretKey secretKey;
 
@@ -40,7 +40,7 @@ public class JWTUtil {
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().getExpiration().before(new Date());
     }
 
-    public String createJwt(String category, boolean isOauth2,String username, String role, Long expiredMs) {
+    public String createJwt(String category, boolean isOauth2, String username, String role, Long expiredMs) {
         return Jwts.builder()
                 .claim("category", category) // refresh, access
                 .claim("username", username) // 사용자 ID
