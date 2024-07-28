@@ -3,12 +3,11 @@ import { useNavigate } from "react-router-dom"
 import CommonHeader from "../../components/parent/common/CommonHeader"
 import InfoSection from "../../components/parent/common/InfoSection"
 import daramgi from "../../assets/parent/notice-daramgi.png"
-import { useNoticeStore } from "../../stores/noticeStore"
 import { getAllNotices } from "../../api/notice"
 
 export default function ParentNotice() {
   const navigate = useNavigate()
-  const notices = useNoticeStore((state) => state.notices)
+  const [notices, setNotices] = useState([]);
   const [searchTerm, setSearchTerm] = useState("")
   const [filteredNotices, setFilteredNotices] = useState(notices)
   const [scroll, setScroll] = useState(false)

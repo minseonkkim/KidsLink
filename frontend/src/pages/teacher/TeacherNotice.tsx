@@ -6,38 +6,31 @@ import { LuPencilLine } from "react-icons/lu";
 import NoticeItem from "../../components/teacher/notice/NoticeItem";
 import { MdOutlineNavigateBefore, MdOutlineNavigateNext } from "react-icons/md";
 import useModal from "../../hooks/teacher/useModal.tsx";
-import { useNoticeStore } from '../../stores/noticeStore.ts';
-import { getAllNotices } from '../../api/notice.ts';
+import { getAllNotices, createNotice } from '../../api/notice.ts'; // Combined import
 
 const ITEMS_PER_PAGE = 4;
 
 export default function TeacherNotice() {
-    const { openModal, Modal } = useModal();
+    const { openModal, closeModal, Modal } = useModal();
     const [currentPage, setCurrentPage] = useState(1);
     const [searchType, setSearchType] = useState("title");
     const [searchTitle, setSearchTitle] = useState("");
     const [searchDate, setSearchDate] = useState("");
+    const [notices, setNotices] = useState([]);
 
-    const { notices, setNotices } = useNoticeStore((state) => ({
-        notices: state.notices,
-        setNotices: state.setNotices,
-      }));
-    
-      useEffect(() => {
-        // 컴포넌트가 마운트될 때 모든 알림을 가져옴
+    useEffect(() => {
         const fetchNotices = async () => {
-          try {
-            const fetchedNotices = await getAllNotices();
-            setNotices(fetchedNotices);
-          } catch (error) {
-            console.error('Failed to fetch notices:', error);
-          }
+            try {
+                const fetchedNotices = await getAllNotices();
+                const sortedNotices = fetchedNotices.sort((a, b) => b.noticeBoardId - a.noticeBoardId);
+                setNotices(sortedNotices);
+            } catch (error) {
+                console.error('Failed to fetch notices:', error);
+            }
         };
-    
+
         fetchNotices();
-      }, [setNotices]);
-
-
+    }, []);
 
     const filteredItems = notices.filter(item => {
         if (searchType === "title") {
@@ -66,40 +59,27 @@ export default function TeacherNotice() {
 
     const handleSearchTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearchTitle(e.target.value);
-        setCurrentPage(1); // 검색 시 페이지를 첫 페이지로 리셋
+        setCurrentPage(1);
     };
 
     const handleSearchDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearchDate(e.target.value);
-        setCurrentPage(1); // 검색 시 페이지를 첫 페이지로 리셋
+        setCurrentPage(1);
     };
 
     const handleSearchTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         setSearchType(e.target.value);
         setSearchTitle("");
         setSearchDate("");
-        setCurrentPage(1); // 검색 유형 변경 시 페이지를 첫 페이지로 리셋
+        setCurrentPage(1);
     };
 
+    const renderModalContent = () => (
+        <CreateNoticeForm closeModal={closeModal} setNotices={setNotices} />
+    );
+
     const openCreateModal = () => {
-        openModal(
-            <div className="w-[500px]">
-                <form>
-                    <div className="mb-4 flex flex-row">
-                        <label className="block mr-3 mb-1 font-bold whitespace-nowrap text-[18px]">제목</label>
-                        <input className="border border-gray-300 p-2 rounded w-full" />
-                    </div>
-                    
-                    <div className="mb-4 flex flex-row">
-                        <label className="block mr-3 mb-1 font-bold whitespace-nowrap text-[18px]">내용</label>
-                        <textarea className="border border-gray-300 p-2 rounded w-full" rows={10}></textarea>
-                    </div>
-                    <div className="flex items-center justify-center">
-                        <button className="w-[70px] h-[38px] border-[2px] border-[#7C7C7C] bg-[#E3EEFF] px-3 py-1 font-bold rounded-[8px] hover:bg-[#D4DDEA]">등록</button>
-                    </div>
-                </form>
-            </div>
-        );
+        openModal(renderModalContent());
     };
 
     return (
@@ -187,7 +167,68 @@ export default function TeacherNotice() {
                     </nav>
                 </div>
             </div>
-            <Modal/>
+            <Modal />
         </>
+    );
+}
+
+function CreateNoticeForm({ closeModal, setNotices }) {
+    const [newNoticeTitle, setNewNoticeTitle] = useState("");
+    const [newNoticeContent, setNewNoticeContent] = useState("");
+
+    const handleCreateNotice = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        const noticeData = {
+            title: newNoticeTitle,
+            content: newNoticeContent,
+            noticeBaordDate: new Date().toISOString().split('T')[0]
+        };
+
+        try {
+            await createNotice(noticeData);
+            // Reload notices after creating a new one
+            const fetchedNotices = await getAllNotices();
+            const sortedNotices = fetchedNotices.sort((a, b) => b.noticeBoardId - a.noticeBoardId);
+            setNotices(sortedNotices);
+            setNewNoticeTitle("");
+            setNewNoticeContent("");
+            closeModal(); // Close the modal after successful creation
+        } catch (error) {
+            console.error('Failed to create notice:', error);
+        }
+    };
+
+    return (
+        <div className="w-[500px]">
+            <form onSubmit={handleCreateNotice}>
+                <div className="mb-4 flex flex-row">
+                    <label className="block mr-3 mb-1 font-bold whitespace-nowrap text-[18px]">제목</label>
+                    <input
+                        className="border border-gray-300 p-2 rounded w-full"
+                        value={newNoticeTitle}
+                        onChange={(e) => setNewNoticeTitle(e.target.value)}
+                    />
+                </div>
+                
+                <div className="mb-4 flex flex-row">
+                    <label className="block mr-3 mb-1 font-bold whitespace-nowrap text-[18px]">내용</label>
+                    <textarea
+                        className="border border-gray-300 p-2 rounded w-full"
+                        rows={10}
+                        value={newNoticeContent}
+                        onChange={(e) => setNewNoticeContent(e.target.value)}
+                    ></textarea>
+                </div>
+                <div className="flex items-center justify-center">
+                    <button
+                        type="submit"
+                        className="w-[70px] h-[38px] border-[2px] border-[#7C7C7C] bg-[#E3EEFF] px-3 py-1 font-bold rounded-[8px] hover:bg-[#D4DDEA]"
+                    >
+                        등록
+                    </button>
+                </div>
+            </form>
+        </div>
     );
 }
