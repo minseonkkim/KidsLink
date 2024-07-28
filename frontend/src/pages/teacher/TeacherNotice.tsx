@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import NavigateBack from "../../components/teacher/common/NavigateBack";
 import TeacherHeader from "../../components/teacher/common/TeacherHeader";
 import Title from "../../components/teacher/common/Title";
@@ -6,15 +6,8 @@ import { LuPencilLine } from "react-icons/lu";
 import NoticeItem from "../../components/teacher/notice/NoticeItem";
 import { MdOutlineNavigateBefore, MdOutlineNavigateNext } from "react-icons/md";
 import useModal from "../../hooks/teacher/useModal.tsx";
-
-const noticeItems = [
-    { id: 6, title: "딸기농장 현장실습", date: "2024-07-15", content: "안녕하세요. 이번주 금요일에 아이들이 기다리던 딸기 농장으로 현장학습을 갑니다.\n아래의 일정을 참고해주시고, 필요한 준비물을 챙겨주세요.\n\n일시: 이번주 금요일, 7월 19일\n장소: 딸기 농장" },
-    { id: 5, title: "동물원 현장학습 안내", date: "2024-07-15", content: "안녕하세요. 이번주 금요일에 아이들이 기다리던 딸기 농장으로 현장학습을 갑니다.\n아래의 일정을 참고해주시고, 필요한 준비물을 챙겨주세요.\n\n일시: 이번주 금요일, 7월 19일\n장소: 딸기 농장" },
-    { id: 4, title: "공원에서의 자연 놀이", date: "2024-07-11", content: "안녕하세요. 이번주 금요일에 아이들이 기다리던 딸기 농장으로 현장학습을 갑니다.\n아래의 일정을 참고해주시고, 필요한 준비물을 챙겨주세요.\n\n일시: 이번주 금요일, 7월 19일\n장소: 딸기 농장" },
-    { id: 3, title: "딸기농장 현장실습", date: "2024-07-15", content: "안녕하세요. 이번주 금요일에 아이들이 기다리던 딸기 농장으로 현장학습을 갑니다.\n아래의 일정을 참고해주시고, 필요한 준비물을 챙겨주세요.\n\n일시: 이번주 금요일, 7월 19일\n장소: 딸기 농장" },
-    { id: 2, title: "산책로 걷기", date: "2024-07-10", content: "안녕하세요. 이번주 금요일에 아이들이 기다리던 산책로 걷기 행사가 있습니다.\n아래의 일정을 참고해주시고, 필요한 준비물을 챙겨주세요.\n\n일시: 이번주 금요일, 7월 19일\n장소: 산책로" },
-    { id: 1, title: "미술관 방문", date: "2024-07-08", content: "안녕하세요. 이번주 금요일에 아이들이 기다리던 미술관 방문이 예정되어 있습니다.\n아래의 일정을 참고해주시고, 필요한 준비물을 챙겨주세요.\n\n일시: 이번주 금요일, 7월 19일\n장소: 미술관" }
-];
+import { useNoticeStore } from '../../stores/noticeStore.ts';
+import { getAllNotices } from '../../api/notice.ts';
 
 const ITEMS_PER_PAGE = 4;
 
@@ -25,11 +18,32 @@ export default function TeacherNotice() {
     const [searchTitle, setSearchTitle] = useState("");
     const [searchDate, setSearchDate] = useState("");
 
-    const filteredItems = noticeItems.filter(item => {
+    const { notices, setNotices } = useNoticeStore((state) => ({
+        notices: state.notices,
+        setNotices: state.setNotices,
+      }));
+    
+      useEffect(() => {
+        // 컴포넌트가 마운트될 때 모든 알림을 가져옴
+        const fetchNotices = async () => {
+          try {
+            const fetchedNotices = await getAllNotices();
+            setNotices(fetchedNotices);
+          } catch (error) {
+            console.error('Failed to fetch notices:', error);
+          }
+        };
+    
+        fetchNotices();
+      }, [setNotices]);
+
+
+
+    const filteredItems = notices.filter(item => {
         if (searchType === "title") {
             return item.title.includes(searchTitle);
         } else if (searchType === "date") {
-            return searchDate === "" || item.date === searchDate;
+            return searchDate === "" || item.noticeBaordDate === searchDate;
         }
         return true;
     });
@@ -130,15 +144,13 @@ export default function TeacherNotice() {
                     {displayedItems.map((item, index) => (
                         <NoticeItem
                             key={index}
-                            id={item.id}
+                            id={item.noticeBoardId}
                             title={item.title}
-                            date={item.date}
+                            date={item.noticeBaordDate}
                             content={item.content}
                         />
                     ))}
                 </div>
-                
-                
                 
                 <div className="flex justify-center w-full">
                     <nav>
