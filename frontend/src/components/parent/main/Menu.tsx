@@ -21,7 +21,7 @@ interface MenuProps {
 
 export default function Menu({ onMenuClick }: MenuProps) {
   return (
-    <div className="grid grid-cols-2 gap-x-4 gap-y-4">
+    <div className="grid grid-cols-2 gap-x-6 gap-y-6">
       {menus.map((menu) => (
         <MenuItem
           key={menu.label}

@@ -18,13 +18,7 @@ export default function GrowthList({ entries, handleBoxClick, scroll }: GrowthLi
       {entries.map((entry) => (
         <div
           key={entry.id}
-          className="flex flex-col md:flex-row p-4 rounded-2xl bg-[#FFF9D7] hover:bg-[#FFEC8A] transition-transform duration-200 transform hover:scale-105 shadow-lg cursor-pointer"
-          style={{
-            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
-            transform: 'rotateX(10deg)',
-            perspective: '1000px',
-            border: '2px solid #FFEC8A'
-          }}
+          className="flex flex-col md:flex-row p-4 rounded-2xl bg-[#FFF9D7] border-1 border-[#FFEC8A] hover:bg-[#FFEC8A] transition-transform duration-200 transform cursor-pointer"
           onClick={() => handleBoxClick(entry.id)}
         >
           {entry.imageCount > 0 && (

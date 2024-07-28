@@ -297,6 +297,9 @@ const ParentFormStep1: FC<ParentFormStep1Props> = ({ onNext }) => {
             onChange={(e) => setTelFirst(e.target.value)}
             maxLength={3}
           />
+          <span className="self-center text-base font-medium text-gray-400">
+            -
+          </span>
           <input
             type="text"
             className="w-1/3 border border-gray-400 rounded-md p-1"
@@ -304,6 +307,9 @@ const ParentFormStep1: FC<ParentFormStep1Props> = ({ onNext }) => {
             onChange={(e) => setTelSecond(e.target.value)}
             maxLength={4}
           />
+          <span className="self-center text-base font-medium text-gray-400">
+            -
+          </span>
           <input
             type="text"
             className="w-1/3 border border-gray-400 rounded-md p-1"

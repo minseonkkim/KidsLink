@@ -45,7 +45,6 @@ interface TeacherSignupData {
   tel?: string;
 }
 
-
 // 로그인 함수
 export async function login(user: LoginData) {
   const setUserType = useAppStore.getState().setUserType
