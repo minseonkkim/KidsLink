@@ -10,10 +10,13 @@ import com.ssafy.kidslink.application.meetingtime.dto.OpenMeetingTimeDTO;
 import com.ssafy.kidslink.application.meetingtime.dto.ReserveMeetingDTO;
 import com.ssafy.kidslink.application.meetingtime.mapper.MeetingTimeMapper;
 import com.ssafy.kidslink.application.meetingtime.repository.MeetingTimeRepository;
+import com.ssafy.kidslink.application.notification.domain.TeacherNotification;
+import com.ssafy.kidslink.application.notification.respository.TeacherNotificationRepository;
 import com.ssafy.kidslink.application.parent.domain.Parent;
 import com.ssafy.kidslink.application.parent.repository.ParentRepository;
 import com.ssafy.kidslink.application.teacher.domain.Teacher;
 import com.ssafy.kidslink.application.teacher.repository.TeacherRepository;
+import com.ssafy.kidslink.common.enums.NotificationCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -33,6 +36,7 @@ public class MeetingTimeService {
     private final MeetingTimeMapper meetingTimeMapper;
     private final MeetingScheduleRepository meetingScheduleRepository;
     private final MeetingScheduleMapper meetingScheduleMapper;
+    private final TeacherNotificationRepository teacherNotificationRepository;
 
     public void openMeetingTimes(String teacherUsername, List<OpenMeetingTimeDTO> openMeetingTimeDTOList) {
         Teacher teacher = teacherRepository.findByTeacherUsername(teacherUsername);
@@ -70,6 +74,13 @@ public class MeetingTimeService {
         meetingSchedule.setMeetingScheduleTime(reserveMeetingDTO.getMeetingTime());
         meetingSchedule.setTeacher(teacherRepository.findByKindergartenClass(
                 parent.getChildren().stream().findFirst().get().getKindergartenClass()));
+
+        TeacherNotification teacherNotification = new TeacherNotification();
+        teacherNotification.setCode(NotificationCode.MEETING);
+        teacherNotification.setTeacherNotificationDate(LocalDate.now());
+        teacherNotification.setTeacher(teacherRepository.findByKindergartenClass(parent.getChildren().iterator().next().getKindergartenClass()));
+        teacherNotification.setTeacherNotificationText("학부모 상담 신청이 도착하였습니다.");
+        teacherNotificationRepository.save(teacherNotification);
 
         meetingTimeRepository.deleteById(id);
 
