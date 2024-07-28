@@ -6,7 +6,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @Entity
 @Getter
@@ -30,7 +30,7 @@ public class ParentNotification {
     private String parentNotificationText;
 
     @Column(name = "parent_notification_date")
-    private Date parentNotificationDate;
+    private LocalDate parentNotificationDate;
 
 
 }

@@ -5,14 +5,19 @@ import com.ssafy.kidslink.application.document.domain.Absent;
 import com.ssafy.kidslink.application.document.dto.AbsentDTO;
 import com.ssafy.kidslink.application.document.mapper.AbsentMapper;
 import com.ssafy.kidslink.application.document.repository.AbsentRepository;
+import com.ssafy.kidslink.application.notification.domain.TeacherNotification;
+import com.ssafy.kidslink.application.notification.respository.TeacherNotificationRepository;
 import com.ssafy.kidslink.application.parent.domain.Parent;
 import com.ssafy.kidslink.application.parent.repository.ParentRepository;
+import com.ssafy.kidslink.application.teacher.repository.TeacherRepository;
 import com.ssafy.kidslink.common.enums.ConfirmationStatus;
+import com.ssafy.kidslink.common.enums.NotificationCode;
 import com.ssafy.kidslink.common.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -25,6 +30,8 @@ public class AbsentService{
     private final AbsentRepository absentRepository;
     private final AbsentMapper absentMapper;
     private final ParentRepository parentRepository;
+    private final TeacherNotificationRepository teacherNotificationRepository;
+    private final TeacherRepository teacherRepository;
 
     private Parent getParentByUsername(String parentUsername) {
         return parentRepository.findByParentUsername(parentUsername);
@@ -35,6 +42,14 @@ public class AbsentService{
         Child child = parent.getChildren().iterator().next(); //부모의 첫번째 자식반환. 자식 여러명 확장시 수정필요
         Absent absent = absentMapper.toEntity(absentDTO, child);
         Absent savedAbsent = absentRepository.save(absent);
+
+        TeacherNotification teacherNotification = new TeacherNotification();
+        teacherNotification.setCode(NotificationCode.DOCUMENT);
+        teacherNotification.setTeacherNotificationDate(LocalDate.now());
+        teacherNotification.setTeacher(teacherRepository.findByKindergartenClass(parent.getChildren().iterator().next().getKindergartenClass()));
+        teacherNotification.setTeacherNotificationText("새로운 결석 서류가 등록되었습니다.");
+        teacherNotificationRepository.save(teacherNotification);
+
         return absentMapper.toDTO(savedAbsent);
     }
     public List<AbsentDTO> getAllAbsents() {

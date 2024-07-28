@@ -5,9 +5,13 @@ import com.ssafy.kidslink.application.noticeboard.dto.NoticeBoardDTO;
 import com.ssafy.kidslink.application.noticeboard.dto.NoticeBoardRequestDTO;
 import com.ssafy.kidslink.application.noticeboard.mapper.NoticeBoardMapper;
 import com.ssafy.kidslink.application.noticeboard.repository.NoticeBoardRepository;
+import com.ssafy.kidslink.application.notification.domain.ParentNotification;
+import com.ssafy.kidslink.application.notification.respository.ParentNotificationRepository;
+import com.ssafy.kidslink.application.parent.domain.Parent;
 import com.ssafy.kidslink.application.parent.repository.ParentRepository;
 import com.ssafy.kidslink.application.teacher.domain.Teacher;
 import com.ssafy.kidslink.application.teacher.repository.TeacherRepository;
+import com.ssafy.kidslink.common.enums.NotificationCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -25,6 +29,7 @@ public class NoticeBoardService {
     private final NoticeBoardMapper noticeBoardMapper;
     private final TeacherRepository teacherRepository;
     private final ParentRepository parentRepository;
+    private final ParentNotificationRepository parentNotificationRepository;
 
 
     public List<NoticeBoardDTO> getAllNoticeBoards(String role, String Username) {
@@ -59,5 +64,14 @@ public class NoticeBoardService {
         noticeBoard.setKindergartenClass(teacher.getKindergartenClass());
 
         noticeBoardRepository.save(noticeBoard);
+        for(Parent parent : parentRepository.findByKindergartenClassId(teacher.getKindergartenClass().getKindergartenClassId())) {
+            ParentNotification parentNotification = new ParentNotification();
+            parentNotification.setCode(NotificationCode.NOTICE);
+            parentNotification.setParentNotificationDate(LocalDate.now());
+            parentNotification.setParentNotificationText("새로운 알림장이 등록되었습니다.");
+            parentNotification.setParent(parent);
+
+            parentNotificationRepository.save(parentNotification);
+        }
     }
 }
