@@ -16,7 +16,7 @@ import java.util.UUID;
 @Slf4j
 public class RefreshTokenService {
 
-    private final RefreshTokenRepository refreshTokenRepository;
+    private final TokenStorageService tokenStorageService;
     private final JWTUtil jwtUtil;
 
     @Transactional
@@ -24,19 +24,19 @@ public class RefreshTokenService {
         String sessionId = UUID.randomUUID().toString();
         String id = username + "-" + sessionId;  // 고유 ID 생성
         RefreshToken refreshTokenObj = new RefreshToken(id, accessToken, refreshToken, username);
-        refreshTokenRepository.save(refreshTokenObj);
+        tokenStorageService.save(refreshTokenObj);
     }
 
     @Transactional
     public void removeRefreshToken(String refreshToken) {
-        RefreshToken token = refreshTokenRepository.findByRefreshToken(refreshToken)
+        RefreshToken token = tokenStorageService.findByRefreshToken(refreshToken)
                 .orElseThrow(() -> new JWTAuthenticationException("Invalid refresh token"));
 
-        refreshTokenRepository.delete(token);
+        tokenStorageService.delete(token);
     }
 
     public RefreshToken getRefreshToken(String refreshToken) {
-        return refreshTokenRepository.findByRefreshToken(refreshToken)
+        return tokenStorageService.findByRefreshToken(refreshToken)
                 .orElseThrow(() -> new JWTAuthenticationException("Token not found"));
     }
 
@@ -46,7 +46,7 @@ public class RefreshTokenService {
             throw new JWTAuthenticationException("Refresh token is expired");
         }
 
-        RefreshToken token = refreshTokenRepository.findByRefreshToken(refreshToken)
+        RefreshToken token = tokenStorageService.findByRefreshToken(refreshToken)
                 .orElseThrow(() -> new JWTAuthenticationException("Invalid refresh token"));
 
         // 새로운 액세스 토큰 발급
@@ -67,7 +67,7 @@ public class RefreshTokenService {
 
         // 기존 리프레시 토큰 정보를 업데이트
         token.updateToken(newAccessToken, newRefreshToken);
-        refreshTokenRepository.save(token);
+        tokenStorageService.save(token);
 
         // 새로운 액세스 토큰 반환
         return token;
