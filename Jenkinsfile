@@ -44,10 +44,12 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    sshagent([SSH_KEY_ID]) {
-                        sh """
-                        ssh -o StrictHostKeyChecking=no minsun@${EC2_IP} 'cd /home/minsun && docker-compose pull && docker-compose up -d'
-                        """
+                    withCredentials([string(credentialsId: 'EC2_IP_SECRET', variable: 'EC2_IP')]) {
+                        sshagent([SSH_KEY_ID]) {
+                            sh """
+                            ssh -o minsun@${EC2_IP} 'cd /home/minsun && docker-compose pull && docker-compose up -d'
+                            """
+                        }
                     }
                 }
             }
