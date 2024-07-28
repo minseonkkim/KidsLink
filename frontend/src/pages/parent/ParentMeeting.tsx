@@ -52,7 +52,7 @@ export default function ParentMeeting() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center bg-[#FFEC8A]">
+    <div className="min-h-[100dvh] flex flex-col items-center bg-[#FFEC8A]">
       <CommonHeader title="상담" />
 
       <div className="w-full flex flex-col items-center mt-16 flex-grow">
@@ -73,13 +73,7 @@ export default function ParentMeeting() {
             {meetings.map((meeting) => (
               <div
                 key={meeting.id}
-                className={`flex flex-col p-4 rounded-2xl ${meeting.completed ? 'bg-[#FFF9D7] hover:bg-[#ffec8a]' : 'bg-[#D3D3D3] cursor-not-allowed'} transition-colors duration-200`}
-                style={{
-                  boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
-                  transform: 'rotateX(10deg)',
-                  perspective: '1000px',
-                  border: meeting.completed ? '2px solid #FFEC8A' : 'none',
-                }}
+                className={`flex flex-col p-4 rounded-2xl ${meeting.completed ? 'bg-[#FFF9D7] hover:bg-[#ffec8a] border-1 border-[#FFEC8A]' : 'bg-[#D3D3D3] cursor-not-allowed'} transition-colors duration-200`}
                 onClick={() => meeting.completed && navigateToMeetingRoomPage(meeting.id)}
               >
                 <div className="flex items-center">

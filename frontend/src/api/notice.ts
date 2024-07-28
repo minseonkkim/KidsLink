@@ -1,5 +1,4 @@
 import axiosInstance from './token/axiosInstance'
-import { useNoticeStore } from '../stores/noticeStore'
 
 interface Notice {
   noticeBoardId: number;
@@ -29,12 +28,7 @@ export async function getAllNotices(): Promise<Notice[]> {
 
     if (response.data.status === 'success') {
       console.log(response.data.data) // 확인 후 삭제
-
-      const notices: Notice[] = response.data.data;
-      const setNotices = useNoticeStore.getState().setNotices;
-      setNotices(notices) // zustand 스토어 업데이트
-
-      return notices
+      return response.data.data
     } else {
       throw new Error('Failed to fetch notices')
     }

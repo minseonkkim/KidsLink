@@ -17,7 +17,7 @@ export default function InfoSection({ description1 = "", main1="", main2="", des
       </div>
       <img
         src={imageSrc}
-        className="max-w-[150px] h-auto object-cover ml-4"
+        className="max-w-[150px] h-auto object-contain ml-4"
         alt={altText}
       />
     </div>
