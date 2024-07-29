@@ -53,6 +53,7 @@ public class AbsentService{
         teacherNotification.setCode(NotificationCode.DOCUMENT);
         teacherNotification.setTeacherNotificationDate(LocalDate.now());
         teacherNotification.setTeacher(teacherRepository.findByKindergartenClass(child.getKindergartenClass()));
+        teacherNotification.setConfirmationStatus(ConfirmationStatus.F);
         teacherNotification.setTeacherNotificationText("새로운 결석 서류가 등록되었습니다.");
         teacherNotificationRepository.save(teacherNotification);
 
