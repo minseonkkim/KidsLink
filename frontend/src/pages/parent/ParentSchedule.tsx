@@ -4,17 +4,36 @@ import Calendar from 'react-calendar';
 import moment from 'moment';
 import 'moment/locale/ko'; // 한글 설정
 import './parent-schedule.css'; // 커스텀 CSS 파일
-import { getAllParentSchedules } from '../../api/schedule'; // API 함수 불러오기
+import { getAllParentSchedules, getParentSchedules } from '../../api/schedule'; // API 함수 불러오기
 
-interface Schedule {
+interface KindergartenSchedule {
+  id: number;
+  content: string;
   date: string;
+}
+
+interface MeetingSchedule {
+  meetingId: number;
+  meetingDate: string;
+  meetingTime: string;
+  parentId: number;
+  teacherId: number;
+}
+
+interface DetailedSchedule {
+  date: string;
+  kindergartenSchedules: KindergartenSchedule[];
+  meetingSchedules: MeetingSchedule[];
+  absentSchedules: any[]; // Replace with specific type if available
+  dosageSchedules: any[]; // Replace with specific type if available
 }
 
 export default function ParentSchedule() {
   const [value, onChange] = useState(new Date()); // 초기값은 현재 날짜
-  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [selectedDate, setSelectedDate] = useState<string | null>(moment(value).format('YYYY-MM-DD'));
   const [activeMonth, setActiveMonth] = useState<string>(moment(value).format('YYYY-MM'));
   const [schedules, setSchedules] = useState<string[]>([]); // API로부터 가져온 일정 데이터
+  const [detailedSchedules, setDetailedSchedules] = useState<DetailedSchedule | null>(null);
 
   const fetchSchedules = async (year: number, month: number) => {
     try {
@@ -25,16 +44,28 @@ export default function ParentSchedule() {
     }
   };
 
+  const fetchDetailedSchedules = async (date: string) => {
+    try {
+      const detailedSchedule = await getParentSchedules(date);
+      setDetailedSchedules(detailedSchedule);
+      console.log("detail-scheduless", detailedSchedules.kindergartenSchedules.length)
+    } catch (error) {
+      console.error('Failed to fetch detailed schedule:', error);
+    }
+  };
+
   useEffect(() => {
     const year = moment(value).year();
     const month = moment(value).month() + 1;
     fetchSchedules(year, month); // 초기 로드 시 데이터 가져오기
-  }, []);
+    fetchDetailedSchedules(moment(value).format('YYYY-MM-DD')); // 초기 로드 시 현재 날짜의 세부 일정 가져오기
+  }, [value]);
 
-  const handleDateClick = (value: Date | Date[]) => {
-    const date = Array.isArray(value) ? value[0] : value;
-    setSelectedDate(moment(date).format('YYYY-MM-DD'));
+  const handleDateClick = (date: Date) => {
+    const formattedDate = moment(date).format('YYYY-MM-DD');
+    setSelectedDate(formattedDate);
     onChange(date);
+    fetchDetailedSchedules(formattedDate); // Fetch detailed schedules for the selected date
   };
 
   const getActiveMonth = (activeStartDate: Date) => {
@@ -74,6 +105,51 @@ export default function ParentSchedule() {
           </div>
         </div>
       </div>
+      {selectedDate && detailedSchedules && (
+        <div className="w-full p-4 mt-16 bg-white rounded-lg shadow-md">
+          <h3 className="text-xl font-bold mb-4">{selectedDate} 일정</h3>
+          {detailedSchedules.kindergartenSchedules.length > 0 && (
+            <div>
+              <h4 className="font-semibold">유치원 일정:</h4>
+              <ul>
+                {detailedSchedules.kindergartenSchedules.map((schedule) => (
+                  <li key={schedule.id}>{schedule.content}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {detailedSchedules.meetingSchedules?.length > 0 && (
+            <div>
+              <h4 className="font-semibold">회의 일정:</h4>
+              <ul>
+                {detailedSchedules.meetingSchedules.map((schedule) => (
+                  <li key={schedule.meetingId}>{`${schedule.meetingDate} ${schedule.meetingTime}`}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {detailedSchedules.absentSchedules?.length > 0 && (
+            <div>
+              <h4 className="font-semibold">결석 일정:</h4>
+              <ul>
+                {detailedSchedules.absentSchedules.map((schedule, index) => (
+                  <li key={index}>결석</li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {detailedSchedules.dosageSchedules?.length > 0 && (
+            <div>
+              <h4 className="font-semibold">투약 일정:</h4>
+              <ul>
+                {detailedSchedules.dosageSchedules.map((schedule, index) => (
+                  <li key={index}>투약</li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
