@@ -1,5 +1,9 @@
 package com.ssafy.kidslink.common.jwt;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ssafy.kidslink.common.dto.APIError;
+import com.ssafy.kidslink.common.dto.APIResponse;
+import com.ssafy.kidslink.common.exception.JWTAuthenticationException;
 import com.ssafy.kidslink.common.service.RefreshTokenService;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
@@ -13,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.filter.GenericFilterBean;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 /**
  * TODO #1 Refresh Token 삭제 로직 추가
@@ -45,9 +50,11 @@ public class CustomLogoutFilter extends GenericFilterBean {
         //get refresh token
         String refresh = null;
         Cookie[] cookies = request.getCookies();
-        for (Cookie cookie : cookies) {
-            if (cookie.getName().equals("refresh")) {
-                refresh = cookie.getValue();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("refresh")) {
+                    refresh = cookie.getValue();
+                }
             }
         }
 
@@ -62,14 +69,14 @@ public class CustomLogoutFilter extends GenericFilterBean {
             jwtUtil.isExpired(refresh);
         } catch (ExpiredJwtException e) {
             //response status code
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            handleException(response, "Refresh token expired", "400", HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
 
         // refresh Token Category confirm
         String category = jwtUtil.getCategory(refresh);
         if (!category.equals("refresh")) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            handleException(response, "Invalid token category", "400", HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
 
@@ -81,7 +88,15 @@ public class CustomLogoutFilter extends GenericFilterBean {
 
         // logout process
         // refresh Token Remove
-        refreshTokenService.removeRefreshToken(refresh);
+        try{
+            refreshTokenService.removeRefreshToken(refresh);
+        }catch (JWTAuthenticationException e){
+            handleException(response, e.getMessage(), "401", HttpServletResponse.SC_UNAUTHORIZED);
+            return;
+        } catch (Exception e){
+            handleException(response, e.getMessage(), "400", HttpServletResponse.SC_BAD_REQUEST);
+            return;
+        }
 
         // Refresh Token Cookie Remove
         Cookie cookie = new Cookie("refresh", null);
@@ -89,6 +104,43 @@ public class CustomLogoutFilter extends GenericFilterBean {
         cookie.setPath("/");
 
         response.addCookie(cookie);
+        response.setHeader("Access-Control-Allow-Credentials", "true");
         response.setStatus(HttpServletResponse.SC_ACCEPTED);
+        handleSuccess(response, "Logout successful");
+    }
+
+    private void handleException(HttpServletResponse response, String message, String code, int status) throws IOException {
+        APIError apiError = new APIError(code, message);
+        APIResponse<Void> responseData = new APIResponse<>(
+                "fail",
+                null,
+                message,
+                apiError
+        );
+
+        response.setStatus(status);
+        response.setContentType("application/json;charset=UTF-8");
+        response.setCharacterEncoding("UTF-8");
+        PrintWriter writer = response.getWriter();
+        ObjectMapper objectMapper = new ObjectMapper();
+        writer.write(objectMapper.writeValueAsString(responseData));
+        writer.flush();
+    }
+
+    private void handleSuccess(HttpServletResponse response, String message) throws IOException {
+        APIResponse<Void> responseData = new APIResponse<>(
+                "success",
+                null,
+                message,
+                null
+        );
+
+        response.setStatus(HttpServletResponse.SC_ACCEPTED);
+        response.setContentType("application/json;charset=UTF-8");
+        response.setCharacterEncoding("UTF-8");
+        PrintWriter writer = response.getWriter();
+        ObjectMapper objectMapper = new ObjectMapper();
+        writer.write(objectMapper.writeValueAsString(responseData));
+        writer.flush();
     }
 }
