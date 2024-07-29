@@ -9,7 +9,7 @@ interface Notice {
   noticeBoardId: number;
   title: string;
   content: string;
-  noticeBaordDate: string;
+  noticeBoardDate: string;
   teacherName: string | null; // 여기 null안되게(지금은 data null로 옴)
 }
 
@@ -115,7 +115,7 @@ export default function ParentNotice() {
                 className={`flex flex-col p-4 rounded-2xl bg-[#FFF9D7] border-1 border-[#FFEC8A] hover:bg-[#FFEC8A] transition-colors duration-200 cursor-pointer`}
                 onClick={() => handleNoticeClick(notice.noticeBoardId)}
               >
-                <p className="text-base font-bold text-[#757575]">{notice.noticeBaordDate}</p>
+                <p className="text-base font-bold text-[#757575]">{notice.noticeBoardDate}</p>
                 <p className="text-lg font-medium text-[#353c4e]">{notice.title}</p>
               </div>
             ))}

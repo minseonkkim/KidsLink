@@ -9,7 +9,7 @@ interface NoticeDetail {
   teacherName: string;
   title: string;
   content: string;
-  noticeBaordDate: string;
+  noticeBoardDate: string;
 }
 
 export default function ParentNoticeDetail() {
@@ -75,7 +75,7 @@ export default function ParentNoticeDetail() {
               {notice.title}
             </p>
             <p className="text-sm font-light text-[#353c4e] mb-6">
-              {notice.noticeBaordDate}
+              {notice.noticeBoardDate}
             </p>
             <div className="text-base text-[#212121] space-y-4 whitespace-pre-line">
               {notice.content}
