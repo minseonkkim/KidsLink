@@ -1,7 +1,7 @@
 package com.ssafy.kidslink.application.parent.controller;
 
 import com.ssafy.kidslink.application.child.dto.ChildDTO;
-import com.ssafy.kidslink.application.parent.dto.JoinDTO;
+import com.ssafy.kidslink.application.parent.dto.ParentJoinDTO;
 import com.ssafy.kidslink.application.parent.dto.ParentDTO;
 import com.ssafy.kidslink.application.parent.mapper.ParentMapper;
 import com.ssafy.kidslink.application.parent.service.ParentService;
@@ -39,7 +39,7 @@ public class ParentController {
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "부모 회원 가입 요청 데이터",
                     content = @Content(mediaType = "application/x-www-form-urlencoded",
-                            schema = @Schema(implementation = JoinDTO.class))
+                            schema = @Schema(implementation = ParentJoinDTO.class))
             ))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "부모 회원 가입 성공",
@@ -50,7 +50,7 @@ public class ParentController {
                             schema = @Schema(implementation = APIResponse.class)))
     })
     @PostMapping("")
-    public ResponseEntity<APIResponse<Void>> joinProcess(@ModelAttribute JoinDTO joinDTO) {
+    public ResponseEntity<APIResponse<Void>> joinProcess(@ModelAttribute ParentJoinDTO joinDTO) {
         log.info("joinDTO : {}", joinDTO);
 
         parentService.joinProcess(joinDTO);
