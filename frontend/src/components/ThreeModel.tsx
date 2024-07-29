@@ -2,10 +2,11 @@ import React, { useRef, useEffect, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, useGLTF, Environment } from '@react-three/drei';
 import { MeshStandardMaterial, Group, Vector2 } from 'three';
-import { useSpring, a } from '@react-spring/three';
+import { useSpring, animated, SpringValue } from '@react-spring/three';
+import { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
 
 function Model(props: JSX.IntrinsicElements['group'] & { mousePosition: Vector2 }) {
-  const { scene } = useGLTF('/3d-daramgi.glb') as unknown as { scene: THREE.Scene; materials: { [key: string]: MeshStandardMaterial } };
+  const { scene } = useGLTF('/3d-daramgi.glb') as unknown as { scene: Group; materials: { [key: string]: MeshStandardMaterial } };
   const groupRef = useRef<Group>(null);
   const [clicked, setClicked] = useState(false);
 
@@ -38,23 +39,26 @@ function Model(props: JSX.IntrinsicElements['group'] & { mousePosition: Vector2 
     setClicked(true);
   };
 
+  const animatedScale = springs.scale as unknown as SpringValue<number[]>;
+  const animatedPosition = springs.position as unknown as SpringValue<number[]>;
+
   return (
-    <a.group
+    <animated.group
       ref={groupRef}
-      scale={springs.scale}
-      position={springs.position}
+      scale={animatedScale.to((x, y, z) => [x, y, z])}
+      position={animatedPosition.to((x, y, z) => [x, y, z])}
       onClick={handleClick}
       {...props}
     >
       <primitive object={scene} />
-    </a.group>
+    </animated.group>
   );
 }
 
 useGLTF.preload('/3d-daramgi.glb');
 
 const ThreeModel: React.FC = () => {
-  const controlsRef = useRef<any>(null);
+  const controlsRef = useRef<OrbitControlsImpl>(null);
   const [mousePosition, setMousePosition] = useState(new Vector2(0, 0));
 
   useEffect(() => {

@@ -1,5 +1,6 @@
 // 토큰 필요한 함수인 경우
-import axios from 'axios';
+import noAuthAxios from './noAuthAxios'
+import axios from 'axios'
 
 const BASE_URL = import.meta.env.VITE_API_KEY;
 
@@ -9,14 +10,16 @@ const axiosInstance = axios.create({
     'Accept': 'application/json',
     'Content-Type': 'application/json',
   },
-});
+  withCredentials: true, 
+})
 
 // 토큰 설정 및 재발급 함수
 const setAuthorizationToken = async () => {
   try {
-    const response = await axios.post(`${BASE_URL}/reissue`);
+    const response = await noAuthAxios.post(`${BASE_URL}/reissue`);
     const newToken = response.data.data.accessToken;
     const expiredAt = response.data.data.expiredAt;
+    console.log("성공")
 
     localStorage.setItem('accessToken', newToken);
     localStorage.setItem('expiredAt', expiredAt.toString());

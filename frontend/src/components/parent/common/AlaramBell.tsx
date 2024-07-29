@@ -7,8 +7,8 @@ import ThreeModel from '../../ThreeModel';
 interface Notification {
   time: string;
   title: string;
-  content: string;
-  type: '알림장' | '상담' | '앨범';
+  contents: string;
+  code: 'Notice' | '상담' | '앨범';
 }
 
 interface AlaramBellProps {

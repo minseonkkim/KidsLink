@@ -3,19 +3,9 @@ import ParentHeader from "../../components/parent/common/HomeHeader"
 import InfoSection from "../../components/parent/common/InfoSection"
 import Menu from "../../components/parent/main/Menu"
 import daramgi from "../../assets/parent/daramgi.png"
-import { useEffect } from 'react';
-import { useParentInfoStore } from '../../stores/useParentInfoStore'
+
 
 export default function ParentHome() {
-  // 부모 정보 가져오기
-  const fetchParentInfo = useParentInfoStore((state) => state.fetchParentInfo);
-  const parentInfo = useParentInfoStore((state) => state.parentInfo);
-
-  useEffect(() => {
-    fetchParentInfo();
-  }, [fetchParentInfo]);
-
-
   const navigate = useNavigate();
 
   const handleMenuClick = (link: string) => {

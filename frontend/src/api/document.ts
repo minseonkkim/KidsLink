@@ -1,6 +1,6 @@
 import axiosInstance from './token/axiosInstance'
 
-interface DocumentData {
+interface DosageData {
   dosageId: number;
   startDate: string;
   name: string;
@@ -22,7 +22,7 @@ interface AbsentData {
   childId: number;
 }
 
-interface Document {
+export interface Document {
   id: null
   data: string;
   type: string;
@@ -48,10 +48,11 @@ export async function getClassAllDocuments(): Promise<Document[]> {
   }
 }
 
+
 // 특정 아이의 모든 서류 조회
-export async function getKidAllDocumnets(childId: number) {
+export async function getKidAllDocuments(childId: number) {
   try {
-    const response = await axiosInstance.get(`document/${childId}`)
+    const response = await axiosInstance.get(`document/child/${childId}`)
 
     if (response.data.status === 'success') {
       console.log(response.data.data) // 확인 후 삭제
@@ -133,37 +134,36 @@ export async function checkDosageDocument(dosageId: number) {
   }
 }
 
-// 결석 서류 작성
-export async function createAbsentDocument() {
-  try  {
-    const response = await axiosInstance.post('document/absent')
-
-    if (response.data.status === 'success') {
-      console.log(response.data.data) // 확인 후 삭제
-      return response.data.data
-    } else {
-      throw new Error('Failed to post absent-document')
-    }
-  } catch (error) {
-    console.error(error)
-    throw error
-  }
-}
-
 // 투약 서류 작성
-export async function createDosageDocument() {
-  try  {
-    const response = await axiosInstance.post('document/dosage')
+export async function createDosageDocument(data: DosageData) {
+  try {
+    const response = await axiosInstance.post('document/dosage', data);
 
     if (response.data.status === 'success') {
-      console.log(response.data.data) // 확인 후 삭제
-      return response.data.data
+      console.log(response.data.data); // 확인 후 삭제
+      return response.data.data;
     } else {
-      throw new Error('Failed to post dosage-document')
+      throw new Error('Failed to post dosage-document');
     }
   } catch (error) {
-    console.error(error)
-    throw error
+    console.error(error);
+    throw error;
   }
 }
 
+// 결석 서류 작성
+export async function createAbsentDocument(data: AbsentData) {
+  try {
+    const response = await axiosInstance.post('document/absent', data);
+
+    if (response.data.status === 'success') {
+      console.log(response.data.data); // 확인 후 삭제
+      return response.data.data;
+    } else {
+      throw new Error('Failed to post absent-document');
+    }
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}

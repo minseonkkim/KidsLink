@@ -7,29 +7,41 @@ import pill from '../../assets/parent/pill.png';
 import absentIcon from '../../assets/parent/absent.png';
 import checkedIcon from '../../assets/parent/check.png';
 import handWithPen from '../../assets/parent/pen.png';
-
-const documents = [
-  {
-    id: 1,
-    date: '2024.07.13 - 2024.07.25',
-    title: '감기약',
-    type: 'med',
-    checked: false,
-  },
-  {
-    id: 2,
-    date: '2024.07.13 - 2024.07.25',
-    title: '불국사 견학',
-    type: 'absent',
-    checked: true,
-  },
-];
+import { getKidAllDocuments, Document } from '../../api/document';
+import { useParentInfoStore } from '../../stores/useParentInfoStore'
 
 export default function ParentDocument() {
+  const [documents, setDocuments] = useState<Document[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [scroll, setScroll] = useState(false);
   const navigate = useNavigate();
   const divRef = useRef<HTMLDivElement>(null);
+  
+  const childId = useParentInfoStore((state) => state.parentInfo?.child.childId); 
+  useEffect(() => {
+    async function fetchDocuments() {
+      if (childId) {
+        try {
+          const response = await getKidAllDocuments(childId);
+          if (response) {
+            const parsedDocuments = response.map((item: any) => ({
+              id: item.id,
+              date: item.date,
+              type: item.type,
+              title: item.type === "Dosage" ? item.dosage.name : "결석",
+              checked: item.type === "Dosage" ? item.dosage.confirmationStatus === "T" : item.absent.confirmationStatus === "T",
+              details: item.type === "Dosage" ? item.dosage.details : item.absent.reason
+            }));
+            setDocuments(parsedDocuments);
+          }
+        } catch (error) {
+          console.error("Failed to fetch documents", error);
+        }
+      }
+    }
+
+    fetchDocuments();
+  }, [childId]);
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
@@ -43,11 +55,7 @@ export default function ParentDocument() {
     const handleScroll = () => {
       if (divRef.current) {
         const topPosition = divRef.current.getBoundingClientRect().top;
-        if (topPosition <= 200) {
-          setScroll(true);
-        } else {
-          setScroll(false);
-        }
+        setScroll(topPosition <= 200);
       }
     };
 
@@ -62,7 +70,6 @@ export default function ParentDocument() {
   return (
     <div className="min-h-[100dvh] flex flex-col items-center bg-[#FFEC8A]">
       <CommonHeader title="서류" />
-
       <div className="w-full flex flex-col items-center mt-16 flex-grow">
         <InfoSection
           main1="아이의 소식"
@@ -93,18 +100,21 @@ export default function ParentDocument() {
                 className={`flex flex-col p-4 rounded-2xl bg-[#FFF9D7] border-1 border-[#FFEC8A] hover:bg-[#ffec8a] transition-colors duration-200`}
               >
                 <div className="flex items-center">
-                  <img
-                    src={doc.type === 'med' ? pill : absentIcon}
-                    alt={doc.type === 'med' ? 'pill' : 'absent'}
-                    className="w-[30px] h-[30px] mr-4"
-                  />
                   <div>
                     <p className="text-base font-bold text-[#757575]">
                       {doc.date}
                     </p>
-                    <p className="text-lg font-bold text-[#353c4e]">
-                      {doc.title}
-                    </p>
+                    <div className="flex justify-center items-center"> 
+                      <img
+                      src={doc.type === 'Dosage' ? pill : absentIcon}
+                      alt={doc.type === 'Dosage' ? 'pill' : 'absent'}
+                      className="w-7 h-7 mr-4"
+                      />
+                      <p className="text-lg font-bold text-[#353c4e] pt-1">
+                        {doc.title}
+                      </p>
+                    </div>
+
                   </div>
                   {doc.checked && (
                     <img
