@@ -5,10 +5,22 @@ import com.ssafy.kidslink.application.busstop.repository.BusStopRepository;
 import com.ssafy.kidslink.application.busstopchild.domain.BusStopChild;
 import com.ssafy.kidslink.application.busstopchild.dto.BusStopChildDTO;
 import com.ssafy.kidslink.application.busstopchild.repository.BusStopChildRepository;
+import com.ssafy.kidslink.application.kindergarten.domain.Kindergarten;
+import com.ssafy.kidslink.application.kindergarten.domain.KindergartenClass;
+import com.ssafy.kidslink.application.kindergarten.repository.KindergartenClassRepository;
+import com.ssafy.kidslink.application.notification.domain.ParentNotification;
+import com.ssafy.kidslink.application.notification.respository.ParentNotificationRepository;
+import com.ssafy.kidslink.application.notification.respository.TeacherNotificationRepository;
+import com.ssafy.kidslink.application.parent.domain.Parent;
+import com.ssafy.kidslink.application.parent.repository.ParentRepository;
+import com.ssafy.kidslink.application.teacher.domain.Teacher;
+import com.ssafy.kidslink.application.teacher.repository.TeacherRepository;
+import com.ssafy.kidslink.common.enums.NotificationCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +32,11 @@ import static com.ssafy.kidslink.application.busstopchild.domain.BusStopChild.Bo
 public class BusStopService {
     private final BusStopRepository busStopRepository;
     private final BusStopChildRepository busStopChildRepository;
+    private final TeacherRepository teacherRepository;
+    private final ParentRepository parentRepository;
+    private final TeacherNotificationRepository teacherNotificationRepository;
+    private final ParentNotificationRepository parentNotificationRepository;
+    private final KindergartenClassRepository kindergartenClassRepository;
 
     public List<BusStop> getAllBusStops() {
         return busStopRepository.findAll();
@@ -46,4 +63,19 @@ public class BusStopService {
     public void isBoarding(int childId){
         busStopChildRepository.updateBoardingStatus(childId, F);
     }
+
+    public void sendBusNotification(String teacherUsername) {
+        Teacher teacher = teacherRepository.findByTeacherUsername(teacherUsername);
+        Kindergarten kindergarten = teacher.getKindergartenClass().getKindergarten();
+        for (KindergartenClass select : kindergartenClassRepository.findByKindergarten(kindergarten))
+            for (Parent parent : parentRepository.findByKindergartenClassId(select.getKindergartenClassId())) {
+                ParentNotification parentNotification = new ParentNotification();
+                parentNotification.setCode(NotificationCode.BUS);
+                parentNotification.setParentNotificationText("버스가 출발하였습니다.");
+                parentNotification.setParentNotificationDate(LocalDate.now());
+                parentNotification.setParent(parent);
+                parentNotificationRepository.save(parentNotification);
+            }
+    }
+
 }
