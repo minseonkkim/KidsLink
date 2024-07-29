@@ -3,7 +3,6 @@ import useModal from '../../../hooks/teacher/useModal';
 
 interface GrowthDiaryItemProps {
     id: number;
-    name: string;
     date: string;
     imgPaths: string[];
     onClick: () => void;
