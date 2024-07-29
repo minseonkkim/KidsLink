@@ -165,6 +165,7 @@ CREATE TABLE `teacher_notification` (
     `teacher_id` INT NOT NULL,
     `code` VARCHAR(50) NULL,
     `teacher_notification_text` VARCHAR(100) NULL,
+    `teacher_notification_date` DATE NULL,
     `confirmation_status` ENUM('T', 'F') DEFAULT 'F',
     PRIMARY KEY (`teacher_notification_id`),
     FOREIGN KEY (`teacher_id`) REFERENCES `teacher`(`teacher_id`)
