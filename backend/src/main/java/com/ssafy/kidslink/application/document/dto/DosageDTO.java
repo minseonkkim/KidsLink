@@ -20,9 +20,10 @@ public class DosageDTO {
     private String name;
     private String volume;
     private String num;
-    private List<String> times;
+    private String times;
     private String storageInfo;
     private String details;
     private ConfirmationStatus confirmationStatus;
     private Integer childId;
+    private String childName;
 }
