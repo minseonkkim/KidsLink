@@ -11,6 +11,9 @@ import ExampleImg from "../../assets/teacher/example_img_1.jpg";
 import useModal from "../../hooks/teacher/useModal.tsx";
 import { FaTrash } from "react-icons/fa";
 import ToastNotification, { showToast, showToastError } from '../../components/teacher/common/ToastNotification.tsx';
+import { useTeacherInfoStore } from "../../stores/useTeacherInfoStore.ts";
+import { getKindergartenClasses } from "../../api/kindergarten.ts";
+import { getClassChilds } from "../../api/kindergarten.ts";
 
 const initialGrowthDiaryData = [
   { id: 1, childId: 1, name: "김민선", date: "2024.07.10", imgPaths: [ExampleImg] },
@@ -26,55 +29,30 @@ export default function TeacherGrowth() {
   const [selectedImages, setSelectedImages] = useState<string[]>([]);
   const [selectedChildId, setSelectedChildId] = useState<number | null>(null);
   const [growthDiaryData, setGrowthDiaryData] = useState(initialGrowthDiaryData);
-  const [growthChildListItems, setGrowthChildListItems] = useState([
-    {
-      id: 1,
-      currentChild: false,
-      name: "김민선",
-      profileImgPath: ProfileImg,
-      completed: false,
-    },
-    {
-      id: 2,
-      currentChild: false,
-      name: "김범수",
-      profileImgPath: ProfileImg,
-      completed: false,
-    },
-    {
-      id: 3,
-      currentChild: false,
-      name: "김여준",
-      profileImgPath: ProfileImg,
-      completed: false,
-    },
-    {
-      id: 4,
-      currentChild: false,
-      name: "김지원",
-      profileImgPath: ProfileImg,
-      completed: false,
-    },
-    {
-      id: 5,
-      currentChild: false,
-      name: "이상민",
-      profileImgPath: ProfileImg,
-      completed: false,
-    },
-    {
-      id: 6,
-      currentChild: false,
-      name: "정현수",
-      profileImgPath: ProfileImg,
-      completed: false,
-    },
-  ]);
+
+  const [currentChildId, setCurrentChildId] = useState<number | null>(null);
+  const [childs, setChilds] = useState([]);
+
+  useEffect(() => {
+    const classId = useTeacherInfoStore.getState().teacherInfo.kindergartenClassId;
+    const fetchChilds = async () => {
+      try{
+        const fetchedChilds = await getClassChilds(classId);
+        setChilds(fetchedChilds);
+      } catch(error){
+        console.error('Failed to fetch childs:', error);
+      }
+    }
+
+    fetchChilds();
+  }, []);
+
+
 
   useEffect(() => {
     // 매일 자정 completed 상태 초기화
     const resetCompletedStatus = () => {
-      setGrowthChildListItems(prevItems =>
+      setChilds(prevItems =>
         prevItems.map(child => ({ ...child, completed: false }))
       );
     };
@@ -113,19 +91,12 @@ export default function TeacherGrowth() {
     setSelectedImages((prevImages) => prevImages.filter((_, i) => i !== index));
   };
 
-  const filteredChildren = growthChildListItems.filter((child) =>
+  const filteredChildren = childs.filter((child) =>
     child.name.includes(searchChild)
   );
 
   const handleChildClick = (id: number) => {
-    setGrowthChildListItems((prevItems) =>
-      prevItems.map((child) =>
-        child.id === id
-          ? { ...child, currentChild: true }
-          : { ...child, currentChild: false }
-      )
-    );
-    setSelectedChildId(id); // 선택된 아이디 저장
+    setCurrentChildId(id);
   };
 
   useEffect(() => {
@@ -148,7 +119,7 @@ export default function TeacherGrowth() {
       return;
     }
 
-    const selectedChild = growthChildListItems.find((child) => child.id === selectedChildId);
+    const selectedChild = childs.find((child) => child.id === selectedChildId);
     if (!selectedChild) return;
 
     const form = event.target as HTMLFormElement;
@@ -257,14 +228,15 @@ export default function TeacherGrowth() {
             </div>
             <div className="flex flex-wrap w-[360px] h-[420px] overflow-y-auto custom-scrollbar">
               {filteredChildren.map((child) => (
-                <GrowthChild
-                  key={child.id}
-                  currentChild={child.currentChild}
-                  name={child.name}
-                  profileImgPath={child.profileImgPath}
-                  completed={child.completed}
-                  onClick={() => handleChildClick(child.id)} // 클릭 이벤트 핸들러
-                />
+                <div key={child.childId} className={`border-[2px] rounded-[10px] ${child.childId === currentChildId ? 'border-[#B2D170]' : 'border-transparent'}`}>
+                  <GrowthChild
+                    key={child.childId}
+                    name={child.name}
+                    profileImgPath={child.profile}
+                    completed={child.completed}
+                    onClick={() => handleChildClick(child.childId)} // 클릭 이벤트 핸들러
+                  />
+                </div>
               ))}
             </div>
           </div>

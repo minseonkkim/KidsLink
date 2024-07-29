@@ -36,7 +36,7 @@ export default function TeacherNotice() {
         if (searchType === "title") {
             return item.title.includes(searchTitle);
         } else if (searchType === "date") {
-            return searchDate === "" || item.noticeBaordDate === searchDate;
+            return searchDate === "" || item.noticeBoardDate === searchDate;
         }
         return true;
     });
@@ -126,7 +126,7 @@ export default function TeacherNotice() {
                             key={index}
                             id={item.noticeBoardId}
                             title={item.title}
-                            date={item.noticeBaordDate}
+                            date={item.noticeBoardDate}
                             content={item.content}
                         />
                     ))}
@@ -182,7 +182,7 @@ function CreateNoticeForm({ closeModal, setNotices }) {
         const noticeData = {
             title: newNoticeTitle,
             content: newNoticeContent,
-            noticeBaordDate: new Date().toISOString().split('T')[0]
+            noticeBoardDate: new Date().toISOString().split('T')[0]
         };
 
         try {
