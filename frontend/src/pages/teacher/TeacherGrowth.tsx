@@ -14,7 +14,7 @@ import ToastNotification, { showToast, showToastError } from '../../components/t
 import { useTeacherInfoStore } from "../../stores/useTeacherInfoStore.ts";
 import { getKindergartenClasses } from "../../api/kindergarten.ts";
 import { getClassChilds } from "../../api/kindergarten.ts";
-import { getChildGrowthDiarys } from "../../api/growthdiary.ts";
+import { getKidAllGrowthDiarys } from "../../api/growthDiary.ts";
 
 
 
@@ -48,7 +48,7 @@ export default function TeacherGrowth() {
 
   const fetchDiarys = async () => {
     try{
-      const fetchedDiarys = await getChildGrowthDiarys(currentChildId);
+      const fetchedDiarys = await getKidAllGrowthDiarys(currentChildId);
       setGrowthDiaryData(fetchedDiarys);
       console.log(growthDiaryData);
 
