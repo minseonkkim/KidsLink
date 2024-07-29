@@ -13,6 +13,7 @@ public class TeacherDTO {
     private String name;
     private String nickname;
     private String tel;
+    private int kindergartenId;
     private String kindergartenName;
     private String kindergartenClassName;
     private String profile;
