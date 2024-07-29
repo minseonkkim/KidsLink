@@ -27,8 +27,8 @@ export default function ParentNoticeDetail() {
           setLoading(false);
         }
       } catch (error) {
-        console.error('Failed to fetch notice detail:', error);
-        setError('Failed to fetch notice detail');
+        console.error("Failed to fetch notice detail:", error);
+        setError("Failed to fetch notice detail");
         setLoading(false);
       }
     };
@@ -61,7 +61,9 @@ export default function ParentNoticeDetail() {
                 alt="프로필 이미지"
               />
             </div>
-            <p className="text-lg font-medium text-[#353c4e]">{notice.teacherName}</p>
+            <p className="text-lg font-medium text-[#353c4e]">
+              {notice.teacherName}
+            </p>
           </div>
 
           <div className="relative w-full bg-[#fff9d7] rounded-[20px] px-6 py-8 shadow-lg border-2 border-[#ffec8a] bg-notebook-pattern">
@@ -84,5 +86,5 @@ export default function ParentNoticeDetail() {
         </div>
       </div>
     </div>
-  )
+  );
 }
