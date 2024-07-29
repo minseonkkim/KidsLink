@@ -8,6 +8,13 @@ import com.ssafy.kidslink.application.teacher.service.TeacherService;
 import com.ssafy.kidslink.common.dto.APIResponse;
 import com.ssafy.kidslink.common.exception.InvalidPrincipalException;
 import com.ssafy.kidslink.common.security.CustomUserDetails;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -23,6 +30,22 @@ public class TeacherController {
     private final TeacherService teacherService;
     private final KindergartenService kindergartenService;
 
+
+
+    @Operation(summary = "선생님 회원 가입", description = "선생님 회원 가입을 처리합니다.",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "선생님 회원 가입 요청 데이터",
+                    content = @Content(mediaType = "application/x-www-form-urlencoded",
+                            schema = @Schema(implementation = JoinDTO.class))
+            ))
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "선생님 회원 가입 성공",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = APIResponse.class))),
+            @ApiResponse(responseCode = "400", description = "유효하지 않은 요청",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = APIResponse.class)))
+    })
     @PostMapping("")
     public ResponseEntity<APIResponse<Void>> joinProcess(@ModelAttribute JoinDTO joinDTO) {
         log.debug("joinDTO : {}", joinDTO);
@@ -37,6 +60,21 @@ public class TeacherController {
         return new ResponseEntity<>(responseData, HttpStatus.OK);
     }
 
+
+
+
+    @Operation(summary = "선생님 정보 조회", description = "선생님의 정보를 조회합니다.",
+            parameters = {
+                    @Parameter(name = "Authorization", description = "JWT 토큰", required = true, in = ParameterIn.HEADER, schema = @Schema(type = "string"))
+            })
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "선생님 정보 조회 성공",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = APIResponse.class))),
+            @ApiResponse(responseCode = "400", description = "유효하지 않은 JWT 토큰",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = APIResponse.class)))
+    })
     @GetMapping("")
     public ResponseEntity<APIResponse<TeacherDTO>> getProcess(@AuthenticationPrincipal Object principal) {
         if (principal instanceof CustomUserDetails userDetails) {
@@ -53,6 +91,21 @@ public class TeacherController {
         throw new InvalidPrincipalException("Invalid user principal");
     }
 
+
+
+
+    @Operation(summary = "우리반 정보 조회", description = "현재 담당하고 있는 반의 정보를 조회합니다.",
+            parameters = {
+                    @Parameter(name = "Authorization", description = "JWT 토큰", required = true, in = ParameterIn.HEADER, schema = @Schema(type = "string"))
+            })
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "우리반 정보 조회 성공",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = APIResponse.class))),
+            @ApiResponse(responseCode = "400", description = "유효하지 않은 JWT 토큰",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = APIResponse.class)))
+    })
     @GetMapping("/class")
     public ResponseEntity<APIResponse<ResponseClassInfoDTO>> getMyClassInfo(@AuthenticationPrincipal Object principal) {
         if (principal instanceof CustomUserDetails userDetails) {
