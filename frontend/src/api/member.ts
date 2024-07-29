@@ -1,9 +1,8 @@
 import noAuthAxios from './token/noAuthAxios'
-import axiosInstance from './token/axiosInstance'
-import axios from 'axios'
 import { useAppStore } from '../stores/store'
 import { getTeacherInfo, getParentInfo } from './Info'
-import { useTeacherInfoStore, useParentInfoStore } from '../stores/useTeacherInfoStore'
+import { useTeacherInfoStore } from '../stores/useTeacherInfoStore'
+import { useParentInfoStore } from '../stores/useParentInfoStore'
 
 const API_BASE_URL = import.meta.env.VITE_API_KEY;
 
