@@ -26,7 +26,7 @@ export interface Document {
   id: null
   data: string;
   type: string;
-  dosage: DocumentData | null;
+  dosage: DosageData | null;
   absent: AbsentData | null;
 }
 
