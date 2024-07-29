@@ -15,5 +15,5 @@ import java.util.List;
 public class ClassifyImageDTO {
     ChildDTO child;
     int count;
-    List<Integer> images;
+    List<String> images;
 }

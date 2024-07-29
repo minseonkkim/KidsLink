@@ -13,7 +13,6 @@ import com.ssafy.kidslink.application.image.service.ImageService;
 import com.ssafy.kidslink.application.kindergarten.domain.KindergartenClass;
 import com.ssafy.kidslink.application.teacher.domain.Teacher;
 import com.ssafy.kidslink.application.teacher.repository.TeacherRepository;
-import com.ssafy.kidslink.common.dto.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -103,12 +102,12 @@ public class AlbumService {
         }
 
         // Grouping results
-        Map<String, List<Integer>> groupedResults = new HashMap<>();
-        List<Integer> unknownList = new ArrayList<>();
+        Map<String, List<String>> groupedResults = new HashMap<>();
+        List<String> unknownList = new ArrayList<>();
 
         for (Map<String, Object> result : responseList) {
             String bestMatchReference = (String) result.get("best_match_reference");
-            Integer classifyImageId = (Integer) result.get("classify_image_id");
+            String classifyImageId = (String) result.get("classify_image_path");
             Boolean verified = (Boolean) result.get("verified");
 
             if (!verified) {
@@ -121,11 +120,11 @@ public class AlbumService {
         List<ClassifyImageDTO> classifyImageDTOs = new ArrayList<>();
 
         // Convert grouped results to DTOs
-        for (Map.Entry<String, List<Integer>> entry : groupedResults.entrySet()) {
+        for (Map.Entry<String, List<String>> entry : groupedResults.entrySet()) {
             String[] parts = entry.getKey().split(":");
             int childId = Integer.parseInt(parts[1]);
             ChildDTO childDTO = childService.getChildInfo(childId);
-            List<Integer> images = entry.getValue();
+            List<String> images = entry.getValue();
             classifyImageDTOs.add(new ClassifyImageDTO(childDTO, images.size(), images));
         }
 
