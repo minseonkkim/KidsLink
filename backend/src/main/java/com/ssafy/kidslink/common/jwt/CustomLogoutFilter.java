@@ -18,6 +18,7 @@ import org.springframework.web.filter.GenericFilterBean;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Arrays;
 
 /**
  * TODO #1 Refresh Token 삭제 로직 추가
@@ -28,26 +29,30 @@ public class CustomLogoutFilter extends GenericFilterBean {
     private final JWTUtil jwtUtil;
     private final RefreshTokenService refreshTokenService;
 
-
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         doFilter((HttpServletRequest) request, (HttpServletResponse) response, chain);
     }
 
     private void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
-        //path and method verify
+        // path and method verify
         String requestUri = request.getRequestURI();
+        String requestMethod = request.getMethod();
+
+        // Log request URI and method
+        System.out.println("Request URI: " + requestUri);
+        System.out.println("Request Method: " + requestMethod);
+
         if (!requestUri.matches("^.*\\/logout$")) {
             filterChain.doFilter(request, response);
             return;
         }
-        String requestMethod = request.getMethod();
         if (!requestMethod.equals("POST")) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        //get refresh token
+        // get refresh token
         String refresh = null;
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
@@ -58,17 +63,20 @@ public class CustomLogoutFilter extends GenericFilterBean {
             }
         }
 
-        //refresh null check
+        // Log cookies
+        System.out.println("Cookies: " + Arrays.toString(cookies));
+
+        // refresh null check
         if (refresh == null) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            handleException(response, "Refresh token not found", "400", HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
 
-        //expired check
+        // expired check
         try {
             jwtUtil.isExpired(refresh);
         } catch (ExpiredJwtException e) {
-            //response status code
+            // response status code
             handleException(response, "Refresh token expired", "400", HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
@@ -81,19 +89,19 @@ public class CustomLogoutFilter extends GenericFilterBean {
         }
 
         // refresh Token DB Check
-//        if (!refreshRepository.existsByRefresh(refresh)) {
-//            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+//        if (!refreshTokenService.existsByRefresh(refresh)) {
+//            handleException(response, "Token not found in database", "400", HttpServletResponse.SC_BAD_REQUEST);
 //            return;
 //        }
 
         // logout process
         // refresh Token Remove
-        try{
+        try {
             refreshTokenService.removeRefreshToken(refresh);
-        }catch (JWTAuthenticationException e){
+        } catch (JWTAuthenticationException e) {
             handleException(response, e.getMessage(), "401", HttpServletResponse.SC_UNAUTHORIZED);
             return;
-        } catch (Exception e){
+        } catch (Exception e) {
             handleException(response, e.getMessage(), "400", HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
@@ -102,10 +110,16 @@ public class CustomLogoutFilter extends GenericFilterBean {
         Cookie cookie = new Cookie("refresh", null);
         cookie.setMaxAge(0);
         cookie.setPath("/");
-
+        cookie.setHttpOnly(true);
+        cookie.setSecure(false); // 로컬 환경에서는 Secure 속성 사용하지 않음
         response.addCookie(cookie);
+
+        // SameSite=Lax 속성 추가
+        response.addHeader("Set-Cookie", "refresh=; Max-Age=0; Path=/; HttpOnly; SameSite=Lax");
+
         response.setHeader("Access-Control-Allow-Credentials", "true");
-        response.setStatus(HttpServletResponse.SC_ACCEPTED);
+        response.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+
         handleSuccess(response, "Logout successful");
     }
 
@@ -125,6 +139,9 @@ public class CustomLogoutFilter extends GenericFilterBean {
         ObjectMapper objectMapper = new ObjectMapper();
         writer.write(objectMapper.writeValueAsString(responseData));
         writer.flush();
+
+        // Log error message
+        System.out.println("Error: " + message);
     }
 
     private void handleSuccess(HttpServletResponse response, String message) throws IOException {
@@ -142,5 +159,8 @@ public class CustomLogoutFilter extends GenericFilterBean {
         ObjectMapper objectMapper = new ObjectMapper();
         writer.write(objectMapper.writeValueAsString(responseData));
         writer.flush();
+
+        // Log success message
+        System.out.println("Success: " + message);
     }
 }

@@ -5,7 +5,6 @@ import com.ssafy.kidslink.common.jwt.CustomLogoutFilter;
 import com.ssafy.kidslink.common.jwt.JWTAuthenticationFilter;
 import com.ssafy.kidslink.common.jwt.JWTAuthorizationFilter;
 import com.ssafy.kidslink.common.jwt.JWTUtil;
-import com.ssafy.kidslink.common.repository.RefreshTokenRepository;
 import com.ssafy.kidslink.common.security.CustomUserDetailsService;
 import com.ssafy.kidslink.common.service.RefreshTokenService;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +26,6 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.util.Collections;
 import java.util.List;
 
 import static org.springframework.http.HttpMethod.POST;
@@ -88,8 +86,7 @@ public class SecurityConfig {
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
         configuration.setMaxAge(86400L);
-
-        configuration.setExposedHeaders(Collections.singletonList("access"));
+        configuration.setExposedHeaders(List.of("Authorization", "Set-Cookie"));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
