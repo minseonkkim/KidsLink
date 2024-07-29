@@ -59,6 +59,7 @@ public class DocumentController {
     @PostMapping("/absent/{childId}")
     public ResponseEntity<APIResponse<Void>> createAbsent(@PathVariable int childId,@RequestBody AbsentDTO absentDTO) {
         absentService.createAbsent(childId,absentDTO);
+
         APIResponse<Void> responseData = new APIResponse<>(
                 "success",
                 null,
@@ -70,6 +71,7 @@ public class DocumentController {
     @PostMapping("/dosage/{childId}")
     public ResponseEntity<APIResponse<Void>> createDosage(@PathVariable int childId, @RequestBody DosageDTO dosageDTO) {
         dosageService.createDosage(childId,dosageDTO);
+
         APIResponse<Void> responseData = new APIResponse<>(
                 "success",
                 null,
