@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useAppStore, UserState } from "./stores/store";
 import ParentHome from "./pages/parent/ParentHome";
 import ParentDocument from "./pages/parent/ParentDocument";
+import ParentDocumentDetail from "./pages/parent/ParentDocumentDetail";
 import ParentDocumentSubmit from "./pages/parent/ParentDocumentSubmit";
 import ParentNotice from "./pages/parent/ParentNotice";
 import ParentNoticeDetail from "./pages/parent/ParentNoticeDetail";
@@ -60,6 +61,7 @@ const App: React.FC = () => {
               <>
                 <Route path="/" element={<ParentHome />} />
                 <Route path="/document" element={<ParentDocument />} />
+                <Route path="/document/detail" element={<ParentDocument />} />
                 <Route path="/document/submit" element={<ParentDocumentSubmit />} />
                 <Route path="/notice" element={<ParentNotice />} />
                 <Route path="/notice/:id" element={<ParentNoticeDetail />} />
