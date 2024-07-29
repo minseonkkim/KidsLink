@@ -15,6 +15,7 @@ public class TeacherMapper {
         dto.setUsername(teacher.getTeacherUsername());
         dto.setKindergartenId(teacher.getKindergartenClass().getKindergartenId());
         dto.setKindergartenName(teacher.getKindergartenClass().getKindergarten().getKindergartenName());
+        dto.setKindergartenClassId(teacher.getKindergartenClass().getKindergartenClassId());
         dto.setKindergartenClassName(teacher.getKindergartenClass().getKindergartenClassName());
         dto.setProfile(teacher.getTeacherProfile());
         return dto;
