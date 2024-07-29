@@ -19,6 +19,7 @@ import com.ssafy.kidslink.common.util.PrincipalUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -40,6 +41,7 @@ public class DosageService {
     private Parent getParentByUsername(String parentUsername) {
         return parentRepository.findByParentUsername(parentUsername);
     }
+    @Transactional
     public void createDosage(int childId, DosageDTO dosageDTO) {
 
         Child child = childRepository.findById(childId)
@@ -51,6 +53,7 @@ public class DosageService {
         teacherNotification.setCode(NotificationCode.DOCUMENT);
         teacherNotification.setTeacherNotificationDate(LocalDate.now());
         teacherNotification.setTeacher(teacherRepository.findByKindergartenClass(child.getKindergartenClass()));
+        teacherNotification.setConfirmationStatus(ConfirmationStatus.F);
         teacherNotification.setTeacherNotificationText("새로운 투약 서류가 등록되었습니다.");
         teacherNotificationRepository.save(teacherNotification);
 
