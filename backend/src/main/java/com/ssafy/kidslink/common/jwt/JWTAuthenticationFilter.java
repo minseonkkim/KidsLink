@@ -1,14 +1,12 @@
 package com.ssafy.kidslink.common.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ssafy.kidslink.application.parent.domain.Parent;
 import com.ssafy.kidslink.common.dto.APIError;
 import com.ssafy.kidslink.common.dto.APIResponse;
 import com.ssafy.kidslink.common.dto.LoginDTO;
-import com.ssafy.kidslink.common.redis.RefreshToken;
-import com.ssafy.kidslink.common.repository.RefreshTokenRepository;
 import com.ssafy.kidslink.common.service.RefreshTokenService;
 import jakarta.servlet.*;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -95,8 +93,10 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         // refresh save
         refreshTokenService.saveTokenInfo(username, access, refresh);
 
-        response.setHeader("access", access);
-        response.addCookie(createCookie("refresh", refresh));
+        response.addHeader("access", access);
+        Cookie refreshCookie = createCookie("refresh", refresh);
+        response.addCookie(refreshCookie);
+
         response.setStatus(HttpStatus.OK.value());
 
         HashMap<String, String> responseMap = new HashMap<>();
