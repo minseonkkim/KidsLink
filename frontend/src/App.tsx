@@ -33,6 +33,10 @@ import JoinDetails from "./pages/common/JoinDetails";
 import TeacherAlbumFinish from "./pages/teacher/TeacherAlbumFinish";
 import TeacherMyPage from "./pages/teacher/TeacherMyPage";
 import Splash from "./pages/parent/Splash";
+import { Theme } from "./components/openvidu/Theme";
+import { ChakraProvider } from "@chakra-ui/react";
+import OpenViduComponent from "./components/openvidu/OpenviduComponent";
+import Broadcast from "./pages/teacher/TeacherBroadcast";
 
 const App: React.FC = () => {
   const userType = useAppStore((state: UserState) => state.userType);
@@ -51,63 +55,61 @@ const App: React.FC = () => {
 
   return (
     <>
-      {showSplash ? (
-        <Splash /> // 스플래시 화면 렌더링
-      ) : (
-        <>
-          <Routes>
-            {userType === "ROLE_PARENT" ? (
-              <>
-                <Route path="/" element={<ParentHome />} />
-                <Route path="/document" element={<ParentDocument />} />
-                <Route path="/document/submit" element={<ParentDocumentSubmit />} />
-                <Route path="/notice" element={<ParentNotice />} />
-                <Route path="/notice/:id" element={<ParentNoticeDetail />} />
-                <Route path="/album" element={<ParentAlbum />} />
-                <Route path="/album/:date" element={<ParentAlbumDetail />} />
-                <Route path="/growth" element={<ParentGrowth />} />
-                <Route path="/growth/:id" element={<ParentGrowthDetail />} />
-                <Route path="/bus" element={<ParentBus />} />
-                <Route path="/meeting" element={<ParentMeeting />} />
-                <Route path="/meeting/submit" element={<ParentMeetingSubmit />} />
-                <Route path="/meeting/:id" element={<ParentMeetingRoom />} />
-                <Route path="/ParentSchedule" element={<ParentSchedule />} />
-                <Route path="/mypage" element={<ParentMyPage />} />
-              </>
-            ) : userType === "ROLE_TEACHER" ? (
-              <>
-                <Route path="/" element={<TeacherHome />} />
-                <Route path="/document" element={<TeacherDocument />} />
-                <Route path="/notice" element={<TeacherNotice />} />
-                <Route path="/album" element={<TeacherAlbum />} />
-                <Route path="/album/finish" element={<TeacherAlbumFinish />} />
-                <Route path="/growth" element={<TeacherGrowth />} />
-                <Route path="/meeting" element={<TeacherMeeting />} />
-                <Route path="/meeting/reservation" element={<TeacherReservation />} />
-                <Route path="/bus" element={<TeacherBus />} />
-                <Route path="/ourclass" element={<TeacherOurClass />} />
-                <Route path="/schedule" element={<TeacherSchedule />} />
-                <Route path="/mypage" element={<TeacherMyPage />} />
-              </>
-            ) : (
-              <>
-                <Route path="/" element={<Login />} />
-                <Route path="/join" element={<Join />} />
-                <Route path="/join/:role" element={<JoinDetails />} />
-              </>
-            )}
-          </Routes>
-          {userType === "ROLE_PARENT" && <Footer />}
-        </>
-      )}
+    
+      <Routes>
+        {userType === "ROLE_PARENT" ? (
+          <>
+            <Route path="/" element={<ParentHome />} />
+            <Route path="/document" element={<ParentDocument />} />
+            <Route path="/document/submit" element={<ParentDocumentSubmit />} />
+            <Route path="/notice" element={<ParentNotice />} />
+            <Route path="/notice/:id" element={<ParentNoticeDetail />} />
+            <Route path="/album" element={<ParentAlbum />} />
+            <Route path="/album/:date" element={<ParentAlbumDetail />} />
+            <Route path="/growth" element={<ParentGrowth />} />
+            <Route path="/growth/:id" element={<ParentGrowthDetail />} />
+            <Route path="/bus" element={<ParentBus />} />
+            <Route path="/meeting" element={<ParentMeeting />} />
+            <Route path="/meeting/submit" element={<ParentMeetingSubmit />} />
+            <Route path="/meeting/:id" element={<ParentMeetingRoom />} />
+            <Route path="/ParentSchedule" element={<ParentSchedule />} />
+            <Route path="/mypage" element={<ParentMyPage/>}/>
+          </>
+        ) : userType === "ROLE_TEACHER" ? (
+          <>
+            <Route path="/" element={<TeacherHome />} />
+            <Route path="/document" element={<TeacherDocument />} />
+            <Route path="/notice" element={<TeacherNotice />} />
+            <Route path="/album" element={<TeacherAlbum />} />
+            <Route path="/album/finish" element={<TeacherAlbumFinish />} />
+            <Route path="/growth" element={<TeacherGrowth />} />
+            <Route path="/meeting" element={<TeacherMeeting />} />
+            <Route path="/meeting/reservation" element={<TeacherReservation />} />
+            <Route path="/bus" element={<TeacherBus />} />
+            <Route path="/ourclass" element={<TeacherOurClass />} />
+            <Route path="/schedule" element={<TeacherSchedule />} />
+            <Route path="/mypage" element={<TeacherMyPage />}/>
+            <Route path="live/broadcast/" element={<Broadcast />} />
+          </>
+        ) : (
+          <>
+            <Route path="/" element={<Login />} />
+            <Route path="/join" element={<Join />} />
+            <Route path="/join/:role" element={<JoinDetails />} />
+          </>
+        )}
+      </Routes>
+      {userType === "ROLE_PARENT" && <Footer />}
     </>
   );
 };
 
 const AppWrapper: React.FC = () => (
+  <ChakraProvider theme={Theme}>
   <Router>
     <App />
   </Router>
+  </ChakraProvider>
 );
 
 export default AppWrapper;

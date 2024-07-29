@@ -11,6 +11,9 @@
     "gen-pwa": "pwa-assets-generator --preset minimal public/vite.svg"
   },
   "dependencies": {
+    "@chakra-ui/react": "^2.8.2",
+    "@emotion/react": "^11.13.0",
+    "@emotion/styled": "^11.13.0",
     "@livekit/components-react": "^2.3.6",
     "@react-three/drei": "^9.109.2",
     "@react-three/fiber": "^8.16.8",
@@ -25,6 +28,7 @@
     "livekit-client": "^2.4.0",
     "moment": "^2.30.1",
     "postprocessing": "^6.36.0",
+    "openvidu-browser": "^2.30.1",
     "react": "^18.3.1",
     "react-calendar": "^5.0.0",
     "react-confetti": "^6.1.0",
