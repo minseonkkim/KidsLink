@@ -74,6 +74,7 @@ const App: React.FC = () => {
             <Route path="/meeting/:id" element={<ParentMeetingRoom />} />
             <Route path="/ParentSchedule" element={<ParentSchedule />} />
             <Route path="/mypage" element={<ParentMyPage/>}/>
+            <Route path="/live/:teacherId/:parentId" element={<Broadcast />} />
           </>
         ) : userType === "ROLE_TEACHER" ? (
           <>
@@ -89,7 +90,7 @@ const App: React.FC = () => {
             <Route path="/ourclass" element={<TeacherOurClass />} />
             <Route path="/schedule" element={<TeacherSchedule />} />
             <Route path="/mypage" element={<TeacherMyPage />}/>
-            <Route path="live/broadcast/" element={<Broadcast />} />
+            <Route path="/live/:teacherId/:parentId" element={<Broadcast />} />
           </>
         ) : (
           <>
