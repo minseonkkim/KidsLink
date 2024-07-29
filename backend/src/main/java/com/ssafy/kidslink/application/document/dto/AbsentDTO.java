@@ -18,7 +18,8 @@ public class AbsentDTO {
     private LocalDate startDate;
     private LocalDate endDate;
     private String reason;
-    private String specialNotes;
+    private String details;
     private ConfirmationStatus confirmationStatus;
     private Integer childId;
+    private String childName;
 }
