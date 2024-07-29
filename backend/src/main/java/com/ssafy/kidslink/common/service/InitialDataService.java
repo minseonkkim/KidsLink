@@ -17,6 +17,8 @@ import com.ssafy.kidslink.application.noticeboard.domain.NoticeBoard;
 import com.ssafy.kidslink.application.noticeboard.repository.NoticeBoardRepository;
 import com.ssafy.kidslink.application.parent.domain.Parent;
 import com.ssafy.kidslink.application.parent.repository.ParentRepository;
+import com.ssafy.kidslink.application.schedule.domain.Schedule;
+import com.ssafy.kidslink.application.schedule.repository.ScheduleRepository;
 import com.ssafy.kidslink.application.teacher.domain.Teacher;
 import com.ssafy.kidslink.application.teacher.repository.TeacherRepository;
 import com.ssafy.kidslink.common.enums.ConfirmationStatus;
@@ -47,6 +49,7 @@ public class InitialDataService {
     private final AbsentRepository absentRepository;
     private final DosageRepository dosageRepository;
     private final ImageService imageService;
+    private final ScheduleRepository scheduleRepository;
 
     @Transactional
     public String initializeData() {
@@ -90,11 +93,44 @@ public class InitialDataService {
             absentRepository.saveAll(getAbsent(child));
         }
 
-        // TODO #10 버스 정류장 데이터 삽입
+        // TODO #10 학사 일정 추가
+        for (Kindergarten kindergarten : kindergartens) {
+            List<Schedule> schedules = getKindergartenSchedules(kindergarten);
+            scheduleRepository.saveAll(schedules);
+        }
 
-        // TODO #11 버스 정류장에 아이 데이터 삽입
+        // TODO #11 선생님 일정 추가
+
+
+        // TODO #12 부모님 일정 추가
+
+        // TODO #13 버스 정류장 데이터 삽입
+
+        // TODO #14 버스 정류장에 아이 데이터 삽입
 
         return "데이터 세팅 성공";
+    }
+
+    private static List<Schedule> getKindergartenSchedules(Kindergarten kindergarten) {
+        List<LocalDate> dates = Arrays.asList(
+                LocalDate.of(2024, 3, 1), LocalDate.of(2024, 4, 5), LocalDate.of(2024, 5, 1), LocalDate.of(2024, 6, 21), LocalDate.of(2024, 8, 26), LocalDate.of(2024, 9, 5), LocalDate.of(2024, 10, 9),
+                LocalDate.of(2024, 11, 11), LocalDate.of(2024, 12, 20), LocalDate.of(2025, 1, 2), LocalDate.of(2025, 2, 14), LocalDate.of(2025, 2, 28)
+        );
+
+        List<String> names = Arrays.asList(
+                "신학기 시작", "식목일 행사", "가족 운동회", "여름방학 시작", "여름방학 종료", "추석 맞이 행사", "한글날 기념 행사",
+                "농업인의 날 행사", "겨울방학 시작", "겨울방학 종료", "졸업식", "학기말 파티"
+        );
+
+        List<Schedule> schedules = new ArrayList<>();
+        for (int i = 0; i < dates.size(); i++) {
+            Schedule schedule = new Schedule();
+            schedule.setScheduleDate(dates.get(i));
+            schedule.setScheduleName(names.get(i));
+            schedule.setKindergarten(kindergarten);
+            schedules.add(schedule);
+        }
+        return schedules;
     }
 
     private List<Kindergarten> getKindergartens() {
@@ -121,6 +157,7 @@ public class InitialDataService {
     }
 
     private void deleteAll(){
+        scheduleRepository.deleteAll();
         absentRepository.deleteAll();
         dosageRepository.deleteAll();
         diaryRepository.deleteAll();
