@@ -22,7 +22,7 @@ public class TeacherNotification {
     @JoinColumn(name = "teacher_id", nullable = false)
     private Teacher teacher;
 
-    @Column(name = "teacher_notification_code")
+    @Column(name = "code")
     private NotificationCode code;
 
     @Column(name = "teacher_notification_text")

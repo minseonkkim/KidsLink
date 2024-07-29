@@ -22,7 +22,7 @@ public class ParentNotification {
     @JoinColumn(name = "parent_id", nullable = false)
     private Parent parent;
 
-    @Column(name = "teacher_notification_code")
+    @Column(name = "code")
     @Enumerated(EnumType.STRING)
     private NotificationCode code;
 
