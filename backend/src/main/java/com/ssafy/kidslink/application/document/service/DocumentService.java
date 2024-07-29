@@ -10,12 +10,17 @@ import com.ssafy.kidslink.application.document.mapper.DosageMapper;
 import com.ssafy.kidslink.application.document.repository.AbsentRepository;
 import com.ssafy.kidslink.application.document.repository.DosageRepository;
 import com.ssafy.kidslink.application.kindergarten.domain.KindergartenClass;
+import com.ssafy.kidslink.application.parent.repository.ParentRepository;
 import com.ssafy.kidslink.application.teacher.repository.TeacherRepository;
+import com.ssafy.kidslink.common.dto.User;
+import com.ssafy.kidslink.common.util.PrincipalUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,12 +31,21 @@ public class DocumentService {
     private final AbsentMapper absentMapper;
     private final DosageMapper dosageMapper;
     private final TeacherRepository teacherRepository;
+    private final ParentRepository parentRepository;
     private final ChildRepository childRepository;
 
-    public List<DocumentDTO> getAllDocuments(String teacherUsername) {
-        KindergartenClass kindergartenClass = teacherRepository.findByTeacherUsername(teacherUsername).getKindergartenClass();
-        List<Child> children = childRepository.findByKindergartenClass(kindergartenClass);
+    public List<DocumentDTO> getAllDocuments(Object principal) {
+        User user = PrincipalUtils.getUserFromPrincipal(principal);
+        String userName = user.getUsername();
+        String role = user.getRole();
 
+        Collection<Child> children;
+        if(role.equals("ROLE_TEACHER")){
+            KindergartenClass kindergartenClass = teacherRepository.findByTeacherUsername(userName).getKindergartenClass();
+            children = childRepository.findByKindergartenClass(kindergartenClass);
+        }else{
+            children = parentRepository.findByParentUsername(userName).getChildren();
+        }
         return children.stream()
                 .flatMap(child -> getAllDocumentsByChild(child.getChildId()).stream())
                 .sorted((d1, d2) -> d1.getDate().compareTo(d2.getDate()))
@@ -66,4 +80,5 @@ public class DocumentService {
         allDocuments.sort((d1, d2) -> d1.getDate().compareTo(d2.getDate()));
         return allDocuments;
     }
+
 }
