@@ -123,7 +123,7 @@ const TabletOrMobileComponent = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsContentVisible(false);
-    }, 6200);
+    }, 2500);
 
     return () => clearTimeout(timer);
   }, []);

@@ -1,15 +1,17 @@
-import React, { useState, } from 'react';
+import React, { useState } from 'react';
 import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 import './parent-schedule.css';
 import CommonHeader from '../../components/parent/common/CommonHeader';
 import daramgi from '../../assets/parent/document-daramgi.png';
+import { createDosageDocument, createAbsentDocument } from '../../api/document';
 
 const ParentDocument: React.FC = () => {
   const [selectedOption, setSelectedOption] = useState<string>('med');
   const [startDate, setStartDate] = useState<Date | undefined>(undefined);
   const [endDate, setEndDate] = useState<Date | undefined>(undefined);
   const [isOpen, setIsOpen] = useState<boolean>(false);
-
+  const [formData, setFormData] = useState<any>({});
 
   const handleOptionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedOption(event.target.value);
@@ -17,15 +19,52 @@ const ParentDocument: React.FC = () => {
 
   const handleDateChange = (update: [Date | null, Date | null]) => {
     const [start, end] = update;
-    setStartDate(start||undefined);
-    setEndDate(end||undefined);
+    setStartDate(start || undefined);
+    setEndDate(end || undefined);
     if (end) {
       setIsOpen(false);
     }
   };
 
-  const handleSubmit = () => {
-    // 제출 로직
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = event.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleSubmit = async () => {
+    const commonData = {
+      startDate: startDate?.toISOString().split('T')[0],
+      endDate: endDate?.toISOString().split('T')[0],
+    };
+
+    try {
+      if (selectedOption === 'med') {
+        const dosageData = {
+          ...commonData,
+          name: formData.name,
+          volume: parseFloat(formData.volume),
+          num: parseInt(formData.num),
+          times: formData.times.split(',').map((time: string) => time.trim()),
+          storageInfo: formData.storageInfo,
+          details: formData.details,
+          confirmationStatus: 'F',
+        };
+        console.log(dosageData)
+        await createDosageDocument(dosageData);
+      } else if (selectedOption === 'absent') {
+        const absentData = {
+          ...commonData,
+          reason: formData.reason,
+          specialNotes: formData.specialNotes,
+        };
+        console.log(absentData)
+        await createAbsentDocument(absentData);
+      }
+      // 성공 시 사용자에게 알림 또는 페이지 이동 등 추가 처리
+    } catch (error) {
+      console.error('Error submitting document:', error);
+      // 오류 처리
+    }
   };
 
   const handleDateClick = () => {
@@ -33,7 +72,7 @@ const ParentDocument: React.FC = () => {
   };
 
   return (
-    <div className="min-h-[100dvh] flex flex-col items-center bg-white">
+    <div className="min-h-screen flex flex-col items-center bg-white">
       <CommonHeader title="서류 제출" />
       <div className="w-full flex flex-col items-center my-16 flex-grow">
         <div className="flex flex-col items-center mt-10">
@@ -77,7 +116,7 @@ const ParentDocument: React.FC = () => {
                   {startDate && endDate ? `${startDate.toLocaleDateString()} - ${endDate.toLocaleDateString()}` : '시작 날짜 - 종료 날짜'}
                 </div>
                 {isOpen && (
-                  <div className="absolute z-10 mt-2">
+                  <div className="absolute z-10 mt-2 bg-white border border-gray-300 rounded-lg shadow-lg">
                     <DatePicker
                       selected={startDate}
                       onChange={handleDateChange}
@@ -94,15 +133,20 @@ const ParentDocument: React.FC = () => {
             </div>
             {selectedOption === 'med' && (
               <>
-                {['약의 종류', '투약 용량', '투약 횟수', '투약 시간', '보관 방법', '특이 사항'].map((label, index) => (
+                {['name', 'volume', 'num', 'times', 'storageInfo', 'details'].map((label, index) => (
                   <div className="mb-4" key={index}>
                     <p className="text-base font-medium text-left text-[#353c4e] mb-2">
-                      {label}
+                      {label === 'name' ? '약의 종류' :
+                        label === 'volume' ? '투약 용량' :
+                          label === 'num' ? '투약 횟수' :
+                            label === 'times' ? '투약 시간 (쉼표로 구분)' :
+                              label === 'storageInfo' ? '보관 방법' :
+                                '특이 사항'}
                     </p>
-                    {label === '특이 사항' ? (
-                      <textarea className="w-full p-2 border rounded"></textarea>
+                    {label === 'details' ? (
+                      <textarea name={label} className="w-full p-2 border rounded" onChange={handleInputChange}></textarea>
                     ) : (
-                      <input type="text" className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#FDDA6E]" />
+                      <input type="text" name={label} className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#FDDA6E]" onChange={handleInputChange} />
                     )}
                   </div>
                 ))}
@@ -110,15 +154,15 @@ const ParentDocument: React.FC = () => {
             )}
             {selectedOption === 'absent' && (
               <>
-                {['사유', '기타 사항'].map((label, index) => (
+                {['reason', 'specialNotes'].map((label, index) => (
                   <div className="mb-4" key={index}>
                     <p className="text-base font-medium text-left text-[#353c4e] mb-2">
-                      {label}
+                      {label === 'reason' ? '사유' : '기타 사항'}
                     </p>
-                    {label === '기타 사항' ? (
-                      <textarea className="w-full p-2 border rounded"></textarea>
+                    {label === 'specialNotes' ? (
+                      <textarea name={label} className="w-full p-2 border rounded" onChange={handleInputChange}></textarea>
                     ) : (
-                      <input type="text" className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#FDDA6E]" />
+                      <input type="text" name={label} className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#FDDA6E]" onChange={handleInputChange} />
                     )}
                   </div>
                 ))}

@@ -2,6 +2,8 @@ import axiosInstance from './token/axiosInstance';
 
 // 인터페이스 정의
 interface Child {
+  childId: number;
+  childProfile: string | null;
   name: string;
   class: string;
   kindergarten: string;

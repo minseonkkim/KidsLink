@@ -2,6 +2,12 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import AlaramBell from './AlaramBell';
 
+interface Notification {
+  time: string;
+  title: string;
+  content: string;
+}
+
 const HomeHeader: React.FC = () => {
   const navigate = useNavigate();
 
@@ -10,7 +16,7 @@ const HomeHeader: React.FC = () => {
   };
 
   const notificationCount = 5;
-  const notifications = [
+  const notifications: Notification[] = [
     {
       time: '오후 2:21',
       title: '새 대화 알림',
