@@ -2,7 +2,7 @@ package com.ssafy.kidslink.application.teacher.controller;
 
 import com.ssafy.kidslink.application.kindergarten.dto.ResponseClassInfoDTO;
 import com.ssafy.kidslink.application.kindergarten.service.KindergartenService;
-import com.ssafy.kidslink.application.teacher.dto.JoinDTO;
+import com.ssafy.kidslink.application.teacher.dto.TeacherJoinDTO;
 import com.ssafy.kidslink.application.teacher.dto.TeacherDTO;
 import com.ssafy.kidslink.application.teacher.service.TeacherService;
 import com.ssafy.kidslink.common.dto.APIResponse;
@@ -36,7 +36,7 @@ public class TeacherController {
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "선생님 회원 가입 요청 데이터",
                     content = @Content(mediaType = "application/x-www-form-urlencoded",
-                            schema = @Schema(implementation = JoinDTO.class))
+                            schema = @Schema(implementation = TeacherJoinDTO.class))
             ))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "선생님 회원 가입 성공",
@@ -47,7 +47,7 @@ public class TeacherController {
                             schema = @Schema(implementation = APIResponse.class)))
     })
     @PostMapping("")
-    public ResponseEntity<APIResponse<Void>> joinProcess(@ModelAttribute JoinDTO joinDTO) {
+    public ResponseEntity<APIResponse<Void>> joinProcess(@ModelAttribute TeacherJoinDTO joinDTO) {
         log.debug("joinDTO : {}", joinDTO);
         teacherService.joinProcess(joinDTO);
         APIResponse<Void> responseData = new APIResponse<>(
