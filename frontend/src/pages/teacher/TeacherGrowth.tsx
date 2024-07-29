@@ -11,70 +11,64 @@ import ExampleImg from "../../assets/teacher/example_img_1.jpg";
 import useModal from "../../hooks/teacher/useModal.tsx";
 import { FaTrash } from "react-icons/fa";
 import ToastNotification, { showToast, showToastError } from '../../components/teacher/common/ToastNotification.tsx';
+import { useTeacherInfoStore } from "../../stores/useTeacherInfoStore.ts";
+import { getKindergartenClasses } from "../../api/kindergarten.ts";
+import { getClassChilds } from "../../api/kindergarten.ts";
+import { getChildGrowthDiarys } from "../../api/growthdiary.ts";
 
-const initialGrowthDiaryData = [
-  { id: 1, childId: 1, name: "김민선", date: "2024.07.10", imgPaths: [ExampleImg] },
-  { id: 2, childId: 1, name: "김민선", date: "2024.07.10", imgPaths: [ExampleImg] },
-  { id: 3, childId: 1, name: "김민선", date: "2024.07.10", imgPaths: [] },
-  { id: 4, childId: 2, name: "김범수", date: "2024.07.09", imgPaths: [] },
-  { id: 5, childId: 2, name: "김범수", date: "2024.07.11", imgPaths: [] },
-];
+
 
 export default function TeacherGrowth() {
   const { openModal, Modal, isModalOpen, closeModal } = useModal();
   const [searchChild, setSearchChild] = useState<string>('');
   const [selectedImages, setSelectedImages] = useState<string[]>([]);
-  const [selectedChildId, setSelectedChildId] = useState<number | null>(null);
-  const [growthDiaryData, setGrowthDiaryData] = useState(initialGrowthDiaryData);
-  const [growthChildListItems, setGrowthChildListItems] = useState([
-    {
-      id: 1,
-      currentChild: false,
-      name: "김민선",
-      profileImgPath: ProfileImg,
-      completed: false,
-    },
-    {
-      id: 2,
-      currentChild: false,
-      name: "김범수",
-      profileImgPath: ProfileImg,
-      completed: false,
-    },
-    {
-      id: 3,
-      currentChild: false,
-      name: "김여준",
-      profileImgPath: ProfileImg,
-      completed: false,
-    },
-    {
-      id: 4,
-      currentChild: false,
-      name: "김지원",
-      profileImgPath: ProfileImg,
-      completed: false,
-    },
-    {
-      id: 5,
-      currentChild: false,
-      name: "이상민",
-      profileImgPath: ProfileImg,
-      completed: false,
-    },
-    {
-      id: 6,
-      currentChild: false,
-      name: "정현수",
-      profileImgPath: ProfileImg,
-      completed: false,
-    },
-  ]);
+  const [growthDiaryData, setGrowthDiaryData] = useState([]);
+
+  const [currentChildId, setCurrentChildId] = useState<number | null>(null);
+  const [childs, setChilds] = useState([]);
+
+  
+  useEffect(() => {
+    const classId = useTeacherInfoStore.getState().teacherInfo.kindergartenClassId;
+    const fetchChilds = async () => {
+      try{
+        const fetchedChilds = await getClassChilds(classId);
+        setChilds(fetchedChilds);
+      } catch(error){
+        console.error('Failed to fetch childs:', error);
+      }
+    }
+
+    fetchChilds();
+  }, []);
+
+  const handleChildClick = (id: number) => {
+    setCurrentChildId(id);
+  };
+
+  const fetchDiarys = async () => {
+    try{
+      const fetchedDiarys = await getChildGrowthDiarys(currentChildId);
+      setGrowthDiaryData(fetchedDiarys);
+      console.log(growthDiaryData);
+
+    } catch(error){
+      console.log('Failed to fetch diarys:', error);
+    }
+  }
+
+  useEffect(() => {
+    console.log(`선택된 아이의 ID가 변경되었습니다: ${currentChildId}`);
+
+    fetchDiarys();
+  }, [currentChildId]);
+
+
 
   useEffect(() => {
     // 매일 자정 completed 상태 초기화
     const resetCompletedStatus = () => {
-      setGrowthChildListItems(prevItems =>
+      setChilds(prevItems =>
         prevItems.map(child => ({ ...child, completed: false }))
       );
     };
@@ -113,42 +107,28 @@ export default function TeacherGrowth() {
     setSelectedImages((prevImages) => prevImages.filter((_, i) => i !== index));
   };
 
-  const filteredChildren = growthChildListItems.filter((child) =>
+  const filteredChildren = childs.filter((child) =>
     child.name.includes(searchChild)
   );
 
-  const handleChildClick = (id: number) => {
-    setGrowthChildListItems((prevItems) =>
-      prevItems.map((child) =>
-        child.id === id
-          ? { ...child, currentChild: true }
-          : { ...child, currentChild: false }
-      )
-    );
-    setSelectedChildId(id); // 선택된 아이디 저장
-  };
-
-  useEffect(() => {
-    console.log(`선택된 아이의 ID가 변경되었습니다: ${selectedChildId}`);
-  }, [selectedChildId]);
 
   const handleDiaryItemClick = (id: number) => {
-    if (selectedChildId === null) {
+    if (currentChildId === null) {
       showToast('아이를 선택해주세요');
     } else {
       // 다른 로직 수행
-      setSelectedChildId(id); // 선택된 아이디 저장
+      setCurrentChildId(id); // 선택된 아이디 저장
     }
   };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (selectedChildId === null) {
+    if (currentChildId === null) {
       showToastError('아이를 선택해주세요');
       return;
     }
 
-    const selectedChild = growthChildListItems.find((child) => child.id === selectedChildId);
+    const selectedChild = childs.find((child) => child.id === currentChildId);
     if (!selectedChild) return;
 
     const form = event.target as HTMLFormElement;
@@ -161,7 +141,7 @@ export default function TeacherGrowth() {
     console.log(event.target);
     const newDiaryEntry = {
       id: growthDiaryData.length + 1,
-      childId: selectedChildId,
+      childId: currentChildId,
       name: selectedChild.name,
       date: dateValue,
       imgPaths: selectedImages,
@@ -236,7 +216,7 @@ export default function TeacherGrowth() {
   }, [selectedImages]);
 
   const openCreateModal = () => {
-    if (selectedChildId === null) {
+    if (currentChildId === null) {
       showToastError('아이를 선택해주세요');
     } else if (!isModalOpen) {
       openModal(renderModalContent());
@@ -257,14 +237,15 @@ export default function TeacherGrowth() {
             </div>
             <div className="flex flex-wrap w-[360px] h-[420px] overflow-y-auto custom-scrollbar">
               {filteredChildren.map((child) => (
-                <GrowthChild
-                  key={child.id}
-                  currentChild={child.currentChild}
-                  name={child.name}
-                  profileImgPath={child.profileImgPath}
-                  completed={child.completed}
-                  onClick={() => handleChildClick(child.id)} // 클릭 이벤트 핸들러
-                />
+                <div key={child.childId} className={`border-[2px] rounded-[10px] ${child.childId === currentChildId ? 'border-[#B2D170]' : 'border-transparent'}`}>
+                  <GrowthChild
+                    key={child.childId}
+                    name={child.name}
+                    profileImgPath={child.profile}
+                    completed={child.completed}
+                    onClick={() => handleChildClick(child.childId)} // 클릭 이벤트 핸들러
+                  />
+                </div>
               ))}
             </div>
           </div>
@@ -274,14 +255,12 @@ export default function TeacherGrowth() {
                 <FiPlusCircle className="text-[30px]" />
               </div>
               {growthDiaryData
-                .filter((diary) => diary.childId === selectedChildId)
                 .map((diary) => (
                   <GrowthDiaryItem
-                    key={diary.id}
-                    id={diary.id}
-                    name={diary.name}
-                    date={diary.date}
-                    imgPaths={diary.imgPaths}
+                    key={diary.diaryId}
+                    id={diary.diaryId}
+                    date={diary.createDate}
+                    imgPaths={diary.images}
                     onClick={() => handleDiaryItemClick(diary.id)}
                   />
               ))}

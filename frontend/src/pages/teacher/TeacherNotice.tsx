@@ -18,17 +18,37 @@ export default function TeacherNotice() {
   const [searchDate, setSearchDate] = useState("");
   const [notices, setNotices] = useState([]);
 
-  useEffect(() => {
-    const fetchNotices = async () => {
-      try {
-        const fetchedNotices = await getAllNotices();
-        const sortedNotices = fetchedNotices.sort(
-          (a, b) => b.noticeBoardId - a.noticeBoardId
-        );
-        setNotices(sortedNotices);
-      } catch (error) {
-        console.error("Failed to fetch notices:", error);
-      }
+    useEffect(() => {
+        const fetchNotices = async () => {
+            try {
+                const fetchedNotices = await getAllNotices();
+                const sortedNotices = fetchedNotices.sort((a, b) => b.noticeBoardId - a.noticeBoardId);
+                setNotices(sortedNotices);
+            } catch (error) {
+                console.error('Failed to fetch notices:', error);
+            }
+        };
+
+        fetchNotices();
+    }, []);
+
+    const filteredItems = notices.filter(item => {
+        if (searchType === "title") {
+            return item.title.includes(searchTitle);
+        } else if (searchType === "date") {
+            return searchDate === "" || item.noticeBoardDate === searchDate;
+        }
+        return true;
+    });
+
+    const totalPages = Math.ceil(filteredItems.length / ITEMS_PER_PAGE);
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    const displayedItems = filteredItems.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+
+    const handlePreviousPage = () => {
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+        }
     };
 
     fetchNotices();
@@ -154,41 +174,85 @@ export default function TeacherNotice() {
                 >
                   <MdOutlineNavigateBefore className="text-[23px]" />
                 </button>
-              </li>
-              {[...Array(totalPages).keys()].map((page) => (
-                <li key={page + 1}>
-                  <button
-                    onClick={() => setCurrentPage(page + 1)}
-                    className={`px-4 py-2 mx-1 font-bold rounded-[360px] ${
-                      currentPage === page + 1
-                        ? "bg-[#B2D170] text-[#fff]"
-                        : "text-[#8CAD1E]"
-                    }`}
-                  >
-                    {page + 1}
-                  </button>
-                </li>
-              ))}
-              <li>
-                <button
-                  onClick={handleNextPage}
-                  className={`py-2 px-5 ${
-                    currentPage === totalPages
-                      ? "text-gray-400"
-                      : "text-[#B2D170]"
-                  }`}
-                  disabled={currentPage === totalPages}
-                >
-                  <MdOutlineNavigateNext className="text-[23px]" />
-                </button>
-              </li>
-            </ul>
-          </nav>
-        </div>
-      </div>
-      <Modal />
-    </>
-  );
+                <div className="flex justify-center w-full mt-[5px]">
+                    <div className="w-1/2 p-0 flex">
+                        <select
+                            value={searchType}
+                            onChange={handleSearchTypeChange}
+                            className="w-1/4 border-2 border-[#f4f4f4] focus:outline-none text-lg rounded-[8px] px-2 py-1"
+                        >
+                            <option value="title">제목 검색</option>
+                            <option value="date">날짜 검색</option>
+                        </select>
+                        {searchType === "title" ? (
+                            <input
+                                type="text"
+                                placeholder="제목 검색"
+                                value={searchTitle}
+                                onChange={handleSearchTitleChange}
+                                className="w-3/4 border-2 border-[#f4f4f4] focus:outline-none text-lg ml-2 custom-placeholder::placeholder px-2 py-1 rounded-[8px]"
+                            />
+                        ) : (
+                            <input
+                                type="date"
+                                value={searchDate}
+                                onChange={handleSearchDateChange}
+                                className="w-3/4 border-2 border-[#f4f4f4] focus:outline-none text-lg ml-2 custom-placeholder::placeholder px-2 py-1 rounded-[8px]"
+                                max="9999-12-31"
+                            />
+                        )}
+                    </div>
+                </div>
+                <div>
+                    {displayedItems.map((item, index) => (
+                        <NoticeItem
+                            key={index}
+                            id={item.noticeBoardId}
+                            title={item.title}
+                            date={item.noticeBoardDate}
+                            content={item.content}
+                        />
+                    ))}
+                </div>
+                
+                <div className="flex justify-center w-full">
+                    <nav>
+                        <ul className="inline-flex items-center">
+                            <li>
+                                <button
+                                    onClick={handlePreviousPage}
+                                    className={`py-2 px-5 ${currentPage === 1 ? 'text-gray-400' : 'text-[#B2D170]'}`}
+                                    disabled={currentPage === 1}
+                                >
+                                    <MdOutlineNavigateBefore className="text-[23px]" />
+                                </button>
+                            </li>
+                            {[...Array(totalPages).keys()].map(page => (
+                                <li key={page + 1}>
+                                    <button
+                                        onClick={() => setCurrentPage(page + 1)}
+                                        className={`px-4 py-2 mx-1 font-bold rounded-[360px] ${currentPage === page + 1 ? 'bg-[#B2D170] text-[#fff]' : 'text-[#8CAD1E]'}`}
+                                    >
+                                        {page + 1}
+                                    </button>
+                                </li>
+                            ))}
+                            <li>
+                                <button
+                                    onClick={handleNextPage}
+                                    className={`py-2 px-5 ${currentPage === totalPages ? 'text-gray-400' : 'text-[#B2D170]'}`}
+                                    disabled={currentPage === totalPages}
+                                >
+                                    <MdOutlineNavigateNext className="text-[23px]" />
+                                </button>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+            <Modal />
+        </>
+    );
 }
 
 function CreateNoticeForm({ closeModal, setNotices }) {
@@ -198,10 +262,24 @@ function CreateNoticeForm({ closeModal, setNotices }) {
   const handleCreateNotice = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const noticeData = {
-      title: newNoticeTitle,
-      content: newNoticeContent,
-      noticeBoardDate: new Date().toISOString().split("T")[0],
+        const noticeData = {
+            title: newNoticeTitle,
+            content: newNoticeContent,
+            noticeBoardDate: new Date().toISOString().split('T')[0]
+        };
+
+        try {
+            await createNotice(noticeData);
+            // Reload notices after creating a new one
+            const fetchedNotices = await getAllNotices();
+            const sortedNotices = fetchedNotices.sort((a, b) => b.noticeBoardId - a.noticeBoardId);
+            setNotices(sortedNotices);
+            setNewNoticeTitle("");
+            setNewNoticeContent("");
+            closeModal(); // Close the modal after successful creation
+        } catch (error) {
+            console.error('Failed to create notice:', error);
+        }
     };
 
     try {

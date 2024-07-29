@@ -1,7 +1,9 @@
-import noAuthAxios from "./token/noAuthAxios";
-import { useAppStore } from "../stores/store";
-import { getParentInfo } from "./Info";
-import { useParentInfoStore } from "../stores/useParentInfoStore";
+import noAuthAxios from './token/noAuthAxios'
+import axiosInstance from './token/axiosInstance'
+import axios from 'axios'
+import { useAppStore } from '../stores/store'
+import { getTeacherInfo, getParentInfo } from './Info'
+import { useTeacherInfoStore, useParentInfoStore } from '../stores/useTeacherInfoStore'
 
 const API_BASE_URL = import.meta.env.VITE_API_KEY;
 
@@ -59,14 +61,15 @@ export async function login(user: LoginData) {
       setUserType(role); // userType 저장
 
       if (role === 'ROLE_TEACHER') {
-        // const teacherInfo = await getTeacherInfo();
-        // useTeacherInfoStore.getState().setTeacherInfo(teacherInfo);
+        const teacherInfo = await getTeacherInfo();
+        useTeacherInfoStore.getState().setTeacherInfo(teacherInfo);
       } else if (role === 'ROLE_PARENT') {
         const parentInfo = await getParentInfo();
         useParentInfoStore.getState().setParentInfo(parentInfo);
       }
 
       console.log("Login successful:", response.data.data);
+
       return response.data.data;
     } else {
       throw new Error('Login failed: ' + response.data.message);
