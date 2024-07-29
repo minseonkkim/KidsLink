@@ -14,6 +14,6 @@ public class NoticeBoardDTO {
     private String teacherName;
     private String title;
     private String content;
-    private LocalDate NoticeBaordDate;
+    private LocalDate noticeBoardDate;
 
 }

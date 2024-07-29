@@ -11,7 +11,7 @@ public class NoticeBoardMapper {
         dto.setNoticeBoardId(noticeBoard.getNoticeBoardId());
         dto.setContent(noticeBoard.getNoticeBoardContent());
         dto.setTitle(noticeBoard.getNoticeBoardTitle());
-        dto.setNoticeBaordDate(noticeBoard.getNoticeBoardDate());
+        dto.setNoticeBoardDate(noticeBoard.getNoticeBoardDate());
         return dto;
     }
 
