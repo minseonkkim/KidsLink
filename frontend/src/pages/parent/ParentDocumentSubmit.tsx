@@ -38,7 +38,7 @@ const ParentDocument: React.FC = () => {
     };
 
     try {
-      if (selectedOption === 'med') {
+      if (selectedOption === 'dosage') {
         const dosageData = {
           ...commonData,
           name: formData.name,
@@ -47,7 +47,6 @@ const ParentDocument: React.FC = () => {
           times: formData.times.split(',').map((time: string) => time.trim()),
           storageInfo: formData.storageInfo,
           details: formData.details,
-          confirmationStatus: 'F',
         };
         console.log(dosageData)
         await createDosageDocument(dosageData);
@@ -89,8 +88,8 @@ const ParentDocument: React.FC = () => {
               <label className="mr-4">
                 <input
                   type="radio"
-                  value="med"
-                  checked={selectedOption === 'med'}
+                  value="dosage"
+                  checked={selectedOption === 'dosage'}
                   onChange={handleOptionChange}
                   className="mr-2 focus:outline-none focus:ring-2 focus:ring-[#FDDA6E]"
                 />
