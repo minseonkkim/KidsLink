@@ -2,6 +2,8 @@ import noAuthAxios from './token/noAuthAxios'
 import axiosInstance from './token/axiosInstance'
 import axios from 'axios'
 import { useAppStore } from '../stores/store'
+import { getTeacherInfo } from './Info'
+import { useTeacherInfoStore } from '../stores/useTeacherInfoStore'
 
 const API_BASE_URL = import.meta.env.VITE_API_KEY
 
@@ -57,6 +59,11 @@ export async function login(user: LoginData) {
       localStorage.setItem('accessToken', token);
       localStorage.setItem('expiredAt', expiredAt.toString())
       setUserType(role) // userType 저장
+
+      if (role === 'ROLE_TEACHER') {
+        const teacherInfo = await getTeacherInfo();
+        useTeacherInfoStore.getState().setTeacherInfo(teacherInfo);
+      }
       console.log("Login successful:", response.data.data)
       return response.data.data;
     } else {
