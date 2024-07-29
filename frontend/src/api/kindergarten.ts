@@ -1,3 +1,4 @@
+import axiosInstance from './token/axiosInstance';
 import noAuthAxios from './token/noAuthAxios'
 
 interface Kindergarten {
@@ -8,6 +9,16 @@ interface Kindergarten {
 interface KindergartenClass {
   kindergartenClassId: number;
   kindergartenClassName: string;
+}
+
+interface Child{
+  childId: number;
+  name: string;
+  kindergartenClassName: string;
+  kindergartenName: string;
+  gender: string;
+  birth: string;
+  profile: string;
 }
 
 // 모든 유치원 조회
@@ -31,4 +42,16 @@ export async function getKindergartenClasses(kindergartenId: number): Promise<Ki
     throw error
   }
 }
+
+// 반 아이들 조회
+export async function getClassChilds(classId: number): Promise<Child[]> {
+  try {
+    const response = await axiosInstance.get(`/kindergarten/class/${classId}`)
+    return response.data.data.children
+  } catch (error) {
+    console.error(error)
+    throw error
+  }
+}
+
 
