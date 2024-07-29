@@ -21,15 +21,16 @@ function BroadcastScreen({ stream, setStream }: BroadcastScreenProps) {
     };
     return (
         <Box w={"33%"} flex="1" overflow="auto" p={6}>
-            {/* <Text
+            <Text
+                marginTop="100px"
                 fontSize="2xl"
                 fontWeight="bold"
                 mb={4}
                 onClick={activateOpenVidu}
             >
                 방송화면
-            </Text> */}
-            {/* <Box bg="gray.200" rounded="md" h="84vh" /> */}
+            </Text>
+            <Box bg="gray.200" rounded="md" h="84vh" />
             {flag ? (
                 <OpenViduComponent
                     type="broadcast"
