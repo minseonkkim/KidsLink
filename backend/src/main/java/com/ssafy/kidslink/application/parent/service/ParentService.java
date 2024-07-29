@@ -9,7 +9,7 @@ import com.ssafy.kidslink.application.image.service.ImageService;
 import com.ssafy.kidslink.application.kindergarten.domain.KindergartenClass;
 import com.ssafy.kidslink.application.kindergarten.repository.KindergartenClassRepository;
 import com.ssafy.kidslink.application.parent.domain.Parent;
-import com.ssafy.kidslink.application.parent.dto.JoinDTO;
+import com.ssafy.kidslink.application.parent.dto.ParentJoinDTO;
 import com.ssafy.kidslink.application.parent.repository.ParentRepository;
 import com.ssafy.kidslink.application.teacher.repository.TeacherRepository;
 import com.ssafy.kidslink.common.enums.Gender;
@@ -39,7 +39,7 @@ public class ParentService {
     private final ChildMapper childMapper;
 
     @Transactional
-    public void joinProcess(JoinDTO joinDTO) {
+    public void joinProcess(ParentJoinDTO joinDTO) {
         log.debug("joinDTO : {}", joinDTO);
 
         if (userService.isExistUser(joinDTO.getUsername())) {
