@@ -2,9 +2,10 @@ package com.ssafy.kidslink.application.schedule.domain;
 
 import com.ssafy.kidslink.application.kindergarten.domain.Kindergarten;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.cglib.core.Local;
 
 import java.time.LocalDate;
 
