@@ -24,6 +24,7 @@ interface ParentSignupData {
   nickname?: string;
   tel?: string;
   child: ChildData;
+  childProfile?: File;
 }
 
 // 로그인 데이터 형식
@@ -102,6 +103,9 @@ export async function parentSignup(user: ParentSignupData) {
   if (user.profile) {
     formData.append("profile", user.profile);
   }
+  if (user.childProfile) {
+    formData.append("childProfile", user.childProfile);
+  }
   console.log(user);
   console.log(formData);
 
@@ -111,6 +115,7 @@ export async function parentSignup(user: ParentSignupData) {
         "Content-Type": "multipart/form-data", // File들어가 있어서 form-data
       },
     });
+
     console.log("Parent signup successful:", response.data);
     return response.data;
   } catch (error) {
