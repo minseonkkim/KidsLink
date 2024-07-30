@@ -11,7 +11,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Repository
-public interface MeetingScheduleRepository extends JpaRepository<MeetingSchedule, Long> {
+public interface MeetingScheduleRepository extends JpaRepository<MeetingSchedule, Integer> {
     List<MeetingSchedule> findByTeacher(Teacher teahcer);
     List<MeetingSchedule> findByParent(Parent parent);
     List<MeetingSchedule> findByTeacherAndMeetingScheduleDate(Teacher teacher, LocalDate date);
