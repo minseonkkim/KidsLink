@@ -1,4 +1,4 @@
-package com.ssafy.kidslink.application.meetingtime.dto;
+package com.ssafy.kidslink.application.meeting.dto;
 
 import lombok.Getter;
 import lombok.Setter;
