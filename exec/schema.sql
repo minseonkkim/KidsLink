@@ -181,6 +181,17 @@ CREATE TABLE `meeting_time` (
     FOREIGN KEY (`teacher_id`) REFERENCES `teacher`(`teacher_id`)
 );
 
+CREATE TABLE `selected_meeting` (
+    `selected_meeting_id` INT NOT NULL AUTO_INCREMENT,
+    `selected_meeting_time` VARCHAR(50) NULL,
+    `teacher_id` INT NOT NULL,
+    `parent_id` INT NOT NULL,
+    `selected_meeting_date` VARCHAR(50) NULL,
+    PRIMARY KEY (`selected_meeting_id`),
+    FOREIGN KEY (`teacher_id`) REFERENCES `teacher`(`teacher_id`),
+        FOREIGN KEY (`parent_id`) REFERENCES `parent`(`parent_id`)
+);
+
 CREATE TABLE `image` (
     `image_id` INT NOT NULL AUTO_INCREMENT,
     `save_folder` VARCHAR(200) NULL,
