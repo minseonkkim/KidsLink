@@ -49,7 +49,7 @@ public class DiaryService {
 
         List<MultipartFile> files = request.getFiles();
         List<ImageDTO> images = new ArrayList<>();
-        if (!files.isEmpty()) {
+        if (files != null && !files.isEmpty()) {
             for (MultipartFile file : files) {
                 try {
                     images.add(imageService.storeFile(file));
