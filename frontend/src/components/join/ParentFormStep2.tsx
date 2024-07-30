@@ -142,8 +142,8 @@ const ParentFormStep2: FC<ParentFormStep2Props> = ({ onBack, onNext }) => {
       profile,
       nickname,
       tel,
+      childProfile,
       child: {
-        childProfile,
         name: childName,
         kindergartenClassName: className,
         kindergartenName,
