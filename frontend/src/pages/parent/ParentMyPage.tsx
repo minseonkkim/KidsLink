@@ -1,15 +1,18 @@
 import { useState } from "react";
 import ParentHeader from "../../components/parent/common/HomeHeader";
 import { IoLogOutOutline } from "react-icons/io5";
-import profileImg from "../../assets/parent/daramgi.png"; // 임시 프로필이미지
-import ChildImg from "../../assets/teacher/profile_img.jpg"; // 임시 프로필이미지
+import profileImg from "../../assets/parent/daramgi.png"; 
 import { logout } from "../../api/member";
 import { useNavigate } from "react-router-dom";
 import { useAppStore } from "../../stores/store";
+import { useParentInfoStore } from "../../stores/useParentInfoStore";
 
 export default function ParentMyPage() {
+  const { parentInfo } = useParentInfoStore();
+  const [currentProfileImg] = useState(parentInfo?.profile || ""); // Keeps parent profile image
+  const [currentChildImg] = useState(parentInfo?.child.childProfile || "");
+
   const navigate = useNavigate();
-  const [currentProfileImg] = useState(profileImg); // Keeps profile image
   const setUserType = useAppStore((state) => state.setUserType);
 
   const handleLogout = async () => {
@@ -38,7 +41,7 @@ export default function ParentMyPage() {
           <div className="flex flex-col items-center mt-5 mb-1">
             <div className="relative mb-3">
               <img
-                src={currentProfileImg}
+                src={currentProfileImg || profileImg} 
                 className="w-[160px] h-[160px] rounded-full object-cover"
               />
             </div>
@@ -55,9 +58,10 @@ export default function ParentMyPage() {
           <div className="text-[17px] my-2">아이 정보</div>
           <div className="rounded-[10px] bg-[#FFF9D7] w-full p-5 flex flex-row">
             <img
-              src={ChildImg}
+              src={currentChildImg || profileImg} 
               className="w-[100px] h-[100px] rounded-full object-cover"
             />
+ 
             <div className="flex flex-col justify-center items-center flex-grow">
               <div className="mb-1">싸피유치원 햇님반</div>
               <div className="font-bold text-[18px]">밤밤수</div>
