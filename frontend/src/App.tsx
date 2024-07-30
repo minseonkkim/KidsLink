@@ -87,7 +87,7 @@ const App: React.FC = () => {
             <Route path="/ourclass" element={<TeacherOurClass />} />
             <Route path="/schedule" element={<TeacherSchedule />} />
             <Route path="/mypage" element={<TeacherMyPage />}/>
-            <Route path="/live/:meetingNo" element={<Broadcast />} />
+            <Route path="/meeting/:teacherId" element={<Broadcast />} />
           </>
         ) : (
           <>

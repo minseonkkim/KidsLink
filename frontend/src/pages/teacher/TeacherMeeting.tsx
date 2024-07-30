@@ -22,7 +22,7 @@ export default function TeacherMeeting() {
           </button>
         </Link>
         <div className="flex flex-row flex-wrap justify-between items-start">
-          <Link to={`/live/${teacherId}`}>
+          <Link to={`/meeting/${teacherId}`}>
             <ScheduledConsulting 
               time="2024.07.18 17:00" 
               name="김민선" 
@@ -30,7 +30,7 @@ export default function TeacherMeeting() {
               isActivate={true}
             />
           </Link>
-          <Link to={`/live/${teacherId}`}>
+          <Link to={`/meeting/${teacherId}`}>
             <ScheduledConsulting 
               time="2024.07.18 14:00" 
               name="김범수" 
@@ -38,7 +38,7 @@ export default function TeacherMeeting() {
               isActivate={false}
             />
           </Link>
-          <Link to={`/live/${teacherId}`}>
+          <Link to={`/meeting/${teacherId}`}>
             <ScheduledConsulting 
               time="2024.07.18 16:00" 
               name="이상민" 

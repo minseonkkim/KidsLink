@@ -2,9 +2,9 @@ import { OpenVidu, Publisher, Session, StreamEvent, StreamManager, Subscriber } 
 import React, { ChangeEvent, useEffect, useState } from "react";
 import styled from "styled-components";
 import OpenViduVideoComponent from "../../components/openvidu/Ovvideo";
-import MeetingHeader from "../../components/openvidu/MeetingHeader";
 import MeetingFooter from "../../components/openvidu/MeetingFooter";
 import { getToken } from "../../api/openvidu";
+import TeacherHeader from "../../components/teacher/common/TeacherHeader";
 
 
 interface User {
@@ -57,14 +57,15 @@ export default function Openvidutest() {
 
   useEffect(() => {
     // sessionId 받아오기
-    setUser((prevUser) => ({ ...prevUser, sessionId: "sessionB" }));
+    setUser((prevUser) => ({ ...prevUser, sessionId: "sessionC" }));
     return () => {
       leaveSession();
     };
   }, []);
 
   useEffect(() => {
-    // console.log(user);
+    console.log("useEffect에서 user T.B.c 67번째줄")
+    console.log(user);
   }, [user]);
 
   useEffect(() => {
@@ -99,78 +100,82 @@ export default function Openvidutest() {
     const OV = new OpenVidu();
     OV.enableProdMode();
     const session = OV.initSession();
-    console.log(session)
-    console.log("session")
     
     // 이벤트 등록
     
-    // session.on("streamCreated", (event: StreamEvent) => {
-    //   try {
-    //     const subscriber = session.subscribe(event.stream, undefined);
-    //     setOpenvidu((prevOpenvidu) => ({
-    //       ...prevOpenvidu,
-    //       subscribers: [...prevOpenvidu.subscribers, subscriber],
-    //     }));
-    //   } catch (error) {
-    //     console.error("Error during stream subscription:", error);
-    //     // 사용자에게 오류 메시지 표시 또는 로그 전송
-    //   }
-    // });
+    session.on("streamCreated", (event: StreamEvent) => {
+      try {
+        const subscriber = session.subscribe(event.stream, undefined);
+        setOpenvidu((prevOpenvidu) => ({
+          ...prevOpenvidu,
+          subscribers: [...prevOpenvidu.subscribers, subscriber],
+        }));
+      } catch (error) {
+        console.error("Error during stream subscription:", error);
+        // 사용자에게 오류 메시지 표시 또는 로그 전송
+      }
+    });
 
-    // session.on("streamDestroyed", (event: StreamEvent) => {
-    //   setOpenvidu((prevOpenvidu) => {
-    //     const streamManager = event.stream.streamManager;
-    //     return {
-    //       ...prevOpenvidu,
-    //       subscribers: prevOpenvidu.subscribers.filter((sub) => sub !== streamManager),
-    //     };
-    //   });
-    // });
-
-    // session.on("exception", (exception) => {
-    //   console.warn(exception);
-    // });
-
-    try {
-      const token = await getToken(user.sessionId);
-      console.log("token")
-      console.log(token)
-      await session.connect(token, { clientData: user.username });
-      const publisher = await OV.initPublisherAsync(undefined, {
-        audioSource: undefined, // 기본 마이크
-        videoSource: undefined, // 기본 웹캠
-        publishAudio: true,
-        publishVideo: true,
-        resolution: "1260x720",
-        frameRate: 30,
-        insertMode: "APPEND",
-        mirror: false,
+    session.on("streamDestroyed", (event: StreamEvent) => {
+      setOpenvidu((prevOpenvidu) => {
+        const streamManager = event.stream.streamManager;
+        return {
+          ...prevOpenvidu,
+          subscribers: prevOpenvidu.subscribers.filter((sub) => sub !== streamManager),
+        };
       });
+    });
 
-      session.publish(publisher);
-      setOpenvidu((prevOpenvidu) => ({
-        ...prevOpenvidu,
-        session: session,
-        mainStreamManager: publisher,
-        publisher: publisher,
-      }));
-    } catch (error) {
-      console.error("There was an error connecting to the session:", error);
-    }
+    session.on("exception", (exception) => {
+      console.warn(exception);
+    });
+    console.log("user.sessionId")
+    console.log(user.sessionId)
+    const token = await getToken(user.sessionId);
+
+    session
+      .connect(token, { clientData: user.username })
+      .then(async () => {
+        const publisher = await OV.initPublisherAsync(undefined, {
+          audioSource: undefined, // The source of audio. If undefined default microphone
+          videoSource: undefined, // The source of video. If undefined default webcam
+          publishAudio: true, // Whether you want to start publishing with your audio unmuted or not
+          publishVideo: true, // Whether you want to start publishing with your video enabled or not
+          resolution: "1260x720", // The resolution of your video
+          frameRate: 30, // The frame rate of your video
+          insertMode: "REPLACE", // How the video is inserted in the target element 'video-container'
+          mirror: true, // Whether to mirror your local video or not
+        });
+        session.publish(publisher);
+        setOpenvidu((p) => ({
+          ...p,
+          session: session,
+          mainStreamManager: publisher,
+          publisher: publisher,
+        }));
+      })
+      .catch((error) => {
+        // console.log(
+        //   "There was an error connecting to the session:",
+        //   error.code,
+        //   error.message
+        // );
+      });
   };
 
+
   return (
-    <Div>
-      <MeetingHeader tabOpen={tabOpen} handleTabOpen={setTabOpen} meetingNo={123} />
+    <div className="bg-gray-300 flex flex-col justify-center items-center m-auto w-screen h-screen min-w-[1000px] overflow-hidden">
+      <TeacherHeader />
       {openvidu.session ? (
-        <MainDiv>
-          <VideoDiv>
-            <UserVideo>
+        <div className="flex w-full h-full">
+          <div className="relative flex flex-col justify-center items-center w-full h-full">
+            <div className="absolute top-[150px] left-0 w-[700px] h-auto rounded-lg border border-black">
               {openvidu.mainStreamManager && (
                 <OpenViduVideoComponent streamManager={openvidu.mainStreamManager} />
               )}
-            </UserVideo>
-            <CallVideo>
+            </div>
+            <div className="absolute top-[150px] right-0 w-[700px] h-auto rounded-lg border border-black">
               {openvidu.subscribers.map((sub, i) => (
                 <OpenViduVideoComponent
                   key={i}
@@ -179,18 +184,11 @@ export default function Openvidutest() {
                   volume={control.volume}
                 />
               ))}
-            </CallVideo>
-          </VideoDiv>
-          {(tabOpen.formTab || tabOpen.profileTab || tabOpen.chatTab) && (
-            <SideDiv>
-              {tabOpen.formTab && <TabDiv>form</TabDiv>}
-              {tabOpen.profileTab && <TabDiv>profile</TabDiv>}
-              {tabOpen.chatTab && <TabDiv>chat</TabDiv>}
-            </SideDiv>
-          )}
-        </MainDiv>
+            </div>
+          </div>
+        </div>
       ) : (
-        <ButtonDiv>
+        <div className="flex flex-col justify-center items-center w-full h-full">
           <input
             name="sessionId"
             value={user.sessionId || ""}
@@ -202,79 +200,13 @@ export default function Openvidutest() {
             onChange={handleUserChange}
           />
           <button onClick={joinSession}>연결</button>
-        </ButtonDiv>
+        </div>
       )}
       <MeetingFooter
         control={control}
         handleControl={setControl}
         close={leaveSession}
       />
-    </Div>
+    </div>
   );
 }
-
-const Div = styled.div`
-  background-color: #d9d9d9;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  margin: auto;
-  width: 100vw;
-  height: 100vh;
-  min-width: 1000px;
-  overflow: hidden;
-`;
-
-const ButtonDiv = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100%;
-`;
-
-const MainDiv = styled.div`
-  display: flex;
-  width: 100%;
-  height: 100%;
-`;
-
-const VideoDiv = styled.div`
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100%;
-`;
-
-const UserVideo = styled.div`
-  position: absolute;
-  top: 50px;
-  right: 50px;
-  width: 315px;
-  height: px;
-  border-radius: 8px;
-  border: black 1px solid;
-`;
-
-const CallVideo = styled.div`
-  width: fit-content;
-  height: 100%;
-  flex-grow: 1;
-`;
-
-const SideDiv = styled.div`
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  flex: 0 0 400px;
-`;
-
-const TabDiv = styled.div`
-  flex: 1 0 0;
-  width: 100%;
-`;
