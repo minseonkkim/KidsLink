@@ -258,9 +258,10 @@ export default function TeacherGrowth() {
                 .map((diary) => (
                   <GrowthDiaryItem
                     key={diary.diaryId}
-                    id={diary.diaryId}
-                    date={diary.createDate}
-                    imgPaths={diary.images}
+                    diaryId={diary.diaryId}
+                    createDate={diary.createDate}
+                    content={diary.content}
+                    images={diary.images}
                     onClick={() => handleDiaryItemClick(diary.id)}
                   />
               ))}
