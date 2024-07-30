@@ -28,6 +28,8 @@ dependencies {
 	implementation 'io.jsonwebtoken:jjwt-impl:0.12.3'
 	implementation 'io.jsonwebtoken:jjwt-jackson:0.12.3'
 
+	implementation 'net.coobird:thumbnailator:0.4.14'
+
 //	Swagger
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
 	implementation group: 'io.swagger.core.v3', name: 'swagger-annotations', version: '2.2.22'

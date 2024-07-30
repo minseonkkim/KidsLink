@@ -19,4 +19,5 @@ public class ParentJoinDTO {
     private String tel;
     private ChildDTO child;
     private MultipartFile profile;
+    private MultipartFile childProfile;
 }
