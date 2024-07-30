@@ -32,7 +32,7 @@ interface ControlState {
   volume: number;
 }
 
-export default function Openvidutest() {
+export default function TeacherBroadcast() {
   const [user, setUser] = useState<User>({
     sessionId: undefined,
     username: "user1",
@@ -64,8 +64,6 @@ export default function Openvidutest() {
   }, []);
 
   useEffect(() => {
-    console.log("useEffect에서 user T.B.c 67번째줄")
-    console.log(user);
   }, [user]);
 
   useEffect(() => {
@@ -129,8 +127,6 @@ export default function Openvidutest() {
     session.on("exception", (exception) => {
       console.warn(exception);
     });
-    console.log("user.sessionId")
-    console.log(user.sessionId)
     const token = await getToken(user.sessionId);
 
     session
@@ -171,11 +167,14 @@ export default function Openvidutest() {
         <div className="flex w-full h-full">
           <div className="relative flex flex-col justify-center items-center w-full h-full">
             <div className="absolute top-[150px] left-0 w-[700px] h-auto rounded-lg border border-black">
+              {/* 내 화면 */}
+              <h1>내 화면</h1>
               {openvidu.mainStreamManager && (
                 <OpenViduVideoComponent streamManager={openvidu.mainStreamManager} />
               )}
             </div>
             <div className="absolute top-[150px] right-0 w-[700px] h-auto rounded-lg border border-black">
+              <h1>상대 화면</h1>
               {openvidu.subscribers.map((sub, i) => (
                 <OpenViduVideoComponent
                   key={i}
