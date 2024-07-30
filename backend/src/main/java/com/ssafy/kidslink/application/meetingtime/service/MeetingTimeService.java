@@ -6,6 +6,7 @@ import com.ssafy.kidslink.application.meetingschedule.mapper.MeetingScheduleMapp
 import com.ssafy.kidslink.application.meetingschedule.repository.MeetingScheduleRepository;
 import com.ssafy.kidslink.application.meetingtime.domain.MeetingTime;
 import com.ssafy.kidslink.application.meetingtime.domain.SelectedMeeting;
+import com.ssafy.kidslink.application.meetingtime.dto.MeetingRoomDTO;
 import com.ssafy.kidslink.application.meetingtime.dto.MeetingTimeDTO;
 import com.ssafy.kidslink.application.meetingtime.dto.OpenMeetingTimeDTO;
 import com.ssafy.kidslink.application.meetingtime.dto.ReserveMeetingDTO;
@@ -219,6 +220,21 @@ public class MeetingTimeService {
 
 
 
+
+    public MeetingRoomDTO enterMeeting(int id){
+        Optional<MeetingSchedule> meetingSchedule = meetingScheduleRepository.findById(id);
+
+        MeetingRoomDTO meetingRoomDTO = new MeetingRoomDTO();
+        meetingRoomDTO.setId(id);
+        meetingRoomDTO.setDate(meetingSchedule.get().getMeetingScheduleDate());
+        meetingRoomDTO.setTime(meetingSchedule.get().getMeetingScheduleTime());
+        meetingRoomDTO.setParentId(meetingSchedule.get().getParent().getParentId());
+        meetingRoomDTO.setChildName(meetingSchedule.get().getParent().getChildren().iterator().next().getChildName());
+        meetingRoomDTO.setTeahcerId(meetingSchedule.get().getTeacher().getTeacherId());
+        meetingRoomDTO.setTeacherName(meetingSchedule.get().getTeacher().getTeacherName());
+
+        return meetingRoomDTO;
+    }
 
 
 }
