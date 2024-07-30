@@ -5,7 +5,7 @@ import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 
 import profileImg from "../../assets/parent/notice-daramgi.png";
-import { getGrowthDiary } from "../../api/growthdiary";
+import { getGrowthDiary } from "../../api/growthDiary";
 
 interface DiaryEntry {
   diaryId: number;

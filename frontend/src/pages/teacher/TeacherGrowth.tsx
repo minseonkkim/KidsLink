@@ -4,16 +4,14 @@ import TeacherHeader from "../../components/teacher/common/TeacherHeader";
 import Title from "../../components/teacher/common/Title";
 import { IoSearch, IoCameraOutline } from "react-icons/io5";
 import GrowthChild from "../../components/teacher/growth/GrowthChild";
-import ProfileImg from "../../assets/teacher/profile_img.jpg";
 import GrowthDiaryItem from "../../components/teacher/growth/GrowthDiaryItem";
 import { FiPlusCircle } from "react-icons/fi";
-import ExampleImg from "../../assets/teacher/example_img_1.jpg";
 import useModal from "../../hooks/teacher/useModal.tsx";
 import { FaTrash } from "react-icons/fa";
 import ToastNotification, { showToast, showToastError } from '../../components/teacher/common/ToastNotification.tsx';
 import { useTeacherInfoStore } from "../../stores/useTeacherInfoStore.ts";
 import { getClassChilds } from "../../api/kindergarten.ts";
-import { createDiary, getKidAllGrowthDiarys } from "../../api/growthDiary.ts";
+import { createDiary, getKidAllGrowthDiarys, FormDiaryData } from "../../api/growthDiary.ts";
 
 export default function TeacherGrowth() {
   const { openModal, Modal, isModalOpen, closeModal } = useModal();
@@ -44,15 +42,14 @@ export default function TeacherGrowth() {
   const fetchDiarys = async () => {
     try {
       const fetchedDiarys = await getKidAllGrowthDiarys(currentChildId);
-      setGrowthDiaryData(fetchedDiarys);
-      console.log(growthDiaryData);
+      const sortedDiarys = fetchedDiarys.sort((a, b) => new Date(b.createDate).getTime() - new Date(a.createDate).getTime());
+      setGrowthDiaryData(sortedDiarys);
     } catch (error) {
       console.log('Failed to fetch diarys:', error);
     }
   }
 
   useEffect(() => {
-    console.log(`선택된 아이의 ID가 변경되었습니다: ${currentChildId}`);
     fetchDiarys();
   }, [currentChildId]);
 
@@ -156,7 +153,7 @@ export default function TeacherGrowth() {
                   createDate={diary.createDate}
                   content={diary.content}
                   images={diary.images}
-                  onClick={() => handleDiaryItemClick(diary.id)}
+                  onClick={() => handleDiaryItemClick(diary.diaryId)}
                 />
               ))}
             </div>
@@ -169,18 +166,18 @@ export default function TeacherGrowth() {
   );
 }
 
+
 function GrowthDiaryForm({ closeModal, currentChildId, childs, fetchDiarys, initialDateValue, initialRecordValue, initialSelectedImages }) {
   const [dateValue, setDateValue] = useState<string>(initialDateValue);
   const [recordValue, setRecordValue] = useState<string>(initialRecordValue);
-  const [selectedImages, setSelectedImages] = useState<string[]>(initialSelectedImages);
+  const [selectedImages, setSelectedImages] = useState<File[]>([]);
 
   const handlePlusImage = (event: React.ChangeEvent<HTMLInputElement>) => {
     try {
       const files = Array.from(event.target.files || []);
       if (files.length === 0) return;
 
-      const newImages = files.map((file) => URL.createObjectURL(file));
-      setSelectedImages((prevImages) => [...prevImages, ...newImages]);
+      setSelectedImages((prevImages) => [...prevImages, ...files]);
     } catch (error) {
       console.error("이미지 선택 오류:", error);
     }
@@ -205,7 +202,7 @@ function GrowthDiaryForm({ closeModal, currentChildId, childs, fetchDiarys, init
       return;
     }
 
-    const diaryData = {
+    const diaryData: FormDiaryData = {
       diaryDate: dateValue,
       files: selectedImages,
       content: recordValue
@@ -247,10 +244,10 @@ function GrowthDiaryForm({ closeModal, currentChildId, childs, fetchDiarys, init
           </label>
           <input type="file" id="photo" className="hidden" onChange={handlePlusImage} multiple />
           <div className="w-full h-[120px] ml-2 flex flex-row overflow-x-auto whitespace-nowrap custom-x-scrollbar">
-            {selectedImages.map((imgSrc, index) => (
+            {selectedImages.map((file, index) => (
               <div key={index} className="w-[100px] h-[100px] relative mr-2 flex-shrink-0">
                 <img
-                  src={imgSrc}
+                  src={URL.createObjectURL(file)}
                   alt={`Selected ${index}`}
                   className="object-cover w-[100px] h-[100px] rounded-[10px] border-[1px]"
                 />
