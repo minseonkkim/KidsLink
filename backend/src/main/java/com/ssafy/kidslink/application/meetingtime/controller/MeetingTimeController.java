@@ -136,16 +136,16 @@ public class MeetingTimeController {
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = APIResponse.class)))
     })
-    @PostMapping("/{id}")
-    public ResponseEntity<APIResponse<Void>> reserveMeeting(@AuthenticationPrincipal Object principal, @Parameter(description = "상담일정 ID") @PathVariable int id, @RequestBody ReserveMeetingDTO requestDTO){
+    @PostMapping("")
+    public ResponseEntity<APIResponse<Void>> selectMeeting(@AuthenticationPrincipal Object principal, @RequestBody List<ReserveMeetingDTO> requestDTOs){
         if(principal instanceof CustomUserDetails){
             CustomUserDetails userDetails = (CustomUserDetails) principal;
 
-            meetingTimeService.reserveMeeting(userDetails.getUsername(), id, requestDTO);
+            meetingTimeService.selectMeeting(userDetails.getUsername(), requestDTOs);
             APIResponse<Void> responseData = new APIResponse<>(
                     "success",
                     null,
-                    "상담 일정 예약에 성공하였습니다.",
+                    "상담 일정 선택에 성공하였습니다.",
                     null
             );
             return new ResponseEntity<>(responseData, HttpStatus.OK);
@@ -153,9 +153,9 @@ public class MeetingTimeController {
         APIError apiError = new APIError("UNAUTHORIZED", "유효한 JWT 토큰이 필요합니다.");
 
         APIResponse<Void> responseData = new APIResponse<>(
-                "success",
+                "fail",
                 null,
-                "상담 일정 예약을 실패했습니다.",
+                "상담 일정 선택을 실패했습니다.",
                 apiError
         );
 
