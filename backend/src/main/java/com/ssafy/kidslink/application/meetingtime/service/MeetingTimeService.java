@@ -12,7 +12,9 @@ import com.ssafy.kidslink.application.meetingtime.dto.ReserveMeetingDTO;
 import com.ssafy.kidslink.application.meetingtime.mapper.MeetingTimeMapper;
 import com.ssafy.kidslink.application.meetingtime.repository.MeetingTimeRepository;
 import com.ssafy.kidslink.application.meetingtime.repository.SelectedMeetingRepository;
+import com.ssafy.kidslink.application.notification.domain.ParentNotification;
 import com.ssafy.kidslink.application.notification.domain.TeacherNotification;
+import com.ssafy.kidslink.application.notification.respository.ParentNotificationRepository;
 import com.ssafy.kidslink.application.notification.respository.TeacherNotificationRepository;
 import com.ssafy.kidslink.application.parent.domain.Parent;
 import com.ssafy.kidslink.application.parent.repository.ParentRepository;
@@ -24,8 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -40,6 +41,7 @@ public class MeetingTimeService {
     private final MeetingScheduleMapper meetingScheduleMapper;
     private final TeacherNotificationRepository teacherNotificationRepository;
     private final SelectedMeetingRepository selectedMeetingRepository;
+    private final ParentNotificationRepository parentNotificationRepository;
 
     public void openMeetingTimes(String teacherUsername, List<OpenMeetingTimeDTO> openMeetingTimeDTOList) {
         Teacher teacher = teacherRepository.findByTeacherUsername(teacherUsername);
@@ -110,4 +112,113 @@ public class MeetingTimeService {
         return meetingReservations;
 
     }
+
+
+
+    public void confirmMeeting(String teacherUsername) {
+        Teacher teacher = teacherRepository.findByTeacherUsername(teacherUsername);
+        List<SelectedMeeting> meetings = selectedMeetingRepository.findByTeacher(teacher);
+        List<MeetingSchedule> meetingSchedules = allocateMeetings(meetings, teacher);
+
+        for (MeetingSchedule meetingSchedule : meetingSchedules) {
+            meetingScheduleRepository.save(meetingSchedule);
+        }
+
+        // 부모한테 예약 확정 알림 보내기
+        for (Parent parent : parentRepository.findByKindergartenClassId(teacher.getKindergartenClass().getKindergartenClassId())) {
+            ParentNotification parentNotification = new ParentNotification();
+
+            parentNotification.setCode(NotificationCode.MEETING);
+            parentNotification.setParent(parent);
+            parentNotification.setParentNotificationDate(LocalDate.now());
+            parentNotification.setParentNotificationText("상담 예약이 확정되었습니다.");
+
+            parentNotificationRepository.save(parentNotification);
+        }
+    }
+
+    private List<MeetingSchedule> allocateMeetings(List<SelectedMeeting> meetings, Teacher teacher) {
+        // 학부모가 요청한 모든 시간대 목록 생성
+        Map<Parent, List<SelectedMeeting>> parentMeetings = new HashMap<>();
+        for (SelectedMeeting meeting : meetings) {
+            Parent parent = meeting.getParent();
+            parentMeetings.putIfAbsent(parent, new ArrayList<>());
+            parentMeetings.get(parent).add(meeting);
+        }
+
+        List<Parent> parents = new ArrayList<>(parentMeetings.keySet());
+        int n = parents.size();
+
+        // DP 테이블 초기화
+        int[] dp = new int[1 << n];
+        List<SelectedMeeting>[] dpMeetings = new ArrayList[1 << n];
+        for (int i = 0; i < (1 << n); i++) {
+            dpMeetings[i] = new ArrayList<>();
+        }
+
+        // 가능한 모든 시간대
+        Set<String> allSlots = new HashSet<>();
+        for (SelectedMeeting meeting : meetings) {
+            String slot = meeting.getSelectedMeetingDate() + " " + meeting.getSelectedMeetingTime();
+            allSlots.add(slot);
+        }
+        List<String> slots = new ArrayList<>(allSlots);
+
+        // DP를 이용하여 최대 학부모 상담 배정 계산
+        for (String slot : slots) {
+            int[] newDp = dp.clone();
+            List<SelectedMeeting>[] newDpMeetings = new ArrayList[1 << n];
+            for (int i = 0; i < (1 << n); i++) {
+                newDpMeetings[i] = new ArrayList<>(dpMeetings[i]);
+            }
+
+            for (int mask = 0; mask < (1 << n); mask++) {
+                for (int i = 0; i < n; i++) {
+                    if ((mask & (1 << i)) == 0) {
+                        Parent parent = parents.get(i);
+                        for (SelectedMeeting meeting : parentMeetings.get(parent)) {
+                            String meetingSlot = meeting.getSelectedMeetingDate() + " " + meeting.getSelectedMeetingTime();
+                            if (meetingSlot.equals(slot)) {
+                                int newMask = mask | (1 << i);
+                                if (newDp[newMask] < dp[mask] + 1) {
+                                    newDp[newMask] = dp[mask] + 1;
+                                    newDpMeetings[newMask] = new ArrayList<>(dpMeetings[mask]);
+                                    newDpMeetings[newMask].add(meeting);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            dp = newDp;
+            dpMeetings = newDpMeetings;
+        }
+
+        // 최적의 배정 조합 선택
+        int bestMask = 0;
+        for (int mask = 0; mask < (1 << n); mask++) {
+            if (dp[mask] > dp[bestMask]) {
+                bestMask = mask;
+            }
+        }
+
+        // MeetingSchedule 리스트 생성
+        List<MeetingSchedule> meetingSchedules = new ArrayList<>();
+        for (SelectedMeeting meeting : dpMeetings[bestMask]) {
+            MeetingSchedule meetingSchedule = new MeetingSchedule();
+            meetingSchedule.setMeetingScheduleDate(meeting.getSelectedMeetingDate());
+            meetingSchedule.setMeetingScheduleTime(meeting.getSelectedMeetingTime());
+            meetingSchedule.setTeacher(teacher);
+            meetingSchedule.setParent(meeting.getParent());
+            meetingSchedules.add(meetingSchedule);
+        }
+
+        return meetingSchedules;
+    }
+
+
+
+
+
 }
