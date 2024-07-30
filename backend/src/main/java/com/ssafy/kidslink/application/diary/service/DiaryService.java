@@ -49,11 +49,13 @@ public class DiaryService {
 
         List<MultipartFile> files = request.getFiles();
         List<ImageDTO> images = new ArrayList<>();
-        for (MultipartFile file : files) {
-            try {
-                images.add(imageService.storeFile(file));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+        if (!files.isEmpty()) {
+            for (MultipartFile file : files) {
+                try {
+                    images.add(imageService.storeFile(file));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
         diary.setDiaryContents(request.getContent());
