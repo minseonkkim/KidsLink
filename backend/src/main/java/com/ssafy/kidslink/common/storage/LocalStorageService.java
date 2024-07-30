@@ -5,11 +5,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Conditional;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -53,8 +56,13 @@ public class LocalStorageService implements StorageService {
     }
 
     @Override
-    public Path loadFileAsResource(String fileName) {
-        return Paths.get(UPLOAD_DIR).toAbsolutePath().normalize().resolve(fileName);
+    public Resource loadFileAsResource(String fileName) {
+        Path filePath = Paths.get(UPLOAD_DIR).toAbsolutePath().normalize().resolve(fileName);
+        try {
+            return new UrlResource(filePath.toUri());
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private String storeRegularFile(MultipartFile file) throws IOException {
