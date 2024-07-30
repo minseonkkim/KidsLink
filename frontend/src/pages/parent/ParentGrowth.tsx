@@ -5,7 +5,7 @@ import InfoSection from "../../components/parent/common/InfoSection";
 import SearchDateBar from "../../components/parent/common/SearchDateBar";
 import GrowthList from "../../components/parent/growth/GrowthList";
 import daramgi from "../../assets/parent/growth-daramgi.png";
-import { getKidAllGrowthDiarys } from '../../api/growthDiary';
+import { getKidAllGrowthDiarys } from '../../api/growthdiary';
 import { useParentInfoStore } from '../../stores/useParentInfoStore';
 
 export default function ParentGrowth() {

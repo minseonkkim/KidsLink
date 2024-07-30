@@ -193,7 +193,7 @@ CREATE TABLE `image_album` (
     `album_id` INT NOT NULL,
     PRIMARY KEY (`image_id`, `album_id`),
     FOREIGN KEY (`image_id`) REFERENCES `image`(`image_id`),
-    FOREIGN KEY (`album_id`) REFERENCES `album`(`album_id`)
+    FOREIGN KEY (`album_id`) REFERENCES `album`(`album_id`) ON DELETE CASCADE
 );
 
 CREATE TABLE `image_diary` (
