@@ -13,13 +13,20 @@ export async function getChildGrowthDiarys(childId: number): Promise<Diary[]>{
     try{
         const response = await axiosInstance.get(`diary/child/${childId}`);
 
-        if(response.data.status === 'success'){
-            return response.data.data
-        } else{
-            throw new Error('Failed to get diary')
-        }
-    } catch(error){
-        throw error
+// 특정 아이의 모든 성장일지 조회
+export async function getKidAllGrowthDiarys(childId: number) {
+    try {
+      const response = await axiosInstance.get(`diary/child/${childId}`)
+  
+      if (response.data.status === 'success') {
+        console.log(response.data.data) // 확인 후 삭제
+        return response.data.data
+      } else {
+        throw new Error('Failed to get growth-diary')
+      }
+    } catch (error) {
+      console.error(error)
+      throw error
     }
 }
 

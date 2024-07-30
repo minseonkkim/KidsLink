@@ -3,7 +3,9 @@ package com.ssafy.kidslink.application.busstop.controller;
 import com.ssafy.kidslink.application.busstop.domain.BusStop;
 import com.ssafy.kidslink.application.busstop.service.BusStopService;
 import com.ssafy.kidslink.application.busstopchild.dto.BusStopChildDTO;
+import com.ssafy.kidslink.common.dto.APIError;
 import com.ssafy.kidslink.common.dto.APIResponse;
+import com.ssafy.kidslink.common.security.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -15,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -103,6 +106,33 @@ public class BusStopController {
         );
 
         return new ResponseEntity<>(responseData, HttpStatus.OK);
+
+    }
+
+    @PostMapping("/notification")
+    public ResponseEntity<APIResponse<Void>> sendBusNotification(@AuthenticationPrincipal Object principal){
+        if (principal instanceof CustomUserDetails) {
+            CustomUserDetails userDetails = (CustomUserDetails) principal;
+
+            busStopService.sendBusNotification(userDetails.getUsername());
+            APIResponse<Void> responseData = new APIResponse<>(
+                    "success",
+                    null,
+                    "버스 출발 알림이 전송되었습니다.",
+                    null
+            );
+            return new ResponseEntity<>(responseData, HttpStatus.OK);
+        }
+        APIError apiError = new APIError("UNAUTHORIZED", "유효한 JWT 토큰이 필요합니다.");
+
+        APIResponse<Void> responseData = new APIResponse<>(
+                "success",
+                null,
+                "버스 출발 알림 전송을 실패했습니다.",
+                apiError
+        );
+
+        return new ResponseEntity<>(responseData, HttpStatus.BAD_REQUEST);
 
     }
 }
