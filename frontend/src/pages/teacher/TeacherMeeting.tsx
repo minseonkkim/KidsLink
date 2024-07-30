@@ -7,7 +7,7 @@ import { Link } from "react-router-dom"
 import { IoMdCalendar } from "react-icons/io";
 
 export default function TeacherMeeting() {
-  const teacherId = "teacher123"; // 실제 teacherId를 가져와야 합니다.
+  const teacherId = 123; // 실제 teacherId를 가져와야 합니다.
 
   return (
     <>
@@ -22,7 +22,7 @@ export default function TeacherMeeting() {
           </button>
         </Link>
         <div className="flex flex-row flex-wrap justify-between items-start">
-          <Link to={`/live/${teacherId}/parent123`}>
+          <Link to={`/live/${teacherId}`}>
             <ScheduledConsulting 
               time="2024.07.18 17:00" 
               name="김민선" 
@@ -30,7 +30,7 @@ export default function TeacherMeeting() {
               isActivate={true}
             />
           </Link>
-          <Link to={`/live/${teacherId}/parent124`}>
+          <Link to={`/live/${teacherId}`}>
             <ScheduledConsulting 
               time="2024.07.18 14:00" 
               name="김범수" 
@@ -38,7 +38,7 @@ export default function TeacherMeeting() {
               isActivate={false}
             />
           </Link>
-          <Link to={`/live/${teacherId}/parent125`}>
+          <Link to={`/live/${teacherId}`}>
             <ScheduledConsulting 
               time="2024.07.18 16:00" 
               name="이상민" 
