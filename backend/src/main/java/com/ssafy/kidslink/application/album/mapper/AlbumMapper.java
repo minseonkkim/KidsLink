@@ -25,6 +25,7 @@ public class AlbumMapper {
     public AlbumDTO toDTO(Album album) {
         AlbumDTO albumDTO = new AlbumDTO();
         albumDTO.setAlbumId(album.getAlbumId());
+        albumDTO.setAlbumDate(album.getAlbumDate());
         albumDTO.setAlbumName(album.getAlbumName());
         albumDTO.setChild(childMapper.toDTO(album.getChild()));
         List<ImageDTO> images = new ArrayList<>();
