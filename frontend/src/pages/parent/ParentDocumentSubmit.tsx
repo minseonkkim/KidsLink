@@ -1,22 +1,31 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import './parent-schedule.css';
-import CommonHeader from '../../components/parent/common/CommonHeader';
-import daramgi from '../../assets/parent/document-daramgi.png';
-import { createDosageDocument, createAbsentDocument, DosageData, AbsentData } from '../../api/document';
-import { useParentInfoStore } from '../../stores/useParentInfoStore';
-import DateRangePicker from '../../components/parent/document/DateRangePicker';
-import InputFields from '../../components/parent/document/InputFields';
-import Modal from '../../components/parent/common/Modal';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import "./parent-schedule.css";
+import CommonHeader from "../../components/parent/common/CommonHeader";
+import daramgi from "../../assets/parent/document-daramgi.png";
+import {
+  createDosageDocument,
+  createAbsentDocument,
+  DosageData,
+  AbsentData,
+} from "../../api/document";
+import { useParentInfoStore } from "../../stores/useParentInfoStore";
+import DateRangePicker from "../../components/parent/document/DateRangePicker";
+import InputFields from "../../components/parent/document/InputFields";
+import Modal from "../../components/parent/common/Modal";
 
 const ParentDocument: React.FC = () => {
-  const [selectedOption, setSelectedOption] = useState<string>('dosage');
+  const [selectedOption, setSelectedOption] = useState<string>("dosage");
   const [startDate, setStartDate] = useState<Date | undefined>(undefined);
   const [endDate, setEndDate] = useState<Date | undefined>(undefined);
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [formData, setFormData] = useState<Partial<DosageData & AbsentData>>({});
+  const [formData, setFormData] = useState<{
+    [key: string]: string | number | undefined;
+  }>({});
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
-  const childId = useParentInfoStore((state) => state.parentInfo?.child.childId);
+  const childId = useParentInfoStore(
+    (state) => state.parentInfo?.child.childId
+  );
   const navigate = useNavigate();
 
   const handleOptionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -32,21 +41,23 @@ const ParentDocument: React.FC = () => {
     }
   };
 
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = event.target;
     setFormData({ ...formData, [name]: value });
   };
 
   const handleSubmit = async () => {
     const commonData = {
-      startDate: startDate?.toISOString().split('T')[0] || '',
-      endDate: endDate?.toISOString().split('T')[0] || '',
+      startDate: startDate?.toISOString().split("T")[0] || "",
+      endDate: endDate?.toISOString().split("T")[0] || "",
     };
 
     try {
-      if (selectedOption === 'dosage') {
+      if (selectedOption === "dosage") {
         const dosageData: DosageData = {
-          dosageId: formData.dosageId,
+          dosageId: formData.dosageId as number,
           confirmationStatus: formData.confirmationStatus as string,
           name: formData.name as string,
           volume: formData.volume as string,
@@ -56,28 +67,28 @@ const ParentDocument: React.FC = () => {
           details: formData.details as string,
           ...commonData,
         };
-        console.log(dosageData)
+        console.log(dosageData);
         await createDosageDocument(dosageData, childId!);
-      } else if (selectedOption === 'absent') {
+      } else if (selectedOption === "absent") {
         const absentData: AbsentData = {
-          absentId: formData.absentId,
+          absentId: formData.absentId as number,
           confirmationStatus: formData.confirmationStatus as string,
           reason: formData.reason as string,
           details: formData.details as string,
           ...commonData,
         };
-        console.log(absentData)
+        console.log(absentData);
         await createAbsentDocument(absentData, childId!);
       }
       setIsSubmitted(true);
     } catch (error) {
-      console.error('Error submitting document:', error);
+      console.error("Error submitting document:", error);
     }
   };
 
   const handleModalClose = () => {
     setIsSubmitted(false);
-    navigate('/document');
+    navigate("/document");
   };
 
   const handleDateClick = () => {
@@ -103,7 +114,7 @@ const ParentDocument: React.FC = () => {
                 <input
                   type="radio"
                   value="dosage"
-                  checked={selectedOption === 'dosage'}
+                  checked={selectedOption === "dosage"}
                   onChange={handleOptionChange}
                   className="mr-2 focus:outline-none focus:ring-2 focus:ring-[#FDDA6E]"
                 />
@@ -113,7 +124,7 @@ const ParentDocument: React.FC = () => {
                 <input
                   type="radio"
                   value="absent"
-                  checked={selectedOption === 'absent'}
+                  checked={selectedOption === "absent"}
                   onChange={handleOptionChange}
                   className="mr-2 focus:outline-none focus:ring-2 focus:ring-[#FDDA6E]"
                 />
@@ -122,7 +133,7 @@ const ParentDocument: React.FC = () => {
             </div>
             <div className="mb-4">
               <p className="text-base font-medium text-left text-[#353c4e] mb-2">
-                기간 선택
+                기간 선택 <span className="text-red-600">*</span>
               </p>
               <DateRangePicker
                 startDate={startDate}
@@ -149,10 +160,7 @@ const ParentDocument: React.FC = () => {
         </div>
       </div>
       {isSubmitted && (
-        <Modal
-          message="제출이 완료되었습니다!"
-          onClose={handleModalClose}
-        />
+        <Modal message="제출이 완료되었습니다!" onClose={handleModalClose} />
       )}
     </div>
   );

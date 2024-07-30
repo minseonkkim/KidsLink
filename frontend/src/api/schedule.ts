@@ -14,12 +14,38 @@ interface MeetingSchedule {
   teacherId: number;
 }
 
+interface AbsentSchedule {
+  absentId: number;
+  startDate: string;
+  endDate: string;
+  reason: string;
+  details: string;
+  confirmationStatus: string;
+  childId: number;
+  childName: string;
+}
+
+interface DosageSchedule {
+  dosageId: number;
+  startDate: string;
+  endDate: string;
+  name: string;
+  volume: string;
+  num: string;
+  times: string;
+  storageInfo: string;
+  details: string;
+  confirmationStatus: string;
+  childId: number;
+  childName: string;
+}
+
 interface ParentSchedules {
   date: string;
   kindergartenSchedules: KindergartenSchedule[];
   meetingSchedules: MeetingSchedule[];
-  absentSchedules: any[]; 
-  dosageSchedules: any[]; 
+  absentSchedules: AbsentSchedule[];
+  dosageSchedules: DosageSchedule[];
 }
 
 // 부모 일정 전체 조회 함수

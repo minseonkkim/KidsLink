@@ -5,7 +5,7 @@ interface Notice {
   teacherName: string;
   title: string;
   content: string;
-  noticeBoardDate: string; // 데이터 오타로 옴
+  noticeBoardDate: string; 
 }
 
 interface NoticeDetail {
