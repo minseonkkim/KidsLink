@@ -1,3 +1,41 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.parent-schedule-calendar {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.parent-schedule-calendar-container {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* Reset margin and padding for calendar tiles */
+.react-calendar__tile,
+.react-calendar__tile--active,
+.react-calendar__tile--range,
+.react-calendar__tile--rangeStart,
+.react-calendar__tile--rangeEnd,
+.react-calendar__tile--rangeBothEnds,
+.react-calendar__month-view__days__day {
+  margin: 5px 0px !important; /* Override any default margin */
+  padding: 3px 0px !important; /* Override any default padding */
+  box-sizing: border-box; /* Ensure padding does not affect the element's size */
+}
+
+/* Additional custom styles */
+.react-calendar__tile {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100px; /* Adjust as needed */
+  height: 100px; /* Adjust as needed */
+}
+
 .react-datepicker {
   font-family: "Arial", sans-serif;
 }
@@ -31,8 +69,9 @@
 .react-datepicker__day-name,
 .react-datepicker__day,
 .react-datepicker__time-name {
-  width: 2.5rem;
-  line-height: 2.5rem;
+  width: 3.5rem; /* Increased width */
+  line-height: 3.5rem; /* Increased line-height */
+  font-size: 1.5rem; /* Adjusted font-size */
 }
 
 .react-datepicker__current-month,
@@ -118,14 +157,19 @@
   display: flex !important;
   align-items: flex-center !important; /* items-start 대신 flex-start 사용 */
   justify-content: flex-start !important; /* 왼쪽 정렬 */
-  width: 60px;
-  height: 60px;
+  width: 90px;
+  height: 90px;
+  padding: 10px;
   border: none !important; /* 테두리 제거 */
+}
+
+.parent-schedule-calendar {
+  padding: 0;
+  margin: 0;
 }
 
 .parent-schedule-calendar__tile {
   text-align: center;
-  height: 60px;
   display: flex;
   flex-direction: column;
   justify-content: center; /* 높이 동일하게 유지 */
@@ -135,11 +179,13 @@
 
 .parent-schedule-calendar__tile .day-number {
   position: absolute;
-  top: 10%;
+  top: 20%;
+  font-size: 1.5rem; /* Adjusted font-size */
 }
 
 .parent-schedule-calendar__tile .emoji {
-  margin-top: 20px; /* 이모티콘과 숫자 사이의 간격 조정 */
+  margin-top: 25px; /* 이모티콘과 숫자 사이의 간격 조정 */
+  font-size: 1.5rem; /* Adjusted font-size */
 }
 
 .parent-schedule-calendar__tile:enabled:hover,
@@ -161,7 +207,13 @@
   border-radius: 14px;
 }
 
+.react-calendar__month-view__weekdays__weekday {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
 .react-calendar__tile--active {
+  margin: 0;
   border: none !important; /* 테두리 제거 */
   background-color: #ffc0cb !important; /* 핑크색 */
   color: #000000;
@@ -173,6 +225,6 @@
 }
 
 .custom-icon {
-  height: 24px;
+  height: 30px;
   width: 24px;
 }
