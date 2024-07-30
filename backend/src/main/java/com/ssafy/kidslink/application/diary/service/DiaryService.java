@@ -95,12 +95,8 @@ public class DiaryService {
             diaryDTO.setCreateDate(diary.getDiaryDate());
             diaryDTO.setContent(diary.getDiaryContents());
             diaryDTO.setTeacherName(teacherRepository.findByKindergartenClass(diary.getChild().getKindergartenClass()).getTeacherUsername());
-            diaryDTO.setImages(diary.getImages().stream().map(image -> {
-                ImageDTO imageDTO = new ImageDTO();
-                imageDTO.setImageId(image.getImageId());
-//                imageDTO.setPath(ImageService.getUriString(image.getSaveFile()));
-                return imageDTO;
-            }).collect(Collectors.toSet()));
+            diaryDTO.setImages(diary.getImages().stream().map(imageMapper::toDTO)
+                    .collect(Collectors.toSet()));
             diaryDTOs.add(diaryDTO);
         }
         return diaryDTOs;
