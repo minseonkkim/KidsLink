@@ -2,18 +2,38 @@ import React from 'react';
 import useModal from '../../../hooks/teacher/useModal';
 
 interface GrowthDiaryItemProps {
-    id: number;
-    name: string;
-    date: string;
-    imgPaths: string[];
+    diaryId: number;
+    createDate: string;
+    content: string;
+    images: { imageId: number, path: string }[];
     onClick: () => void;
 }
 
-export default function GrowthDiaryItem({ date, imgPaths }:GrowthDiaryItemProps){
+const GrowthDiaryModalContent = ({ createDate, content, images }: GrowthDiaryItemProps) => (
+    <div className="w-[500px] h-[400px] p-4">
+        <div className="block mb-4 font-bold text-[18px]">{createDate}</div>
+        {images.length > 0 && (
+            <div className="flex flex-row overflow-x-auto">
+                {images.map((image, index) => (
+                    <div key={index} className="w-[100px] h-[100px] relative mr-2 flex-shrink-0">
+                        <img
+                            src={image.path}
+                            alt={`photo ${index}`}
+                            className="object-cover w-full h-full rounded-[10px] border-[1px]"
+                        />
+                    </div>
+                ))}
+            </div>
+        )}
+        <div className="mt-4">{content}</div>
+    </div>
+);
+
+export default function GrowthDiaryItem({ diaryId, createDate, content, images, onClick }: GrowthDiaryItemProps) {
     const { openModal, Modal } = useModal();
     
     const backgroundImageWrapperStyle: React.CSSProperties = {
-        backgroundImage: imgPaths.length > 0 ? `url(${imgPaths[0]})` : 'none',
+        backgroundImage: images.length > 0 ? `url(${images[0].path})` : 'none',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         opacity: 0.4,
@@ -35,28 +55,26 @@ export default function GrowthDiaryItem({ date, imgPaths }:GrowthDiaryItemProps)
         alignItems: 'center',
         justifyContent: 'center',
         overflow: 'hidden',
-        backgroundColor: imgPaths.length === 0 ? '#D5E4B4' : 'transparent',
+        backgroundColor: images.length === 0 ? '#D5E4B4' : 'transparent',
     };
 
     const openReadModal = () => {
         openModal(
-            <div className="w-[500px] h-[400px]">
-                <div className="block mr-3 mb-4 font-bold whitespace-nowrap text-[18px]">2024.07.11</div>
-                <div className="cursor-pointer mb-4 bg-[#f4f4f4] w-[100px] h-[100px] rounded-[10px] flex items-center justify-center border-[1px]">
-             
-                </div>
-                <div className="">
-                오늘 민선이는 블록 놀이 시간에 정말 멋진 성을 만들었어요. 친구들과 함께 협력하여 각자의 역할을 맡아 성을 쌓아 올렸고, 중간중간 의견 충돌이 있었지만 잘 해결하는 모습을 보였어요. 민선이가 성의 입구 부분을 맡아서 더욱 견고하게 만들었답니다. 민선이의 창의력과 협동심이 돋보였던 하루였어요.
-                </div>
-            </div>
-        )
-    }
+            <GrowthDiaryModalContent
+                diaryId={diaryId}
+                createDate={createDate}
+                content={content}
+                images={images}
+                onClick={onClick}
+            />
+        );
+    };
 
     return (
         <>
             <div onClick={openReadModal} style={outerContainerStyle}>
-                {imgPaths.length > 0 && <div style={backgroundImageWrapperStyle} />}
-                <p style={{ position: 'relative', zIndex: 10, fontWeight: 'bold', fontSize: '18px' }}>{date}</p>
+                {images.length > 0 && <div style={backgroundImageWrapperStyle} />}
+                <p style={{ position: 'relative', zIndex: 10, fontWeight: 'bold', fontSize: '18px'}}>{createDate}</p>
             </div>
             <Modal/>
         </>

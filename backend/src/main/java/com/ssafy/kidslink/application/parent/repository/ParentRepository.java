@@ -10,5 +10,4 @@ public interface ParentRepository extends JpaRepository<Parent, Integer> {
     boolean existsByParentUsername(String parentUsername);
     Parent findByParentUsername(String parentUsername);
     @Query("SELECT DISTINCT c.parent FROM Child c WHERE c.kindergartenClass.kindergartenClassId = :classId")
-    List<Parent> findByKindergartenClassId(int classId);
-}
+    List<Parent> findByKindergartenClassId(int classId);}

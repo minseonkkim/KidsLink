@@ -1,61 +1,61 @@
-import { useEffect, useRef, useState } from "react"
-import { useNavigate } from "react-router-dom"
-import CommonHeader from "../../components/parent/common/CommonHeader"
-import InfoSection from "../../components/parent/common/InfoSection"
-import daramgi from "../../assets/parent/notice-daramgi.png"
-import { getAllNotices } from "../../api/notice"
+import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import CommonHeader from "../../components/parent/common/CommonHeader";
+import InfoSection from "../../components/parent/common/InfoSection";
+import daramgi from "../../assets/parent/notice-daramgi.png";
+import { getAllNotices } from "../../api/notice";
 
 interface Notice {
   noticeBoardId: number;
   title: string;
   content: string;
-  noticeBaordDate: string;
+  noticeBoardDate: string;
   teacherName: string | null; // 여기 null안되게(지금은 data null로 옴)
 }
 
 export default function ParentNotice() {
-  const navigate = useNavigate()
-  const [notices, setNotices] = useState<Notice[]>([])
-  const [searchTerm, setSearchTerm] = useState("")
-  const [filteredNotices, setFilteredNotices] = useState<Notice[]>([])
-  const [scroll, setScroll] = useState(false)
-  const divRef = useRef<HTMLDivElement>(null)
-  const infoSectionRef = useRef<HTMLDivElement>(null)
+  const navigate = useNavigate();
+  const [notices, setNotices] = useState<Notice[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredNotices, setFilteredNotices] = useState<Notice[]>([]);
+  const [scroll, setScroll] = useState(false);
+  const divRef = useRef<HTMLDivElement>(null);
+  const infoSectionRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const fetchNotices = async () => {
       try {
-        const fetchedNotices = await getAllNotices()
-        setNotices(fetchedNotices)
-        setFilteredNotices(fetchedNotices)
+        const fetchedNotices = await getAllNotices();
+        setNotices(fetchedNotices);
+        setFilteredNotices(fetchedNotices);
       } catch (error) {
-        console.error("Failed to fetch notices:", error)
+        console.error("Failed to fetch notices:", error);
       }
-    }
+    };
 
-    fetchNotices()
-  }, [])
+    fetchNotices();
+  }, []);
 
   useEffect(() => {
-    setFilteredNotices(notices)
-  }, [notices])
+    setFilteredNotices(notices);
+  }, [notices]);
 
   const handleNoticeClick = (id: number) => {
-    navigate(`/notice/${id}`)
-  }
+    navigate(`/notice/${id}`);
+  };
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const term = e.target.value
-    setSearchTerm(term)
+    const term = e.target.value;
+    setSearchTerm(term);
     if (term) {
       const filtered = notices.filter((notice) =>
         notice.title.toLowerCase().includes(term.toLowerCase())
-      )
-      setFilteredNotices(filtered)
+      );
+      setFilteredNotices(filtered);
     } else {
-      setFilteredNotices(notices)
+      setFilteredNotices(notices);
     }
-  }
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -67,11 +67,11 @@ export default function ParentNotice() {
           setScroll(false);
         }
       }
-    }
+    };
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [])
+  }, []);
 
   return (
     <div className="min-h-[100dvh] flex flex-col items-center bg-[#FFEC8A]">
@@ -101,7 +101,9 @@ export default function ParentNotice() {
             />
           </div>
           <div
-            className={`space-y-6 ${scroll ? "overflow-y-auto" : "overflow-hidden"}`}
+            className={`space-y-6 ${
+              scroll ? "overflow-y-auto" : "overflow-hidden"
+            }`}
             style={{
               maxHeight: scroll ? "calc(100vh - 200px)" : "auto",
               paddingBottom: "100px",
@@ -115,13 +117,17 @@ export default function ParentNotice() {
                 className={`flex flex-col p-4 rounded-2xl bg-[#FFF9D7] border-1 border-[#FFEC8A] hover:bg-[#FFEC8A] transition-colors duration-200 cursor-pointer`}
                 onClick={() => handleNoticeClick(notice.noticeBoardId)}
               >
-                <p className="text-base font-bold text-[#757575]">{notice.noticeBaordDate}</p>
-                <p className="text-lg font-medium text-[#353c4e]">{notice.title}</p>
+                <p className="text-base font-bold text-[#757575]">
+                  {notice.noticeBoardDate}
+                </p>
+                <p className="text-lg font-medium text-[#353c4e]">
+                  {notice.title}
+                </p>
               </div>
             ))}
           </div>
         </div>
       </div>
     </div>
-  )
+  );
 }

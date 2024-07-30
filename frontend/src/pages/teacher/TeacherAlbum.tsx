@@ -4,8 +4,10 @@ import Title from "../../components/teacher/common/Title";
 import { useState, ChangeEvent } from "react";
 import { FiUpload } from "react-icons/fi";
 import { FaTrash } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 export default function TeacherAlbum() {
+  const navigate = useNavigate();
   const [images, setImages] = useState<string[]>([]);
 
   const handleImageUpload = (event: ChangeEvent<HTMLInputElement>) => {
@@ -47,7 +49,7 @@ export default function TeacherAlbum() {
                   </div>
                 ))}
               </div>
-              <button className="mt-5 font-bold py-2 px-4 bg-gradient-to-br from-[#FFF3B1] to-[#D5E4B4] rounded-[10px] w-[240px] h-[45px]">
+              <button onClick={() => navigate('/album/finish')} className="mt-5 font-bold py-2 px-4 bg-gradient-to-br from-[#FFF3B1] to-[#D5E4B4] rounded-[10px] w-[240px] h-[45px]">
                 아이별로 분류하기
               </button>
             </div>
