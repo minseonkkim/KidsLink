@@ -1,11 +1,9 @@
 package com.ssafy.kidslink.application.parent.controller;
 
 import com.ssafy.kidslink.application.child.dto.ChildDTO;
-import com.ssafy.kidslink.application.parent.dto.ParentJoinDTO;
 import com.ssafy.kidslink.application.parent.dto.ParentDTO;
-import com.ssafy.kidslink.application.parent.mapper.ParentMapper;
+import com.ssafy.kidslink.application.parent.dto.ParentJoinDTO;
 import com.ssafy.kidslink.application.parent.service.ParentService;
-import com.ssafy.kidslink.common.dto.APIError;
 import com.ssafy.kidslink.common.dto.APIResponse;
 import com.ssafy.kidslink.common.exception.InvalidPrincipalException;
 import com.ssafy.kidslink.common.security.CustomUserDetails;
@@ -32,7 +30,6 @@ import java.util.Set;
 @Slf4j
 public class ParentController {
     private final ParentService parentService;
-    private final ParentMapper parentMapper;
 
 
     @Operation(summary = "부모 회원 가입", description = "부모 회원 가입을 처리합니다.",
@@ -80,13 +77,8 @@ public class ParentController {
     @GetMapping("")
     @Secured("ROLE_PARENT")
     public ResponseEntity<APIResponse<ParentDTO>> getProcesses(@AuthenticationPrincipal Object principal) {
-        log.info("getProcesses : {}", principal);
-        ParentDTO parentDTO = new ParentDTO();
-
-        if (principal instanceof CustomUserDetails) {
-            CustomUserDetails userDetails = (CustomUserDetails) principal;
-
-            parentDTO = parentMapper.toDTO(parentService.getDetailByUsername(userDetails.getUsername()));
+        if (principal instanceof CustomUserDetails userDetails) {
+            ParentDTO parentDTO = parentService.getDetailByUsername(userDetails.getUsername());
 
             APIResponse<ParentDTO> responseData = new APIResponse<>(
                     "success",
@@ -96,16 +88,7 @@ public class ParentController {
             );
             return new ResponseEntity<>(responseData, HttpStatus.OK);
         }
-        APIError apiError = new APIError("UNAUTHORIZED", "유효한 JWT 토큰이 필요합니다.");
-
-        APIResponse<ParentDTO> responseData = new APIResponse<>(
-                "fail",
-                null,
-                "부모님의 정보 조회를 실패했습니다.",
-                apiError
-        );
-
-        return new ResponseEntity<>(responseData, HttpStatus.BAD_REQUEST);
+        throw new InvalidPrincipalException("Invalid user principal");
     }
 
 
