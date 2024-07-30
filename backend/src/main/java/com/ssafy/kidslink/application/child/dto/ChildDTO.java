@@ -3,7 +3,6 @@ package com.ssafy.kidslink.application.child.dto;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Setter
@@ -16,5 +15,4 @@ public class ChildDTO {
     private String gender;
     private String birth;
     private String profile;
-    private MultipartFile childProfile;
 }

@@ -9,7 +9,9 @@ import com.ssafy.kidslink.application.image.service.ImageService;
 import com.ssafy.kidslink.application.kindergarten.domain.KindergartenClass;
 import com.ssafy.kidslink.application.kindergarten.repository.KindergartenClassRepository;
 import com.ssafy.kidslink.application.parent.domain.Parent;
+import com.ssafy.kidslink.application.parent.dto.ParentDTO;
 import com.ssafy.kidslink.application.parent.dto.ParentJoinDTO;
+import com.ssafy.kidslink.application.parent.mapper.ParentMapper;
 import com.ssafy.kidslink.application.parent.repository.ParentRepository;
 import com.ssafy.kidslink.application.teacher.repository.TeacherRepository;
 import com.ssafy.kidslink.common.enums.Gender;
@@ -37,6 +39,7 @@ public class ParentService {
     private final ImageService imageService;
     private final UserService userService;
     private final ChildMapper childMapper;
+    private final ParentMapper parentMapper;
 
     @Transactional
     public void joinProcess(ParentJoinDTO joinDTO) {
@@ -73,9 +76,11 @@ public class ParentService {
         child.setChildGender(Gender.fromCode(childDTO.getGender()));
         child.setChildName(childDTO.getName());
         child.setChildBirth(childDTO.getBirth());
-        if (childDTO.getChildProfile() != null) {
+        if (joinDTO.getChildProfile() != null) {
+            log.info("childDTO.getChildProfile success");
             try {
-                child.setChildProfile(imageService.storeFile(childDTO.getChildProfile()).getPath());
+                ImageDTO childImageDTO = imageService.storeFile(joinDTO.getChildProfile());
+                child.setChildProfile(childImageDTO.getPath());
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -93,8 +98,8 @@ public class ParentService {
         childRepository.save(child);
     }
 
-    public Parent getDetailByUsername(String username) {
-        return parentRepository.findByParentUsername(username);
+    public ParentDTO getDetailByUsername(String username) {
+        return parentMapper.toDTO(parentRepository.findByParentUsername(username));
     }
 
     public Set<ChildDTO> getMyChildren(String username) {

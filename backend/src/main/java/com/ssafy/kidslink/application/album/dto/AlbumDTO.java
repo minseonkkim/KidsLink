@@ -15,6 +15,5 @@ public class AlbumDTO {
     int albumId;
     String albumName;
     String albumDate;
-    ChildDTO child;
     List<ImageDTO> images;
 }
