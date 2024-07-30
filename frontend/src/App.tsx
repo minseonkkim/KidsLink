@@ -33,9 +33,6 @@ import JoinDetails from "./pages/common/JoinDetails";
 import TeacherAlbumFinish from "./pages/teacher/TeacherAlbumFinish";
 import TeacherMyPage from "./pages/teacher/TeacherMyPage";
 import Splash from "./pages/parent/Splash";
-import { Theme } from "./components/openvidu/Theme";
-import { ChakraProvider } from "@chakra-ui/react";
-import OpenViduComponent from "./components/openvidu/OpenviduComponent";
 import Broadcast from "./pages/teacher/TeacherBroadcast";
 
 const App: React.FC = () => {
@@ -47,11 +44,11 @@ const App: React.FC = () => {
       setShowSplash(true);
       const timer = setTimeout(() => {
         setShowSplash(false);
-      }, 2000); 
-
+      }, 2000);
+  
       return () => clearTimeout(timer);
     }
-  }, [userType]);
+  }, [userType]);  
 
   return (
     <>
@@ -74,7 +71,7 @@ const App: React.FC = () => {
             <Route path="/meeting/:id" element={<ParentMeetingRoom />} />
             <Route path="/ParentSchedule" element={<ParentSchedule />} />
             <Route path="/mypage" element={<ParentMyPage/>}/>
-            <Route path="/live/:teacherId/:parentId" element={<Broadcast />} />
+            <Route path="/live/:meetingNo" element={<Broadcast />} />
           </>
         ) : userType === "ROLE_TEACHER" ? (
           <>
@@ -90,7 +87,7 @@ const App: React.FC = () => {
             <Route path="/ourclass" element={<TeacherOurClass />} />
             <Route path="/schedule" element={<TeacherSchedule />} />
             <Route path="/mypage" element={<TeacherMyPage />}/>
-            <Route path="/live/:teacherId/:parentId" element={<Broadcast />} />
+            <Route path="/live/:meetingNo" element={<Broadcast />} />
           </>
         ) : (
           <>
@@ -106,11 +103,9 @@ const App: React.FC = () => {
 };
 
 const AppWrapper: React.FC = () => (
-  <ChakraProvider theme={Theme}>
   <Router>
     <App />
   </Router>
-  </ChakraProvider>
 );
 
 export default AppWrapper;

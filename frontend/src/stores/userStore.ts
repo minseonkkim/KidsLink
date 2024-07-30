@@ -1,19 +1,19 @@
 import create from 'zustand';
 
-interface UserState {
-  accessToken: string;
-  userId: string;
-  role: string;
-  setAccessToken: (token: string) => void;
-  setUserId: (id: string) => void;
-  setRole: (role: string) => void;
+interface ChatRoomState {
+  roomNo: number;
+  name: string;
+  sub: boolean;
+  setRoom: (roomNo: number, name: string) => void;
+  setSub: (sub: boolean) => void;
 }
 
-export const useUserStore = create<UserState>((set) => ({
-  accessToken: '',
-  userId: '',
-  role: '',
-  setAccessToken: (token) => set({ accessToken: token }),
-  setUserId: (id) => set({ userId: id }),
-  setRole: (role) => set({ role: role }),
+const useChatRoomStore = create<ChatRoomState>((set) => ({
+  roomNo: -1,
+  name: "",
+  sub: false,
+  setRoom: (roomNo, name) => set({ roomNo, name }),
+  setSub: (sub) => set({ sub }),
 }));
+
+export default useChatRoomStore;
