@@ -1,9 +1,6 @@
 package com.ssafy.kidslink.application.meeting.controller;
 
-import com.ssafy.kidslink.application.meeting.dto.MeetingScheduleDTO;
-import com.ssafy.kidslink.application.meeting.dto.MeetingTimeDTO;
-import com.ssafy.kidslink.application.meeting.dto.OpenMeetingTimeDTO;
-import com.ssafy.kidslink.application.meeting.dto.ReserveMeetingDTO;
+import com.ssafy.kidslink.application.meeting.dto.*;
 import com.ssafy.kidslink.application.meeting.service.MeetingTimeService;
 import com.ssafy.kidslink.common.dto.APIError;
 import com.ssafy.kidslink.common.dto.APIResponse;
@@ -224,6 +221,33 @@ public class MeetingTimeController {
                 "fail",
                 null,
                 "상담 일정 확정을 실패했습니다.",
+                apiError
+        );
+
+        return new ResponseEntity<>(responseData, HttpStatus.BAD_REQUEST);
+    }
+
+    @GetMapping("/{meetingId}")
+    public ResponseEntity<APIResponse<MeetingRoomDTO>> enterMeeting(@AuthenticationPrincipal Object principal,
+                                                                    @Parameter(description = "상담 ID") @PathVariable int meetingId){
+        if(principal instanceof CustomUserDetails){
+            CustomUserDetails userDetails = (CustomUserDetails) principal;
+
+            MeetingRoomDTO details = meetingTimeService.enterMeeting(meetingId);
+            APIResponse<MeetingRoomDTO> responseData = new APIResponse<>(
+                    "success",
+                    details,
+                    "화상 상담 입장에 성공하였습니다.",
+                    null
+            );
+            return new ResponseEntity<>(responseData, HttpStatus.OK);
+        }
+        APIError apiError = new APIError("UNAUTHORIZED", "유효한 JWT 토큰이 필요합니다.");
+
+        APIResponse<MeetingRoomDTO> responseData = new APIResponse<>(
+                "fail",
+                null,
+                "화상 상담 입장을 실패했습니다.",
                 apiError
         );
 
