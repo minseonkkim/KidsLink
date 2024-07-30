@@ -1,7 +1,7 @@
-package com.ssafy.kidslink.application.meetingschedule.mapper;
+package com.ssafy.kidslink.application.meeting.mapper;
 
-import com.ssafy.kidslink.application.meetingschedule.domain.MeetingSchedule;
-import com.ssafy.kidslink.application.meetingschedule.dto.MeetingScheduleDTO;
+import com.ssafy.kidslink.application.meeting.domain.MeetingSchedule;
+import com.ssafy.kidslink.application.meeting.dto.MeetingScheduleDTO;
 import org.springframework.stereotype.Component;
 
 @Component

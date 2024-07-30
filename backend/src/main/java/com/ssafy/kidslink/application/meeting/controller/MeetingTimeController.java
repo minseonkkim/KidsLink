@@ -1,10 +1,10 @@
-package com.ssafy.kidslink.application.meetingtime.controller;
+package com.ssafy.kidslink.application.meeting.controller;
 
-import com.ssafy.kidslink.application.meetingschedule.dto.MeetingScheduleDTO;
-import com.ssafy.kidslink.application.meetingtime.dto.MeetingTimeDTO;
-import com.ssafy.kidslink.application.meetingtime.dto.OpenMeetingTimeDTO;
-import com.ssafy.kidslink.application.meetingtime.dto.ReserveMeetingDTO;
-import com.ssafy.kidslink.application.meetingtime.service.MeetingTimeService;
+import com.ssafy.kidslink.application.meeting.dto.MeetingScheduleDTO;
+import com.ssafy.kidslink.application.meeting.dto.MeetingTimeDTO;
+import com.ssafy.kidslink.application.meeting.dto.OpenMeetingTimeDTO;
+import com.ssafy.kidslink.application.meeting.dto.ReserveMeetingDTO;
+import com.ssafy.kidslink.application.meeting.service.MeetingTimeService;
 import com.ssafy.kidslink.common.dto.APIError;
 import com.ssafy.kidslink.common.dto.APIResponse;
 import com.ssafy.kidslink.common.security.CustomUserDetails;
