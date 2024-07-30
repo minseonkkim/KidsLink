@@ -1,4 +1,4 @@
-package com.ssafy.kidslink.application.meetingtime.domain;
+package com.ssafy.kidslink.application.meeting.domain;
 
 import com.ssafy.kidslink.application.parent.domain.Parent;
 import com.ssafy.kidslink.application.teacher.domain.Teacher;

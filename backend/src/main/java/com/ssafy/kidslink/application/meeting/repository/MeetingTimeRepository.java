@@ -1,6 +1,6 @@
-package com.ssafy.kidslink.application.meetingtime.repository;
+package com.ssafy.kidslink.application.meeting.repository;
 
-import com.ssafy.kidslink.application.meetingtime.domain.MeetingTime;
+import com.ssafy.kidslink.application.meeting.domain.MeetingTime;
 import com.ssafy.kidslink.application.teacher.domain.Teacher;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
