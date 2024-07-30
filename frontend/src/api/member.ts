@@ -1,6 +1,4 @@
 import noAuthAxios from './token/noAuthAxios'
-import axiosInstance from './token/axiosInstance'
-import axios from 'axios'
 import { useAppStore } from '../stores/store'
 import { getTeacherInfo, getParentInfo } from './Info'
 import { useTeacherInfoStore } from '../stores/useTeacherInfoStore'

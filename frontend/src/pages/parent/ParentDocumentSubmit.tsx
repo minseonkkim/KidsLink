@@ -1,17 +1,23 @@
 import React, { useState } from 'react';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
+import { useNavigate } from 'react-router-dom';
 import './parent-schedule.css';
 import CommonHeader from '../../components/parent/common/CommonHeader';
 import daramgi from '../../assets/parent/document-daramgi.png';
-import { createDosageDocument, createAbsentDocument } from '../../api/document';
+import { createDosageDocument, createAbsentDocument, DosageData, AbsentData } from '../../api/document';
+import { useParentInfoStore } from '../../stores/useParentInfoStore';
+import DateRangePicker from '../../components/parent/document/DateRangePicker';
+import InputFields from '../../components/parent/document/InputFields';
+import Modal from '../../components/parent/common/Modal';
 
 const ParentDocument: React.FC = () => {
-  const [selectedOption, setSelectedOption] = useState<string>('med');
+  const [selectedOption, setSelectedOption] = useState<string>('dosage');
   const [startDate, setStartDate] = useState<Date | undefined>(undefined);
   const [endDate, setEndDate] = useState<Date | undefined>(undefined);
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [formData, setFormData] = useState<any>({});
+  const [formData, setFormData] = useState<Partial<DosageData & AbsentData>>({});
+  const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
+  const childId = useParentInfoStore((state) => state.parentInfo?.child.childId);
+  const navigate = useNavigate();
 
   const handleOptionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedOption(event.target.value);
@@ -33,38 +39,45 @@ const ParentDocument: React.FC = () => {
 
   const handleSubmit = async () => {
     const commonData = {
-      startDate: startDate?.toISOString().split('T')[0],
-      endDate: endDate?.toISOString().split('T')[0],
+      startDate: startDate?.toISOString().split('T')[0] || '',
+      endDate: endDate?.toISOString().split('T')[0] || '',
     };
 
     try {
-      if (selectedOption === 'med') {
-        const dosageData = {
+      if (selectedOption === 'dosage') {
+        const dosageData: DosageData = {
+          dosageId: formData.dosageId,
+          confirmationStatus: formData.confirmationStatus as string,
+          name: formData.name as string,
+          volume: formData.volume as string,
+          num: formData.num as string,
+          times: formData.times as string,
+          storageInfo: formData.storageInfo as string,
+          details: formData.details as string,
           ...commonData,
-          name: formData.name,
-          volume: parseFloat(formData.volume),
-          num: parseInt(formData.num),
-          times: formData.times.split(',').map((time: string) => time.trim()),
-          storageInfo: formData.storageInfo,
-          details: formData.details,
-          confirmationStatus: 'F',
         };
         console.log(dosageData)
-        await createDosageDocument(dosageData);
+        await createDosageDocument(dosageData, childId!);
       } else if (selectedOption === 'absent') {
-        const absentData = {
+        const absentData: AbsentData = {
+          absentId: formData.absentId,
+          confirmationStatus: formData.confirmationStatus as string,
+          reason: formData.reason as string,
+          details: formData.details as string,
           ...commonData,
-          reason: formData.reason,
-          specialNotes: formData.specialNotes,
         };
         console.log(absentData)
-        await createAbsentDocument(absentData);
+        await createAbsentDocument(absentData, childId!);
       }
-      // 성공 시 사용자에게 알림 또는 페이지 이동 등 추가 처리
+      setIsSubmitted(true);
     } catch (error) {
       console.error('Error submitting document:', error);
-      // 오류 처리
     }
+  };
+
+  const handleModalClose = () => {
+    setIsSubmitted(false);
+    navigate('/document');
   };
 
   const handleDateClick = () => {
@@ -89,8 +102,8 @@ const ParentDocument: React.FC = () => {
               <label className="mr-4">
                 <input
                   type="radio"
-                  value="med"
-                  checked={selectedOption === 'med'}
+                  value="dosage"
+                  checked={selectedOption === 'dosage'}
                   onChange={handleOptionChange}
                   className="mr-2 focus:outline-none focus:ring-2 focus:ring-[#FDDA6E]"
                 />
@@ -111,63 +124,19 @@ const ParentDocument: React.FC = () => {
               <p className="text-base font-medium text-left text-[#353c4e] mb-2">
                 기간 선택
               </p>
-              <div className="relative">
-                <div onClick={handleDateClick} className="p-2 border rounded w-full cursor-pointer">
-                  {startDate && endDate ? `${startDate.toLocaleDateString()} - ${endDate.toLocaleDateString()}` : '시작 날짜 - 종료 날짜'}
-                </div>
-                {isOpen && (
-                  <div className="absolute z-10 mt-2 bg-white border border-gray-300 rounded-lg shadow-lg">
-                    <DatePicker
-                      selected={startDate}
-                      onChange={handleDateChange}
-                      startDate={startDate}
-                      endDate={endDate}
-                      selectsRange
-                      inline
-                      onClickOutside={() => setIsOpen(false)}
-                      className="datepicker-custom"
-                    />
-                  </div>
-                )}
-              </div>
+              <DateRangePicker
+                startDate={startDate}
+                endDate={endDate}
+                isOpen={isOpen}
+                handleDateClick={handleDateClick}
+                handleDateChange={handleDateChange}
+              />
             </div>
-            {selectedOption === 'med' && (
-              <>
-                {['name', 'volume', 'num', 'times', 'storageInfo', 'details'].map((label, index) => (
-                  <div className="mb-4" key={index}>
-                    <p className="text-base font-medium text-left text-[#353c4e] mb-2">
-                      {label === 'name' ? '약의 종류' :
-                        label === 'volume' ? '투약 용량' :
-                          label === 'num' ? '투약 횟수' :
-                            label === 'times' ? '투약 시간 (쉼표로 구분)' :
-                              label === 'storageInfo' ? '보관 방법' :
-                                '특이 사항'}
-                    </p>
-                    {label === 'details' ? (
-                      <textarea name={label} className="w-full p-2 border rounded" onChange={handleInputChange}></textarea>
-                    ) : (
-                      <input type="text" name={label} className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#FDDA6E]" onChange={handleInputChange} />
-                    )}
-                  </div>
-                ))}
-              </>
-            )}
-            {selectedOption === 'absent' && (
-              <>
-                {['reason', 'specialNotes'].map((label, index) => (
-                  <div className="mb-4" key={index}>
-                    <p className="text-base font-medium text-left text-[#353c4e] mb-2">
-                      {label === 'reason' ? '사유' : '기타 사항'}
-                    </p>
-                    {label === 'specialNotes' ? (
-                      <textarea name={label} className="w-full p-2 border rounded" onChange={handleInputChange}></textarea>
-                    ) : (
-                      <input type="text" name={label} className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#FDDA6E]" onChange={handleInputChange} />
-                    )}
-                  </div>
-                ))}
-              </>
-            )}
+            <InputFields
+              formData={formData}
+              handleInputChange={handleInputChange}
+              selectedOption={selectedOption}
+            />
             <div className="flex justify-center mt-10">
               <button
                 className="w-[99px] h-[51px] bg-[#ffec8a] rounded-full flex items-center justify-center text-base font-medium text-[#212121]"
@@ -179,6 +148,12 @@ const ParentDocument: React.FC = () => {
           </div>
         </div>
       </div>
+      {isSubmitted && (
+        <Modal
+          message="제출이 완료되었습니다!"
+          onClose={handleModalClose}
+        />
+      )}
     </div>
   );
 };

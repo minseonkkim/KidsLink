@@ -61,7 +61,7 @@ const App: React.FC = () => {
               <>
                 <Route path="/" element={<ParentHome />} />
                 <Route path="/document" element={<ParentDocument />} />
-                <Route path="/document/detail" element={<ParentDocument />} />
+                <Route path="/document/:type/:id" element={<ParentDocumentDetail />} />
                 <Route path="/document/submit" element={<ParentDocumentSubmit />} />
                 <Route path="/notice" element={<ParentNotice />} />
                 <Route path="/notice/:id" element={<ParentNoticeDetail />} />
