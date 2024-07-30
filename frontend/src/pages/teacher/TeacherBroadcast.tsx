@@ -1,6 +1,5 @@
 import { OpenVidu, Publisher, Session, StreamEvent, StreamManager, Subscriber } from "openvidu-browser";
 import React, { ChangeEvent, useEffect, useState } from "react";
-import styled from "styled-components";
 import OpenViduVideoComponent from "../../components/openvidu/Ovvideo";
 import MeetingFooter from "../../components/openvidu/MeetingFooter";
 import { getToken } from "../../api/openvidu";
