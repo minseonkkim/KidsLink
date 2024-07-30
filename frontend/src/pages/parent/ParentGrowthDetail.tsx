@@ -5,7 +5,7 @@ import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 
 import profileImg from "../../assets/parent/notice-daramgi.png";
-import { getGrowthDiary } from "../../api/growthdiary";
+import { getGrowthDiary } from "../../api/growthDiary";
 
 interface DiaryEntry {
   diaryId: number;
@@ -50,7 +50,9 @@ const ParentGrowthDetail: React.FC = () => {
                 alt="프로필 이미지"
               />
             </div>
-            <p className="text-lg font-medium text-[#353c4e]">개나리반 선생님</p>
+            <p className="text-lg font-medium text-[#353c4e]">
+              개나리반 선생님
+            </p>
           </div>
 
           <div className="relative w-full bg-[#fff9d7] rounded-[20px] px-6 py-8 shadow-lg border-2 border-[#ffec8a] bg-notebook-pattern">
@@ -61,10 +63,19 @@ const ParentGrowthDetail: React.FC = () => {
             <div className="absolute -bottom-4 -right-4 w-16 h-8 bg-yellow-300 rotate-12 transform z-10"></div>
 
             {entry.images.length > 0 && (
-              <Carousel className="mb-8" showThumbs={false} showStatus={false} infiniteLoop>
+              <Carousel
+                className="mb-8"
+                showThumbs={false}
+                showStatus={false}
+                infiniteLoop
+              >
                 {entry.images.map((image) => (
                   <div key={image.imageId}>
-                    <img src={image.path} alt={`성장 이미지 ${image.imageId}`} className="rounded-lg" />
+                    <img
+                      src={image.path}
+                      alt={`성장 이미지 ${image.imageId}`}
+                      className="rounded-lg"
+                    />
                   </div>
                 ))}
               </Carousel>

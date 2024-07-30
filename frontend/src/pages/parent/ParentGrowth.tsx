@@ -5,8 +5,8 @@ import InfoSection from "../../components/parent/common/InfoSection";
 import SearchDateBar from "../../components/parent/common/SearchDateBar";
 import GrowthList from "../../components/parent/growth/GrowthList";
 import daramgi from "../../assets/parent/growth-daramgi.png";
-import { getKidAllGrowthDiarys } from '../../api/growthdiary';
-import { useParentInfoStore } from '../../stores/useParentInfoStore';
+import { getKidAllGrowthDiarys } from "../../api/growthDiary";
+import { useParentInfoStore } from "../../stores/useParentInfoStore";
 
 export default function ParentGrowth() {
   const [growthEntries, setGrowthEntries] = useState<any[]>([]);
@@ -14,7 +14,9 @@ export default function ParentGrowth() {
   const [scroll, setScroll] = useState(false);
   const divRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
-  const childId = useParentInfoStore((state) => state.parentInfo?.child.childId);
+  const childId = useParentInfoStore(
+    (state) => state.parentInfo?.child.childId
+  );
 
   useEffect(() => {
     async function fetchGrowthDiarys() {
@@ -49,8 +51,8 @@ export default function ParentGrowth() {
       }
     };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const handleBoxClick = (id: number) => {
@@ -77,10 +79,17 @@ export default function ParentGrowth() {
         <div
           ref={divRef}
           className="w-full bg-white rounded-tl-[20px] rounded-tr-[20px] px-12 shadow-top flex-grow overflow-hidden animate-slideUp"
-          style={{ marginTop: '-40px' }}
+          style={{ marginTop: "-40px" }}
         >
-          <SearchDateBar searchDate={searchDate} handleDateChange={handleDateChange} />
-          <GrowthList entries={filteredEntries} handleBoxClick={handleBoxClick} scroll={scroll} />
+          <SearchDateBar
+            searchDate={searchDate}
+            handleDateChange={handleDateChange}
+          />
+          <GrowthList
+            entries={filteredEntries}
+            handleBoxClick={handleBoxClick}
+            scroll={scroll}
+          />
         </div>
       </div>
     </div>

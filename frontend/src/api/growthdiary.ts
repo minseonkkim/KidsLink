@@ -1,18 +1,16 @@
 import axiosInstance from './token/axiosInstance'
 
-interface Diary{
-    diaryId: number;
-    createDate: string;
-    content: string;
-    images: string[];
+export interface DiaryData {
+  diaryDate: string;
+  content: string;
+  files: string[]; 
 }
 
-interface DiaryData{
-    diaryDate: string;
-    files: string[];
-    content: string;
+export interface FormDiaryData {
+  diaryDate: string;
+  content: string;
+  files: File[]; 
 }
-
 
 // 아이별 성장일지 목록 조회
 export async function getKidAllGrowthDiarys(childId: number) {
@@ -49,14 +47,29 @@ export async function getGrowthDiary(diaryId: number) {
 }
 
 // 성장일지 작성
-export async function createDiary(childId:number, diary: DiaryData){
-  try{
-    const response = await axiosInstance.post(`diary/child/${childId}`);
+export async function createDiary(childId: number, diary: FormDiaryData) {
+  const formData = new FormData();
+  formData.append('diaryDate', diary.diaryDate);
+  formData.append('content', diary.content);
+  diary.files.forEach((file) => {
+    formData.append('files', file); // Use the same name for each file to ensure they are treated as an array
+  });
 
-    if(response.data.status === "success"){
-      console.log("create-diary success");
-    } else{
-      throw new Error("cereate-diary failed: " + response.data.message);
+  console.log(diary)
+  console.log(diary.files,"sdf")
+
+  try {
+    const response = await axiosInstance.post(`diary/child/${childId}`, diary, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+ 
+
+    if (response.data.status === "success") {
+      console.log("create diary success");
+    } else {
+      throw new Error("create diary failed: " + response.data.message);
     }
   } catch (error) {
     console.error(error);
