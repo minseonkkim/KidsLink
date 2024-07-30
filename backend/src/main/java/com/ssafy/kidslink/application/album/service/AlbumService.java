@@ -3,12 +3,19 @@ package com.ssafy.kidslink.application.album.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ssafy.kidslink.application.album.domain.Album;
+import com.ssafy.kidslink.application.album.dto.ChildImageDTO;
 import com.ssafy.kidslink.application.album.dto.ClassifyImageDTO;
 import com.ssafy.kidslink.application.album.dto.ReferenceImageDTO;
+import com.ssafy.kidslink.application.album.dto.RequestAlbumDTO;
+import com.ssafy.kidslink.application.album.repository.AlbumRepository;
 import com.ssafy.kidslink.application.child.domain.Child;
 import com.ssafy.kidslink.application.child.dto.ChildDTO;
+import com.ssafy.kidslink.application.child.repository.ChildRepository;
 import com.ssafy.kidslink.application.child.service.ChildService;
+import com.ssafy.kidslink.application.image.domain.Image;
 import com.ssafy.kidslink.application.image.dto.ImageDTO;
+import com.ssafy.kidslink.application.image.repository.ImageRepository;
 import com.ssafy.kidslink.application.image.service.ImageService;
 import com.ssafy.kidslink.application.kindergarten.domain.KindergartenClass;
 import com.ssafy.kidslink.application.teacher.domain.Teacher;
@@ -23,15 +30,16 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartRequest;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class AlbumService {
+    private final ImageRepository imageRepository;
+    private final ChildRepository childRepository;
+    private final AlbumRepository albumRepository;
     @Value("${ai.server.url}")
     private String aiServerUrl;
 
@@ -102,36 +110,68 @@ public class AlbumService {
         }
 
         // Grouping results
-        Map<String, List<String>> groupedResults = new HashMap<>();
-        List<String> unknownList = new ArrayList<>();
+        Map<String, List<ImageDTO>> groupedResults = new HashMap<>();
+        List<ImageDTO> unknownList = new ArrayList<>();
 
         for (Map<String, Object> result : responseList) {
             String bestMatchReference = (String) result.get("best_match_reference");
-            String classifyImageId = (String) result.get("classify_image_path");
+            int imageId = (int) result.get("classify_image_id");
+            String classifyImagePath = (String) result.get("classify_image_path");
             Boolean verified = (Boolean) result.get("verified");
 
+            ImageDTO imageDTO = new ImageDTO(imageId, classifyImagePath);
+
             if (!verified) {
-                unknownList.add(classifyImageId);
+                unknownList.add(imageDTO);
             } else {
-                groupedResults.computeIfAbsent(bestMatchReference, k -> new ArrayList<>()).add(classifyImageId);
+                groupedResults.computeIfAbsent(bestMatchReference, k -> new ArrayList<>()).add(imageDTO);
             }
         }
 
         List<ClassifyImageDTO> classifyImageDTOs = new ArrayList<>();
 
         // Convert grouped results to DTOs
-        for (Map.Entry<String, List<String>> entry : groupedResults.entrySet()) {
+        for (Map.Entry<String, List<ImageDTO>> entry : groupedResults.entrySet()) {
             String[] parts = entry.getKey().split(":");
             int childId = Integer.parseInt(parts[1]);
             ChildDTO childDTO = childService.getChildInfo(childId);
-            List<String> images = entry.getValue();
+            List<ImageDTO> images = entry.getValue();
             classifyImageDTOs.add(new ClassifyImageDTO(childDTO, images.size(), images));
         }
 
         // Add unknown group if there are any
         if (!unknownList.isEmpty()) {
-            classifyImageDTOs.add(new ClassifyImageDTO(null, unknownList.size(), unknownList)); // -1 or any other identifier for unknown
+            classifyImageDTOs.add(new ClassifyImageDTO(null, unknownList.size(), unknownList)); // null for unknown
         }
         return classifyImageDTOs;
+    }
+
+    public void uploadAlbum(RequestAlbumDTO requestAlbumDTO) {
+        String albumName = requestAlbumDTO.getAlbumName();
+
+        if (requestAlbumDTO.getTaggedPhotos().isEmpty()) {
+            throw new RuntimeException("Tagged photos is empty");
+        }
+
+        for (ChildImageDTO taggedPhoto : requestAlbumDTO.getTaggedPhotos()) {
+            if (taggedPhoto.getPhotos().isEmpty()) continue;
+
+            Set<Image> images = taggedPhoto.getPhotos().stream()
+                    .map(imageId -> imageRepository.findById(imageId)
+                            .orElseThrow(() -> new RuntimeException("Image not found with id " + imageId)))
+                    .collect(Collectors.toSet());
+
+            Child child = childRepository.findById(taggedPhoto.getChildId())
+                    .orElseThrow(() -> new RuntimeException("Child not found with id " + taggedPhoto.getChildId()));
+
+            Album album = new Album();
+            album.setAlbumName(albumName);
+            album.setImages(images);
+            album.setChild(child);
+
+            // TODO #1 부모님에게 알림 전송하기 (요구사항 : 앨범 이름도 함께 전송)
+
+            albumRepository.save(album);
+        }
     }
 }
