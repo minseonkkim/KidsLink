@@ -203,5 +203,32 @@ public class MeetingTimeController {
         return new ResponseEntity<>(responseData, HttpStatus.BAD_REQUEST);
 
     }
+
+    @PostMapping("/confirm")
+    public ResponseEntity<APIResponse<Void>> confirmMeeting(@AuthenticationPrincipal Object principal){
+        if(principal instanceof CustomUserDetails){
+            CustomUserDetails userDetails = (CustomUserDetails) principal;
+
+            meetingTimeService.confirmMeeting(userDetails.getUsername());
+            APIResponse<Void> responseData = new APIResponse<>(
+                    "success",
+                    null,
+                    "상담 일정 확정에 성공하였습니다.",
+                    null
+            );
+            return new ResponseEntity<>(responseData, HttpStatus.OK);
+        }
+        APIError apiError = new APIError("UNAUTHORIZED", "유효한 JWT 토큰이 필요합니다.");
+
+        APIResponse<Void> responseData = new APIResponse<>(
+                "fail",
+                null,
+                "상담 일정 확정을 실패했습니다.",
+                apiError
+        );
+
+        return new ResponseEntity<>(responseData, HttpStatus.BAD_REQUEST);
+    }
+
 }
 
