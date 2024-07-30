@@ -4,10 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.kidslink.application.album.domain.Album;
-import com.ssafy.kidslink.application.album.dto.ChildImageDTO;
-import com.ssafy.kidslink.application.album.dto.ClassifyImageDTO;
-import com.ssafy.kidslink.application.album.dto.ReferenceImageDTO;
-import com.ssafy.kidslink.application.album.dto.RequestAlbumDTO;
+import com.ssafy.kidslink.application.album.dto.*;
+import com.ssafy.kidslink.application.album.mapper.AlbumMapper;
 import com.ssafy.kidslink.application.album.repository.AlbumRepository;
 import com.ssafy.kidslink.application.child.domain.Child;
 import com.ssafy.kidslink.application.child.dto.ChildDTO;
@@ -40,6 +38,7 @@ public class AlbumService {
     private final ImageRepository imageRepository;
     private final ChildRepository childRepository;
     private final AlbumRepository albumRepository;
+    private final AlbumMapper albumMapper;
     @Value("${ai.server.url}")
     private String aiServerUrl;
 
@@ -173,5 +172,10 @@ public class AlbumService {
 
             albumRepository.save(album);
         }
+    }
+
+    public List<AlbumDTO> getChildAlbums(int childId) {
+        Child child = childRepository.findById(childId).orElseThrow(() -> new RuntimeException("Child not found with id " + childId));
+        return albumRepository.findByChild(child).stream().map(albumMapper::toDTO).collect(Collectors.toList());
     }
 }
