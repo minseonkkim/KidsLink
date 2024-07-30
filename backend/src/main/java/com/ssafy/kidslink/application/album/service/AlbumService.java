@@ -16,8 +16,11 @@ import com.ssafy.kidslink.application.image.dto.ImageDTO;
 import com.ssafy.kidslink.application.image.repository.ImageRepository;
 import com.ssafy.kidslink.application.image.service.ImageService;
 import com.ssafy.kidslink.application.kindergarten.domain.KindergartenClass;
+import com.ssafy.kidslink.application.notification.domain.ParentNotification;
+import com.ssafy.kidslink.application.notification.respository.ParentNotificationRepository;
 import com.ssafy.kidslink.application.teacher.domain.Teacher;
 import com.ssafy.kidslink.application.teacher.repository.TeacherRepository;
+import com.ssafy.kidslink.common.enums.NotificationCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,6 +31,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartRequest;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -39,6 +43,7 @@ public class AlbumService {
     private final ChildRepository childRepository;
     private final AlbumRepository albumRepository;
     private final AlbumMapper albumMapper;
+    private final ParentNotificationRepository parentNotificationRepository;
     @Value("${ai.server.url}")
     private String aiServerUrl;
 
@@ -168,9 +173,17 @@ public class AlbumService {
             album.setImages(images);
             album.setChild(child);
 
-            // TODO #1 부모님에게 알림 전송하기 (요구사항 : 앨범 이름도 함께 전송)
-
             albumRepository.save(album);
+
+            // TODO #1 부모님에게 알림 전송하기 (요구사항 : 앨범 이름도 함께 전송)
+            ParentNotification parentNotification = new ParentNotification();
+            parentNotification.setCode(NotificationCode.ALBUM);
+            parentNotification.setParentNotificationDate(LocalDate.now());
+            parentNotification.setParent(child.getParent());
+            parentNotification.setParentNotificationText(album.getAlbumName() + "앨범이 등록되었습니다.");
+
+            parentNotificationRepository.save(parentNotification);
+
         }
     }
 
