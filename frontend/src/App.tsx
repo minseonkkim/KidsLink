@@ -34,6 +34,7 @@ import JoinDetails from "./pages/common/JoinDetails";
 import TeacherAlbumFinish from "./pages/teacher/TeacherAlbumFinish";
 import TeacherMyPage from "./pages/teacher/TeacherMyPage";
 import Splash from "./pages/parent/Splash";
+import Broadcast from "./pages/teacher/TeacherBroadcast";
 
 const App: React.FC = () => {
   const userType = useAppStore((state: UserState) => state.userType);
@@ -44,11 +45,11 @@ const App: React.FC = () => {
       setShowSplash(true);
       const timer = setTimeout(() => {
         setShowSplash(false);
-      }, 2000); 
-
+      }, 2000);
+  
       return () => clearTimeout(timer);
     }
-  }, [userType]);
+  }, [userType]);  
 
   return (
     <>
