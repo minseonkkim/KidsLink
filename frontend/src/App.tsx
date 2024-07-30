@@ -108,7 +108,7 @@ const App: React.FC = () => {
 
 const AppWrapper: React.FC = () => (
   <Router>
-    <App />
+      <App />
   </Router>
 );
 
