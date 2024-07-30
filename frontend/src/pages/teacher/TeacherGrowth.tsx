@@ -14,7 +14,7 @@ import ToastNotification, { showToast, showToastError } from '../../components/t
 import { useTeacherInfoStore } from "../../stores/useTeacherInfoStore.ts";
 import { getKindergartenClasses } from "../../api/kindergarten.ts";
 import { getClassChilds } from "../../api/kindergarten.ts";
-import { getKidAllGrowthDiarys } from "../../api/growthDiary.ts";
+import { getKidAllGrowthDiarys } from "../../api/growthdiary.ts";
 
 
 
