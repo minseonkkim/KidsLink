@@ -39,10 +39,6 @@ public class CustomLogoutFilter extends GenericFilterBean {
         String requestUri = request.getRequestURI();
         String requestMethod = request.getMethod();
 
-        // Log request URI and method
-        System.out.println("Request URI: " + requestUri);
-        System.out.println("Request Method: " + requestMethod);
-
         if (!requestUri.matches("^.*\\/logout$")) {
             filterChain.doFilter(request, response);
             return;
@@ -62,9 +58,6 @@ public class CustomLogoutFilter extends GenericFilterBean {
                 }
             }
         }
-
-        // Log cookies
-        System.out.println("Cookies: " + Arrays.toString(cookies));
 
         // refresh null check
         if (refresh == null) {
@@ -139,9 +132,6 @@ public class CustomLogoutFilter extends GenericFilterBean {
         ObjectMapper objectMapper = new ObjectMapper();
         writer.write(objectMapper.writeValueAsString(responseData));
         writer.flush();
-
-        // Log error message
-        System.out.println("Error: " + message);
     }
 
     private void handleSuccess(HttpServletResponse response, String message) throws IOException {
@@ -159,8 +149,5 @@ public class CustomLogoutFilter extends GenericFilterBean {
         ObjectMapper objectMapper = new ObjectMapper();
         writer.write(objectMapper.writeValueAsString(responseData));
         writer.flush();
-
-        // Log success message
-        System.out.println("Success: " + message);
     }
 }
