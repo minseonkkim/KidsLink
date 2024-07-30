@@ -12,7 +12,6 @@ import java.time.LocalDate;
 @Setter
 @ToString
 public class DocumentDTO {
-    private Long id;
     private LocalDate date;
     private String type;
     private DosageDTO dosage;

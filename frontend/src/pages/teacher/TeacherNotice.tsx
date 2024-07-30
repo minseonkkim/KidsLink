@@ -126,7 +126,7 @@ export default function TeacherNotice() {
                             key={index}
                             id={item.noticeBoardId}
                             title={item.title}
-                            date={item.noticeBaordDate}
+                            date={item.noticeBoardDate}
                             content={item.content}
                         />
                     ))}

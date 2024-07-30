@@ -1,33 +1,37 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import CommonHeader from "../../components/parent/common/CommonHeader";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 
 import profileImg from "../../assets/parent/notice-daramgi.png";
-import cameraDaramgi from "../../assets/parent/daramgi.png"; // 다람쥐 이미지로 대체
+import { getGrowthDiary } from "../../api/growthDiary";
 
-const growthEntries = [
-  {
-    id: 1,
-    date: "2024.07.15 (월)",
-    content: "오늘 민선이는 블록 놀이 시간에 정말 멋진 성을 만들었어요. ...",
-    images: [cameraDaramgi, cameraDaramgi, cameraDaramgi],
-  },
-  {
-    id: 2,
-    date: "2024.07.12 (금)",
-    content: "민선이는 오늘 그림 그리기를 통해 창의력을 발휘했어요.",
-    images: [],
-  },
-  // 다른 성장 기록들 추가
-];
+interface DiaryEntry {
+  diaryId: number;
+  createDate: string;
+  content: string;
+  images: { imageId: number; path: string }[];
+}
 
-const ParentGrowthDetailPage: React.FC = () => {
+const ParentGrowthDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const entry = growthEntries.find(
-    (entry) => entry.id === parseInt(id || "0", 10)
-  );
+  const [entry, setEntry] = useState<DiaryEntry | null>(null);
+
+  useEffect(() => {
+    async function fetchGrowthDiary() {
+      if (id) {
+        try {
+          const data = await getGrowthDiary(parseInt(id));
+          setEntry(data);
+        } catch (error) {
+          console.error("Failed to fetch growth diary", error);
+        }
+      }
+    }
+
+    fetchGrowthDiary();
+  }, [id]);
 
   if (!entry) {
     return <p>해당 성장 기록을 찾을 수 없습니다.</p>;
@@ -46,7 +50,9 @@ const ParentGrowthDetailPage: React.FC = () => {
                 alt="프로필 이미지"
               />
             </div>
-            <p className="text-lg font-medium text-[#353c4e]">개나리반 선생님</p>
+            <p className="text-lg font-medium text-[#353c4e]">
+              개나리반 선생님
+            </p>
           </div>
 
           <div className="relative w-full bg-[#fff9d7] rounded-[20px] px-6 py-8 shadow-lg border-2 border-[#ffec8a] bg-notebook-pattern">
@@ -57,16 +63,25 @@ const ParentGrowthDetailPage: React.FC = () => {
             <div className="absolute -bottom-4 -right-4 w-16 h-8 bg-yellow-300 rotate-12 transform z-10"></div>
 
             {entry.images.length > 0 && (
-              <Carousel showThumbs={false} showStatus={false} infiniteLoop>
-                {entry.images.map((image, index) => (
-                  <div key={index}>
-                    <img src={image} alt={`성장 이미지 ${index + 1}`} className="rounded-lg" />
+              <Carousel
+                className="mb-8"
+                showThumbs={false}
+                showStatus={false}
+                infiniteLoop
+              >
+                {entry.images.map((image) => (
+                  <div key={image.imageId}>
+                    <img
+                      src={image.path}
+                      alt={`성장 이미지 ${image.imageId}`}
+                      className="rounded-lg"
+                    />
                   </div>
                 ))}
               </Carousel>
             )}
-            <p className="text-sm font-light text-[#353c4e] mt-8 mb-4">
-              {entry.date}
+            <p className="text-sm font-light text-[#353c4e] mb-4">
+              {entry.createDate}
             </p>
             <div className="text-base text-[#212121] space-y-4 whitespace-pre-line">
               {entry.content}
@@ -78,4 +93,4 @@ const ParentGrowthDetailPage: React.FC = () => {
   );
 };
 
-export default ParentGrowthDetailPage;
+export default ParentGrowthDetail;

@@ -5,7 +5,7 @@ interface Notice {
   teacherName: string;
   title: string;
   content: string;
-  noticeBaordDate: string; // 데이터 오타로 옴
+  noticeBoardDate: string; 
 }
 
 interface NoticeDetail {
@@ -13,7 +13,7 @@ interface NoticeDetail {
   teacherName: string;
   title: string;
   content: string;
-  noticeBaordDate: string; 
+  noticeBoardDate: string; 
 }
 
 interface NoticeData {
@@ -71,3 +71,4 @@ export async function createNotice(notice: NoticeData) {
     throw error
   }
 }
+

@@ -49,11 +49,13 @@ public class DiaryService {
 
         List<MultipartFile> files = request.getFiles();
         List<ImageDTO> images = new ArrayList<>();
-        for (MultipartFile file : files) {
-            try {
-                images.add(imageService.storeFile(file));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+        if (files != null && !files.isEmpty()) {
+            for (MultipartFile file : files) {
+                try {
+                    images.add(imageService.storeFile(file));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
         diary.setDiaryContents(request.getContent());
@@ -92,12 +94,9 @@ public class DiaryService {
             diaryDTO.setDiaryId(diary.getDiaryId());
             diaryDTO.setCreateDate(diary.getDiaryDate());
             diaryDTO.setContent(diary.getDiaryContents());
-            diaryDTO.setImages(diary.getImages().stream().map(image -> {
-                ImageDTO imageDTO = new ImageDTO();
-                imageDTO.setImageId(image.getImageId());
-//                imageDTO.setPath(ImageService.getUriString(image.getSaveFile()));
-                return imageDTO;
-            }).collect(Collectors.toSet()));
+            diaryDTO.setTeacherName(teacherRepository.findByKindergartenClass(diary.getChild().getKindergartenClass()).getTeacherUsername());
+            diaryDTO.setImages(diary.getImages().stream().map(imageMapper::toDTO)
+                    .collect(Collectors.toSet()));
             diaryDTOs.add(diaryDTO);
         }
         return diaryDTOs;
@@ -109,6 +108,7 @@ public class DiaryService {
             diaryDTO.setDiaryId(diary.getDiaryId());
             diaryDTO.setCreateDate(diary.getDiaryDate());
             diaryDTO.setContent(diary.getDiaryContents());
+            diaryDTO.setTeacherName(teacherRepository.findByKindergartenClass(diary.getChild().getKindergartenClass()).getTeacherUsername());
             diaryDTO.setImages(diary.getImages().stream().map(imageMapper::toDTO).collect(Collectors.toSet()));
             return diaryDTO;
         }).orElseThrow();

@@ -4,6 +4,7 @@ import com.ssafy.kidslink.application.child.domain.Child;
 import com.ssafy.kidslink.application.document.domain.Absent;
 import com.ssafy.kidslink.application.document.domain.Dosage;
 import com.ssafy.kidslink.application.document.dto.DosageDTO;
+import com.ssafy.kidslink.common.enums.ConfirmationStatus;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
@@ -21,11 +22,12 @@ public class DosageMapper {
         dto.setName(dosage.getDosageName());
         dto.setVolume(dosage.getDosageVolume());
         dto.setNum(dosage.getDosageNum());
-        dto.setTimes(Arrays.asList(dosage.getDosageTime().split(",")));
+        dto.setTimes(dosage.getDosageTime());
         dto.setStorageInfo(dosage.getDosageStore());
         dto.setDetails(dosage.getDosageDetails());
         dto.setConfirmationStatus(dosage.getConfirmationStatus());
         dto.setChildId(dosage.getChild().getChildId());
+        dto.setChildName(dosage.getChild().getChildName());
         return dto;
     }
 
@@ -40,10 +42,10 @@ public class DosageMapper {
         dosage.setDosageName(dto.getName());
         dosage.setDosageVolume(dto.getVolume());
         dosage.setDosageNum(dto.getNum());
-        dosage.setDosageTime(String.join(",", dto.getTimes()));
+        dosage.setDosageTime(dto.getTimes());
         dosage.setDosageStore(dto.getStorageInfo());
         dosage.setDosageDetails(dto.getDetails());
-        dosage.setConfirmationStatus(dto.getConfirmationStatus());
+        dosage.setConfirmationStatus(ConfirmationStatus.F);
         dosage.setChild(child);
         return dosage;
     }
