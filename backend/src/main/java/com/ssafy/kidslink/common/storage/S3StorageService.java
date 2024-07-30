@@ -4,11 +4,15 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.ssafy.kidslink.config.S3Config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -39,8 +43,10 @@ public class S3StorageService implements StorageService {
     }
 
     @Override
-    public Path loadFileAsResource(String fileName) {
-        return null;
+    public Resource loadFileAsResource(String fileName) {
+        S3Object s3Object = amazonS3Client.getObject(bucket, fileName);
+            S3ObjectInputStream inputStream = s3Object.getObjectContent();
+        return new InputStreamResource(inputStream);
     }
 
     private File convertMultipartFileToFile(MultipartFile file) throws IOException {

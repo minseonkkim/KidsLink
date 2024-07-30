@@ -22,7 +22,7 @@ public class Album {
     @Column(name = "album_name")
     private String albumName;
 
-    @Column(name = "album_date")
+    @Column(name = "album_date", updatable = false, insertable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private String albumDate;
 
     @ManyToOne(fetch = FetchType.LAZY)

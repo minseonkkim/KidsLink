@@ -153,8 +153,9 @@ CREATE TABLE `meeting_schedule` (
 CREATE TABLE `parent_notification` (
     `parent_notification_id` INT NOT NULL AUTO_INCREMENT,
     `parent_id` INT NOT NULL,
-    `code` ENUM('dosage','absent','meeting') NULL,
+    `code` varchar(50) NULL,
     `parent_notification_text` VARCHAR(100) NULL,
+    `parent_notification_date` Date NULL,
     `confirmation_status` ENUM('T', 'F') DEFAULT 'F',
     PRIMARY KEY (`parent_notification_id`),
     FOREIGN KEY (`parent_id`) REFERENCES `parent`(`parent_id`)
@@ -165,7 +166,7 @@ CREATE TABLE `teacher_notification` (
     `teacher_id` INT NOT NULL,
     `code` VARCHAR(50) NULL,
     `teacher_notification_text` VARCHAR(100) NULL,
-    `teacher_notification_date` DATE NULL,
+    `teacher_notification_date` Date NULL,
     `confirmation_status` ENUM('T', 'F') DEFAULT 'F',
     PRIMARY KEY (`teacher_notification_id`),
     FOREIGN KEY (`teacher_id`) REFERENCES `teacher`(`teacher_id`)
@@ -193,7 +194,7 @@ CREATE TABLE `image_album` (
     `album_id` INT NOT NULL,
     PRIMARY KEY (`image_id`, `album_id`),
     FOREIGN KEY (`image_id`) REFERENCES `image`(`image_id`),
-    FOREIGN KEY (`album_id`) REFERENCES `album`(`album_id`)
+    FOREIGN KEY (`album_id`) REFERENCES `album`(`album_id`) ON DELETE CASCADE
 );
 
 CREATE TABLE `image_diary` (

@@ -5,11 +5,13 @@ import com.ssafy.kidslink.application.meetingschedule.dto.MeetingScheduleDTO;
 import com.ssafy.kidslink.application.meetingschedule.mapper.MeetingScheduleMapper;
 import com.ssafy.kidslink.application.meetingschedule.repository.MeetingScheduleRepository;
 import com.ssafy.kidslink.application.meetingtime.domain.MeetingTime;
+import com.ssafy.kidslink.application.meetingtime.domain.SelectedMeeting;
 import com.ssafy.kidslink.application.meetingtime.dto.MeetingTimeDTO;
 import com.ssafy.kidslink.application.meetingtime.dto.OpenMeetingTimeDTO;
 import com.ssafy.kidslink.application.meetingtime.dto.ReserveMeetingDTO;
 import com.ssafy.kidslink.application.meetingtime.mapper.MeetingTimeMapper;
 import com.ssafy.kidslink.application.meetingtime.repository.MeetingTimeRepository;
+import com.ssafy.kidslink.application.meetingtime.repository.SelectedMeetingRepository;
 import com.ssafy.kidslink.application.notification.domain.TeacherNotification;
 import com.ssafy.kidslink.application.notification.respository.TeacherNotificationRepository;
 import com.ssafy.kidslink.application.parent.domain.Parent;
@@ -37,6 +39,7 @@ public class MeetingTimeService {
     private final MeetingScheduleRepository meetingScheduleRepository;
     private final MeetingScheduleMapper meetingScheduleMapper;
     private final TeacherNotificationRepository teacherNotificationRepository;
+    private final SelectedMeetingRepository selectedMeetingRepository;
 
     public void openMeetingTimes(String teacherUsername, List<OpenMeetingTimeDTO> openMeetingTimeDTOList) {
         Teacher teacher = teacherRepository.findByTeacherUsername(teacherUsername);
@@ -65,15 +68,20 @@ public class MeetingTimeService {
 
     }
 
-    public void reserveMeeting(String parentUsername, int id, ReserveMeetingDTO reserveMeetingDTO) {
+    public void selectMeeting(String parentUsername, List<ReserveMeetingDTO> reserveMeetingDTOS) {
         Parent parent = parentRepository.findByParentUsername(parentUsername);
 
-        MeetingSchedule meetingSchedule = new MeetingSchedule();
-        meetingSchedule.setMeetingScheduleDate(reserveMeetingDTO.getMeetingDate());
-        meetingSchedule.setParent(parent);
-        meetingSchedule.setMeetingScheduleTime(reserveMeetingDTO.getMeetingTime());
-        meetingSchedule.setTeacher(teacherRepository.findByKindergartenClass(
-                parent.getChildren().stream().findFirst().get().getKindergartenClass()));
+        for(ReserveMeetingDTO dto : reserveMeetingDTOS) {
+            SelectedMeeting selectedMeeting = new SelectedMeeting();
+            selectedMeeting.setSelectedMeetingDate(dto.getMeetingDate());
+            selectedMeeting.setSelectedMeetingTime(dto.getMeetingTime());
+            selectedMeeting.setParent(parent);
+            selectedMeeting.setTeacher(teacherRepository.findByKindergartenClass(
+                    parent.getChildren().stream().findFirst().get().getKindergartenClass()));
+
+            selectedMeetingRepository.save(selectedMeeting);
+
+        }
 
         TeacherNotification teacherNotification = new TeacherNotification();
         teacherNotification.setCode(NotificationCode.MEETING);
@@ -82,7 +90,6 @@ public class MeetingTimeService {
         teacherNotification.setTeacherNotificationText("학부모 상담 신청이 도착하였습니다.");
         teacherNotificationRepository.save(teacherNotification);
 
-        meetingTimeRepository.deleteById(id);
 
     }
 
