@@ -1,5 +1,6 @@
 package com.ssafy.kidslink.application.diary.service;
 
+import com.ssafy.kidslink.application.child.domain.Child;
 import com.ssafy.kidslink.application.child.repository.ChildRepository;
 import com.ssafy.kidslink.application.diary.domain.Diary;
 import com.ssafy.kidslink.application.diary.domain.ImageDiary;
@@ -15,7 +16,6 @@ import com.ssafy.kidslink.application.notification.domain.ParentNotification;
 import com.ssafy.kidslink.application.notification.respository.ParentNotificationRepository;
 import com.ssafy.kidslink.application.parent.domain.Parent;
 import com.ssafy.kidslink.application.parent.repository.ParentRepository;
-import com.ssafy.kidslink.application.teacher.domain.Teacher;
 import com.ssafy.kidslink.application.teacher.repository.TeacherRepository;
 import com.ssafy.kidslink.common.enums.NotificationCode;
 import lombok.RequiredArgsConstructor;
@@ -76,16 +76,16 @@ public class DiaryService {
             diaryRepository.save(diary);
         }
 
-        Teacher teacher = teacherRepository.findByTeacherUsername(teacherUsername);
-        for(Parent parent : parentRepository.findByKindergartenClassId(teacher.getKindergartenClass().getKindergartenClassId())) {
-            ParentNotification parentNotification = new ParentNotification();
-            parentNotification.setCode(NotificationCode.NOTICE);
-            parentNotification.setParentNotificationDate(LocalDate.now());
-            parentNotification.setParentNotificationText("새로운 성장일지가 등록되었습니다.");
-            parentNotification.setParent(parent);
+        Child child = diary.getChild();
+        Parent parent = child.getParent();
 
-            parentNotificationRepository.save(parentNotification);
-        }
+        ParentNotification parentNotification = new ParentNotification();
+        parentNotification.setCode(NotificationCode.NOTICE);
+        parentNotification.setParentNotificationDate(LocalDate.now());
+        parentNotification.setParentNotificationText("우리 아이의 성장일지가 등록되었습니다.");
+        parentNotification.setParent(parent);
+
+        parentNotificationRepository.save(parentNotification);
     }
 
     public List<DiaryDTO> getAllDiary(int childId) {
