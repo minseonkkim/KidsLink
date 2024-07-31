@@ -6,13 +6,16 @@ import { IoSearch } from "react-icons/io5";
 import DosageDocument from '../../components/teacher/document/DosageDocument';
 import DocumentChild from '../../components/teacher/document/DocumentChild';
 import { getClassAllDocuments } from '../../api/document';
+import { getChildInfo } from '../../api/child';
+import AbsentDocument from '../../components/teacher/document/AbsentDocument';
 
-export default function TeacherDocument(){
+export default function TeacherDocument() {
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [filteredDocuments, setFilteredDocuments] = useState([]);
   const [documents, setDocuments] = useState([]);
   const [selectedDocumentType, setSelectedDocumentType] = useState("");
-  const [selectedDocumentId, setSelectedDocumentId] = useState(null);
+  const [selectedDocumentId, setSelectedDocumentId] = useState<number | null>(null);
+  const [childImages, setChildImages] = useState<{ [key: number]: string }>({});
 
   useEffect(() => {
     const fetchDocuments = async () => {
@@ -29,6 +32,14 @@ export default function TeacherDocument(){
             setSelectedDocumentId(fetchedDocuments[0].details.dosageId);
           }
         }
+
+        // Fetch and store child images
+        const images = {};
+        for (const document of fetchedDocuments) {
+          const profileImgPath = await findChildImg(document.details.childId);
+          images[document.details.childId] = profileImgPath;
+        }
+        setChildImages(images);
       } catch (error) {
         console.error('Failed to fetch documents:', error);
       }
@@ -48,6 +59,11 @@ export default function TeacherDocument(){
   const handleDocumentClick = (type, id) => {
     setSelectedDocumentId(id);
     setSelectedDocumentType(type);
+  };
+
+  const findChildImg = async (childId: number): Promise<string> => {
+    const childInfo = await getChildInfo(childId);
+    return childInfo.profile;
   };
 
   return (
@@ -81,13 +97,16 @@ export default function TeacherDocument(){
                   <DocumentChild
                     type={document.type}
                     name={document.details.childName}
+                    profileImgPath={childImages[document.details.childId] || ''}
                   />
                 </div>
               ))}
             </div>
           </div>
-          <DosageDocument />
-          {/* <AbsentDocument/> */}
+          {selectedDocumentType === "Absent" ? 
+            (selectedDocumentId !== null && <AbsentDocument absentId={selectedDocumentId} />) : 
+            (selectedDocumentId !== null && <DosageDocument dosageId={selectedDocumentId}/>)
+          }
         </div>
       </div>
     </>
