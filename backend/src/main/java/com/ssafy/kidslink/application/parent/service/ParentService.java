@@ -109,4 +109,8 @@ public class ParentService {
                 .map(childMapper::toDTO)
                 .collect(Collectors.toSet());
     }
+
+    public ParentDTO getDetailByParentId(int parentId) {
+        return parentMapper.toDTO(parentRepository.findById(parentId).orElseThrow(IllegalArgumentException::new));
+    }
 }
