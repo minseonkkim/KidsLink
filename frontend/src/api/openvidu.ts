@@ -1,8 +1,7 @@
 import axios from "axios";
 import axiosInstance from "./token/axiosInstance";
 
-const APPLICATION_SERVER_URL = "http://localhost:8080/api/video";
-const OPENVIDU_SERVER_SECRET = "MY_SECRET";
+const APPLICATION_SERVER_URL = import.meta.env.VITE_OPENVIDU_URL
 
 export const getToken = async (mySessionId: string): Promise<string> => {
   const sessionId = await createSession(mySessionId);
