@@ -1,14 +1,13 @@
 import { ImCheckboxChecked } from "react-icons/im";
 
 interface DocumentChildProps {
-    // currentChild: boolean;
     type: string;
     name: string;
     profileImgPath: string;
-    // finish: boolean;
+    finish: string;
 }
 
-export default function DocumentChild({type, name, profileImgPath}: DocumentChildProps){
+export default function DocumentChild({type, name, profileImgPath, finish}: DocumentChildProps){
     const currentChild = true;
     return <>
         <div className={`flex flex-row items-center bg-[#ffffff] px-5 py-2 w-full h-full rounded-[15px]`}>
@@ -17,7 +16,7 @@ export default function DocumentChild({type, name, profileImgPath}: DocumentChil
                 <img src={profileImgPath} className="w-full h-full rounded-full object-cover"  />
             </div>
             <div className="font-bold mx-3 text-[21px]">{name}</div>
-            {/* {finish && <ImCheckboxChecked className="mx-[10px] w-[20px] h-[20px]"/>} */}
+            {finish == "T" && <ImCheckboxChecked className="mx-[10px] w-[20px] h-[20px]"/>}
         </div>
     </>
 }
