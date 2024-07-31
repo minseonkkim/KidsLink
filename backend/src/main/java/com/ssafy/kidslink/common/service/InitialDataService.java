@@ -36,6 +36,8 @@ import com.ssafy.kidslink.common.enums.ConfirmationStatus;
 import com.ssafy.kidslink.common.enums.Gender;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -73,6 +75,11 @@ public class InitialDataService {
     private final ImageRepository imageRepository;
     private final ImageMapper imageMapper;
 
+    @Value("${server.url}")
+    private String serverUrl;
+
+    @Value("${file.profile-dir}")
+    private String profileDir;
     @Transactional
     public String initializeData() {
         deleteAll();
@@ -147,7 +154,7 @@ public class InitialDataService {
 
             Set<Image> images = new HashSet<>();
             for (String imageFile : imageFiles) {
-                String imagePath = "src/main/resources/static/profiles/" + imageFile;
+                String imagePath = profileDir + "/" + imageFile;
                 File imageFileObj = new File(imagePath);
                 try {
                     MultipartFile multipartFile = convertFileToMultipartFile(imageFileObj);
@@ -305,14 +312,14 @@ public class InitialDataService {
             child.setChildName(childNames[i]);
             child.setChildGender(genders[i]);
             child.setChildBirth(births[i]);
-            String profilePath = "src/main/resources/static/profiles/" + profiles[i];
+            String profilePath = profileDir + "/" + profiles[i];
             File profileFile = new File(profilePath);
             try {
                 MultipartFile multipartFile = convertFileToMultipartFile(profileFile);
                 // Store the file
                 imageService.storeFile(multipartFile);
                 // Set the profile URL after storing the file
-                child.setChildProfile("http://localhost:8080/api/image/" + profiles[i]);
+                child.setChildProfile(serverUrl+"/image/" + profiles[i]);
             } catch (IOException e) {
                 // Handle the exception appropriately
                 throw new RuntimeException("데이터 초기화 중 사진 저장 오류", e);
@@ -393,7 +400,7 @@ public class InitialDataService {
             diary.setChild(child); // 주어진 child 객체를 설정합니다.
             Set<Image> imageSet = new HashSet<>();
             for (int j = 0; j < 3; j++) {
-                String profilePath = "src/main/resources/static/profiles/" + profiles[j];
+                String profilePath = profileDir + "/" + profiles[j];
                 File profileFile = new File(profilePath);
                 try {
                     MultipartFile multipartFile = convertFileToMultipartFile(profileFile);
