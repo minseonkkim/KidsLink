@@ -73,9 +73,11 @@ public class ParentService {
         child.setChildGender(Gender.fromCode(childDTO.getGender()));
         child.setChildName(childDTO.getName());
         child.setChildBirth(childDTO.getBirth());
+        System.out.println(childDTO.getChildProfile());
         if (childDTO.getChildProfile() != null) {
             try {
                 child.setChildProfile(imageService.storeFile(childDTO.getChildProfile()).getPath());
+                System.out.println(childDTO.getChildProfile());
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

@@ -9,8 +9,8 @@ import { useParentInfoStore } from "../../stores/useParentInfoStore";
 
 export default function ParentMyPage() {
   const { parentInfo } = useParentInfoStore();
-  const [currentProfileImg] = useState(parentInfo?.profile || ""); // Keeps parent profile image
-  const [currentChildImg] = useState(parentInfo?.child.childProfile || "");
+  const [currentProfileImg] = useState(parentInfo?.profile || ""); 
+  const [currentChildImg] = useState(parentInfo?.child.profile || "");
 
   const navigate = useNavigate();
   const setUserType = useAppStore((state) => state.setUserType);
