@@ -46,7 +46,7 @@ const DesktopComponent = () => {
       <LoginHeader />
       <div className="flex flex-row bg-[#fff9d7] min-h-[calc(100vh-85px)] h-full font-KoPubDotum z-1">
         <div className="mx-[150px] py-[100px]">
-          <p className="text-[38px] font-bold text-left text-[#363636] mb-[65px] h-[120px]">
+          <div className="text-[38px] font-bold text-left text-[#363636] mb-[65px] h-[120px]">
             <Typewriter
                 options={{
                   strings: ['소중한 추억을 기록하며<br>교육의 모든 순간을 함께하세요.'],
@@ -54,7 +54,7 @@ const DesktopComponent = () => {
                   loop: true,
                 }}
               />
-          </p>
+          </div>
 
           <form className="flex flex-col" onSubmit={handleLogin}>
             <input

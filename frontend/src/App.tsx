@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Router, Routes, Route } from "react-router-dom";
 import { useAppStore, UserState } from "./stores/store";
 import ParentHome from "./pages/parent/ParentHome";
 import ParentDocument from "./pages/parent/ParentDocument";
@@ -108,10 +108,6 @@ const App: React.FC = () => {
   );
 };
 
-const AppWrapper: React.FC = () => (
-  <Router>
-      <App />
-  </Router>
-);
 
-export default AppWrapper;
+
+export default App;
