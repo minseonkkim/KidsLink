@@ -13,6 +13,7 @@ import java.util.Set;
 @ToString
 public class DiaryDTO {
     private int diaryId;
+    private String teacherName;
     private LocalDate createDate;
     private String content;
     private Set<ImageDTO> images;

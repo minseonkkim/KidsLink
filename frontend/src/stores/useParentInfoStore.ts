@@ -1,6 +1,7 @@
 import create from 'zustand';
 import { ParentInfo } from '../api/Info'
 
+
 interface ParentInfoState {
   parentInfo: ParentInfo | null;
   setParentInfo: (info: ParentInfo) => void;
