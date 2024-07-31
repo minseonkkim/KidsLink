@@ -6,29 +6,40 @@ import { IoSearch } from "react-icons/io5";
 import DosageDocument from '../../components/teacher/document/DosageDocument';
 import DocumentChild from '../../components/teacher/document/DocumentChild';
 import { getClassAllDocuments } from '../../api/document';
+import { getChildInfo } from '../../api/child';
+import AbsentDocument from '../../components/teacher/document/AbsentDocument';
 
-export default function TeacherDocument(){
+export default function TeacherDocument() {
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [filteredDocuments, setFilteredDocuments] = useState([]);
   const [documents, setDocuments] = useState([]);
   const [selectedDocumentType, setSelectedDocumentType] = useState("");
-  const [selectedDocumentId, setSelectedDocumentId] = useState(null);
+  const [selectedDocumentId, setSelectedDocumentId] = useState<number | null>(null);
+  const [childImages, setChildImages] = useState<{ [key: number]: string }>({});
 
   useEffect(() => {
     const fetchDocuments = async () => {
       try {
         const fetchedDocuments = await getClassAllDocuments();
         console.log(fetchedDocuments);
-
+        
         setDocuments(fetchedDocuments);
         if (fetchedDocuments.length > 0) {
-          setSelectedDocumentType(fetchedDocuments[0].type);
+          setSelectedDocumentType(fetchedDocuments[fetchedDocuments.length - 1].type);
           if (fetchedDocuments[0].type === "Absent") {
-            setSelectedDocumentId(fetchedDocuments[0].details.absentId);
+            setSelectedDocumentId(fetchedDocuments[fetchedDocuments.length - 1].details.absentId);
           } else {
-            setSelectedDocumentId(fetchedDocuments[0].details.dosageId);
+            setSelectedDocumentId(fetchedDocuments[fetchedDocuments.length - 1].details.dosageId);
           }
         }
+
+        // Fetch and store child images
+        const images = {};
+        for (const document of fetchedDocuments) {
+          const profileImgPath = await findChildImg(document.details.childId);
+          images[document.details.childId] = profileImgPath;
+        }
+        setChildImages(images);
       } catch (error) {
         console.error('Failed to fetch documents:', error);
       }
@@ -41,13 +52,23 @@ export default function TeacherDocument(){
     setFilteredDocuments(
       documents.filter(document =>
         document.details.childName.includes(searchTerm)
-      )
+      ).reverse()
     );
   }, [searchTerm, documents]);
 
   const handleDocumentClick = (type, id) => {
     setSelectedDocumentId(id);
     setSelectedDocumentType(type);
+  };
+
+  const findChildImg = async (childId: number): Promise<string> => {
+    const childInfo = await getChildInfo(childId);
+    return childInfo.profile;
+  };
+
+  const handleDocumentUpdate = async () => {
+    const fetchedDocuments = await getClassAllDocuments();
+    setDocuments(fetchedDocuments);
   };
 
   return (
@@ -81,13 +102,17 @@ export default function TeacherDocument(){
                   <DocumentChild
                     type={document.type}
                     name={document.details.childName}
+                    profileImgPath={childImages[document.details.childId] || ''}
+                    finish={document.details.confirmationStatus}
                   />
                 </div>
               ))}
             </div>
           </div>
-          <DosageDocument />
-          {/* <AbsentDocument/> */}
+          {selectedDocumentType === "Absent" ? 
+            (selectedDocumentId !== null && <AbsentDocument absentId={selectedDocumentId} onUpdate={handleDocumentUpdate} />) : 
+            (selectedDocumentId !== null && <DosageDocument dosageId={selectedDocumentId} onUpdate={handleDocumentUpdate}/>)
+          }
         </div>
       </div>
     </>
