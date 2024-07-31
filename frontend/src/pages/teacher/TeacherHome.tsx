@@ -31,8 +31,9 @@ export default function TeacherHome(){
             
             <div className="w-[350px] h-[500px] rounded-[20px] bg-[#f4f4f4] flex flex-col items-center py-7 drop-shadow-md">
                 <div className="w-[170px] h-[170px]">
-                    <img src={useTeacherInfoStore.getState().teacherInfo.profile || 
+                    <img src={useTeacherInfoStore.getState().teacherInfo.profile == null? 
                         DefaultProfile
+                        :useTeacherInfoStore.getState().teacherInfo.profile
                     } className="w-full h-full rounded-full object-cover"  />
                 </div>
                 <p className="text-[30px] font-bold text-center text-[#8cad1e] mt-3">{useTeacherInfoStore.getState().teacherInfo.kindergartenClassName + " 선생님"}</p>

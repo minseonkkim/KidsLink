@@ -200,3 +200,17 @@ export async function createAbsentDocument(data: AbsentData, childId: number) {
     throw error;
   }
 }
+
+// 날짜별 아이 문서 조회
+export async function getDocumentsByDate(childId: number, date: string){
+  try{
+    const response = await axiosInstance.get(`child/${childId}/document/check?date=${date}`)
+    if(response.data.status === 'success'){
+      console.log(response.data.data)
+      return response.data.data
+    }
+  }catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
