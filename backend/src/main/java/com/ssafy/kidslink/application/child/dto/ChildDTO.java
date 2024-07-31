@@ -1,5 +1,6 @@
 package com.ssafy.kidslink.application.child.dto;
 
+import com.ssafy.kidslink.application.kindergarten.dto.KindergartenClassDTO;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -10,8 +11,7 @@ import lombok.ToString;
 public class ChildDTO {
     private int childId;
     private String name;
-    private String kindergartenClassName;  // 또는 반 ID를 나타내는 필드로 변경 가능
-    private String kindergartenName;  // 또는 유치원 ID를 나타내는 필드로 변경 가능
+    private KindergartenClassDTO kindergartenClass;
     private String gender;
     private String birth;
     private String profile;

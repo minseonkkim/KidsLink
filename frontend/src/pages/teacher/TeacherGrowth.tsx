@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import NavigateBack from "../../components/teacher/common/NavigateBack";
 import TeacherHeader from "../../components/teacher/common/TeacherHeader";
 import Title from "../../components/teacher/common/Title";
@@ -8,29 +8,37 @@ import GrowthDiaryItem from "../../components/teacher/growth/GrowthDiaryItem";
 import { FiPlusCircle } from "react-icons/fi";
 import useModal from "../../hooks/teacher/useModal.tsx";
 import { FaTrash } from "react-icons/fa";
-import ToastNotification, { showToast, showToastError } from '../../components/teacher/common/ToastNotification.tsx';
+import ToastNotification, {
+  showToast,
+  showToastError,
+} from "../../components/teacher/common/ToastNotification.tsx";
 import { useTeacherInfoStore } from "../../stores/useTeacherInfoStore.ts";
 import { getClassChilds } from "../../api/kindergarten.ts";
-import { createDiary, getKidAllGrowthDiarys, FormDiaryData } from "../../api/growthDiary.ts";
+import {
+  createDiary,
+  getKidAllGrowthDiarys,
+  FormDiaryData,
+} from "../../api/growthdiary.ts";
 
 export default function TeacherGrowth() {
   const { openModal, Modal, isModalOpen, closeModal } = useModal();
-  const [searchChild, setSearchChild] = useState<string>('');
+  const [searchChild, setSearchChild] = useState<string>("");
   const [growthDiaryData, setGrowthDiaryData] = useState([]);
 
   const [currentChildId, setCurrentChildId] = useState<number | null>(null);
   const [childs, setChilds] = useState([]);
 
   useEffect(() => {
-    const classId = useTeacherInfoStore.getState().teacherInfo.kindergartenClassId;
+    const classId =
+      useTeacherInfoStore.getState().teacherInfo.kindergartenClassId;
     const fetchChilds = async () => {
       try {
         const fetchedChilds = await getClassChilds(classId);
         setChilds(fetchedChilds);
       } catch (error) {
-        console.error('Failed to fetch childs:', error);
+        console.error("Failed to fetch childs:", error);
       }
-    }
+    };
 
     fetchChilds();
   }, []);
@@ -42,12 +50,15 @@ export default function TeacherGrowth() {
   const fetchDiarys = async () => {
     try {
       const fetchedDiarys = await getKidAllGrowthDiarys(currentChildId);
-      const sortedDiarys = fetchedDiarys.sort((a, b) => new Date(b.createDate).getTime() - new Date(a.createDate).getTime());
+      const sortedDiarys = fetchedDiarys.sort(
+        (a, b) =>
+          new Date(b.createDate).getTime() - new Date(a.createDate).getTime()
+      );
       setGrowthDiaryData(sortedDiarys);
     } catch (error) {
-      console.log('Failed to fetch diarys:', error);
+      console.log("Failed to fetch diarys:", error);
     }
-  }
+  };
 
   useEffect(() => {
     fetchDiarys();
@@ -56,8 +67,8 @@ export default function TeacherGrowth() {
   useEffect(() => {
     // 매일 자정 completed 상태 초기화
     const resetCompletedStatus = () => {
-      setChilds(prevItems =>
-        prevItems.map(child => ({ ...child, completed: false }))
+      setChilds((prevItems) =>
+        prevItems.map((child) => ({ ...child, completed: false }))
       );
     };
 
@@ -85,13 +96,17 @@ export default function TeacherGrowth() {
 
   const handleDiaryItemClick = (id: number) => {
     if (currentChildId === null) {
-      showToast('아이를 선택해주세요');
+      showToast("아이를 선택해주세요");
     } else {
       setCurrentChildId(id);
     }
   };
 
-  const renderModalContent = (currentDateValue, currentRecordValue, currentSelectedImages) => (
+  const renderModalContent = (
+    currentDateValue,
+    currentRecordValue,
+    currentSelectedImages
+  ) => (
     <GrowthDiaryForm
       closeModal={closeModal}
       currentChildId={currentChildId}
@@ -103,15 +118,23 @@ export default function TeacherGrowth() {
     />
   );
 
-  const [currentDateValue, setCurrentDateValue] = useState<string>('');
-  const [currentRecordValue, setCurrentRecordValue] = useState<string>('');
-  const [currentSelectedImages, setCurrentSelectedImages] = useState<string[]>([]);
+  const [currentDateValue, setCurrentDateValue] = useState<string>("");
+  const [currentRecordValue, setCurrentRecordValue] = useState<string>("");
+  const [currentSelectedImages, setCurrentSelectedImages] = useState<string[]>(
+    []
+  );
 
   const openCreateModal = () => {
     if (currentChildId === null) {
-      showToastError('아이를 선택해주세요');
+      showToastError("아이를 선택해주세요");
     } else if (!isModalOpen) {
-      openModal(renderModalContent(currentDateValue, currentRecordValue, currentSelectedImages));
+      openModal(
+        renderModalContent(
+          currentDateValue,
+          currentRecordValue,
+          currentSelectedImages
+        )
+      );
     }
   };
 
@@ -125,11 +148,24 @@ export default function TeacherGrowth() {
           <div className="rounded-[10px] bg-[#f4f4f4] w-[380px] h-[520px] p-[10px]">
             <div className="bg-[#fff] h-[53px] rounded-[10px] flex items-center p-3 mx-2 my-3">
               <IoSearch className="text-[25px] mr-3" />
-              <input type="text" className="focus:outline-none text-[18px]" value={searchChild} onChange={handleSearchChange} placeholder="이름으로 검색하세요" />
+              <input
+                type="text"
+                className="focus:outline-none text-[18px]"
+                value={searchChild}
+                onChange={handleSearchChange}
+                placeholder="이름으로 검색하세요"
+              />
             </div>
             <div className="flex flex-wrap w-[360px] h-[420px] overflow-y-auto custom-scrollbar">
               {filteredChildren.map((child) => (
-                <div key={child.childId} className={`border-[2px] rounded-[10px] ${child.childId === currentChildId ? 'border-[#B2D170]' : 'border-transparent'}`}>
+                <div
+                  key={child.childId}
+                  className={`border-[2px] rounded-[10px] ${
+                    child.childId === currentChildId
+                      ? "border-[#B2D170]"
+                      : "border-transparent"
+                  }`}
+                >
                   <GrowthChild
                     key={child.childId}
                     name={child.name}
@@ -143,7 +179,10 @@ export default function TeacherGrowth() {
           </div>
           <div className="rounded-[10px] bg-[#f4f4f4] w-[720px] h-[520px] p-[10px]">
             <div className="flex flex-wrap content-start w-[700px] h-[500px] rounded-[20px] bg-[#f4f4f4] overflow-auto custom-scrollbar p-1">
-              <div onClick={openCreateModal} className="bg-[#fff] rounded-[10px] w-[135px] h-[135px] m-[17px] flex items-center justify-center font-bold text-[18px]">
+              <div
+                onClick={openCreateModal}
+                className="bg-[#fff] rounded-[10px] w-[135px] h-[135px] m-[17px] flex items-center justify-center font-bold text-[18px]"
+              >
                 <FiPlusCircle className="text-[30px]" />
               </div>
               {growthDiaryData.map((diary) => (
@@ -166,8 +205,15 @@ export default function TeacherGrowth() {
   );
 }
 
-
-function GrowthDiaryForm({ closeModal, currentChildId, childs, fetchDiarys, initialDateValue, initialRecordValue, initialSelectedImages }) {
+function GrowthDiaryForm({
+  closeModal,
+  currentChildId,
+  childs,
+  fetchDiarys,
+  initialDateValue,
+  initialRecordValue,
+  initialSelectedImages,
+}) {
   const [dateValue, setDateValue] = useState<string>(initialDateValue);
   const [recordValue, setRecordValue] = useState<string>(initialRecordValue);
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
@@ -190,35 +236,37 @@ function GrowthDiaryForm({ closeModal, currentChildId, childs, fetchDiarys, init
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (currentChildId === null) {
-      showToastError('아이를 선택해주세요');
+      showToastError("아이를 선택해주세요");
       return;
     }
 
-    const selectedChild = childs.find((child) => child.childId === currentChildId);
+    const selectedChild = childs.find(
+      (child) => child.childId === currentChildId
+    );
     if (!selectedChild) return;
 
     if (!dateValue) {
-      showToastError('날짜를 선택해주세요');
+      showToastError("날짜를 선택해주세요");
       return;
     }
 
     const diaryData: FormDiaryData = {
       diaryDate: dateValue,
       files: selectedImages,
-      content: recordValue
+      content: recordValue,
     };
 
     try {
       await createDiary(selectedChild.childId, diaryData);
       selectedChild.completed = true;
       setSelectedImages([]);
-      setDateValue('');
-      setRecordValue('');
+      setDateValue("");
+      setRecordValue("");
       closeModal();
       fetchDiarys();
     } catch (error) {
-      console.error('Failed to create diary:', error);
-      showToastError('성장일지 작성에 실패했습니다.');
+      console.error("Failed to create diary:", error);
+      showToastError("성장일지 작성에 실패했습니다.");
     }
   };
 
@@ -226,7 +274,9 @@ function GrowthDiaryForm({ closeModal, currentChildId, childs, fetchDiarys, init
     <div className="w-[500px]">
       <form onSubmit={handleSubmit}>
         <div className="mb-4 flex flex-row items-center">
-          <label className="block mr-3 mb-1 font-bold whitespace-nowrap text-[18px]">날짜</label>
+          <label className="block mr-3 mb-1 font-bold whitespace-nowrap text-[18px]">
+            날짜
+          </label>
           <input
             type="date"
             name="date"
@@ -236,16 +286,27 @@ function GrowthDiaryForm({ closeModal, currentChildId, childs, fetchDiarys, init
           />
         </div>
         <div className="mb-4 flex flex-row">
-          <label className="block mr-3 mb-1 font-bold whitespace-nowrap text-[18px]">사진</label>
+          <label className="block mr-3 mb-1 font-bold whitespace-nowrap text-[18px]">
+            사진
+          </label>
           <label htmlFor="photo">
             <div className="cursor-pointer bg-[#f4f4f4] w-[100px] h-[100px] rounded-[10px] flex items-center justify-center border-[1px]">
               <IoCameraOutline className="text-[40px]" />
             </div>
           </label>
-          <input type="file" id="photo" className="hidden" onChange={handlePlusImage} multiple />
+          <input
+            type="file"
+            id="photo"
+            className="hidden"
+            onChange={handlePlusImage}
+            multiple
+          />
           <div className="w-full h-[120px] ml-2 flex flex-row overflow-x-auto whitespace-nowrap custom-x-scrollbar">
             {selectedImages.map((file, index) => (
-              <div key={index} className="w-[100px] h-[100px] relative mr-2 flex-shrink-0">
+              <div
+                key={index}
+                className="w-[100px] h-[100px] relative mr-2 flex-shrink-0"
+              >
                 <img
                   src={URL.createObjectURL(file)}
                   alt={`Selected ${index}`}
@@ -263,7 +324,9 @@ function GrowthDiaryForm({ closeModal, currentChildId, childs, fetchDiarys, init
           </div>
         </div>
         <div className="mb-4 flex flex-row">
-          <label className="block mr-3 mb-1 font-bold whitespace-nowrap text-[18px]">기록</label>
+          <label className="block mr-3 mb-1 font-bold whitespace-nowrap text-[18px]">
+            기록
+          </label>
           <textarea
             name="record"
             className="border border-gray-300 p-2 rounded w-full"

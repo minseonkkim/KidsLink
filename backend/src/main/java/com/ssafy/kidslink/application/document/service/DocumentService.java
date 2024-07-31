@@ -1,6 +1,7 @@
 package com.ssafy.kidslink.application.document.service;
 
 import com.ssafy.kidslink.application.child.domain.Child;
+import com.ssafy.kidslink.application.child.dto.DocumentCheckResponse;
 import com.ssafy.kidslink.application.child.repository.ChildRepository;
 import com.ssafy.kidslink.application.document.domain.Absent;
 import com.ssafy.kidslink.application.document.domain.Dosage;
@@ -15,12 +16,11 @@ import com.ssafy.kidslink.application.teacher.repository.TeacherRepository;
 import com.ssafy.kidslink.common.dto.User;
 import com.ssafy.kidslink.common.util.PrincipalUtils;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
-
-import java.util.*;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -81,4 +81,17 @@ public class DocumentService {
         return allDocuments;
     }
 
+    public DocumentCheckResponse checkDocument(int childId, LocalDate date) {
+        Child child = childRepository.findById(childId).orElseThrow();
+        List<Absent> absents = absentRepository.findByChildAndDateBetween(child, date);
+        List<Dosage> dosages = dosageRepository.findByChildAndDateBetween(child, date);
+
+        DocumentCheckResponse response = new DocumentCheckResponse();
+        response.setAbsents(absents.stream().map(absentMapper::toDTO).collect(Collectors.toList()));
+        response.setDosages(dosages.stream().map(dosageMapper::toDTO).collect(Collectors.toList()));
+        response.setAbsentExists(!absents.isEmpty());
+        response.setDosageExists(!dosages.isEmpty());
+
+        return response;
+    }
 }

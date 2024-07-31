@@ -86,12 +86,10 @@ public class MeetingTimeController {
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = APIResponse.class)))
     })
-    @GetMapping
+    @GetMapping("")
     public ResponseEntity<APIResponse<List<MeetingTimeDTO>>> getMeetingTimes(@AuthenticationPrincipal Object principal){
-        if(principal instanceof CustomUserDetails){
-            CustomUserDetails userDetails = (CustomUserDetails) principal;
-
-            List<MeetingTimeDTO> meetingTimes = meetingTimeService.getMeetingTimes(userDetails.getUsername());
+        if(principal instanceof CustomUserDetails userDetails){
+            List<MeetingTimeDTO> meetingTimes = meetingTimeService.getMeetingTimes(userDetails);
             APIResponse<List<MeetingTimeDTO>> responseData = new APIResponse<>(
                     "success",
                     meetingTimes,
