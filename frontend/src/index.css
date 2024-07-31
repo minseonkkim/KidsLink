@@ -38,7 +38,6 @@ body {
     align-items: center;
 }
 
-
 .gradient-text {
     background: linear-gradient(to right, #F8DE56, #B2D170);
     -webkit-background-clip: text;
