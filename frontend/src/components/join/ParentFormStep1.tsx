@@ -1,7 +1,7 @@
 import { ChangeEvent, FC, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { CiCamera } from "react-icons/ci";
-import { useAppStore } from "../../stores/store";
+import useAppStore from "../../stores/store";
 import { checkUsernameExists } from "../../api/member"; // 아이디 중복 검사 함수 import
 import defaultProfileImg from "../../assets/join/default-profile.png";
 
