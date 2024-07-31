@@ -1,11 +1,8 @@
 import React from "react";
-import { IoVideocam, IoVideocamOff, IoVolumeHigh } from "react-icons/io5";
-import { CiMicrophoneOff, CiMicrophoneOn } from "react-icons/ci";
+import { IoVideocam, IoVideocamOff, IoVolumeHigh, IoVolumeMute } from "react-icons/io5";
 import { RxCrossCircled } from "react-icons/rx";
-import { VolumeOff, VolumeUp } from "@mui/icons-material";
 import { Slider } from "@mui/material";
-import { Button } from "./styled"; // Import your styled button
-import { IoMdVolumeOff } from "react-icons/io";
+import { FaMicrophone, FaMicrophoneSlash } from "react-icons/fa";
 
 // Define the types for the props
 interface ControlState {
@@ -22,20 +19,20 @@ interface MeetingFooterProps {
 }
 
 const MeetingFooter: React.FC<MeetingFooterProps> = ({ control, handleControl, close }) => {
+  const isMuted = control.muted || control.volume === 0;
+
   return (
-    <div className="bottom-8 bg-white flex justify-between items-center p-6 text-white rounded-full">
+    <div className="mb-[30px] bg-white flex justify-between items-center px-10 py-3 text-white rounded-full z-50">
       <div className="flex items-center gap-4">
         <div className="flex flex-col justify-center items-center gap-2 w-22">
           {control.video ? (
             <IoVideocam
-              color="black"
-              className="cursor-pointer text-3xl"
+              className="cursor-pointer text-3xl text-black"
               onClick={() => handleControl((prev) => ({ ...prev, video: false }))}
             />
           ) : (
             <IoVideocamOff
-              color="black"
-              className="cursor-pointer opacity-50 text-3xl"
+              className="cursor-pointer text-[#B8B8B8] text-3xl"
               onClick={() => handleControl((prev) => ({ ...prev, video: true }))}
             />
           )}
@@ -43,51 +40,59 @@ const MeetingFooter: React.FC<MeetingFooterProps> = ({ control, handleControl, c
         <div className="bg-white w-px h-full" />
         <div className="flex flex-col justify-center items-center gap-2 w-22">
           {control.mic ? (
-            <CiMicrophoneOn
-              color="black"
-              className="cursor-pointer text-3xl"
+            <FaMicrophone
+              className="cursor-pointer text-3xl text-black"
               onClick={() => handleControl((prev) => ({ ...prev, mic: false }))}
             />
           ) : (
-            <CiMicrophoneOff
-              color="black"
-              className="cursor-pointer opacity-50 text-3xl"
+            <FaMicrophoneSlash
+              className="cursor-pointer text-3xl text-[#B8B8B8]"
               onClick={() => handleControl((prev) => ({ ...prev, mic: true }))}
             />
           )}
         </div>
         <div className="bg-white w-px h-full" />
         <div className="flex items-center gap-2">
-          {control.muted ? (
-            <IoMdVolumeOff
-              className="cursor-pointer opacity-50 text-3xl text-black"
+          {isMuted ? (
+            <IoVolumeMute
+              className="cursor-pointer text-3xl text-[#B8B8B8] mr-3"
               onClick={() => handleControl((prev) => ({ ...prev, muted: false }))}
             />
           ) : (
             <IoVolumeHigh
-              className="cursor-pointer text-3xl text-black"
+              className="cursor-pointer text-3xl text-black mr-3"
               onClick={() => handleControl((prev) => ({ ...prev, muted: true }))}
             />
           )}
           <div className="w-48 py-2 items-center">
-            <Slider
-              value={control.volume}
-              step={0.1}
-              min={0.0}
-              max={1.0}
-              onChange={(event, newVal) =>
-                handleControl((prev) => ({ ...prev, volume: newVal as number }))
-              }
-              sx={{ width: '100%' }}
-              disabled={control.muted}
-            />
+          <Slider
+            value={control.volume}
+            step={0.1}
+            min={0.0}
+            max={1.0}
+            onChange={(event, newVal) =>
+              handleControl((prev) => ({ ...prev, volume: newVal as number }))
+            }
+            sx={{
+              width: '100%',
+              color: 'yellow',
+              '& .MuiSlider-thumb': {
+                backgroundColor: '#FFD700',
+              },
+              '& .MuiSlider-track': {
+                backgroundColor: '#FFD700',
+              },
+              '& .MuiSlider-rail': {
+                backgroundColor: '#FFD700',
+              },
+            }}
+          />
           </div>
         </div>
       </div>
       <div>
         <RxCrossCircled
-          color="red"
-          className="ml-3 text-3xl cursor-pointer"
+          className="ml-3 text-3xl cursor-pointer text-red-600"
           onClick={close}
         />
       </div>
