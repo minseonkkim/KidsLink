@@ -12,6 +12,7 @@ import com.ssafy.kidslink.application.document.repository.AbsentRepository;
 import com.ssafy.kidslink.application.document.repository.DosageRepository;
 import com.ssafy.kidslink.application.image.domain.Image;
 import com.ssafy.kidslink.application.image.dto.ImageDTO;
+import com.ssafy.kidslink.application.image.mapper.ImageMapper;
 import com.ssafy.kidslink.application.image.repository.ImageRepository;
 import com.ssafy.kidslink.application.image.service.ImageService;
 import com.ssafy.kidslink.application.kindergarten.domain.Kindergarten;
@@ -70,6 +71,7 @@ public class InitialDataService {
     private final MeetingTimeRepository meetingTimeRepository;
     private final MeetingScheduleRepository meetingScheduleRepository;
     private final ImageRepository imageRepository;
+    private final ImageMapper imageMapper;
 
     @Transactional
     public String initializeData() {
@@ -381,12 +383,32 @@ public class InitialDataService {
                 "오늘은 유치원에서 자연 탐험을 했어요. 주변의 식물과 동물을 관찰하며 자연을 사랑하게 되었습니다.",
                 "오늘은 유치원에서 숫자 공부를 했어요. 수학 문제를 풀며 논리적인 사고를 길렀습니다."
         };
+        String[] profiles = {"child1.jpg", "child2.jpg", "child3.jpg", "child4.jpg", "child5.jpg", "child6.jpg", "child7.jpg", "child8.jpg", "child9.jpg", "child10.jpg"};
+
 
         for (int i = 0; i < 30; i++) { // 100개의 테스트 데이터를 생성합니다.
             Diary diary = new Diary();
             diary.setDiaryDate(LocalDate.now().minusDays(i)); // 각 일지의 날짜를 다르게 설정합니다.
             diary.setDiaryContents(contents[i % contents.length]); // 다양한 내용을 순환하며 설정합니다.
             diary.setChild(child); // 주어진 child 객체를 설정합니다.
+            Set<Image> imageSet = new HashSet<>();
+            for (int j = 0; j < 3; j++) {
+                String profilePath = "src/main/resources/static/profiles/" + profiles[j];
+                File profileFile = new File(profilePath);
+                try {
+                    MultipartFile multipartFile = convertFileToMultipartFile(profileFile);
+                    // Store the file
+                    ImageDTO imageDTO = imageService.storeFile(multipartFile);
+                    imageSet.add(imageMapper.toEntity(imageDTO));
+                    if (j == 0) {
+                        diary.setDiaryThumbnail(imageDTO.getPath());
+                    }
+                } catch (IOException e) {
+                    // Handle the exception appropriately
+                    throw new RuntimeException("데이터 초기화 중 사진 저장 오류", e);
+                }
+            }
+            diary.setImages(imageSet);
             diaries.add(diary);
         }
 
