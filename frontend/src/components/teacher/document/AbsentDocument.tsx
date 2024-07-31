@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import DocumentItem from "./DocumentItem";
-import { getAbsentDocument } from "../../../api/document";
+import { checkAbsentDocument, getAbsentDocument } from "../../../api/document";
 
 interface AbsentDocumentProps {
   absentId: number;
+  onUpdate: () => void;
 }
 
-export default function AbsentDocument({ absentId }: AbsentDocumentProps) {
+export default function AbsentDocument({ absentId, onUpdate }: AbsentDocumentProps) {
   const [absentDocument, setAbsentDocument] = useState(null);
 
   useEffect(() => {
@@ -22,6 +23,18 @@ export default function AbsentDocument({ absentId }: AbsentDocumentProps) {
     fetchAbsentDocument();
   }, [absentId]);
 
+  const handleCheckboxClick = async () => {
+    if (absentDocument.confirmationStatus === "F") {
+        try {
+            await checkAbsentDocument(absentId);
+            setAbsentDocument({ ...absentDocument, confirmationStatus: "T" });
+            onUpdate(); // Update the parent component
+        } catch (error) {
+            console.error('Failed to check absent document:', error);
+        }
+    }
+};
+
   if (!absentDocument) {
     return <div>Loading...</div>;
   }
@@ -34,6 +47,9 @@ export default function AbsentDocument({ absentId }: AbsentDocumentProps) {
           <input
             type="checkbox"
             className="mx-[3px] w-[20px] h-[20px] accent-[#363636]"
+            checked={absentDocument.confirmationStatus === "T"}
+            disabled={absentDocument.confirmationStatus === "T"}
+            onClick={handleCheckboxClick}
           />
           <span className="font-bold text-[18px] mx-3">확인완료</span>
         </div>

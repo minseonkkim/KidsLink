@@ -22,14 +22,14 @@ export default function TeacherDocument() {
       try {
         const fetchedDocuments = await getClassAllDocuments();
         console.log(fetchedDocuments);
-
+        
         setDocuments(fetchedDocuments);
         if (fetchedDocuments.length > 0) {
-          setSelectedDocumentType(fetchedDocuments[0].type);
+          setSelectedDocumentType(fetchedDocuments[fetchedDocuments.length - 1].type);
           if (fetchedDocuments[0].type === "Absent") {
-            setSelectedDocumentId(fetchedDocuments[0].details.absentId);
+            setSelectedDocumentId(fetchedDocuments[fetchedDocuments.length - 1].details.absentId);
           } else {
-            setSelectedDocumentId(fetchedDocuments[0].details.dosageId);
+            setSelectedDocumentId(fetchedDocuments[fetchedDocuments.length - 1].details.dosageId);
           }
         }
 
@@ -52,7 +52,7 @@ export default function TeacherDocument() {
     setFilteredDocuments(
       documents.filter(document =>
         document.details.childName.includes(searchTerm)
-      )
+      ).reverse()
     );
   }, [searchTerm, documents]);
 
@@ -64,6 +64,11 @@ export default function TeacherDocument() {
   const findChildImg = async (childId: number): Promise<string> => {
     const childInfo = await getChildInfo(childId);
     return childInfo.profile;
+  };
+
+  const handleDocumentUpdate = async () => {
+    const fetchedDocuments = await getClassAllDocuments();
+    setDocuments(fetchedDocuments);
   };
 
   return (
@@ -98,14 +103,15 @@ export default function TeacherDocument() {
                     type={document.type}
                     name={document.details.childName}
                     profileImgPath={childImages[document.details.childId] || ''}
+                    finish={document.details.confirmationStatus}
                   />
                 </div>
               ))}
             </div>
           </div>
           {selectedDocumentType === "Absent" ? 
-            (selectedDocumentId !== null && <AbsentDocument absentId={selectedDocumentId} />) : 
-            (selectedDocumentId !== null && <DosageDocument dosageId={selectedDocumentId}/>)
+            (selectedDocumentId !== null && <AbsentDocument absentId={selectedDocumentId} onUpdate={handleDocumentUpdate} />) : 
+            (selectedDocumentId !== null && <DosageDocument dosageId={selectedDocumentId} onUpdate={handleDocumentUpdate}/>)
           }
         </div>
       </div>
