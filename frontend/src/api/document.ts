@@ -27,35 +27,24 @@ export interface AbsentData {
 }
 
 export interface Document {
-  id: number;
-  date: string;
-  dosage?: DosageData;
-  absent?: AbsentData;
+  type: 'Absent' | 'Dosage';
+  details: AbsentData | DosageData;
 }
-// 목록 조회에 쓰임
-// export interface DosageDetails {
-//   dosageId: number;
-//   name: string;
-//   confirmationStatus: string;
-//   startDate: string;
-//   endDate: string;
-//   details: string;
-// }
-// export interface AbsentDetails {
-//   absentId: number;
-//   reason: string;
-//   confirmationStatus: string;
-//   startDate: string;
-//   endDate: string;
-//   details: string;
-// }
-// export interface DocumentResponse {
-//   id: number;
-//   date: string;
-//   dosage?: DosageDetails;
-//   absent?: AbsentDetails;
-// }
 
+export interface DosageData {
+  dosageId: number;
+  name: string;
+  confirmationStatus: string;
+  startDate: string;
+  endDate: string;
+  details: string;
+  num: string;
+  times: string;
+  storageInfo: string;
+  volume: string;
+  childId: number;
+  childName: string;
+}
 
 
 // 반 전체 서류 조회

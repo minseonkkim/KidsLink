@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import CommonHeader from "../../components/parent/common/CommonHeader";
 import InfoSection from "../../components/parent/common/InfoSection";
 import daramgi from "../../assets/parent/notice-daramgi.png";
 import { getAllNotices } from "../../api/notice";
@@ -40,8 +39,8 @@ export default function ParentNotice() {
     setFilteredNotices(notices);
   }, [notices]);
 
-  const handleNoticeClick = (id: number) => {
-    navigate(`/notice/${id}`);
+  const handleNoticeClick = (noticeId: number) => {
+    navigate(`/notice/${noticeId}`);
   };
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -75,7 +74,6 @@ export default function ParentNotice() {
 
   return (
     <div className="min-h-[100dvh] flex flex-col items-center bg-[#FFEC8A]">
-      <CommonHeader title="알림장" />
       <div className="w-full flex flex-col items-center mt-16 flex-grow">
         <div ref={infoSectionRef}>
           <InfoSection

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { FaCheck } from "react-icons/fa";
 import Confetti from "react-confetti";
 import daramgi from "../../assets/join/joinResultDaramgi.png";
-import { useAppStore } from "../../stores/store";
+import useAppStore from "../../stores/store";
 import { login as apiLogin } from "../../api/member";
 import { useNavigate } from "react-router-dom";
 
