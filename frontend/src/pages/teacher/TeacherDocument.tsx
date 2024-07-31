@@ -109,10 +109,14 @@ export default function TeacherDocument() {
               ))}
             </div>
           </div>
-          {selectedDocumentType === "Absent" ? 
-            (selectedDocumentId !== null && <AbsentDocument absentId={selectedDocumentId} onUpdate={handleDocumentUpdate} />) : 
-            (selectedDocumentId !== null && <DosageDocument dosageId={selectedDocumentId} onUpdate={handleDocumentUpdate}/>)
+          <div className='border-[#B2D170] border-[3px] rounded-[20px]'>
+            {selectedDocumentType === "Absent" ? 
+            (selectedDocumentId !== null && <AbsentDocument absentId={selectedDocumentId} onUpdate={handleDocumentUpdate} isOurClass={false} />) : 
+            (selectedDocumentId !== null && <DosageDocument dosageId={selectedDocumentId} onUpdate={handleDocumentUpdate} isOurClass={false}/>)
           }
+
+          </div>
+          
         </div>
       </div>
     </>
