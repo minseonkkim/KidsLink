@@ -191,4 +191,9 @@ public class AlbumService {
         Child child = childRepository.findById(childId).orElseThrow(() -> new RuntimeException("Child not found with id " + childId));
         return albumRepository.findByChild(child).stream().map(albumMapper::toDTO).collect(Collectors.toList());
     }
+
+    public AlbumDTO getAlbumById(int albumId) {
+        return albumMapper.toDTO(albumRepository.findById(albumId).orElseThrow(() -> new RuntimeException("Album not found with id " + albumId)));
+    }
+
 }
