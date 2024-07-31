@@ -40,7 +40,7 @@ export default function useModal(): UseModalReturn {
       overlayClassName="modal-overlay"
       ariaHideApp={false}
     >
-      <div className="p-6">
+      <div className="p-5">
         {modalContent}
       </div>
     </ReactModal>
