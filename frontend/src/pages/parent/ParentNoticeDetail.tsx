@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import CommonHeader from "../../components/parent/common/CommonHeader";
 import profileImg from "../../assets/parent/notice-daramgi.png";
 import { getNoticeDetail } from "../../api/notice";
 
@@ -13,7 +12,7 @@ interface NoticeDetail {
 }
 
 export default function ParentNoticeDetail() {
-  const { id } = useParams<{ id: string }>();
+  const { noticeId } = useParams<{ noticeId: string }>();
   const [notice, setNotice] = useState<NoticeDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -21,8 +20,8 @@ export default function ParentNoticeDetail() {
   useEffect(() => {
     const fetchNoticeDetail = async () => {
       try {
-        if (id) {
-          const detail = await getNoticeDetail(Number(id));
+        if (noticeId) {
+          const detail = await getNoticeDetail(Number(noticeId));
           setNotice(detail);
           setLoading(false);
         }
@@ -34,7 +33,7 @@ export default function ParentNoticeDetail() {
     };
 
     fetchNoticeDetail();
-  }, [id]);
+  }, [noticeId]);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -50,7 +49,6 @@ export default function ParentNoticeDetail() {
 
   return (
     <div className="min-h-[100dvh] flex flex-col justify-between bg-white">
-      <CommonHeader title="알림장" />
       <div className="flex flex-1 flex-col my-16 items-center px-6">
         <div className="relative w-full mt-4 mb-12">
           <div className="flex items-center my-6">

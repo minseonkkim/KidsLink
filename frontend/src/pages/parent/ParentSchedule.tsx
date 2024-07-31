@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import ParentHeader from "../../components/parent/common/HomeHeader";
 import Calendar from "react-calendar";
 import moment from "moment";
 import "moment/locale/ko"; // 한글 설정
@@ -134,7 +133,6 @@ export default function ParentSchedule() {
 
   return (
     <div className="min-h-[100vh] flex flex-col items-center bg-[#FFEC8A]">
-      <ParentHeader />
       <div className="w-full h-[100vh] mt-24 flex flex-col items-center">
         <div className="w-full h-full bg-white shadow-top px-5 rounded-tl-[20px] rounded-tr-[20px]">
           <div className="flex flex-col justify-start items-center pt-4 bg-white">

@@ -3,7 +3,7 @@ import LoginHeader from "../../components/login/LoginHeader";
 import mainImg from "../../assets/teacher/main_img.png";
 import { Link, useNavigate } from "react-router-dom";
 import { login as loginAPI } from "../../api/member";
-import { useAppStore } from "../../stores/store";
+import useAppStore from "../../stores/store";
 import { useMediaQuery } from 'react-responsive';
 import Typewriter from 'typewriter-effect';
 

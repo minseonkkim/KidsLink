@@ -1,14 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import CommonHeader from "../../components/parent/common/CommonHeader";
 import InfoSection from "../../components/parent/common/InfoSection";
 import SearchDateBar from "../../components/parent/common/SearchDateBar";
-import GrowthList from "../../components/parent/growth/GrowthList";
+import DiaryList from "../../components/parent/diary/DiaryList";
 import daramgi from "../../assets/parent/growth-daramgi.png";
 import { getKidAllGrowthDiarys } from "../../api/growthdiary";
 import { useParentInfoStore } from "../../stores/useParentInfoStore";
 
-export default function ParentGrowth() {
+export default function ParentDiary() {
   const [growthEntries, setGrowthEntries] = useState<any[]>([]);
   const [searchDate, setSearchDate] = useState("");
   const [scroll, setScroll] = useState(false);
@@ -55,8 +54,8 @@ export default function ParentGrowth() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const handleBoxClick = (id: number) => {
-    navigate(`/growth/${id}`);
+  const handleBoxClick = (diaryId: number) => {
+    navigate(`/diary/${diaryId}`);
   };
 
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -65,8 +64,6 @@ export default function ParentGrowth() {
 
   return (
     <div className="min-h-[100dvh] flex flex-col items-center bg-[#FFEC8A]">
-      <CommonHeader title="성장 일지" />
-
       <div className="w-full flex flex-col items-center mt-16 flex-grow">
         <InfoSection
           description1="교사가 전하는"
@@ -85,7 +82,7 @@ export default function ParentGrowth() {
             searchDate={searchDate}
             handleDateChange={handleDateChange}
           />
-          <GrowthList
+          <DiaryList
             entries={filteredEntries}
             handleBoxClick={handleBoxClick}
             scroll={scroll}
