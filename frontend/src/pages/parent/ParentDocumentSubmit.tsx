@@ -26,6 +26,9 @@ const ParentDocument: React.FC = () => {
   const childId = useParentInfoStore(
     (state) => state.parentInfo?.child.childId
   );
+  const childName = useParentInfoStore(
+    (state) => state.parentInfo?.child.name
+  );
   const navigate = useNavigate();
 
   const handleOptionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -52,6 +55,8 @@ const ParentDocument: React.FC = () => {
     const commonData = {
       startDate: startDate?.toISOString().split("T")[0] || "",
       endDate: endDate?.toISOString().split("T")[0] || "",
+      childId: childId,
+      childName: childName,
     };
 
     try {
