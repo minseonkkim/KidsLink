@@ -99,7 +99,6 @@ export default function TeacherBroadcast() {
     const session = OV.initSession();
     
     // 이벤트 등록
-    
     session.on("streamCreated", (event: StreamEvent) => {
       try {
         const subscriber = session.subscribe(event.stream, undefined);
