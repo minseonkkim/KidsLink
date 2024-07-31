@@ -5,11 +5,11 @@ import com.ssafy.kidslink.application.diary.domain.Diary;
 import com.ssafy.kidslink.application.diary.domain.ImageDiary;
 import com.ssafy.kidslink.application.diary.dto.DiaryDTO;
 import com.ssafy.kidslink.application.diary.dto.DiaryRequestDTO;
+import com.ssafy.kidslink.application.diary.mapper.DiaryMapper;
 import com.ssafy.kidslink.application.diary.repository.DiaryRepository;
 import com.ssafy.kidslink.application.diary.repository.ImageDiaryRepository;
 import com.ssafy.kidslink.application.image.dto.ImageDTO;
 import com.ssafy.kidslink.application.image.mapper.ImageMapper;
-
 import com.ssafy.kidslink.application.image.service.ImageService;
 import com.ssafy.kidslink.application.notification.domain.ParentNotification;
 import com.ssafy.kidslink.application.notification.respository.ParentNotificationRepository;
@@ -27,7 +27,6 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -43,6 +42,7 @@ public class DiaryService {
     private final ImageDiaryRepository imageDiaryRepository;
     private final ImageMapper imageMapper;
     private final TeacherRepository teacherRepository;
+    private final DiaryMapper diaryMapper;
 
     public void createDiary(int childId, String teacherUsername, DiaryRequestDTO request) {
         Diary diary = new Diary();
@@ -61,10 +61,10 @@ public class DiaryService {
         diary.setDiaryContents(request.getContent());
         diary.setDiaryDate(LocalDate.parse(request.getDiaryDate()));
         diary.setChild(childRepository.findById(childId).orElseThrow());
-        Diary savedDiary = diaryRepository.save(diary);
 
         if (!images.isEmpty()) {
             diary.setDiaryThumbnail(images.get(0).getPath());
+            Diary savedDiary = diaryRepository.save(diary);
             for (ImageDTO image : images) {
                 ImageDiary imageDiary = new ImageDiary();
                 imageDiary.setDiary(savedDiary);
@@ -72,6 +72,8 @@ public class DiaryService {
 
                 imageDiaryRepository.save(imageDiary);
             }
+        } else {
+            diaryRepository.save(diary);
         }
 
         Teacher teacher = teacherRepository.findByTeacherUsername(teacherUsername);
@@ -90,28 +92,13 @@ public class DiaryService {
         List<Diary> diaries = diaryRepository.findByChildChildId(childId);
         List<DiaryDTO> diaryDTOs = new ArrayList<>();
         for (Diary diary : diaries) {
-            DiaryDTO diaryDTO = new DiaryDTO();
-            diaryDTO.setDiaryId(diary.getDiaryId());
-            diaryDTO.setCreateDate(diary.getDiaryDate());
-            diaryDTO.setContent(diary.getDiaryContents());
-            diaryDTO.setTeacherName(teacherRepository.findByKindergartenClass(diary.getChild().getKindergartenClass()).getTeacherUsername());
-            diaryDTO.setImages(diary.getImages().stream().map(imageMapper::toDTO)
-                    .collect(Collectors.toSet()));
-            diaryDTOs.add(diaryDTO);
+            diaryDTOs.add(diaryMapper.toDTO(diary));
         }
         return diaryDTOs;
     }
 
     public DiaryDTO getDiary(int diaryId) {
-        return diaryRepository.findById(diaryId).map(diary -> {
-            DiaryDTO diaryDTO = new DiaryDTO();
-            diaryDTO.setDiaryId(diary.getDiaryId());
-            diaryDTO.setCreateDate(diary.getDiaryDate());
-            diaryDTO.setContent(diary.getDiaryContents());
-            diaryDTO.setTeacherName(teacherRepository.findByKindergartenClass(diary.getChild().getKindergartenClass()).getTeacherUsername());
-            diaryDTO.setImages(diary.getImages().stream().map(imageMapper::toDTO).collect(Collectors.toSet()));
-            return diaryDTO;
-        }).orElseThrow();
+        return diaryRepository.findById(diaryId).map(diaryMapper::toDTO).orElseThrow();
     }
 
 }
