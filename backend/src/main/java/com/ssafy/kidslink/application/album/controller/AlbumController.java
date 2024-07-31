@@ -124,4 +124,16 @@ public class AlbumController {
         );
         return ResponseEntity.status(HttpStatus.OK).body(responseData);
     }
+
+    @GetMapping("/{albumId}")
+    public ResponseEntity<APIResponse<AlbumDTO>> getAlbumById(@PathVariable("albumId") int albumId) {
+        AlbumDTO album = albumService.getAlbumById(albumId);
+        APIResponse<AlbumDTO> responseData = new APIResponse<>(
+                "success",
+                album,
+                "앨범을 성공적으로 조회했습니다.",
+                null
+        );
+        return ResponseEntity.status(HttpStatus.OK).body(responseData);
+    }
 }
