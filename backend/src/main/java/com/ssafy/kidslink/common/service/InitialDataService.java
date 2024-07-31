@@ -1,5 +1,7 @@
 package com.ssafy.kidslink.common.service;
 
+import com.ssafy.kidslink.application.album.domain.Album;
+import com.ssafy.kidslink.application.album.repository.AlbumRepository;
 import com.ssafy.kidslink.application.child.domain.Child;
 import com.ssafy.kidslink.application.child.repository.ChildRepository;
 import com.ssafy.kidslink.application.diary.domain.Diary;
@@ -8,30 +10,43 @@ import com.ssafy.kidslink.application.document.domain.Absent;
 import com.ssafy.kidslink.application.document.domain.Dosage;
 import com.ssafy.kidslink.application.document.repository.AbsentRepository;
 import com.ssafy.kidslink.application.document.repository.DosageRepository;
+import com.ssafy.kidslink.application.image.domain.Image;
+import com.ssafy.kidslink.application.image.dto.ImageDTO;
+import com.ssafy.kidslink.application.image.mapper.ImageMapper;
+import com.ssafy.kidslink.application.image.repository.ImageRepository;
 import com.ssafy.kidslink.application.image.service.ImageService;
 import com.ssafy.kidslink.application.kindergarten.domain.Kindergarten;
-import com.ssafy.kidslink.application.kindergarten.repository.KindergartenRepository;
 import com.ssafy.kidslink.application.kindergarten.domain.KindergartenClass;
 import com.ssafy.kidslink.application.kindergarten.repository.KindergartenClassRepository;
+import com.ssafy.kidslink.application.kindergarten.repository.KindergartenRepository;
+import com.ssafy.kidslink.application.meeting.repository.MeetingScheduleRepository;
+import com.ssafy.kidslink.application.meeting.repository.MeetingTimeRepository;
 import com.ssafy.kidslink.application.noticeboard.domain.NoticeBoard;
 import com.ssafy.kidslink.application.noticeboard.repository.NoticeBoardRepository;
+import com.ssafy.kidslink.application.notification.respository.ParentNotificationRepository;
+import com.ssafy.kidslink.application.notification.respository.TeacherNotificationRepository;
 import com.ssafy.kidslink.application.parent.domain.Parent;
 import com.ssafy.kidslink.application.parent.repository.ParentRepository;
 import com.ssafy.kidslink.application.schedule.domain.Schedule;
 import com.ssafy.kidslink.application.schedule.repository.ScheduleRepository;
 import com.ssafy.kidslink.application.teacher.domain.Teacher;
 import com.ssafy.kidslink.application.teacher.repository.TeacherRepository;
+import com.ssafy.kidslink.common.dto.CustomMultipartFile;
 import com.ssafy.kidslink.common.enums.ConfirmationStatus;
 import com.ssafy.kidslink.common.enums.Gender;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -50,6 +65,13 @@ public class InitialDataService {
     private final DosageRepository dosageRepository;
     private final ImageService imageService;
     private final ScheduleRepository scheduleRepository;
+    private final TeacherNotificationRepository teacherNotificationRepository;
+    private final ParentNotificationRepository parentNotificationRepository;
+    private final AlbumRepository albumRepository;
+    private final MeetingTimeRepository meetingTimeRepository;
+    private final MeetingScheduleRepository meetingScheduleRepository;
+    private final ImageRepository imageRepository;
+    private final ImageMapper imageMapper;
 
     @Transactional
     public String initializeData() {
@@ -101,14 +123,47 @@ public class InitialDataService {
 
         // TODO #11 선생님 일정 추가
 
-
         // TODO #12 부모님 일정 추가
+
+        // TODO #13 앨범 데이터 추가
+        List<Album> albums = getAlbums(children.get(0));
+        albumRepository.saveAll(albums);
 
         // TODO #13 버스 정류장 데이터 삽입
 
         // TODO #14 버스 정류장에 아이 데이터 삽입
 
         return "데이터 세팅 성공";
+    }
+
+    private List<Album> getAlbums(Child child) {
+        List<Album> albums = new ArrayList<>();
+        String[] albumNames = {"봄 소풍", "여름 캠프", "가을 운동회", "겨울 발표회"};
+        String[] imageFiles = {"child1.jpg", "child2.jpg", "child3.jpg", "child4.jpg", "child5.jpg", "child6.jpg", "child7.jpg", "child8.jpg", "child9.jpg", "child10.jpg"};
+        for (String albumName : albumNames) {
+            Album album = new Album();
+            album.setAlbumName(albumName);
+            album.setChild(child);
+
+            Set<Image> images = new HashSet<>();
+            for (String imageFile : imageFiles) {
+                String imagePath = "src/main/resources/static/profiles/" + imageFile;
+                File imageFileObj = new File(imagePath);
+                try {
+                    MultipartFile multipartFile = convertFileToMultipartFile(imageFileObj);
+                    // Store the image file
+                    ImageDTO imageDTO = imageService.storeFile(multipartFile);
+                    // Retrieve the saved image and add to the album
+                    Image image = imageRepository.findById(imageDTO.getImageId()).orElseThrow(() -> new RuntimeException("Image not found"));
+                    images.add(image);
+                } catch (IOException e) {
+                    throw new RuntimeException("앨범 초기화 중 사진 저장 오류", e);
+                }
+            }
+            album.setImages(images);
+            albums.add(album);
+        }
+        return albums;
     }
 
     private static List<Schedule> getKindergartenSchedules(Kindergarten kindergarten) {
@@ -157,6 +212,11 @@ public class InitialDataService {
     }
 
     private void deleteAll(){
+        teacherNotificationRepository.deleteAll();
+        parentNotificationRepository.deleteAll();
+        albumRepository.deleteAll();
+        meetingTimeRepository.deleteAll();
+        meetingScheduleRepository.deleteAll();
         scheduleRepository.deleteAll();
         absentRepository.deleteAll();
         dosageRepository.deleteAll();
@@ -245,7 +305,18 @@ public class InitialDataService {
             child.setChildName(childNames[i]);
             child.setChildGender(genders[i]);
             child.setChildBirth(births[i]);
-            child.setChildProfile("http://localhost:8080/api/image/" + profiles[i]);
+            String profilePath = "src/main/resources/static/profiles/" + profiles[i];
+            File profileFile = new File(profilePath);
+            try {
+                MultipartFile multipartFile = convertFileToMultipartFile(profileFile);
+                // Store the file
+                imageService.storeFile(multipartFile);
+                // Set the profile URL after storing the file
+                child.setChildProfile("http://localhost:8080/api/image/" + profiles[i]);
+            } catch (IOException e) {
+                // Handle the exception appropriately
+                throw new RuntimeException("데이터 초기화 중 사진 저장 오류", e);
+            }
             child.setParent(parents.get(i));
             child.setKindergartenClass(kindergartenClass); // 유치원 반을 순환하며 할당
             children.add(child);
@@ -312,12 +383,32 @@ public class InitialDataService {
                 "오늘은 유치원에서 자연 탐험을 했어요. 주변의 식물과 동물을 관찰하며 자연을 사랑하게 되었습니다.",
                 "오늘은 유치원에서 숫자 공부를 했어요. 수학 문제를 풀며 논리적인 사고를 길렀습니다."
         };
+        String[] profiles = {"child1.jpg", "child2.jpg", "child3.jpg", "child4.jpg", "child5.jpg", "child6.jpg", "child7.jpg", "child8.jpg", "child9.jpg", "child10.jpg"};
+
 
         for (int i = 0; i < 30; i++) { // 100개의 테스트 데이터를 생성합니다.
             Diary diary = new Diary();
             diary.setDiaryDate(LocalDate.now().minusDays(i)); // 각 일지의 날짜를 다르게 설정합니다.
             diary.setDiaryContents(contents[i % contents.length]); // 다양한 내용을 순환하며 설정합니다.
             diary.setChild(child); // 주어진 child 객체를 설정합니다.
+            Set<Image> imageSet = new HashSet<>();
+            for (int j = 0; j < 3; j++) {
+                String profilePath = "src/main/resources/static/profiles/" + profiles[j];
+                File profileFile = new File(profilePath);
+                try {
+                    MultipartFile multipartFile = convertFileToMultipartFile(profileFile);
+                    // Store the file
+                    ImageDTO imageDTO = imageService.storeFile(multipartFile);
+                    imageSet.add(imageMapper.toEntity(imageDTO));
+                    if (j == 0) {
+                        diary.setDiaryThumbnail(imageDTO.getPath());
+                    }
+                } catch (IOException e) {
+                    // Handle the exception appropriately
+                    throw new RuntimeException("데이터 초기화 중 사진 저장 오류", e);
+                }
+            }
+            diary.setImages(imageSet);
             diaries.add(diary);
         }
 
@@ -412,6 +503,14 @@ public class InitialDataService {
         }
 
         return dosageList;
+    }
+
+    private MultipartFile convertFileToMultipartFile(File file) throws IOException {
+        Path path = Paths.get(file.getAbsolutePath());
+        byte[] content;
+        content = Files.readAllBytes(path);
+        String contentType = Files.probeContentType(path);
+        return new CustomMultipartFile(content, file.getName(), contentType);
     }
 
 }

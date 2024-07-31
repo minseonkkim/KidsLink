@@ -135,7 +135,7 @@ export async function getDosageDocument(dosageId: number) {
 // 결석 서류 확인
 export async function checkAbsentDocument(absentId: number) {
   try  {
-    const response = await axiosInstance.patch(`document/absent/${absentId}`)
+    const response = await axiosInstance.put(`document/absent/${absentId}`)
 
     if (response.data.status === 'success') {
       console.log(response.data.data) // 확인 후 삭제
@@ -152,7 +152,7 @@ export async function checkAbsentDocument(absentId: number) {
 // 투약 서류 확인
 export async function checkDosageDocument(dosageId: number) {
   try  {
-    const response = await axiosInstance.patch(`document/dosage/${dosageId}`)
+    const response = await axiosInstance.put(`document/dosage/${dosageId}`)
 
     if (response.data.status === 'success') {
       console.log(response.data.data) // 확인 후 삭제

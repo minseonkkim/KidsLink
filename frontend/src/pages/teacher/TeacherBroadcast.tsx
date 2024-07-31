@@ -1,10 +1,10 @@
 import { OpenVidu, Publisher, Session, StreamEvent, StreamManager, Subscriber } from "openvidu-browser";
 import React, { ChangeEvent, useEffect, useState } from "react";
-import styled from "styled-components";
 import OpenViduVideoComponent from "../../components/openvidu/Ovvideo";
 import MeetingFooter from "../../components/openvidu/MeetingFooter";
 import { getToken } from "../../api/openvidu";
 import TeacherHeader from "../../components/teacher/common/TeacherHeader";
+import MeetingBackground from "../../assets/teacher/meeting_background.png"
 
 
 interface User {
@@ -100,7 +100,6 @@ export default function TeacherBroadcast() {
     const session = OV.initSession();
     
     // 이벤트 등록
-    
     session.on("streamCreated", (event: StreamEvent) => {
       try {
         const subscriber = session.subscribe(event.stream, undefined);
@@ -161,29 +160,28 @@ export default function TeacherBroadcast() {
 
 
   return (
-    <div className="bg-gray-300 flex flex-col justify-center items-center m-auto w-screen h-screen min-w-[1000px] overflow-hidden">
+    <div className="relative flex flex-col justify-center items-center w-screen h-screen min-w-[1000px] overflow-hidden">
+    <img src={MeetingBackground} className="absolute top-0 left-0 w-full h-full object-cover" />
+    <div className="relative z-10 w-full h-full flex flex-col items-center">
       <TeacherHeader />
       {openvidu.session ? (
-        <div className="flex w-full h-full">
-          <div className="relative flex flex-col justify-center items-center w-full h-full">
-            <div className="absolute top-[150px] left-0 w-[700px] h-auto rounded-lg border border-black">
-              {/* 내 화면 */}
-              <h1>내 화면</h1>
-              {openvidu.mainStreamManager && (
-                <OpenViduVideoComponent streamManager={openvidu.mainStreamManager} />
-              )}
-            </div>
-            <div className="absolute top-[150px] right-0 w-[700px] h-auto rounded-lg border border-black">
-              <h1>상대 화면</h1>
-              {openvidu.subscribers.map((sub, i) => (
-                <OpenViduVideoComponent
-                  key={i}
-                  streamManager={sub}
-                  muted={control.muted}
-                  volume={control.volume}
-                />
-              ))}
-            </div>
+        <div className="relative w-full h-full flex">
+          <div className="absolute top-[150px] left-0 w-[700px] h-auto rounded-lg border border-black">
+            <h1>내 화면</h1>
+            {openvidu.mainStreamManager && (
+              <OpenViduVideoComponent streamManager={openvidu.mainStreamManager} />
+            )}
+          </div>
+          <div className="absolute top-[150px] right-0 w-[700px] h-auto rounded-lg border border-black">
+            <h1>상대 화면</h1>
+            {openvidu.subscribers.map((sub, i) => (
+              <OpenViduVideoComponent
+                key={i}
+                streamManager={sub}
+                muted={control.muted}
+                volume={control.volume}
+              />
+            ))}
           </div>
         </div>
       ) : (
@@ -207,5 +205,6 @@ export default function TeacherBroadcast() {
         close={leaveSession}
       />
     </div>
+  </div>
   );
 }

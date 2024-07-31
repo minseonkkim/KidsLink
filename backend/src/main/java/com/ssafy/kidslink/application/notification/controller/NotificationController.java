@@ -89,9 +89,7 @@ public class NotificationController {
     })
     @GetMapping("/count")
     public ResponseEntity<APIResponse<Integer>> getNotificationCount(@AuthenticationPrincipal Object principal){
-        if (principal instanceof CustomUserDetails) {
-            CustomUserDetails userDetails = (CustomUserDetails) principal;
-
+        if (principal instanceof CustomUserDetails userDetails) {
             Collection<? extends GrantedAuthority> collection = userDetails.getAuthorities();
             Iterator<? extends GrantedAuthority> it = collection.iterator();
             GrantedAuthority auth = it.next();
