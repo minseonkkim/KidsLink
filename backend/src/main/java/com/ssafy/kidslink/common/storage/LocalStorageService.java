@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Conditional;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
@@ -22,8 +23,8 @@ import java.nio.file.StandardCopyOption;
 import java.util.UUID;
 
 @Service
-@Conditional(LocalCondition.class)
 @RequiredArgsConstructor
+@Conditional(LocalCondition.class)
 @Slf4j
 public class LocalStorageService implements StorageService {
     @Value("${file.upload-dir}")

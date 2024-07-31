@@ -27,11 +27,11 @@ export interface AbsentData {
 }
 
 export interface Document {
-  type: 'Absent' | 'Dosage';
-  details: AbsentData | DosageData;
+  id: number;
+  date: string;
+  dosage?: DosageData;
+  absent?: AbsentData;
 }
-
-
 // 목록 조회에 쓰임
 // export interface DosageDetails {
 //   dosageId: number;

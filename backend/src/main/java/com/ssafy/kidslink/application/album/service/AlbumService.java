@@ -35,9 +35,10 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Service
+
 @RequiredArgsConstructor
 @Slf4j
+@Service
 public class AlbumService {
     private final ImageRepository imageRepository;
     private final ChildRepository childRepository;

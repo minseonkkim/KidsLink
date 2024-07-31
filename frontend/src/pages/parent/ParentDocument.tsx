@@ -20,6 +20,7 @@ interface MappedDocument {
   documentId: number;
   title: string;
   details: string;
+  childId: number;
 }
 
 export default function ParentDocument() {
@@ -48,7 +49,8 @@ export default function ParentDocument() {
                   endDate: item.dosage.endDate,
                   documentId: item.dosage.dosageId,
                   title: item.dosage.name,
-                  details: item.dosage.details
+                  details: item.dosage.details,
+                  childId:childId
                 };
               } else if (item.absent) {
                 return {
@@ -60,7 +62,8 @@ export default function ParentDocument() {
                   endDate: item.absent.endDate,
                   documentId: item.absent.absentId,
                   title: item.absent.reason,
-                  details: item.absent.details
+                  details: item.absent.details,
+                  childId:childId
                 };
               } else {
                 throw new Error("Document must have either dosage or absent data");
