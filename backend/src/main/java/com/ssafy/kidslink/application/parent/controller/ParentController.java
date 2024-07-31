@@ -91,6 +91,17 @@ public class ParentController {
         throw new InvalidPrincipalException("Invalid user principal");
     }
 
+    @GetMapping("/{parentId}")
+    public ResponseEntity<APIResponse<ParentDTO>> getParentInfoById(@PathVariable("parentId") int parentId) {
+        ParentDTO parentDTO = parentService.getDetailByParentId(parentId);
+        APIResponse<ParentDTO> responseData = new APIResponse<>(
+                "success",
+                parentDTO,
+                "부모님의 정보를 성공적으로 조회했습니다.",
+                null
+        );
+        return new ResponseEntity<>(responseData, HttpStatus.OK);
+    }
 
     @Operation(summary = "부모의 자녀 목록 조회", description = "부모님이 소유한 자녀들의 정보를 조회합니다.",
             parameters = {
