@@ -4,6 +4,7 @@ import com.ssafy.kidslink.application.kindergarten.dto.KindergartenClassDTO;
 import com.ssafy.kidslink.application.kindergarten.dto.KindergartenDTO;
 import com.ssafy.kidslink.application.kindergarten.dto.ResponseClassInfoDTO;
 import com.ssafy.kidslink.application.kindergarten.service.KindergartenService;
+import com.ssafy.kidslink.application.teacher.dto.TeacherDTO;
 import com.ssafy.kidslink.common.dto.APIResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -113,6 +114,20 @@ public class KindergartenController {
                 null
         );
 
+        return new ResponseEntity<>(responseData, HttpStatus.OK);
+    }
+
+    // 반 선생님 정보 조회
+    @GetMapping("/class/{classId}/teacher")
+    public ResponseEntity<APIResponse<TeacherDTO>> getClassTeacher(@PathVariable int classId) {
+        TeacherDTO teacherDTO = kindergartenService.findTeacherByKindergartenClass(classId);
+
+        APIResponse<TeacherDTO> responseData = new APIResponse<>(
+                "success",
+                teacherDTO,
+                "선생님 정보 조회에 성공했습니다.",
+                null
+        );
         return new ResponseEntity<>(responseData, HttpStatus.OK);
     }
 }

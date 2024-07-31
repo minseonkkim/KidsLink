@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./parent-schedule.css";
 import CommonHeader from "../../components/parent/common/CommonHeader";

@@ -94,5 +94,4 @@ export const useAppStore = create<AppState>((set) => ({
   setKindergartenName: (kindergartenName) => set(() => ({ kindergartenName })),
   setClassName: (className) => set(() => ({ className })),
   setChildProfile: (childProfile) => set(() => ({ childProfile })),
-}));
-
+}))
