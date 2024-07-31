@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import useModal from "../../../hooks/teacher/useModal";
 import AbsentDocument from "../document/AbsentDocument";
 import DosageDocument from "../document/DosageDocument";
@@ -44,18 +44,16 @@ export default function ChildCard({ name, gender, age, absent, dosage, profileIm
     };
 
     const nextDosage = () => {
-        setCurrentDosageIndex((currentDosageIndex + 1) % dosageId.length);
+        const newIndex = currentDosageIndex + 1 < dosageId.length ? currentDosageIndex + 1 : currentDosageIndex;
+        setCurrentDosageIndex(newIndex);
+        openDosageModal(newIndex);
     };
 
     const previousDosage = () => {
-        setCurrentDosageIndex((currentDosageIndex - 1 + dosageId.length) % dosageId.length);
+        const newIndex = currentDosageIndex - 1 >= 0 ? currentDosageIndex - 1 : currentDosageIndex;
+        setCurrentDosageIndex(newIndex);
+        openDosageModal(newIndex);
     };
-
-    useEffect(() => {
-        if (isModalOpen) {
-            openDosageModal(currentDosageIndex);
-        }
-    }, [currentDosageIndex, isModalOpen]);
 
     return (
         <div className="w-[200px] h-[250px] m-2 relative drop-shadow-md">
