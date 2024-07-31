@@ -1,4 +1,3 @@
-import CommonHeader from "../../components/parent/common/CommonHeader";
 import { useEffect, useState } from "react";
 import { getAllPossibleReservations, postAllPossibleReservations, Reservation, ParentReservation } from "../../api/meeting";
 import { useNavigate } from "react-router-dom";
@@ -72,7 +71,6 @@ const ParentMeetingSubmit = () => {
 
   return (
     <div className="min-h-screen flex flex-col items-center bg-white">
-      <CommonHeader title="상담 예약" />
       <div className="w-full p-6 my-16">
         <h2 className="text-xl font-bold mb-4 flex items-center">
           <FaClock className="mr-2" />
