@@ -15,12 +15,11 @@ import com.ssafy.kidslink.application.teacher.repository.TeacherRepository;
 import com.ssafy.kidslink.common.dto.User;
 import com.ssafy.kidslink.common.util.PrincipalUtils;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
