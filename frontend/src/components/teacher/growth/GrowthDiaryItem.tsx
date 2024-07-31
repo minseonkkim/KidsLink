@@ -5,15 +5,35 @@ interface GrowthDiaryItemProps {
     diaryId: number;
     createDate: string;
     content: string;
-    images: string[];
+    images: { imageId: number, path: string }[];
     onClick: () => void;
 }
 
-export default function GrowthDiaryItem({ createDate, content, images }:GrowthDiaryItemProps){
+const GrowthDiaryModalContent = ({ createDate, content, images }: GrowthDiaryItemProps) => (
+    <div className="w-[500px] h-[400px] p-4">
+        <div className="block mb-4 font-bold text-[18px]">{createDate}</div>
+        {images.length > 0 && (
+            <div className="flex flex-row overflow-x-auto">
+                {images.map((image, index) => (
+                    <div key={index} className="w-[100px] h-[100px] relative mr-2 flex-shrink-0">
+                        <img
+                            src={image.path}
+                            alt={`photo ${index}`}
+                            className="object-cover w-full h-full rounded-[10px] border-[1px]"
+                        />
+                    </div>
+                ))}
+            </div>
+        )}
+        <div className="mt-4">{content}</div>
+    </div>
+);
+
+export default function GrowthDiaryItem({ diaryId, createDate, content, images, onClick }: GrowthDiaryItemProps) {
     const { openModal, Modal } = useModal();
     
     const backgroundImageWrapperStyle: React.CSSProperties = {
-        backgroundImage: images.length > 0 ? `url(${images[0]})` : 'none',
+        backgroundImage: images.length > 0 ? `url(${images[0].path})` : 'none',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         opacity: 0.4,
@@ -40,33 +60,21 @@ export default function GrowthDiaryItem({ createDate, content, images }:GrowthDi
 
     const openReadModal = () => {
         openModal(
-            <div className="w-[500px] h-[400px]">
-                <div className="block mr-3 mb-4 font-bold whitespace-nowrap text-[18px]">{createDate}</div>
-                {images.length > 0 && <div className="w-full h-[120px] ml-2 flex flex-row overflow-x-auto whitespace-nowrap custom-x-scrollbar">
-                    {
-                        images.map((image, index) => (
-                            <div key={index} className="w-[100px] h-[100px] relative mr-2 flex-shrink-0">
-                            <img
-                            src={image}
-                            alt={`photo ${index}`}
-                            className="object-cover w-[100px] h-[100px] rounded-[10px] border-[1px]"
-                            />
-                        </div>
-                        ))
-                    }
-                </div>}
-                <div className="">
-                    {content}
-                </div>
-            </div>
-        )
-    }
+            <GrowthDiaryModalContent
+                diaryId={diaryId}
+                createDate={createDate}
+                content={content}
+                images={images}
+                onClick={onClick}
+            />
+        );
+    };
 
     return (
         <>
             <div onClick={openReadModal} style={outerContainerStyle}>
                 {images.length > 0 && <div style={backgroundImageWrapperStyle} />}
-                <p style={{ position: 'relative', zIndex: 10, fontWeight: 'bold', fontSize: '18px' }}>{createDate}</p>
+                <p style={{ position: 'relative', zIndex: 10, fontWeight: 'bold', fontSize: '18px'}}>{createDate}</p>
             </div>
             <Modal/>
         </>

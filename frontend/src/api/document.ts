@@ -11,6 +11,8 @@ export interface DosageData {
   times: string;
   storageInfo: string;
   volume: string;
+  childId: number;
+  childName: string;
 }
 
 export interface AbsentData {
@@ -20,13 +22,13 @@ export interface AbsentData {
   startDate: string;
   endDate: string;
   details: string;
+  childId: number;
+  childName: string;
 }
 
 export interface Document {
-  id: number;
-  date: string;
-  dosage?: DosageData;
-  absent?: AbsentData;
+  type: 'Absent' | 'Dosage';
+  details: AbsentData | DosageData;
 }
 
 
@@ -57,15 +59,20 @@ export interface Document {
 
 
 // 반 전체 서류 조회
-export async function getClassAllDocuments(): Promise<Document[]> {
+export async function getClassAllDocuments(){
   try {
     const response = await axiosInstance.get('document')
 
     if (response.data.status === 'success') {
-      console.log(response.data.data) // 확인 후 삭제
-      return response.data.data
+      const documents = response.data.data.map((item: any) => {
+        return {
+          type: item.type,
+          details: item.type === 'Absent' ? item.absent : item.dosage,
+        };
+      });
+      return documents;
     } else {
-      throw new Error('Failed to get documents')
+      throw new Error('Failed to get documents');
     }
   } catch (error) {
     console.error(error)

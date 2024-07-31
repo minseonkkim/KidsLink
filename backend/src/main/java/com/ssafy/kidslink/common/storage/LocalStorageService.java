@@ -3,6 +3,7 @@ package com.ssafy.kidslink.common.storage;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.core.io.Resource;
@@ -10,7 +11,8 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.FileOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
@@ -18,8 +20,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.UUID;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 @Service
 @Conditional(LocalCondition.class)
@@ -73,15 +73,25 @@ public class LocalStorageService implements StorageService {
     }
 
     private String storeCompressedFile(MultipartFile file) throws IOException {
-        String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename() + ".zip";
+        String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
         Path filePath = Paths.get(UPLOAD_DIR).resolve(fileName);
 
-        try (ZipOutputStream zipOut = new ZipOutputStream(new FileOutputStream(filePath.toFile()))) {
-            zipOut.putNextEntry(new ZipEntry(file.getOriginalFilename()));
-            zipOut.write(file.getBytes());
-            zipOut.closeEntry();
+        // 메모리 내에서 이미지 압축
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+        Thumbnails.of(file.getInputStream())
+                .size(1200, 1200) // 최대 크기를 1200으로 설정 (가로 또는 세로 중 더 긴 쪽에 맞춤)
+                .outputQuality(0.8) // 이미지 품질을 80%로 설정 (0.0에서 1.0 사이의 값)
+                .keepAspectRatio(true) // 비율을 유지
+                .toOutputStream(outputStream);
+
+        // 압축된 이미지를 파일로 저장
+        byte[] compressedData = outputStream.toByteArray();
+        try (ByteArrayInputStream inputStream = new ByteArrayInputStream(compressedData)) {
+            Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
         }
 
         return fileName;
     }
+
 }

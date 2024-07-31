@@ -1,6 +1,31 @@
+import { useEffect, useState } from "react";
 import DocumentItem from "./DocumentItem";
+import { getDosageDocument } from "../../../api/document";
 
-export default function DosageDocument(){
+interface DosageDocumentProps {
+    dosageId: number;
+  }
+
+export default function DosageDocument({ dosageId }:DosageDocumentProps){
+    const [dosageDocument, setDosageDocument] = useState(null);
+
+    useEffect(()=>{
+        const fetchDosageDocument = async () => {
+            try{
+                const fetchedDosageDocument = await getDosageDocument(dosageId);
+                setDosageDocument(fetchedDosageDocument);
+            } catch(error){
+                console.error('Failed to fetch dosage document:', error);
+            }
+        }
+
+        fetchDosageDocument();
+    }, [dosageId]);
+
+    if (!dosageDocument) {
+        return <div>Loading...</div>;
+    }
+
     return <>
         <div className="font-KoPubDotum w-[720px] h-[520px] rounded-[20px] bg-[#ffffff] border-[#B2D170] border-[3px] p-8">
             <div className="flex flex-row justify-between">
@@ -14,13 +39,13 @@ export default function DosageDocument(){
                 </div>
             </div>
             <div className="text-[20px] my-8">
-                <DocumentItem title="기간" content="2024.07.10 ~ 2024.07.14"/>
-                <DocumentItem title="약의 종류" content="감기약"/>
-                <DocumentItem title="투약 용량" content=""/>
-                <DocumentItem title="투약 횟수" content="2회"/>
-                <DocumentItem title="투약 시간" content="09:00, 13:00"/>
-                <DocumentItem title="보관 방법" content=""/>
-                <DocumentItem title="특이사항" content=""/>
+                <DocumentItem title="기간" content={`${dosageDocument.startDate} ~ ${dosageDocument.endDate}`}/>
+                <DocumentItem title="약의 종류" content={dosageDocument.name}/>
+                <DocumentItem title="투약 용량" content={dosageDocument.volume}/>
+                <DocumentItem title="투약 횟수" content={dosageDocument.num}/>
+                <DocumentItem title="투약 시간" content={dosageDocument.times}/>
+                <DocumentItem title="보관 방법" content={dosageDocument.storageInfo}/>
+                <DocumentItem title="특이사항" content={dosageDocument.details}/>
             </div>
         </div>
     </>
