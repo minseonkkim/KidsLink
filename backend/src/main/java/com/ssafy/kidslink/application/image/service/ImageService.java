@@ -25,17 +25,24 @@ public class ImageService {
         String savedFileName = storageService.storeFile(file);
 
         Image image = new Image();
-        image.setSaveFolder(storageService instanceof S3StorageService ? "s3" : "local");
+        image.setSaveFolder(getStorageFolder());
         image.setOriginalFile(file.getOriginalFilename());
         image.setSaveFile(savedFileName);
 
         Image savedImage = imageRepository.save(image);
 
-        ImageDTO imageDTO = new ImageDTO();
-        imageDTO.setImageId(savedImage.getImageId());
-        String url = storageService instanceof S3StorageService ? savedFileName : getUriString(image.getSaveFile());
-        imageDTO.setPath(url);
+        return createImageDTO(savedImage);
+    }
 
+    private String getStorageFolder() {
+        return storageService instanceof S3StorageService ? "s3" : "local";
+    }
+
+    private ImageDTO createImageDTO(Image image) {
+        ImageDTO imageDTO = new ImageDTO();
+        imageDTO.setImageId(image.getImageId());
+        String url = storageService instanceof S3StorageService ? image.getSaveFile() : getUriString(image.getSaveFile());
+        imageDTO.setPath(url);
         return imageDTO;
     }
 
