@@ -1,6 +1,5 @@
 import { OpenVidu, Publisher, Session, StreamEvent, StreamManager, Subscriber } from "openvidu-browser";
 import React, { ChangeEvent, useEffect, useState } from "react";
-import styled from "styled-components";
 import OpenViduVideoComponent from "../../components/openvidu/Ovvideo";
 import MeetingFooter from "../../components/openvidu/MeetingFooter";
 import { getToken } from "../../api/openvidu";
@@ -100,7 +99,6 @@ export default function TeacherBroadcast() {
     const session = OV.initSession();
     
     // 이벤트 등록
-    
     session.on("streamCreated", (event: StreamEvent) => {
       try {
         const subscriber = session.subscribe(event.stream, undefined);
