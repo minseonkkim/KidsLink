@@ -3,6 +3,7 @@ package com.ssafy.kidslink.application.child.mapper;
 import com.ssafy.kidslink.application.child.domain.Child;
 import com.ssafy.kidslink.application.child.dto.ChildDTO;
 import com.ssafy.kidslink.application.kindergarten.domain.KindergartenClass;
+import com.ssafy.kidslink.application.kindergarten.mapper.KindergartenClassMapper;
 import com.ssafy.kidslink.application.kindergarten.repository.KindergartenClassRepository;
 import com.ssafy.kidslink.common.enums.Gender;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Component;
 public class ChildMapper {
 
     private final KindergartenClassRepository kindergartenClassRepository;
+    private final KindergartenClassMapper kindergartenClassMapper;
 
     public Child toEntity(final ChildDTO childDTO) {
         Child child = new Child();
@@ -20,7 +22,7 @@ public class ChildMapper {
         child.setChildGender(Gender.fromCode(childDTO.getGender()));
         child.setChildBirth(child.getChildBirth());
 
-        KindergartenClass kindergartenClass = kindergartenClassRepository.findByKindergartenKindergartenNameAndKindergartenClassName(childDTO.getKindergartenName(), childDTO.getKindergartenClassName());
+        KindergartenClass kindergartenClass = kindergartenClassMapper.toEntity(childDTO.getKindergartenClass());
         child.setKindergartenClass(kindergartenClass);
 
         child.setParent(child.getParent());
@@ -35,8 +37,7 @@ public class ChildMapper {
         childDTO.setName(child.getChildName());
         childDTO.setBirth(child.getChildBirth());
         childDTO.setGender(child.getChildGender().getCode());
-        childDTO.setKindergartenName(child.getKindergartenClass().getKindergarten().getKindergartenName());
-        childDTO.setKindergartenClassName(child.getKindergartenClass().getKindergartenClassName());
+        childDTO.setKindergartenClass(kindergartenClassMapper.toDTO(child.getKindergartenClass()));
         childDTO.setProfile(child.getChildProfile());
         return childDTO;
     }
