@@ -3,6 +3,9 @@ import TeacherHeader from "../../components/teacher/common/TeacherHeader";
 import Title from "../../components/teacher/common/Title";
 import ChildCard from "../../components/teacher/ourclass/ChildCard";
 import ProfileImg from "../../assets/teacher/profile_img.jpg";
+import { useEffect, useState } from "react";
+import { useTeacherInfoStore } from "../../stores/useTeacherInfoStore";
+import { getClassChilds } from "../../api/kindergarten";
 
 interface OurClassChildType {
     childName: string;
@@ -25,6 +28,42 @@ const ourClassChild: OurClassChildType[] = [
 export default function TeacherOurClass() {
     const absentCount = ourClassChild.filter(child => child.childAbsent).length;
     const dosageCount = ourClassChild.filter(child => child.childDosage).length;
+    const [childs, setChilds] = useState([]);
+
+
+    // 나이를 계산하는 함수
+    const calculateAge = (birthDateString: string): number => {
+        const birthdate = new Date(birthDateString);
+        const today = new Date();
+        let age = today.getFullYear() - birthdate.getFullYear();
+        const monthDifference = today.getMonth() - birthdate.getMonth();
+
+        if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthdate.getDate())) {
+            age--;
+        }
+
+        return age;
+    };
+
+    useEffect(() => {
+        const classId = useTeacherInfoStore.getState().teacherInfo.kindergartenClassId;
+        const fetchChilds = async () => {
+            try {
+                const fetchedChilds = await getClassChilds(classId);
+                // 나이 필드를 추가한 새 객체 배열 생성
+                const childsWithAge = fetchedChilds.map((child: any) => ({
+                    ...child,
+                    age: calculateAge(child.birth), // child.birthDate가 생년월일을 포함한다고 가정
+                }));
+                setChilds(childsWithAge);
+            } catch (error) {
+                console.error("Failed to fetch childs:", error);
+            }
+        };
+
+        fetchChilds();
+    }, []);
+    
 
     return (
         <>
@@ -42,15 +81,15 @@ export default function TeacherOurClass() {
                 <span className="absolute top-[125px] right-[250px] px-3 py-2 flex flex-row items-center text-xl font-bold">{dosageCount}명</span>
 
                 <div className="grid gap-4 w-full" style={{gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))'}}>
-                    {ourClassChild.map((child, index) => (
+                    {childs.map((child, index) => (
                         <ChildCard 
                             key={index}
-                            name={child.childName} 
-                            gender={child.childGender} 
-                            age={child.childAge} 
+                            name={child.name} 
+                            gender={child.gender} 
+                            age={child.age} 
                             absent={child.childAbsent} 
                             dosage={child.childDosage} 
-                            profileImgPath={child.childProfileImg}
+                            profileImgPath={child.profile}
                         />
                     ))}
                 </div>

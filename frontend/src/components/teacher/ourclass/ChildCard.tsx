@@ -15,7 +15,7 @@ export default function ChildCard({ name, gender, age, absent, dosage, profileIm
                 {name}
             </p>
             <p className="w-[100px] absolute left-[40px] top-[190px] text-l mt-3 font-medium text-center text-[#363636]">
-                {gender} / 만 {age}세
+                {gender === "M" ? "남자" : "여자"} / 만 {age}세
             </p>
             {absent && (
                 <>
