@@ -133,7 +133,7 @@ public class MeetingTimeService {
             meetingScheduleRepository.save(meetingSchedule);
         }
 
-        // 부모한테 예약 확정 알림 보내기
+        // TODO #1 부모한테 예약 확정 알림 보내기 -> 부모 한명에게만 보내기
         for (Parent parent : parentRepository.findByKindergartenClassId(teacher.getKindergartenClass().getKindergartenClassId())) {
             ParentNotification parentNotification = new ParentNotification();
 
