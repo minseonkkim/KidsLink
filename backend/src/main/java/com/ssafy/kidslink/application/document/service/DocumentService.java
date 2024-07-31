@@ -17,7 +17,6 @@ import com.ssafy.kidslink.common.dto.User;
 import com.ssafy.kidslink.common.util.PrincipalUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
