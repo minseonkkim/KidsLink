@@ -2,7 +2,7 @@
   import CommonHeader from "../../components/parent/common/CommonHeader";
   import InfoSection from "../../components/parent/common/InfoSection";
   import daramgi from "../../assets/parent/bus-daramgi.png";
-  import { initializeMap, receiveBusLocation } from '../../api/webSocket';
+  import { receiveBusLocation } from '../../api/webSocket';
 
   declare global {
     interface Window {

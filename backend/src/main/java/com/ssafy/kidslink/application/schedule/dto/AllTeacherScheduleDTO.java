@@ -1,6 +1,6 @@
 package com.ssafy.kidslink.application.schedule.dto;
 
-import com.ssafy.kidslink.application.meetingschedule.dto.MeetingScheduleDTO;
+import com.ssafy.kidslink.application.meeting.dto.MeetingScheduleDTO;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;

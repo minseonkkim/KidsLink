@@ -1,76 +1,66 @@
-import { useEffect, useRef, useState } from "react"
-import { useNavigate } from "react-router-dom"
-import CommonHeader from "../../components/parent/common/CommonHeader"
-import InfoSection from "../../components/parent/common/InfoSection"
-import SearchDateBar from "../../components/parent/common/SearchDateBar"
-import GrowthList from "../../components/parent/growth/GrowthList"
-import daramgi from "../../assets/parent/growth-daramgi.png"
-import albumImg from "../../assets/parent/daramgi.png"
+import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import CommonHeader from "../../components/parent/common/CommonHeader";
+import InfoSection from "../../components/parent/common/InfoSection";
+import SearchDateBar from "../../components/parent/common/SearchDateBar";
+import GrowthList from "../../components/parent/growth/GrowthList";
+import daramgi from "../../assets/parent/growth-daramgi.png";
+import { getKidAllGrowthDiarys } from "../../api/growthDiary";
+import { useParentInfoStore } from "../../stores/useParentInfoStore";
 
-const growthEntries = [
-  {
-    id: 1,
-    date: "2024-07-15",
-    content: "오늘 민선이는 블록 놀이 시간에 정말 멋진 성을 만들었어요. ...",
-    imageCount: 3,
-    images: [albumImg, albumImg, albumImg],
-  },
-  {
-    id: 2,
-    date: "2024-07-12",
-    content: "민선이는 오늘 그림 그리기를 통해 창의력을 발휘했어요.",
-    imageCount: 0,
-    images: [],
-  },
-  {
-    id: 3,
-    date: "2024-07-15",
-    content: "오늘 민선이는 블록 놀이 시간에 정말 멋진 성을 만들었어요. ...",
-    imageCount: 3,
-    images: [albumImg, albumImg, albumImg],
-  },
-  {
-    id: 4,
-    date: "2024-07-12",
-    content: "민선이는 오늘 그림 그리기를 통해 창의력을 발휘했어요.",
-    imageCount: 0,
-    images: [],
-  },
-  // 다른 성장 기록들 추가
-];
-
-export default function ParentGrowthPage() {
+export default function ParentGrowth() {
+  const [growthEntries, setGrowthEntries] = useState<any[]>([]);
   const [searchDate, setSearchDate] = useState("");
   const [scroll, setScroll] = useState(false);
   const divRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+  const childId = useParentInfoStore(
+    (state) => state.parentInfo?.child.childId
+  );
+
+  useEffect(() => {
+    async function fetchGrowthDiarys() {
+      if (childId) {
+        try {
+          const response = await getKidAllGrowthDiarys(childId);
+          if (response) {
+            setGrowthEntries(response);
+          }
+        } catch (error) {
+          console.error("Failed to fetch growth diarys", error);
+        }
+      }
+    }
+
+    fetchGrowthDiarys();
+  }, [childId]);
 
   const filteredEntries = growthEntries.filter((entry) =>
-    entry.date.includes(searchDate)
-  )
+    entry.createDate.includes(searchDate)
+  );
 
   useEffect(() => {
     const handleScroll = () => {
       if (divRef.current) {
         const topPosition = divRef.current.getBoundingClientRect().top;
         if (topPosition <= 200) {
-          setScroll(true)
+          setScroll(true);
         } else {
-          setScroll(false)
+          setScroll(false);
         }
       }
-    }
+    };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const handleBoxClick = (id: number) => {
-    navigate(`/growth/${id}`)
+    navigate(`/growth/${id}`);
   };
 
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchDate(e.target.value)
+    setSearchDate(e.target.value);
   };
 
   return (
@@ -89,12 +79,19 @@ export default function ParentGrowthPage() {
         <div
           ref={divRef}
           className="w-full bg-white rounded-tl-[20px] rounded-tr-[20px] px-12 shadow-top flex-grow overflow-hidden animate-slideUp"
-          style={{ marginTop: '-40px' }}
+          style={{ marginTop: "-40px" }}
         >
-          <SearchDateBar searchDate={searchDate} handleDateChange={handleDateChange} />
-          <GrowthList entries={filteredEntries} handleBoxClick={handleBoxClick} scroll={scroll} />
+          <SearchDateBar
+            searchDate={searchDate}
+            handleDateChange={handleDateChange}
+          />
+          <GrowthList
+            entries={filteredEntries}
+            handleBoxClick={handleBoxClick}
+            scroll={scroll}
+          />
         </div>
       </div>
     </div>
-  )
+  );
 }

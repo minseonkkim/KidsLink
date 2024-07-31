@@ -34,6 +34,7 @@ import JoinDetails from "./pages/common/JoinDetails";
 import TeacherAlbumFinish from "./pages/teacher/TeacherAlbumFinish";
 import TeacherMyPage from "./pages/teacher/TeacherMyPage";
 import Splash from "./pages/parent/Splash";
+import TeacherBroadcast from "./pages/teacher/TeacherBroadcast";
 
 const App: React.FC = () => {
   const userType = useAppStore((state: UserState) => state.userType);
@@ -44,11 +45,11 @@ const App: React.FC = () => {
       setShowSplash(true);
       const timer = setTimeout(() => {
         setShowSplash(false);
-      }, 2000); 
-
+      }, 2000);
+  
       return () => clearTimeout(timer);
     }
-  }, [userType]);
+  }, [userType]);  
 
   return (
     <>
@@ -61,7 +62,7 @@ const App: React.FC = () => {
               <>
                 <Route path="/" element={<ParentHome />} />
                 <Route path="/document" element={<ParentDocument />} />
-                <Route path="/document/detail" element={<ParentDocument />} />
+                <Route path="/document/:type/:id" element={<ParentDocumentDetail />} />
                 <Route path="/document/submit" element={<ParentDocumentSubmit />} />
                 <Route path="/notice" element={<ParentNotice />} />
                 <Route path="/notice/:id" element={<ParentNoticeDetail />} />
@@ -90,6 +91,7 @@ const App: React.FC = () => {
                 <Route path="/ourclass" element={<TeacherOurClass />} />
                 <Route path="/schedule" element={<TeacherSchedule />} />
                 <Route path="/mypage" element={<TeacherMyPage />} />
+                <Route path="/meeting/:meetingNo" element={<TeacherBroadcast />} />
               </>
             ) : (
               <>

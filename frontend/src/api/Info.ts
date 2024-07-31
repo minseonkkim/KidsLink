@@ -1,24 +1,27 @@
 import axiosInstance from './token/axiosInstance';
 
 // 인터페이스 정의
-interface Child {
+export interface ChildInfo {
+  birth: string;
   childId: number;
   childProfile: string | null;
-  name: string;
-  class: string;
-  kindergarten: string;
   gender: string;
-  birth: string;
+  kindergartenClassName: string;
+  kindergartenName: string;
+  name: string;
+  profile: string | null;
 }
 
 export interface ParentInfo {
-  username: string;
-  email: string | null;
+  email: string;
   name: string;
   nickname: string;
-  tel: string | null;
-  child: Child;
+  profile: string | null;
+  tel: string;
+  username: string;
+  child: ChildInfo;
 }
+
 
 export interface TeacherInfo {
   username: string;

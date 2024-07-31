@@ -1,46 +1,78 @@
 import axiosInstance from './token/axiosInstance'
 
-interface DosageData {
+export interface DosageData {
   dosageId: number;
-  startDate: string;
   name: string;
-  volume: string;
-  times: string;
-  storageInfo: string;
-  details: string;
   confirmationStatus: string;
-  childId: number;
-}
-
-interface AbsentData {
-  absentId: number;
   startDate: string;
   endDate: string;
-  reason: string;
-  specialNotes: string;
-  confirmationStatus: string;
+  details: string;
+  num: string;
+  times: string;
+  storageInfo: string;
+  volume: string;
   childId: number;
+  childName: string;
+}
+
+export interface AbsentData {
+  absentId: number;
+  reason: string;
+  confirmationStatus: string;
+  startDate: string;
+  endDate: string;
+  details: string;
+  childId: number;
+  childName: string;
 }
 
 export interface Document {
-  id: null
-  data: string;
-  type: string;
-  dosage: DosageData | null;
-  absent: AbsentData | null;
+  type: 'Absent' | 'Dosage';
+  details: AbsentData | DosageData;
 }
 
 
+// 목록 조회에 쓰임
+// export interface DosageDetails {
+//   dosageId: number;
+//   name: string;
+//   confirmationStatus: string;
+//   startDate: string;
+//   endDate: string;
+//   details: string;
+// }
+// export interface AbsentDetails {
+//   absentId: number;
+//   reason: string;
+//   confirmationStatus: string;
+//   startDate: string;
+//   endDate: string;
+//   details: string;
+// }
+// export interface DocumentResponse {
+//   id: number;
+//   date: string;
+//   dosage?: DosageDetails;
+//   absent?: AbsentDetails;
+// }
+
+
+
 // 반 전체 서류 조회
-export async function getClassAllDocuments(): Promise<Document[]> {
+export async function getClassAllDocuments(){
   try {
     const response = await axiosInstance.get('document')
 
     if (response.data.status === 'success') {
-      console.log(response.data.data) // 확인 후 삭제
-      return response.data.data
+      const documents = response.data.data.map((item: any) => {
+        return {
+          type: item.type,
+          details: item.type === 'Absent' ? item.absent : item.dosage,
+        };
+      });
+      return documents;
     } else {
-      throw new Error('Failed to get documents')
+      throw new Error('Failed to get documents');
     }
   } catch (error) {
     console.error(error)
@@ -135,9 +167,10 @@ export async function checkDosageDocument(dosageId: number) {
 }
 
 // 투약 서류 작성
-export async function createDosageDocument(data: DosageData) {
+export async function createDosageDocument(data: DosageData, childId: number) {
   try {
-    const response = await axiosInstance.post('document/dosage', data);
+    const response = await axiosInstance.post(`document/dosage/${childId}`, data);
+    console.log(data, "data")
 
     if (response.data.status === 'success') {
       console.log(response.data.data); // 확인 후 삭제
@@ -152,9 +185,9 @@ export async function createDosageDocument(data: DosageData) {
 }
 
 // 결석 서류 작성
-export async function createAbsentDocument(data: AbsentData) {
+export async function createAbsentDocument(data: AbsentData, childId: number) {
   try {
-    const response = await axiosInstance.post('document/absent', data);
+    const response = await axiosInstance.post(`document/absent/${childId}`, data);
 
     if (response.data.status === 'success') {
       console.log(response.data.data); // 확인 후 삭제

@@ -1,40 +1,33 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import NavigateBack from "../../components/teacher/common/NavigateBack";
 import TeacherHeader from "../../components/teacher/common/TeacherHeader";
 import Title from "../../components/teacher/common/Title";
 import { IoSearch, IoCameraOutline } from "react-icons/io5";
 import GrowthChild from "../../components/teacher/growth/GrowthChild";
-import ProfileImg from "../../assets/teacher/profile_img.jpg";
 import GrowthDiaryItem from "../../components/teacher/growth/GrowthDiaryItem";
 import { FiPlusCircle } from "react-icons/fi";
-import ExampleImg from "../../assets/teacher/example_img_1.jpg";
 import useModal from "../../hooks/teacher/useModal.tsx";
 import { FaTrash } from "react-icons/fa";
 import ToastNotification, { showToast, showToastError } from '../../components/teacher/common/ToastNotification.tsx';
 import { useTeacherInfoStore } from "../../stores/useTeacherInfoStore.ts";
-import { getKindergartenClasses } from "../../api/kindergarten.ts";
 import { getClassChilds } from "../../api/kindergarten.ts";
-import { getChildGrowthDiarys } from "../../api/growthdiary.ts";
-
-
+import { createDiary, getKidAllGrowthDiarys, FormDiaryData } from "../../api/growthDiary.ts";
 
 export default function TeacherGrowth() {
   const { openModal, Modal, isModalOpen, closeModal } = useModal();
   const [searchChild, setSearchChild] = useState<string>('');
-  const [selectedImages, setSelectedImages] = useState<string[]>([]);
   const [growthDiaryData, setGrowthDiaryData] = useState([]);
 
   const [currentChildId, setCurrentChildId] = useState<number | null>(null);
   const [childs, setChilds] = useState([]);
 
-  
   useEffect(() => {
     const classId = useTeacherInfoStore.getState().teacherInfo.kindergartenClassId;
     const fetchChilds = async () => {
-      try{
+      try {
         const fetchedChilds = await getClassChilds(classId);
         setChilds(fetchedChilds);
-      } catch(error){
+      } catch (error) {
         console.error('Failed to fetch childs:', error);
       }
     }
@@ -47,23 +40,18 @@ export default function TeacherGrowth() {
   };
 
   const fetchDiarys = async () => {
-    try{
-      const fetchedDiarys = await getChildGrowthDiarys(currentChildId);
-      setGrowthDiaryData(fetchedDiarys);
-      console.log(growthDiaryData);
-
-    } catch(error){
+    try {
+      const fetchedDiarys = await getKidAllGrowthDiarys(currentChildId);
+      const sortedDiarys = fetchedDiarys.sort((a, b) => new Date(b.createDate).getTime() - new Date(a.createDate).getTime());
+      setGrowthDiaryData(sortedDiarys);
+    } catch (error) {
       console.log('Failed to fetch diarys:', error);
     }
   }
 
   useEffect(() => {
-    console.log(`선택된 아이의 ID가 변경되었습니다: ${currentChildId}`);
-
     fetchDiarys();
   }, [currentChildId]);
-
-
 
   useEffect(() => {
     // 매일 자정 completed 상태 초기화
@@ -91,135 +79,39 @@ export default function TeacherGrowth() {
     setSearchChild(event.target.value);
   };
 
-  const handlePlusImage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    try {
-      const files = Array.from(event.target.files || []);
-      if (files.length === 0) return; // 파일이 선택되지 않은 경우 함수 종료
-
-      const newImages = files.map((file) => URL.createObjectURL(file));
-      setSelectedImages((prevImages) => [...prevImages, ...newImages]);
-    } catch (error) {
-      console.error("이미지 선택 오류:", error);
-    }
-  };
-
-  const handleRemoveImage = (index: number) => {
-    setSelectedImages((prevImages) => prevImages.filter((_, i) => i !== index));
-  };
-
   const filteredChildren = childs.filter((child) =>
     child.name.includes(searchChild)
   );
-
 
   const handleDiaryItemClick = (id: number) => {
     if (currentChildId === null) {
       showToast('아이를 선택해주세요');
     } else {
-      // 다른 로직 수행
-      setCurrentChildId(id); // 선택된 아이디 저장
+      setCurrentChildId(id);
     }
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (currentChildId === null) {
-      showToastError('아이를 선택해주세요');
-      return;
-    }
-
-    const selectedChild = childs.find((child) => child.id === currentChildId);
-    if (!selectedChild) return;
-
-    const form = event.target as HTMLFormElement;
-    const dateValue = form.date.value;
-    if (!dateValue) {
-      showToastError('날짜를 선택해주세요');
-      return;
-    }
-
-    console.log(event.target);
-    const newDiaryEntry = {
-      id: growthDiaryData.length + 1,
-      childId: currentChildId,
-      name: selectedChild.name,
-      date: dateValue,
-      imgPaths: selectedImages,
-    };
-    selectedChild.completed = true;
-
-    setGrowthDiaryData((prevData) => [...prevData, newDiaryEntry]);
-    setSelectedImages([]);
-    closeModal();
-  };
-
-  const renderModalContent = () => (
-    <div className="w-[500px]">
-      <form onSubmit={handleSubmit}>
-        <div className="mb-4 flex flex-row items-center">
-          <label className="block mr-3 mb-1 font-bold whitespace-nowrap text-[18px]">날짜</label>
-          <input
-            type="date"
-            name="date"
-            className="w-full p-2 border-b-2 border-gray-300 focus:outline-none focus:border-[#FDDA6E]"
-          />
-        </div>
-        <div className="mb-4 flex flex-row">
-          <label className="block mr-3 mb-1 font-bold whitespace-nowrap text-[18px]">사진</label>
-          <label htmlFor="photo">
-            <div className="cursor-pointer bg-[#f4f4f4] w-[100px] h-[100px] rounded-[10px] flex items-center justify-center border-[1px]">
-              <IoCameraOutline className="text-[40px]" />
-            </div>
-          </label>
-          <input type="file" id="photo" className="hidden" onChange={handlePlusImage} multiple />
-          <div className="w-full h-[120px] ml-2 flex flex-row overflow-x-auto whitespace-nowrap custom-x-scrollbar">
-            {selectedImages.map((imgSrc, index) => (
-              <div key={index} className="w-[100px] h-[100px] relative mr-2 flex-shrink-0">
-                <img
-                  src={imgSrc}
-                  alt={`Selected ${index}`}
-                  className="object-cover w-[100px] h-[100px] rounded-[10px] border-[1px]"
-                />
-                <button
-                  type="button"
-                  onClick={() => handleRemoveImage(index)}
-                  className="p-1 absolute top-1 right-1 bg-red-600 text-white rounded-full w-5 h-5 flex items-center justify-center"
-                >
-                  <FaTrash/>
-                </button>
-              </div>
-            ))}
-          </div>
-        </div>
-        <div className="mb-4 flex flex-row">
-          <label className="block mr-3 mb-1 font-bold whitespace-nowrap text-[18px]">기록</label>
-          <textarea
-            name="record"
-            className="border border-gray-300 p-2 rounded w-full"
-            rows={8}
-          ></textarea>
-        </div>
-        <div className="flex items-center justify-center">
-          <button className="w-[70px] h-[38px] border-[2px] border-[#7C7C7C] bg-[#E3EEFF] px-3 py-1 font-bold rounded-[8px] hover:bg-[#D4DDEA]">
-            등록
-          </button>
-        </div>
-      </form>
-    </div>
+  const renderModalContent = (currentDateValue, currentRecordValue, currentSelectedImages) => (
+    <GrowthDiaryForm
+      closeModal={closeModal}
+      currentChildId={currentChildId}
+      childs={childs}
+      fetchDiarys={fetchDiarys}
+      initialDateValue={currentDateValue}
+      initialRecordValue={currentRecordValue}
+      initialSelectedImages={currentSelectedImages}
+    />
   );
 
-  useEffect(() => {
-    if (isModalOpen) {
-      closeModal();
-      openModal(renderModalContent());
-    }
-  }, [selectedImages]);
+  const [currentDateValue, setCurrentDateValue] = useState<string>('');
+  const [currentRecordValue, setCurrentRecordValue] = useState<string>('');
+  const [currentSelectedImages, setCurrentSelectedImages] = useState<string[]>([]);
 
   const openCreateModal = () => {
     if (currentChildId === null) {
       showToastError('아이를 선택해주세요');
     } else if (!isModalOpen) {
-      openModal(renderModalContent());
+      openModal(renderModalContent(currentDateValue, currentRecordValue, currentSelectedImages));
     }
   };
 
@@ -243,7 +135,7 @@ export default function TeacherGrowth() {
                     name={child.name}
                     profileImgPath={child.profile}
                     completed={child.completed}
-                    onClick={() => handleChildClick(child.childId)} // 클릭 이벤트 핸들러
+                    onClick={() => handleChildClick(child.childId)}
                   />
                 </div>
               ))}
@@ -254,15 +146,15 @@ export default function TeacherGrowth() {
               <div onClick={openCreateModal} className="bg-[#fff] rounded-[10px] w-[135px] h-[135px] m-[17px] flex items-center justify-center font-bold text-[18px]">
                 <FiPlusCircle className="text-[30px]" />
               </div>
-              {growthDiaryData
-                .map((diary) => (
-                  <GrowthDiaryItem
-                    key={diary.diaryId}
-                    id={diary.diaryId}
-                    date={diary.createDate}
-                    imgPaths={diary.images}
-                    onClick={() => handleDiaryItemClick(diary.id)}
-                  />
+              {growthDiaryData.map((diary) => (
+                <GrowthDiaryItem
+                  key={diary.diaryId}
+                  diaryId={diary.diaryId}
+                  createDate={diary.createDate}
+                  content={diary.content}
+                  images={diary.images}
+                  onClick={() => handleDiaryItemClick(diary.diaryId)}
+                />
               ))}
             </div>
           </div>
@@ -271,5 +163,121 @@ export default function TeacherGrowth() {
       <Modal />
       <ToastNotification />
     </>
+  );
+}
+
+
+function GrowthDiaryForm({ closeModal, currentChildId, childs, fetchDiarys, initialDateValue, initialRecordValue, initialSelectedImages }) {
+  const [dateValue, setDateValue] = useState<string>(initialDateValue);
+  const [recordValue, setRecordValue] = useState<string>(initialRecordValue);
+  const [selectedImages, setSelectedImages] = useState<File[]>([]);
+
+  const handlePlusImage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    try {
+      const files = Array.from(event.target.files || []);
+      if (files.length === 0) return;
+
+      setSelectedImages((prevImages) => [...prevImages, ...files]);
+    } catch (error) {
+      console.error("이미지 선택 오류:", error);
+    }
+  };
+
+  const handleRemoveImage = (index: number) => {
+    setSelectedImages((prevImages) => prevImages.filter((_, i) => i !== index));
+  };
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (currentChildId === null) {
+      showToastError('아이를 선택해주세요');
+      return;
+    }
+
+    const selectedChild = childs.find((child) => child.childId === currentChildId);
+    if (!selectedChild) return;
+
+    if (!dateValue) {
+      showToastError('날짜를 선택해주세요');
+      return;
+    }
+
+    const diaryData: FormDiaryData = {
+      diaryDate: dateValue,
+      files: selectedImages,
+      content: recordValue
+    };
+
+    try {
+      await createDiary(selectedChild.childId, diaryData);
+      selectedChild.completed = true;
+      setSelectedImages([]);
+      setDateValue('');
+      setRecordValue('');
+      closeModal();
+      fetchDiarys();
+    } catch (error) {
+      console.error('Failed to create diary:', error);
+      showToastError('성장일지 작성에 실패했습니다.');
+    }
+  };
+
+  return (
+    <div className="w-[500px]">
+      <form onSubmit={handleSubmit}>
+        <div className="mb-4 flex flex-row items-center">
+          <label className="block mr-3 mb-1 font-bold whitespace-nowrap text-[18px]">날짜</label>
+          <input
+            type="date"
+            name="date"
+            className="w-full p-2 border-b-2 border-gray-300 focus:outline-none focus:border-[#FDDA6E]"
+            value={dateValue}
+            onChange={(e) => setDateValue(e.target.value)}
+          />
+        </div>
+        <div className="mb-4 flex flex-row">
+          <label className="block mr-3 mb-1 font-bold whitespace-nowrap text-[18px]">사진</label>
+          <label htmlFor="photo">
+            <div className="cursor-pointer bg-[#f4f4f4] w-[100px] h-[100px] rounded-[10px] flex items-center justify-center border-[1px]">
+              <IoCameraOutline className="text-[40px]" />
+            </div>
+          </label>
+          <input type="file" id="photo" className="hidden" onChange={handlePlusImage} multiple />
+          <div className="w-full h-[120px] ml-2 flex flex-row overflow-x-auto whitespace-nowrap custom-x-scrollbar">
+            {selectedImages.map((file, index) => (
+              <div key={index} className="w-[100px] h-[100px] relative mr-2 flex-shrink-0">
+                <img
+                  src={URL.createObjectURL(file)}
+                  alt={`Selected ${index}`}
+                  className="object-cover w-[100px] h-[100px] rounded-[10px] border-[1px]"
+                />
+                <button
+                  type="button"
+                  onClick={() => handleRemoveImage(index)}
+                  className="p-1 absolute top-1 right-1 bg-red-600 text-white rounded-full w-5 h-5 flex items-center justify-center"
+                >
+                  <FaTrash />
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="mb-4 flex flex-row">
+          <label className="block mr-3 mb-1 font-bold whitespace-nowrap text-[18px]">기록</label>
+          <textarea
+            name="record"
+            className="border border-gray-300 p-2 rounded w-full"
+            rows={8}
+            value={recordValue}
+            onChange={(e) => setRecordValue(e.target.value)}
+          ></textarea>
+        </div>
+        <div className="flex items-center justify-center">
+          <button className="w-[70px] h-[38px] border-[2px] border-[#7C7C7C] bg-[#E3EEFF] px-3 py-1 font-bold rounded-[8px] hover:bg-[#D4DDEA]">
+            등록
+          </button>
+        </div>
+      </form>
+    </div>
   );
 }
