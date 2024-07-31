@@ -7,9 +7,8 @@ import TeacherHeader from "../../components/teacher/common/TeacherHeader";
 import Title from "../../components/teacher/common/Title";
 import ReservationTime from "../../components/teacher/consulting/ReservationTime";
 import "./teacher-schedule.css";
-import { PostTeacherReservations, TeacherMeetingReservation } from "../../api/meeting";
-
-
+import { PostTeacherReservations, TeacherMeetingReservation, getAllPossibleReservations } from "../../api/meeting";
+import axiosInstance from "../../api/token/axiosInstance";
 
 export default function TeacherReservation() {
   type ValuePiece = Date | null;
@@ -17,11 +16,31 @@ export default function TeacherReservation() {
   const [isEditing, setIsEditing] = useState(false);
   const [selectedTimes, setSelectedTimes] = useState<string[]>([]);
   const [tempSelectedTimes, setTempSelectedTimes] = useState<{ [key: string]: string[] }>({});
-  const [reservations, setReservations] = useState<{ [key: string]: string[] }>({
-    "2024-07-20": ["10:00", "14:00", "16:00"],
-    "2024-07-21": ["09:30", "11:00", "15:30"]
-  });
-  const [selectedDateExists, setSelectedDateExists] = useState<boolean>(false);
+  const [reservations, setReservations] = useState<{ [key: string]: string[] }>({});
+  const [fetchedReservations, setFetchedReservations] = useState<{ [key: string]: string[] }>({});
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const data = await getAllPossibleReservations();
+        console.log("useEffect에서의 data");
+        console.log(data);
+        const formattedData = data.reduce((acc, curr) => {
+          const { date, time } = curr;
+          if (!acc[date]) {
+            acc[date] = [];
+          }
+          acc[date].push(time);
+          return acc;
+        }, {});
+        setReservations(formattedData);
+        setFetchedReservations(formattedData);
+      } catch (error) {
+        console.error('예약 데이터를 가져오는 중 오류 발생:', error);
+      }
+    }
+    fetchData();
+  }, []);
 
   // 모든 시간 목록
   const allTimes = [
@@ -44,16 +63,21 @@ export default function TeacherReservation() {
     if (date instanceof Date) {
       const formattedDate = moment(date).format("YYYY-MM-DD");
       setSelectedTimes(tempSelectedTimes[formattedDate] || reservations[formattedDate] || []);
-      setSelectedDateExists(!!reservations[formattedDate]);
     }
   };
 
   // 시간 클릭할 때
   const handleTimeClick = (time: string) => {
     if (!isEditing) return;
-    setSelectedTimes((prevTimes) =>
-      prevTimes.includes(time) ? prevTimes.filter((t) => t !== time) : [...prevTimes, time]
-    );
+    if (date instanceof Date) {
+      const formattedDate = moment(date).format("YYYY-MM-DD");
+      // Prevent changing times fetched from the server
+      if (fetchedReservations[formattedDate]?.includes(time)) return;
+
+      setSelectedTimes((prevTimes) =>
+        prevTimes.includes(time) ? prevTimes.filter((t) => t !== time) : [...prevTimes, time]
+      );
+    }
   };
 
   // 전체 선택/해제 버튼 클릭할 때
@@ -88,8 +112,8 @@ export default function TeacherReservation() {
           const requestData: TeacherMeetingReservation[] = Object.entries(nonEmptyTempSelectedTimes).map(
             ([date, times]) => ({ date, times })
           );
-          console.log("requestData")
-          console.log(requestData)
+          console.log("requestData");
+          console.log(requestData);
           // Call the API function
           await PostTeacherReservations(requestData);
   
@@ -138,23 +162,12 @@ export default function TeacherReservation() {
                 <FaRegCalendar className="mr-3"/>
                 {formatDate(date)}
               </div>
-              {!selectedDateExists && !reservations[date && moment(date).format("YYYY-MM-DD")] && (isEditing ? (
-                <div>
-                  <button 
-                    className="mt-2 h-[40px] border-2 border-[#7C7C7C] bg-[#E3EEFF] px-3 py-1 font-bold rounded-[10px] hover:bg-[#D4DDEA]"
-                    onClick={handleSaveClick}
-                  >
-                    수정완료
-                  </button>
-                </div>
-              ) : (
-                <button 
-                  className="mt-2 h-[40px] border-2 border-[#7C7C7C] bg-[#E3EEFF] px-3 py-1 font-bold rounded-[10px] hover:bg-[#D4DDEA]"
-                  onClick={handleEditClick}
-                >
-                  수정하기
-                </button>
-              ))}
+              <button 
+                className="mt-2 h-[40px] border-2 border-[#7C7C7C] bg-[#E3EEFF] px-3 py-1 font-bold rounded-[10px] hover:bg-[#D4DDEA]"
+                onClick={isEditing ? handleSaveClick : handleEditClick}
+              >
+                {isEditing ? '수정완료' : '수정하기'}
+              </button>
             </div>
             <div className="flex justify-between">
               <div></div>
