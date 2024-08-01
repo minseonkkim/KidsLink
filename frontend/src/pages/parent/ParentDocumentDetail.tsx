@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { getAbsentDocument, getDosageDocument } from '../../api/document';
-import CommonHeader from '../../components/parent/common/CommonHeader';
 
 interface DosageDocument {
   startDate: string;
@@ -26,17 +25,17 @@ const isDosageDocument = (document: DosageDocument | AbsentDocument): document i
 };
 
 export default function DocumentDetail() {
-  const { type, id } = useParams<{ type: string; id: string }>();
+  const { docType, docId } = useParams<{ docType: string; docId: string }>();
   const [document, setDocument] = useState<DosageDocument | AbsentDocument | null>(null);
 
   useEffect(() => {
     async function fetchDocument() {
       try {
-        const documentId = parseInt(id);
-        if (type === 'absent') {
+        const documentId = parseInt(docId);
+        if (docType === 'absent') {
           const data = await getAbsentDocument(documentId);
           setDocument(data);
-        } else if (type === 'dosage') {
+        } else if (docType === 'dosage') {
           const data = await getDosageDocument(documentId);
           setDocument(data);
         }
@@ -46,7 +45,7 @@ export default function DocumentDetail() {
     }
 
     fetchDocument();
-  }, [type, id]);
+  }, [docType, docId]);
 
   if (!document) {
     return <div>Loading...</div>;
@@ -54,10 +53,9 @@ export default function DocumentDetail() {
 
   return (
     <div className="min-h-screen flex flex-col items-center bg-white">
-      <CommonHeader title="서류 상세" />
       <div className="w-full flex flex-col items-center mt-16 flex-grow">
         <div className="w-full p-8">
-          <h2 className="text-2xl font-bold mb-4">{type === 'dosage' ? '투약 서류' : '결석 서류'}</h2>
+          <h2 className="text-2xl font-bold mb-4">{docType === 'dosage' ? '투약 서류' : '결석 서류'}</h2>
           <p className="mb-2"><strong>날짜:</strong> {document.startDate} ~ {document.endDate}</p>
           {isDosageDocument(document) ? (
             <>

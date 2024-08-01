@@ -31,31 +31,20 @@ export interface Document {
   details: AbsentData | DosageData;
 }
 
-
-// 목록 조회에 쓰임
-// export interface DosageDetails {
-//   dosageId: number;
-//   name: string;
-//   confirmationStatus: string;
-//   startDate: string;
-//   endDate: string;
-//   details: string;
-// }
-// export interface AbsentDetails {
-//   absentId: number;
-//   reason: string;
-//   confirmationStatus: string;
-//   startDate: string;
-//   endDate: string;
-//   details: string;
-// }
-// export interface DocumentResponse {
-//   id: number;
-//   date: string;
-//   dosage?: DosageDetails;
-//   absent?: AbsentDetails;
-// }
-
+export interface DosageData {
+  dosageId: number;
+  name: string;
+  confirmationStatus: string;
+  startDate: string;
+  endDate: string;
+  details: string;
+  num: string;
+  times: string;
+  storageInfo: string;
+  volume: string;
+  childId: number;
+  childName: string;
+}
 
 
 // 반 전체 서류 조회
@@ -196,6 +185,20 @@ export async function createAbsentDocument(data: AbsentData, childId: number) {
       throw new Error('Failed to post absent-document');
     }
   } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+// 날짜별 아이 문서 조회
+export async function getDocumentsByDate(childId: number, date: string){
+  try{
+    const response = await axiosInstance.get(`child/${childId}/document/check?date=${date}`)
+    if(response.data.status === 'success'){
+      console.log(response.data.data)
+      return response.data.data
+    }
+  }catch (error) {
     console.error(error);
     throw error;
   }

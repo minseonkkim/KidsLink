@@ -81,6 +81,7 @@ CREATE TABLE `teacher_schedule` (
     `teacher_schedule_id` INT NOT NULL AUTO_INCREMENT,
     `teacher_schedule_date` DATETIME NULL,
     `teacher_schedule_contents` VARCHAR(1000) NULL,
+    `confirmation_status` ENUM('T', 'F') DEFAULT 'F',
     `teacher_id` INT NOT NULL,
     PRIMARY KEY (`teacher_schedule_id`),
     FOREIGN KEY (`teacher_id`) REFERENCES `teacher`(`teacher_id`)

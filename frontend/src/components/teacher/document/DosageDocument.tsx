@@ -5,9 +5,10 @@ import { checkDosageDocument, getDosageDocument } from "../../../api/document";
 interface DosageDocumentProps {
     dosageId: number;
     onUpdate: () => void;
+    isOurClass: boolean;
 }
 
-export default function DosageDocument({ dosageId, onUpdate }: DosageDocumentProps) {
+export default function DosageDocument({ dosageId, onUpdate, isOurClass }: DosageDocumentProps) {
     const [dosageDocument, setDosageDocument] = useState<any>(null); // Ensure any type to access all properties
 
     useEffect(() => {
@@ -40,9 +41,10 @@ export default function DosageDocument({ dosageId, onUpdate }: DosageDocumentPro
     }
 
     return (
-        <div className="font-KoPubDotum w-[720px] h-[520px] rounded-[20px] bg-[#ffffff] border-[#B2D170] border-[3px] p-8">
+        <div className="font-KoPubDotum w-[720px] h-[520px] rounded-[20px] bg-[#ffffff] p-8">
             <div className="flex flex-row justify-between">
                 <span className="rounded-[10px] bg-[#E7DFFF] flex items-center justify-center w-[75px] h-[40px] font-bold text-[20px]">투약</span>
+                {isOurClass === false &&
                 <div className="flex flex-row items-center h-[30px]">
                     <input
                         type="checkbox"
@@ -53,6 +55,7 @@ export default function DosageDocument({ dosageId, onUpdate }: DosageDocumentPro
                     />
                     <span className="font-bold text-[18px] mx-3">확인완료</span>
                 </div>
+}
             </div>
             <div className="text-[20px] my-8">
                 <DocumentItem title="기간" content={`${dosageDocument.startDate} ~ ${dosageDocument.endDate}`} />

@@ -1,10 +1,9 @@
 import { useState } from "react";
-import ParentHeader from "../../components/parent/common/HomeHeader";
 import { IoLogOutOutline } from "react-icons/io5";
 import profileImg from "../../assets/parent/daramgi.png"; 
 import { logout } from "../../api/member";
 import { useNavigate } from "react-router-dom";
-import { useAppStore } from "../../stores/store";
+import useAppStore from "../../stores/store";
 import { useParentInfoStore } from "../../stores/useParentInfoStore";
 
 export default function ParentMyPage() {
@@ -28,7 +27,6 @@ export default function ParentMyPage() {
 
   return (
     <div className="min-h-[100dvh] flex flex-col items-center bg-[#FFEC8A]">
-      <ParentHeader />
       <div className="w-full h-[807px] absolute left-0 top-[93px]">
         <div className="w-full h-full absolute left-0 top-0 rounded-tl-[20px] rounded-tr-[20px] bg-white shadow-top px-5">
           <div

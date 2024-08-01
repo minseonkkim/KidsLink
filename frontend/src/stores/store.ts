@@ -1,5 +1,5 @@
-// 여기 수정 필요
-import { create } from 'zustand'
+import { create } from 'zustand';
+import { persist} from 'zustand/middleware';
 
 // AuthState interface and state
 interface AuthState {
@@ -53,45 +53,56 @@ interface ChildInfoState {
 // Unified AppState interface
 interface AppState extends AuthState, UserState, ParentInfoState, ChildInfoState {}
 
-export const useAppStore = create<AppState>((set) => ({
-  // AuthState initial values and methods
-  username: '',
-  password: '',
-  isLoggedIn: false,
-  setUsername: (username) => set(() => ({ username })),
-  setPassword: (password) => set(() => ({ password })),
-  login: () => set(() => ({ isLoggedIn: true })),
-  logout: () => set(() => ({ isLoggedIn: false, username: '', password: '' })),
+// Define the zustand store with persist middleware
+const useAppStore = create<AppState>()(
+  persist(
+    (set) => ({
+      // AuthState initial values and methods
+      username: '',
+      password: '',
+      isLoggedIn: false,
+      setUsername: (username) => set(() => ({ username })),
+      setPassword: (password) => set(() => ({ password })),
+      login: () => set(() => ({ isLoggedIn: true })),
+      logout: () => set(() => ({ isLoggedIn: false, username: '', password: '' })),
 
-  // UserState initial values and methods
-  userType: '',
-  setUserType: (userType) => set(() => ({ userType })),
+      // UserState initial values and methods
+      userType: '',
+      setUserType: (userType) => set(() => ({ userType })),
 
-  // ParentInfoState initial values and methods
-  email: '',
-  name: '',
-  nickname: '',
-  tel: '',
-  passwordConfirm: '',
-  profile: undefined,
-  setEmail: (email) => set(() => ({ email })),
-  setName: (name) => set(() => ({ name })),
-  setNickname: (nickname) => set(() => ({ nickname })),
-  setTel: (tel) => set(() => ({ tel })),
-  setPasswordConfirm: (passwordConfirm) => set(() => ({ passwordConfirm })),
-  setProfile: (profile) => set(() => ({ profile })),
+      // ParentInfoState initial values and methods
+      email: '',
+      name: '',
+      nickname: '',
+      tel: '',
+      passwordConfirm: '',
+      profile: undefined,
+      setEmail: (email) => set(() => ({ email })),
+      setName: (name) => set(() => ({ name })),
+      setNickname: (nickname) => set(() => ({ nickname })),
+      setTel: (tel) => set(() => ({ tel })),
+      setPasswordConfirm: (passwordConfirm) => set(() => ({ passwordConfirm })),
+      setProfile: (profile) => set(() => ({ profile })),
 
-  // ChildInfoState initial values and methods
-  gender: undefined,
-  childName: '',
-  birth: '',
-  kindergartenName: '',
-  className: '',
-  childProfile: undefined,
-  setGender: (gender) => set(() => ({ gender })),
-  setChildName: (childName) => set(() => ({ childName })),
-  setBirth: (birth) => set(() => ({ birth })),
-  setKindergartenName: (kindergartenName) => set(() => ({ kindergartenName })),
-  setClassName: (className) => set(() => ({ className })),
-  setChildProfile: (childProfile) => set(() => ({ childProfile })),
-}))
+      // ChildInfoState initial values and methods
+      gender: undefined,
+      childName: '',
+      birth: '',
+      kindergartenName: '',
+      className: '',
+      childProfile: undefined,
+      setGender: (gender) => set(() => ({ gender })),
+      setChildName: (childName) => set(() => ({ childName })),
+      setBirth: (birth) => set(() => ({ birth })),
+      setKindergartenName: (kindergartenName) => set(() => ({ kindergartenName })),
+      setClassName: (className) => set(() => ({ className })),
+      setChildProfile: (childProfile) => set(() => ({ childProfile })),
+    }),
+    {
+      name: 'user-storage', // localStorage 키 이름
+      partialize: (state) => ({ userType: state.userType }), // userType만 저장
+    }
+  )
+);
+
+export default useAppStore;

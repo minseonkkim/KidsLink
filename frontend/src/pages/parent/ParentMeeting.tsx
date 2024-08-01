@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react"
 import { useNavigate } from "react-router-dom"
-import CommonHeader from "../../components/parent/common/CommonHeader"
 import InfoSection from "../../components/parent/common/InfoSection"
 import daramgi from "../../assets/parent/meeting-daramgi.png"
 import meetingTimeIcon from '../../assets/parent/meeting.png'
@@ -47,14 +46,12 @@ export default function ParentMeeting() {
     navigate("/meeting/submit");
   }
 
-  const navigateToMeetingRoomPage = (id: number) => {
-    navigate(`/meeting/${id}`);
+  const navigateToMeetingRoomPage = (meetingId: number) => {
+    navigate(`/meeting/${meetingId}`);
   }
 
   return (
     <div className="min-h-[100dvh] flex flex-col items-center bg-[#FFEC8A]">
-      <CommonHeader title="상담" />
-
       <div className="w-full flex flex-col items-center mt-16 flex-grow">
         <InfoSection
           main1="예약부터 상담까지"

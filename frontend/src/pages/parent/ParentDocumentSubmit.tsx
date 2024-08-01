@@ -1,7 +1,5 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./parent-schedule.css";
-import CommonHeader from "../../components/parent/common/CommonHeader";
 import daramgi from "../../assets/parent/document-daramgi.png";
 import {
   createDosageDocument,
@@ -25,6 +23,9 @@ const ParentDocument: React.FC = () => {
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
   const childId = useParentInfoStore(
     (state) => state.parentInfo?.child.childId
+  );
+  const childName = useParentInfoStore(
+    (state) => state.parentInfo?.child.name
   );
   const navigate = useNavigate();
 
@@ -52,6 +53,8 @@ const ParentDocument: React.FC = () => {
     const commonData = {
       startDate: startDate?.toISOString().split("T")[0] || "",
       endDate: endDate?.toISOString().split("T")[0] || "",
+      childId: childId,
+      childName: childName,
     };
 
     try {
@@ -97,7 +100,6 @@ const ParentDocument: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col items-center bg-white">
-      <CommonHeader title="서류 제출" />
       <div className="w-full flex flex-col items-center my-16 flex-grow">
         <div className="flex flex-col items-center mt-10">
           <img

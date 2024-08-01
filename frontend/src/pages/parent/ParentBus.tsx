@@ -1,5 +1,4 @@
   import React, { useEffect, useRef, useState } from 'react';
-  import CommonHeader from "../../components/parent/common/CommonHeader";
   import InfoSection from "../../components/parent/common/InfoSection";
   import daramgi from "../../assets/parent/bus-daramgi.png";
   import { receiveBusLocation } from '../../api/webSocket';
@@ -15,6 +14,8 @@
     const mapContainer = useRef<HTMLDivElement>(null);
     const wsRef = useRef<WebSocket | null>(null);
     const [location, setLocation] = useState({ lat: 37.5665, lng: 126.9780 });
+
+
 
     useEffect(() => {
       const apiKey = import.meta.env.VITE_KAKAO_API_KEY;
@@ -33,12 +34,14 @@
               level: 3,
             };
             const map = new window.kakao.maps.Map(container, options);
+
+            // consg bugImg = 
   
             const markerPosition = new window.kakao.maps.LatLng(location.lat, location.lng);
             const marker = new window.kakao.maps.Marker({
               position: markerPosition,
             });
-            marker.setMap(map);
+            marker.setMap(map); // 이미지 변경
   
             // WebSocket 연결 설정
             const cleanup = receiveBusLocation(wsRef, setLocation, map, marker);
@@ -58,8 +61,6 @@
     }, []);
     return (
       <div className="min-h-[100dvh] flex flex-col items-center bg-yellow-200">
-        <CommonHeader title="버스" />
-
         <div className="w-full flex flex-col items-center mt-16 flex-grow">
           <InfoSection
             description1="버스가"

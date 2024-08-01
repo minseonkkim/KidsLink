@@ -1,6 +1,6 @@
 package com.ssafy.kidslink.application.parent.dto;
 
-import com.ssafy.kidslink.application.child.dto.ChildDTO;
+import com.ssafy.kidslink.application.child.dto.JoinChildDTO;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -17,7 +17,7 @@ public class ParentJoinDTO {
     private String name;
     private String nickname;
     private String tel;
-    private ChildDTO child;
+    private JoinChildDTO child;
     private MultipartFile profile;
     private MultipartFile childProfile;
 }

@@ -2,17 +2,21 @@ package com.ssafy.kidslink.application.parent.service;
 
 import com.ssafy.kidslink.application.child.domain.Child;
 import com.ssafy.kidslink.application.child.dto.ChildDTO;
+import com.ssafy.kidslink.application.child.dto.JoinChildDTO;
 import com.ssafy.kidslink.application.child.mapper.ChildMapper;
 import com.ssafy.kidslink.application.child.repository.ChildRepository;
 import com.ssafy.kidslink.application.image.dto.ImageDTO;
 import com.ssafy.kidslink.application.image.service.ImageService;
 import com.ssafy.kidslink.application.kindergarten.domain.KindergartenClass;
+import com.ssafy.kidslink.application.kindergarten.mapper.KindergartenClassMapper;
 import com.ssafy.kidslink.application.kindergarten.repository.KindergartenClassRepository;
 import com.ssafy.kidslink.application.parent.domain.Parent;
 import com.ssafy.kidslink.application.parent.dto.ParentDTO;
 import com.ssafy.kidslink.application.parent.dto.ParentJoinDTO;
 import com.ssafy.kidslink.application.parent.mapper.ParentMapper;
 import com.ssafy.kidslink.application.parent.repository.ParentRepository;
+import com.ssafy.kidslink.application.teacher.dto.TeacherDTO;
+import com.ssafy.kidslink.application.teacher.mapper.TeacherMapper;
 import com.ssafy.kidslink.application.teacher.repository.TeacherRepository;
 import com.ssafy.kidslink.common.enums.Gender;
 import com.ssafy.kidslink.common.exception.PasswordMismatchException;
@@ -40,6 +44,8 @@ public class ParentService {
     private final UserService userService;
     private final ChildMapper childMapper;
     private final ParentMapper parentMapper;
+    private final TeacherMapper teacherMapper;
+    private final KindergartenClassMapper kindergartenClassMapper;
 
     @Transactional
     public void joinProcess(ParentJoinDTO joinDTO) {
@@ -61,7 +67,7 @@ public class ParentService {
             }
         }
 
-        ChildDTO childDTO = joinDTO.getChild();
+        JoinChildDTO childDTO = joinDTO.getChild();
         Parent parent = new Parent();
         parent.setParentName(joinDTO.getName());
         parent.setParentEmail(joinDTO.getEmail());
@@ -85,12 +91,7 @@ public class ParentService {
                 throw new RuntimeException(e);
             }
         }
-
-        KindergartenClass kindergartenClass =
-                kindergartenClassRepository
-                        .findByKindergartenKindergartenNameAndKindergartenClassName(
-                                childDTO.getKindergartenName(), childDTO.getKindergartenClassName()
-                        );
+        KindergartenClass kindergartenClass = kindergartenClassRepository.findById(childDTO.getKindergartenClassId()).orElseThrow();
 
         child.setParent(savedParent);
         child.setKindergartenClass(kindergartenClass);
@@ -108,5 +109,21 @@ public class ParentService {
                 .stream()
                 .map(childMapper::toDTO)
                 .collect(Collectors.toSet());
+    }
+
+    public ParentDTO getDetailByParentId(int parentId) {
+        return parentMapper.toDTO(parentRepository.findById(parentId).orElseThrow(IllegalArgumentException::new));
+    }
+
+    public TeacherDTO getTeacherByParentId(int parentId) {
+        Parent parent = parentRepository.findById(parentId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid parent Id:" + parentId));
+
+        // Assuming the parent has only one child for simplicity
+        Child child = parent.getChildren().iterator().next();
+        KindergartenClass kindergartenClass = child.getKindergartenClass();
+        TeacherDTO teacherDTO = teacherMapper.toDTO(teacherRepository.findByKindergartenClass(kindergartenClass));
+
+        return teacherDTO;
     }
 }
