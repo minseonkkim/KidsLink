@@ -1,4 +1,4 @@
-import create from 'zustand';
+import { create } from 'zustand'
 import { ParentInfo } from '../api/Info'
 
 
@@ -10,4 +10,4 @@ interface ParentInfoState {
 export const useParentInfoStore = create<ParentInfoState>((set) => ({
   parentInfo: null,
   setParentInfo: (info) => set({ parentInfo: info }),
-}));
+}))
