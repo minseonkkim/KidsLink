@@ -156,22 +156,18 @@ export default function ParentMeeting() {
   const toggleVideo = () => setIsVideoOn(prev => !prev);
 
   return (
-    <div className="min-h-[100dvh]">
-      {/* div박스의 배경으로 */}
-      {/* <img src={bgImg} className="w-full h-full object-cover" alt='meeting'/> */}
-      <div className="inset-0 w-full h-full bg-[#897153] mix-blend-multiply" />
-          <div className="bottom-8 w-[455px] h-[50px] left-1/2 transform -translate-x-1/2 flex space-x-4 justify-center">
-            <div className="bg-white p-2 rounded-full opacity-90 cursor-pointer" onClick={toggleMic}>
-        
+    <div className="min-h-[100dvh] bg-cover bg-center bg-no-repeat" style={{ backgroundImage: `url(${bgImg})` }}>
+      <TeacherHeader />
+      <div className="absolute top-[200px] bg-black bg-opacity-50 min-h-full flex flex-col justify-center items-center text-white z-5">
         {openvidu.session ? (
           <div className="w-full h-full flex">
-            <div className="top-[150px] left-0 w-[700px] h-auto rounded-lg border border-black">
+            <div className="top-[150px] left-0 w-[700px] h-auto rounded-lg border border-white">
               <h1>내 화면</h1>
               {openvidu.mainStreamManager && (
                 <OpenViduVideoComponent streamManager={openvidu.mainStreamManager} />
               )}
             </div>
-            <div className="top-[150px] right-0 w-[700px] h-auto rounded-lg border border-black">
+            <div className="top-[150px] right-0 w-[700px] h-auto rounded-lg border border-white">
               <h1>상대 화면</h1>
               {openvidu.subscribers.map((sub, i) => (
                 <OpenViduVideoComponent
@@ -201,6 +197,5 @@ export default function ParentMeeting() {
         <MeetingFooter control={control} handleControl={setControl} close={leaveSession} />
       </div>
     </div>
-  </div>
   );
 }

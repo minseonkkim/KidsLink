@@ -6,7 +6,7 @@ import NavigateBack from "../../components/teacher/common/NavigateBack";
 import TeacherHeader from "../../components/teacher/common/TeacherHeader";
 import Title from "../../components/teacher/common/Title";
 import ReservationTime from "../../components/teacher/consulting/ReservationTime";
-import { PostTeacherReservations, TeacherMeetingReservation } from "../../api/meeting";
+import { PostTeacherReservations, TeacherMeetingReservation, getAllPossibleReservations } from "../../api/meeting";
 import styled from 'styled-components';
 
 const StyledCalendar = styled(Calendar)`
