@@ -8,7 +8,7 @@ import Title from "../../components/teacher/common/Title";
 import moment from "moment";
 import { FaRegCalendar, FaXmark } from "react-icons/fa6";
 import styled from 'styled-components';
-import { createTeacherSchedule, getTeacherSchedules } from "../../api/schedule";
+import { createTeacherSchedule, createTeacherScheduleCheck, getTeacherSchedules } from "../../api/schedule";
 
 const StyledCalendar = styled(Calendar)`
   display: flex;
@@ -254,29 +254,34 @@ const TeacherSchedule: React.FC = () => {
     const [time, setTime] = useState('');
     const [todo, setTodo] = useState('');
 
+    const fetchSchedules = async () => {
+        try{
+            const fetchedSchedules = (await getTeacherSchedules(formatDate(date))).teacherSchedules;
+            fetchedSchedules.sort((a, b) => {
+                // 우선순위: completed === "T"
+                if (a.confirmationStatus === "T" && b.confirmationStatus !== "T") return -1;
+                if (a.confirmationStatus !== "T" && b.confirmationStatus === "T") return 1;
+
+                // 2차 정렬: content 값
+                const isANumeric = /^\d/.test(a.content);
+                const isBNumeric = /^\d/.test(b.content);
+
+                if (isANumeric && !isBNumeric) return -1;
+                if (!isANumeric && isBNumeric) return 1;
+                if (a.content < b.content) return -1;
+                if (a.content > b.content) return 1;
+
+                // 모든 조건이 같을 경우
+                return 0;
+            });
+            setScheduleItems(fetchedSchedules);
+        } catch (error) {
+            console.error("Failed to fetch schedules:", error);
+        }
+    }
+
 
     useEffect(() => {
-        const fetchSchedules = async () => {
-            try{
-                const fetchedSchedules = (await getTeacherSchedules(formatDate(date))).teacherSchedules;
-                fetchedSchedules.sort((a, b) => {
-                    // 우선순위: completed === "T"
-                    if (a.confirmationStatus === "T" && b.confirmationStatus !== "T") return -1;
-                    if (a.confirmationStatus !== "T" && b.confirmationStatus === "T") return 1;
-                
-                    // 2차 정렬: content 값
-                    if (a.content < b.content) return -1;
-                    if (a.content > b.content) return 1;
-                
-                    // 모든 조건이 같을 경우
-                    return 0;
-                });
-                setScheduleItems(fetchedSchedules);
-            } catch (error) {
-                console.error("Failed to fetch schedules:", error);
-            }
-        }
-
         fetchSchedules();
     }, [date])
 
@@ -308,20 +313,7 @@ const TeacherSchedule: React.FC = () => {
 
         try {
             await createTeacherSchedule(scheduleData);
-            const fetchedSchedules = (await getTeacherSchedules(formatDate(date))).teacherSchedules;
-            fetchedSchedules.sort((a, b) => {
-                // 우선순위: completed === "T"
-                if (a.confirmationStatus === "T" && b.confirmationStatus !== "T") return -1;
-                if (a.confirmationStatus !== "T" && b.confirmationStatus === "T") return 1;
-            
-                // 2차 정렬: content 값
-                if (a.content < b.content) return -1;
-                if (a.content > b.content) return 1;
-            
-                // 모든 조건이 같을 경우
-                return 0;
-            });
-            setScheduleItems(fetchedSchedules);
+            fetchSchedules();
             setTime('');
             setTodo('');
         } catch (error) {
@@ -329,10 +321,9 @@ const TeacherSchedule: React.FC = () => {
         }
     };
 
-    const toggleComplete = (id: number) => {
-        setScheduleItems(scheduleItems.map(item =>
-            item.id === id ? { ...item, confirmationStatus: item.confirmationStatus === "T" ? "F" : "T" } : item
-        ));
+    const toggleComplete = async (id: number) => {
+        await createTeacherScheduleCheck(id);
+        fetchSchedules();
     };
 
     return (
@@ -358,20 +349,24 @@ const TeacherSchedule: React.FC = () => {
                         </div>
                         <div className="border-[2px] border-[#8CAD1E] rounded-[10px] h-[330px]">
                             <div className="overflow-y-auto custom-scrollbar h-[310px] m-[10px]">
-                            {
+                            {scheduleItems.length === 0 ? (
+                                <div className="flex justify-center items-center h-[310px]">
+                                일정이 없어요.
+                                </div>
+                                ) : (
                                 scheduleItems.map(({ id, content, confirmationStatus }, index) => (
-                                    <ScheduleItem
-                                        key={id}
-                                        id={id}
-                                        content={content}
-                                        confirmationStatus={confirmationStatus}
-                                        index={index}
-                                        moveItem={moveItem}
-                                        deleteItem={deleteItem}
-                                        toggleComplete={toggleComplete}
-                                    />
+                                <ScheduleItem
+                                    key={id}
+                                    id={id}
+                                    content={content}
+                                    confirmationStatus={confirmationStatus}
+                                    index={index}
+                                    moveItem={moveItem}
+                                    deleteItem={deleteItem}
+                                    toggleComplete={toggleComplete}
+                                />
                                 ))
-                            }
+                            )}
                             </div>
                         </div>
                         <div className="flex flex-row justify-between items-center mt-3">
