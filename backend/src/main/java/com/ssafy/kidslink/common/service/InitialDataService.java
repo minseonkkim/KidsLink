@@ -154,8 +154,7 @@ public class InitialDataService {
 
             Set<Image> images = new HashSet<>();
             for (String imageFile : imageFiles) {
-                String imagePath = profileDir + "/" + imageFile;
-                File imageFileObj = new File(imagePath);
+                File imageFileObj = new File(profileDir, imageFile);
                 try {
                     MultipartFile multipartFile = convertFileToMultipartFile(imageFileObj);
                     // Store the image file
@@ -312,14 +311,13 @@ public class InitialDataService {
             child.setChildName(childNames[i]);
             child.setChildGender(genders[i]);
             child.setChildBirth(births[i]);
-            String profilePath = profileDir + "/" + profiles[i];
-            File profileFile = new File(profilePath);
+            File profileFile = new File(profileDir, profiles[i]);
             try {
                 MultipartFile multipartFile = convertFileToMultipartFile(profileFile);
                 // Store the file
-                imageService.storeFile(multipartFile);
+                ImageDTO imageDTO = imageService.storeFile(multipartFile);
                 // Set the profile URL after storing the file
-                child.setChildProfile(serverUrl+"/image/" + profiles[i]);
+                child.setChildProfile(imageDTO.getPath());
             } catch (IOException e) {
                 // Handle the exception appropriately
                 throw new RuntimeException("데이터 초기화 중 사진 저장 오류", e);
@@ -400,8 +398,7 @@ public class InitialDataService {
             diary.setChild(child); // 주어진 child 객체를 설정합니다.
             Set<Image> imageSet = new HashSet<>();
             for (int j = 0; j < 3; j++) {
-                String profilePath = profileDir + "/" + profiles[j];
-                File profileFile = new File(profilePath);
+                File profileFile = new File(profileDir, profiles[j]);
                 try {
                     MultipartFile multipartFile = convertFileToMultipartFile(profileFile);
                     // Store the file
