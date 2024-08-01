@@ -27,6 +27,7 @@ import com.ssafy.kidslink.application.schedule.repository.TeacherScheduleReposit
 import com.ssafy.kidslink.application.teacher.domain.Teacher;
 import com.ssafy.kidslink.application.teacher.repository.TeacherRepository;
 import com.ssafy.kidslink.common.enums.ConfirmationStatus;
+import com.ssafy.kidslink.common.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -149,5 +150,13 @@ public class ScheduleService {
             teacherSchedule.setConfirmationStatus(ConfirmationStatus.T);
         }
         teacherScheduleRepository.save(teacherSchedule);
+    }
+
+    public void deleteTeacherSchedule(int teacherScheduleId) {
+        if (teacherScheduleRepository.existsById(teacherScheduleId)) {
+           teacherScheduleRepository.deleteById(teacherScheduleId);
+           return;
+        }
+        throw new NotFoundException("Teacher Schedule Not Found");
     }
 }

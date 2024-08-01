@@ -223,4 +223,19 @@ public class ScheduleController {
         }
         throw new InvalidPrincipalException("Invalid principal type");
     }
+
+    @DeleteMapping("/teacher/{teacherScheduleId}")
+    public ResponseEntity<APIResponse<Void>> deleteTeacherSchedule(@AuthenticationPrincipal Object principal, @PathVariable int teacherScheduleId){
+        if(principal instanceof CustomUserDetails userDetails){
+            scheduleService.deleteTeacherSchedule(teacherScheduleId);
+            APIResponse<Void> responseData = new APIResponse<>(
+                    "success",
+                    null,
+                    "일정 삭제 성공",
+                    null
+            );
+            return ResponseEntity.status(HttpStatus.OK).body(responseData);
+        }
+        throw new InvalidPrincipalException("Invalid principal type");
+    }
 }
