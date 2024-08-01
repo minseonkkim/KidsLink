@@ -1,12 +1,12 @@
 import React from "react";
 
-interface GrowthListProps {
+interface DiaryListProps {
   entries: any[];
   handleBoxClick: (id: number) => void;
   scroll: boolean;
 }
 
-const GrowthList: React.FC<GrowthListProps> = ({ entries, handleBoxClick, scroll }) => {
+const DiaryList: React.FC<DiaryListProps> = ({ entries, handleBoxClick, scroll }) => {
   return (
     <div className={`space-y-6 ${scroll ? 'overflow-y-auto' : 'overflow-hidden'}`} style={{ maxHeight: scroll ? 'calc(100vh - 200px)' : 'auto', paddingBottom: '100px', scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
       {entries.map((entry) => (
@@ -33,4 +33,4 @@ const GrowthList: React.FC<GrowthListProps> = ({ entries, handleBoxClick, scroll
   );
 }
 
-export default GrowthList;
+export default DiaryList;

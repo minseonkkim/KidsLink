@@ -1,56 +1,74 @@
-import { useParams } from "react-router-dom"
-import CommonHeader from "../../components/parent/common/CommonHeader"
-import { FaRegCalendarCheck } from "react-icons/fa6"
-
-import cameraDaramgi from "../../assets/parent/daramgi.png" // 임시 앨범 이미지
-
-const images = [
-  { src: cameraDaramgi, date: "2024-07-15" },
-  { src: cameraDaramgi, date: "2024-07-15" },
-  { src: cameraDaramgi, date: "2024-07-12" },
-  { src: cameraDaramgi, date: "2024-07-12" },
-  { src: cameraDaramgi, date: "2024-07-11" },
-  { src: cameraDaramgi, date: "2024-07-11" },
-  { src: cameraDaramgi, date: "2024-07-09" },
-  { src: cameraDaramgi, date: "2024-07-09" },
-  { src: cameraDaramgi, date: "2024-07-09" },
-];
+import { useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { getKidAlbum } from '../../api/album';
 
 export default function AlbumDetail() {
-  const { date } = useParams<{ date: string }>()
-  const filteredImages = images.filter((image) => image.date === date)
+  const { albumId } = useParams();
+  const navigate = useNavigate();
+  const [album, setAlbum] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    console.log("albumId: ", albumId)
+    const fetchAlbum = async () => {
+      try {
+        const id = parseInt(albumId, 10); // albumId를 다른 이름으로 파싱
+        if (isNaN(id)) {
+          throw new Error('Invalid albumId');
+        }
+        const data = await getKidAlbum(id);
+        setAlbum(data);
+        setLoading(false);
+      } catch (error) {
+        console.error('Failed to fetch album', error);
+        setLoading(false);
+      }
+    };
+
+    fetchAlbum();
+  }, [albumId]);
+
+  if (loading) {
+    return (
+      <div className="min-h-[100dvh] flex flex-col justify-center items-center bg-white">
+        <p>Loading...</p>
+      </div>
+    );
+  }
+
+  if (!album) {
+    return (
+      <div className="min-h-[100dvh] flex flex-col justify-center items-center bg-white">
+        <p>앨범을 불러오지 못했습니다.</p>
+      </div>
+    );
+  }
+
+  const handleImageClick = (imageId) => {
+    navigate(`/album/${albumId}/image/${imageId}`);
+  };
 
   return (
     <div className="min-h-[100dvh] flex flex-col justify-between bg-white">
-      <CommonHeader title="앨범" />
-      <div className="flex flex-1 flex-col my-16 items-center px-6">
-        <div className="relative w-full mt-4 mb-12">
-          <div className="flex items-center my-6">
-            <FaRegCalendarCheck className="w-[25px] h-[25px] mr-2 text-gray-700" />
-            <p className="text-lg font-bold text-[#353c4e]">{date}</p>
-          </div>
-          
-          <div className="relative w-full bg-[#fff9d7] rounded-[20px] px-6 py-8 shadow-lg border-2 border-[#ffec8a] bg-notebook-pattern">
-             {/* 테이프 효과 */}
-             <div className="absolute -top-4 -left-4 w-16 h-8 bg-yellow-300 rotate-12 transform z-10"></div>
-            <div className="absolute -top-4 -right-4 w-16 h-8 bg-yellow-300 -rotate-12 transform z-10"></div>
-            <div className="absolute -bottom-4 -left-4 w-16 h-8 bg-yellow-300 -rotate-12 transform z-10"></div>
-            <div className="absolute -bottom-4 -right-4 w-16 h-8 bg-yellow-300 rotate-12 transform z-10"></div>
-            
-            <div className="grid grid-cols-1 gap-4">
-              {filteredImages.map((image, index) => (
-                <div key={index} className="w-full">
-                  <img
-                    src={image.src}
-                    alt={`Album ${index}`}
-                    className="w-full h-auto object-cover rounded-lg"
-                  />
-                </div>
-              ))}
+      <div className="flex flex-1 flex-col my-16 items-center px-6 w-full">
+        <h2 className="text-2xl font-bold mt-10 mb-4">{album.albumName}</h2>
+        <p className="text-sm text-gray-600 mb-8">{new Date(album.albumDate).toLocaleDateString()}</p>
+        <div className="w-full max-w-5xl grid grid-cols-3 gap-1">
+          {album.images.map((image) => (
+            <div
+              key={image.imageId}
+              className="relative group bg-white overflow-hidden transition-transform duration-200 ease-in-out transform hover:scale-105"
+              onClick={() => handleImageClick(image.imageId)}
+            >
+              <img
+                src={image.path}
+                alt={`앨범 이미지 ${image.imageId}`}
+                className="w-full h-32 object-cover"
+              />
             </div>
-          </div>
+          ))}
         </div>
       </div>
     </div>
-  )
+  );
 }

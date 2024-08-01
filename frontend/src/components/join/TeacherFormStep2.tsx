@@ -1,6 +1,6 @@
 import { ChangeEvent, FC, useState, useEffect } from "react";
 import { FaCheck } from "react-icons/fa";
-import { useAppStore } from "../../stores/store";
+import useAppStore from "../../stores/store";
 import { teacherSignup } from "../../api/member";
 import {
   getAllKindergartens,

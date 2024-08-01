@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import CommonHeader from "../../components/parent/common/CommonHeader";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
-
 import profileImg from "../../assets/parent/notice-daramgi.png";
 import { getGrowthDiary } from "../../api/growthdiary"
 
@@ -14,15 +12,15 @@ interface DiaryEntry {
   images: { imageId: number; path: string }[];
 }
 
-const ParentGrowthDetail: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
+const ParentDiaryDetail: React.FC = () => {
+  const { diaryId } = useParams<{ diaryId: string }>();
   const [entry, setEntry] = useState<DiaryEntry | null>(null);
 
   useEffect(() => {
     async function fetchGrowthDiary() {
-      if (id) {
+      if (diaryId) {
         try {
-          const data = await getGrowthDiary(parseInt(id));
+          const data = await getGrowthDiary(parseInt(diaryId));
           setEntry(data);
         } catch (error) {
           console.error("Failed to fetch growth diary", error);
@@ -31,7 +29,7 @@ const ParentGrowthDetail: React.FC = () => {
     }
 
     fetchGrowthDiary();
-  }, [id]);
+  }, [diaryId]);
 
   if (!entry) {
     return <p>해당 성장 기록을 찾을 수 없습니다.</p>;
@@ -39,7 +37,6 @@ const ParentGrowthDetail: React.FC = () => {
 
   return (
     <div className="min-h-[100dvh] flex flex-col justify-between bg-white">
-      <CommonHeader title="성장 일지" />
       <div className="flex flex-1 flex-col my-16 items-center px-6">
         <div className="relative w-full mt-4 mb-12">
           <div className="flex items-center my-6">
@@ -93,4 +90,4 @@ const ParentGrowthDetail: React.FC = () => {
   );
 };
 
-export default ParentGrowthDetail;
+export default ParentDiaryDetail;
