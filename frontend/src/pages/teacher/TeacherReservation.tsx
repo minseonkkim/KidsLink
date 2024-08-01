@@ -20,27 +20,28 @@ export default function TeacherReservation() {
   const [fetchedReservations, setFetchedReservations] = useState<{ [key: string]: string[] }>({});
 
   useEffect(() => {
-    async function fetchData() {
-      try {
-        const data = await getAllPossibleReservations();
-        console.log("useEffect에서의 data");
-        console.log(data);
-        const formattedData = data.reduce((acc, curr) => {
-          const { date, time } = curr;
-          if (!acc[date]) {
-            acc[date] = [];
-          }
-          acc[date].push(time);
-          return acc;
-        }, {});
-        setReservations(formattedData);
-        setFetchedReservations(formattedData);
-      } catch (error) {
-        console.error('예약 데이터를 가져오는 중 오류 발생:', error);
-      }
-    }
     fetchData();
   }, []);
+
+  async function fetchData() {
+    try {
+      const data = await getAllPossibleReservations();
+      console.log("useEffect에서의 data");
+      console.log(data);
+      const formattedData = data.reduce((acc, curr) => {
+        const { date, time } = curr;
+        if (!acc[date]) {
+          acc[date] = [];
+        }
+        acc[date].push(time);
+        return acc;
+      }, {});
+      setReservations(formattedData);
+      setFetchedReservations(formattedData);
+    } catch (error) {
+      console.error('예약 데이터를 가져오는 중 오류 발생:', error);
+    }
+  }
 
   // 모든 시간 목록
   const allTimes = [
@@ -71,7 +72,7 @@ export default function TeacherReservation() {
     if (!isEditing) return;
     if (date instanceof Date) {
       const formattedDate = moment(date).format("YYYY-MM-DD");
-      // Prevent changing times fetched from the server
+      // 서버에서 가져온 시간은 수정 불가
       if (fetchedReservations[formattedDate]?.includes(time)) return;
 
       setSelectedTimes((prevTimes) =>
@@ -79,6 +80,19 @@ export default function TeacherReservation() {
       );
     }
   };
+
+  // selectedTimes가 변경될 때 tempSelectedTimes 업데이트
+  useEffect(() => {
+    if (date instanceof Date) {
+      const formattedDate = moment(date).format("YYYY-MM-DD");
+      // fetchedReservations에 있는 시간은 제외하고 tempSelectedTimes 설정
+      const timesToSet = selectedTimes.filter(time => !fetchedReservations[formattedDate]?.includes(time));
+      setTempSelectedTimes(prev => ({
+        ...prev,
+        [formattedDate]: timesToSet
+      }));
+    }
+  }, [selectedTimes, date]);
 
   // 전체 선택/해제 버튼 클릭할 때
   const handleSelectAllClick = () => {
@@ -97,48 +111,34 @@ export default function TeacherReservation() {
   // 수정 완료 버튼 클릭할 때 => POST
   const handleSaveClick = async () => {
     try {
-        const nonEmptyTempSelectedTimes = Object.fromEntries(
-          Object.entries(tempSelectedTimes).filter(([key, value]) => value.length > 0)
-        );
-  
-        if (Object.keys(nonEmptyTempSelectedTimes).length > 0) {
-          // Save to the state
-          setReservations(prev => ({
-            ...prev,
-            ...nonEmptyTempSelectedTimes
-          }));
-  
-          // Prepare data for API call
-          const requestData: TeacherMeetingReservation[] = Object.entries(nonEmptyTempSelectedTimes).map(
-            ([date, times]) => ({ date, times })
-          );
-          console.log("requestData");
-          console.log(requestData);
-          // Call the API function
-          await PostTeacherReservations(requestData);
-  
-          console.log('Reservations saved:', requestData);
-        }
-      } catch (error) {
-        console.error('Error saving reservations:', error);
-      }
+      // 새로 추가된 예약 시간만 필터링
+      const nonEmptyTempSelectedTimes = Object.fromEntries(
+        Object.entries(tempSelectedTimes).filter(([key, value]) => value.length > 0)
+      );
 
-    // 상태 초기화 및 편집 모드 종료
-    setTempSelectedTimes({});
-    setIsEditing(false);
-    setSelectedTimes([]);
-  };
+      // API 요청 데이터 준비
+      const requestData: TeacherMeetingReservation[] = Object.entries(tempSelectedTimes).map(
+        ([date, times]) => ({ date, times })
+      );
+      console.log("requestData");
+      console.log(requestData);
 
-  // Update tempSelectedTimes on selectedTimes change
-  useEffect(() => {
-    if (date instanceof Date) {
-      const formattedDate = moment(date).format("YYYY-MM-DD");
-      setTempSelectedTimes(prev => ({
-        ...prev,
-        [formattedDate]: selectedTimes
-      }));
+      // API 호출
+      await PostTeacherReservations(requestData);
+
+      console.log('예약이 저장되었습니다:', requestData);
+
+      // 최신 데이터 다시 가져오기
+      await fetchData();
+
+      // 상태 초기화 및 편집 모드 종료
+      setTempSelectedTimes({});
+      setIsEditing(false);
+      setSelectedTimes([]);
+    } catch (error) {
+      console.error('예약을 저장하는 중 오류 발생:', error);
     }
-  }, [selectedTimes, date]);
+  };
 
   return (
     <>
