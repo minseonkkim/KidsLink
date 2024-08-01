@@ -6,15 +6,16 @@ import { FiUpload } from "react-icons/fi";
 import { FaTrash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { createClassifyImages } from "../../api/album";
+import PulseLoader from "react-spinners/PulseLoader";
 
 export default function TeacherAlbum() {
   const navigate = useNavigate();
-  const [images, setImages] = useState<string[]>([]);
+  const [images, setImages] = useState<File[]>([]);
+  const [loading, setLoading] = useState(false);
 
   const handleImageUpload = (event: ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || []);
-    const newImages = files.map(file => URL.createObjectURL(file));
-    setImages(prevImages => [...prevImages, ...newImages]);
+    setImages(prevImages => [...prevImages, ...files]);
   };
 
   const handleDeleteImage = (index: number) => {
@@ -22,8 +23,16 @@ export default function TeacherAlbum() {
   };
 
   const handleClassify = async () => {
-    await createClassifyImages(images);
-  }
+    setLoading(true);
+    try {
+      const result = await createClassifyImages(images);
+      navigate('/album/finish', { state: { result } });
+    } catch (error) {
+      console.error("Error classifying images:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <>
@@ -42,9 +51,9 @@ export default function TeacherAlbum() {
           {images.length > 0 && (
             <div className="flex flex-col justify-center items-center mt-8">
               <div className="grid grid-cols-5 gap-4 overflow-y-auto h-[442px] border-[#B2D170] border-[1px] mt-10 rounded-[10px] content-start p-3">
-                {images.map((image, index) => (
+                {images.map((file, index) => (
                   <div key={index} className="relative w-32 h-32">
-                    <img src={image} alt={`upload-${index}`} className="object-cover w-full h-full rounded-md" />
+                    <img src={URL.createObjectURL(file)} alt={`upload-${index}`} className="object-cover w-full h-full rounded-md" />
                     <button 
                       onClick={() => handleDeleteImage(index)} 
                       className="absolute top-1 right-1 bg-red-600 text-white p-1 rounded-full"
@@ -54,8 +63,12 @@ export default function TeacherAlbum() {
                   </div>
                 ))}
               </div>
-              <button onClick={handleClassify} className="mt-5 font-bold py-2 px-4 bg-gradient-to-br from-[#FFF3B1] to-[#D5E4B4] rounded-[10px] w-[240px] h-[45px]">
-                아이별로 분류하기
+              <button 
+                onClick={handleClassify} 
+                className="mt-5 font-bold py-2 px-4 bg-gradient-to-br from-[#FFF3B1] to-[#D5E4B4] rounded-[10px] w-[240px] h-[45px]"
+                disabled={loading}
+              >
+                {loading ? <PulseLoader /> : '아이별로 분류하기'}
               </button>
             </div>
           )}
