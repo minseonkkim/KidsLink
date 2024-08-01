@@ -2,6 +2,7 @@ package com.ssafy.kidslink.application.parent.service;
 
 import com.ssafy.kidslink.application.child.domain.Child;
 import com.ssafy.kidslink.application.child.dto.ChildDTO;
+import com.ssafy.kidslink.application.child.dto.JoinChildDTO;
 import com.ssafy.kidslink.application.child.mapper.ChildMapper;
 import com.ssafy.kidslink.application.child.repository.ChildRepository;
 import com.ssafy.kidslink.application.image.dto.ImageDTO;
@@ -66,7 +67,7 @@ public class ParentService {
             }
         }
 
-        ChildDTO childDTO = joinDTO.getChild();
+        JoinChildDTO childDTO = joinDTO.getChild();
         Parent parent = new Parent();
         parent.setParentName(joinDTO.getName());
         parent.setParentEmail(joinDTO.getEmail());
@@ -90,8 +91,7 @@ public class ParentService {
                 throw new RuntimeException(e);
             }
         }
-
-        KindergartenClass kindergartenClass = kindergartenClassMapper.toEntity(childDTO.getKindergartenClass());
+        KindergartenClass kindergartenClass = kindergartenClassRepository.findById(childDTO.getKindergartenClassId()).orElseThrow();
 
         child.setParent(savedParent);
         child.setKindergartenClass(kindergartenClass);
