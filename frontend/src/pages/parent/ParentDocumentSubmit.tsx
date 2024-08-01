@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./parent-schedule.css";
 import daramgi from "../../assets/parent/document-daramgi.png";
 import {
   createDosageDocument,
