@@ -2,9 +2,11 @@ import { OpenVidu, Publisher, Session, StreamEvent, StreamManager, Subscriber } 
 import React, { ChangeEvent, useEffect, useState } from "react";
 import OpenViduVideoComponent from "../../components/openvidu/Ovvideo";
 import MeetingFooter from "../../components/openvidu/MeetingFooter";
-import { getToken } from "../../api/openvidu";
+import { getToken, handleSpeechRecognition } from '../../api/openvidu'; // 이 부분을 추가
 import TeacherHeader from "../../components/teacher/common/TeacherHeader";
+import axios from 'axios';
 
+const APPLICATION_SERVER_URL = "http://localhost:8080/api/video"; // 이 부분을 추가
 
 interface User {
   sessionId?: string;
@@ -31,6 +33,12 @@ interface ControlState {
   volume: number;
 }
 
+interface Recording {
+  id: string;
+  name: string;
+  url: string; // Assuming the URL to access the recording is available
+}
+
 export default function TeacherBroadcast() {
   const [user, setUser] = useState<User>({
     sessionId: undefined,
@@ -53,6 +61,7 @@ export default function TeacherBroadcast() {
     muted: false,
     volume: 0.2,
   });
+  const [recordings, setRecordings] = useState<Recording[]>([]);
 
   useEffect(() => {
     // sessionId 받아오기
@@ -63,7 +72,9 @@ export default function TeacherBroadcast() {
   }, []);
 
   useEffect(() => {
-  }, [user]);
+    // 녹화 파일 목록 불러오기
+    fetchRecordings();
+  }, []);
 
   useEffect(() => {
     if (openvidu.publisher) {
@@ -108,7 +119,6 @@ export default function TeacherBroadcast() {
         }));
       } catch (error) {
         console.error("Error during stream subscription:", error);
-        // 사용자에게 오류 메시지 표시 또는 로그 전송
       }
     });
 
@@ -131,14 +141,14 @@ export default function TeacherBroadcast() {
       .connect(token, { clientData: user.username })
       .then(async () => {
         const publisher = await OV.initPublisherAsync(undefined, {
-          audioSource: undefined, // The source of audio. If undefined default microphone
-          videoSource: undefined, // The source of video. If undefined default webcam
-          publishAudio: true, // Whether you want to start publishing with your audio unmuted or not
-          publishVideo: true, // Whether you want to start publishing with your video enabled or not
-          resolution: "1260x720", // The resolution of your video
-          frameRate: 30, // The frame rate of your video
-          insertMode: "REPLACE", // How the video is inserted in the target element 'video-container'
-          mirror: true, // Whether to mirror your local video or not
+          audioSource: undefined,
+          videoSource: undefined,
+          publishAudio: true,
+          publishVideo: true,
+          resolution: "1260x720",
+          frameRate: 30,
+          insertMode: "REPLACE",
+          mirror: true,
         });
         session.publish(publisher);
         setOpenvidu((p) => ({
@@ -147,16 +157,23 @@ export default function TeacherBroadcast() {
           mainStreamManager: publisher,
           publisher: publisher,
         }));
+
+        // 음성 인식 및 비속어 감지 시작
+        await handleSpeechRecognition(user.sessionId);
       })
       .catch((error) => {
-        // console.log(
-        //   "There was an error connecting to the session:",
-        //   error.code,
-        //   error.message
-        // );
+        console.error("Error connecting to the session:", error);
       });
   };
 
+  const fetchRecordings = async () => {
+    try {
+      const response = await axios.get(`${APPLICATION_SERVER_URL}/recordings`);
+      setRecordings(response.data);
+    } catch (error) {
+      console.error('Error fetching recordings:', error);
+    }
+  };
 
   return (
     <div className="bg-gray-300 flex flex-col justify-center items-center m-auto w-screen h-screen min-w-[1000px] overflow-hidden">
@@ -204,6 +221,18 @@ export default function TeacherBroadcast() {
         handleControl={setControl}
         close={leaveSession}
       />
+
+      {/* 녹화 파일 목록 추가 */}
+      <div className="recordings-list mt-4">
+        <h2>녹화 파일 목록</h2>
+        <ul>
+          {recordings.map((recording) => (
+            <li key={recording.id}>
+              {recording.name} - <a href={recording.url} target="_blank" rel="noopener noreferrer">다운로드</a>
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 }
