@@ -26,6 +26,7 @@ import com.ssafy.kidslink.application.schedule.repository.ScheduleRepository;
 import com.ssafy.kidslink.application.schedule.repository.TeacherScheduleRepository;
 import com.ssafy.kidslink.application.teacher.domain.Teacher;
 import com.ssafy.kidslink.application.teacher.repository.TeacherRepository;
+import com.ssafy.kidslink.common.enums.ConfirmationStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -135,6 +136,7 @@ public class ScheduleService {
         teacherSchedule.setTeacher(teacher);
         teacherSchedule.setTeacherScheduleDate(scheduleDTO.getDate());
         teacherSchedule.setTeacherScheduleContents(scheduleDTO.getContent());
+        teacherSchedule.setConfirmationStatus(ConfirmationStatus.F);
         teacherScheduleRepository.save(teacherSchedule);
     }
 }
