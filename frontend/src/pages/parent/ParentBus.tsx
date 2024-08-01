@@ -1,5 +1,4 @@
   import React, { useEffect, useRef, useState } from 'react';
-  import CommonHeader from "../../components/parent/common/CommonHeader";
   import InfoSection from "../../components/parent/common/InfoSection";
   import daramgi from "../../assets/parent/bus-daramgi.png";
   import { receiveBusLocation } from '../../api/webSocket';
@@ -62,8 +61,6 @@
     }, []);
     return (
       <div className="min-h-[100dvh] flex flex-col items-center bg-yellow-200">
-        <CommonHeader title="버스" />
-
         <div className="w-full flex flex-col items-center mt-16 flex-grow">
           <InfoSection
             description1="버스가"

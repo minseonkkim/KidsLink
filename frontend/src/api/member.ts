@@ -1,5 +1,5 @@
 import noAuthAxios from './token/noAuthAxios'
-import { useAppStore } from '../stores/store'
+import useAppStore from '../stores/store'
 import { getTeacherInfo, getParentInfo } from './Info'
 import { useTeacherInfoStore } from '../stores/useTeacherInfoStore'
 import { useParentInfoStore } from '../stores/useParentInfoStore'
@@ -106,8 +106,7 @@ export async function parentSignup(user: ParentSignupData) {
   if (user.childProfile) {
     formData.append("childProfile", user.childProfile);
   }
-  console.log(user);
-  console.log(formData);
+  console.log("학부모 회원가입 보내고 있는 data:", user);
 
   try {
     const response = await noAuthAxios.post(`${API_BASE_URL}/parent`, formData, {
