@@ -49,8 +49,9 @@ interface ParentSchedules {
 }
 
 interface TeacherPersonalSchedule {
-  date: string;
+  id: number;
   content: string;
+  confirmationStatus: string;
 }
 
 interface TeacherSchedules{
