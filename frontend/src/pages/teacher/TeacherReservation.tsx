@@ -6,7 +6,7 @@ import NavigateBack from "../../components/teacher/common/NavigateBack";
 import TeacherHeader from "../../components/teacher/common/TeacherHeader";
 import Title from "../../components/teacher/common/Title";
 import ReservationTime from "../../components/teacher/consulting/ReservationTime";
-import { PostTeacherReservations, TeacherMeetingReservation } from "../../api/meeting";
+import { ConfirmMeeting, PostTeacherReservations, TeacherMeetingReservation, getAllPossibleReservations } from "../../api/meeting";
 import styled from 'styled-components';
 
 const StyledCalendar = styled(Calendar)`
@@ -190,11 +190,32 @@ export default function TeacherReservation() {
   const [isEditing, setIsEditing] = useState(false);
   const [selectedTimes, setSelectedTimes] = useState<string[]>([]);
   const [tempSelectedTimes, setTempSelectedTimes] = useState<{ [key: string]: string[] }>({});
-  const [reservations, setReservations] = useState<{ [key: string]: string[] }>({
-    "2024-07-20": ["10:00", "14:00", "16:00"],
-    "2024-07-21": ["09:30", "11:00", "15:30"]
-  });
-  const [selectedDateExists, setSelectedDateExists] = useState<boolean>(false);
+  const [reservations, setReservations] = useState<{ [key: string]: string[] }>({});
+  const [fetchedReservations, setFetchedReservations] = useState<{ [key: string]: string[] }>({});
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  async function fetchData() {
+    try {
+      const data = await getAllPossibleReservations();
+      console.log("useEffect에서의 data");
+      console.log(data);
+      const formattedData = data.reduce((acc, curr) => {
+        const { date, time } = curr;
+        if (!acc[date]) {
+          acc[date] = [];
+        }
+        acc[date].push(time);
+        return acc;
+      }, {});
+      setReservations(formattedData);
+      setFetchedReservations(formattedData);
+    } catch (error) {
+      console.error('예약 데이터를 가져오는 중 오류 발생:', error);
+    }
+  }
 
   // 모든 시간 목록
   const allTimes = [
@@ -217,17 +238,35 @@ export default function TeacherReservation() {
     if (date instanceof Date) {
       const formattedDate = moment(date).format("YYYY-MM-DD");
       setSelectedTimes(tempSelectedTimes[formattedDate] || reservations[formattedDate] || []);
-      setSelectedDateExists(!!reservations[formattedDate]);
     }
   };
 
   // 시간 클릭할 때
   const handleTimeClick = (time: string) => {
     if (!isEditing) return;
-    setSelectedTimes((prevTimes) =>
-      prevTimes.includes(time) ? prevTimes.filter((t) => t !== time) : [...prevTimes, time]
-    );
+    if (date instanceof Date) {
+      const formattedDate = moment(date).format("YYYY-MM-DD");
+      // 서버에서 가져온 시간은 수정 불가
+      if (fetchedReservations[formattedDate]?.includes(time)) return;
+
+      setSelectedTimes((prevTimes) =>
+        prevTimes.includes(time) ? prevTimes.filter((t) => t !== time) : [...prevTimes, time]
+      );
+    }
   };
+
+  // selectedTimes가 변경될 때 tempSelectedTimes 업데이트
+  useEffect(() => {
+    if (date instanceof Date) {
+      const formattedDate = moment(date).format("YYYY-MM-DD");
+      // fetchedReservations에 있는 시간은 제외하고 tempSelectedTimes 설정
+      const timesToSet = selectedTimes.filter(time => !fetchedReservations[formattedDate]?.includes(time));
+      setTempSelectedTimes(prev => ({
+        ...prev,
+        [formattedDate]: timesToSet
+      }));
+    }
+  }, [selectedTimes, date]);
 
   // 전체 선택/해제 버튼 클릭할 때
   const handleSelectAllClick = () => {
@@ -246,48 +285,41 @@ export default function TeacherReservation() {
   // 수정 완료 버튼 클릭할 때 => POST
   const handleSaveClick = async () => {
     try {
-        const nonEmptyTempSelectedTimes = Object.fromEntries(
-          Object.entries(tempSelectedTimes).filter(([key, value]) => value.length > 0)
-        );
-  
-        if (Object.keys(nonEmptyTempSelectedTimes).length > 0) {
-          // Save to the state
-          setReservations(prev => ({
-            ...prev,
-            ...nonEmptyTempSelectedTimes
-          }));
-  
-          // Prepare data for API call
-          const requestData: TeacherMeetingReservation[] = Object.entries(nonEmptyTempSelectedTimes).map(
-            ([date, times]) => ({ date, times })
-          );
-          console.log("requestData")
-          console.log(requestData)
-          // Call the API function
-          await PostTeacherReservations(requestData);
-  
-          console.log('Reservations saved:', requestData);
-        }
-      } catch (error) {
-        console.error('Error saving reservations:', error);
-      }
+      // 새로 추가된 예약 시간만 필터링
+      const nonEmptyTempSelectedTimes = Object.fromEntries(
+        Object.entries(tempSelectedTimes).filter(([key, value]) => value.length > 0)
+      );
 
-    // 상태 초기화 및 편집 모드 종료
-    setTempSelectedTimes({});
-    setIsEditing(false);
-    setSelectedTimes([]);
+      // API 요청 데이터 준비
+      const requestData: TeacherMeetingReservation[] = Object.entries(tempSelectedTimes).map(
+        ([date, times]) => ({ date, times })
+      );
+      console.log("requestData");
+      console.log(requestData);
+
+      // API 호출
+      await PostTeacherReservations(requestData);
+
+      console.log('예약이 저장되었습니다:', requestData);
+
+      // 최신 데이터 다시 가져오기
+      await fetchData();
+
+      // 상태 초기화 및 편집 모드 종료
+      setTempSelectedTimes({});
+      setIsEditing(false);
+      setSelectedTimes([]);
+    } catch (error) {
+      console.error('예약을 저장하는 중 오류 발생:', error);
+    }
   };
 
-  // Update tempSelectedTimes on selectedTimes change
-  useEffect(() => {
-    if (date instanceof Date) {
-      const formattedDate = moment(date).format("YYYY-MM-DD");
-      setTempSelectedTimes(prev => ({
-        ...prev,
-        [formattedDate]: selectedTimes
-      }));
-    }
-  }, [selectedTimes, date]);
+  // 지난날짜인지 검증
+  const isPastDate = (date) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Set the time to midnight
+    return date < today;
+  };
 
   return (
     <>
@@ -303,6 +335,7 @@ export default function TeacherReservation() {
             formatDay={(locale: string, date: Date) => date.toLocaleString("en", {day: "numeric"})}
             next2Label={null}
             prev2Label={null}
+            tileDisabled={({ date, view }) => view === 'month' && isPastDate(date)}
           />
 
           <div className="w-[637px]">
@@ -311,23 +344,18 @@ export default function TeacherReservation() {
                 <FaRegCalendar className="mr-3"/>
                 {formatDate(date)}
               </div>
-              {!selectedDateExists && !reservations[date && moment(date).format("YYYY-MM-DD")] && (isEditing ? (
-                <div>
-                  <button 
-                    className="mt-2 h-[40px] border-2 border-[#7C7C7C] bg-[#E3EEFF] px-3 py-1 font-bold rounded-[10px] hover:bg-[#D4DDEA]"
-                    onClick={handleSaveClick}
-                  >
-                    수정완료
-                  </button>
-                </div>
-              ) : (
-                <button 
-                  className="mt-2 h-[40px] border-2 border-[#7C7C7C] bg-[#E3EEFF] px-3 py-1 font-bold rounded-[10px] hover:bg-[#D4DDEA]"
-                  onClick={handleEditClick}
-                >
-                  수정하기
-                </button>
-              ))}
+              <button 
+                className="mt-2 h-[40px] border-2 border-[#7C7C7C] bg-[#E3EEFF] px-3 py-1 font-bold rounded-[10px] hover:bg-[#D4DDEA]"
+                onClick={ConfirmMeeting}
+              >
+                상담일자 확정하기
+              </button>
+              <button 
+                className="mt-2 h-[40px] border-2 border-[#7C7C7C] bg-[#E3EEFF] px-3 py-1 font-bold rounded-[10px] hover:bg-[#D4DDEA]"
+                onClick={isEditing ? handleSaveClick : handleEditClick}
+              >
+                {isEditing ? '수정완료' : '수정하기'}
+              </button>
             </div>
             <div className="flex justify-between">
               <div></div>
@@ -340,25 +368,39 @@ export default function TeacherReservation() {
               </div>
               <p className="mb-3 font-bold text-[18px]">오전</p>
               <div className="flex flex-row flex-wrap">
-                {allTimes.slice(0, 6).map((time) => (
-                  <ReservationTime 
-                    key={time} 
-                    time={time} 
-                    isActive={selectedTimes.includes(time) || (reservations[date && moment(date).format("YYYY-MM-DD")]?.includes(time) || false)}
-                    onClick={() => handleTimeClick(time)}
-                  />
-                ))}
+                {allTimes.slice(0, 6).map((time) => {
+                  const formattedDate = date && moment(date).format("YYYY-MM-DD");
+                  const isFetched = fetchedReservations[formattedDate]?.includes(time) || false;
+                  const isActive = selectedTimes.includes(time) || isFetched;
+
+                  return (
+                    <ReservationTime 
+                      key={time} 
+                      time={time} 
+                      isActive={isActive}
+                      isFetched={isFetched}
+                      onClick={() => handleTimeClick(time)}
+                    />
+                  );
+                })}
               </div>
               <p className="mt-5 mb-3 font-bold text-[18px]">오후</p>
               <div className="flex flex-row flex-wrap">
-                {allTimes.slice(6).map((time) => (
-                  <ReservationTime 
-                    key={time} 
-                    time={time} 
-                    isActive={selectedTimes.includes(time) || (reservations[date && moment(date).format("YYYY-MM-DD")]?.includes(time) || false)}
-                    onClick={() => handleTimeClick(time)}
-                  />
-                ))}
+                {allTimes.slice(6).map((time) => {
+                  const formattedDate = date && moment(date).format("YYYY-MM-DD");
+                  const isFetched = fetchedReservations[formattedDate]?.includes(time) || false;
+                  const isActive = selectedTimes.includes(time) || isFetched;
+
+                  return (
+                    <ReservationTime 
+                      key={time} 
+                      time={time} 
+                      isActive={isActive}
+                      isFetched={isFetched}
+                      onClick={() => handleTimeClick(time)}
+                    />
+                  );
+                })}
               </div>
           </div>
         </div>

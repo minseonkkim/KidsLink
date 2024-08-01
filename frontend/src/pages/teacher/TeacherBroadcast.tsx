@@ -1,11 +1,13 @@
+import { useParams } from "react-router-dom";
 import { OpenVidu, Publisher, Session, StreamEvent, StreamManager, Subscriber } from "openvidu-browser";
 import React, { ChangeEvent, useEffect, useState } from "react";
 import OpenViduVideoComponent from "../../components/openvidu/Ovvideo";
 import MeetingFooter from "../../components/openvidu/MeetingFooter";
 import { getToken } from "../../api/openvidu";
 import TeacherHeader from "../../components/teacher/common/TeacherHeader";
-import MeetingBackground from "../../assets/teacher/meeting_background.png"
-
+import MeetingBackground from "../../assets/teacher/meeting_background.png";
+import useTeacherStore from "../../stores/teacher";
+import { useTeacherInfoStore } from "../../stores/useTeacherInfoStore";
 
 interface User {
   sessionId?: string;
@@ -33,9 +35,11 @@ interface ControlState {
 }
 
 export default function TeacherBroadcast() {
+  const { meetingId } = useParams<{ meetingId: string }>(); // useParams 훅을 사용하여 URL 파라미터에서 meetingId를 가져옴
+  const { teacherInfo } = useTeacherInfoStore()
   const [user, setUser] = useState<User>({
-    sessionId: undefined,
-    username: "user1",
+    sessionId: meetingId, // meetingId를 sessionId로 설정
+    username: teacherInfo.name,
   });
   const [openvidu, setOpenvidu] = useState<OpenViduState>({
     session: undefined,
@@ -56,15 +60,10 @@ export default function TeacherBroadcast() {
   });
 
   useEffect(() => {
-    // sessionId 받아오기
-    setUser((prevUser) => ({ ...prevUser, sessionId: "sessionC" }));
-    return () => {
-      leaveSession();
-    };
-  }, []);
-
-  useEffect(() => {
-  }, [user]);
+    // URL에서 meetingId를 sessionId로 설정
+    
+    setUser((prevUser) => ({ ...prevUser, sessionId: meetingId }));
+  }, [meetingId]);
 
   useEffect(() => {
     if (openvidu.publisher) {
@@ -94,11 +93,12 @@ export default function TeacherBroadcast() {
   };
 
   const joinSession = async () => {
+    
     if (!user.sessionId) return;
     const OV = new OpenVidu();
     OV.enableProdMode();
     const session = OV.initSession();
-    
+
     // 이벤트 등록
     session.on("streamCreated", (event: StreamEvent) => {
       try {
@@ -109,7 +109,6 @@ export default function TeacherBroadcast() {
         }));
       } catch (error) {
         console.error("Error during stream subscription:", error);
-        // 사용자에게 오류 메시지 표시 또는 로그 전송
       }
     });
 
@@ -126,20 +125,22 @@ export default function TeacherBroadcast() {
     session.on("exception", (exception) => {
       console.warn(exception);
     });
+
     const token = await getToken(user.sessionId);
+    console.log(token)
 
     session
       .connect(token, { clientData: user.username })
       .then(async () => {
         const publisher = await OV.initPublisherAsync(undefined, {
-          audioSource: undefined, // The source of audio. If undefined default microphone
-          videoSource: undefined, // The source of video. If undefined default webcam
-          publishAudio: true, // Whether you want to start publishing with your audio unmuted or not
-          publishVideo: true, // Whether you want to start publishing with your video enabled or not
-          resolution: "1260x720", // The resolution of your video
-          frameRate: 30, // The frame rate of your video
-          insertMode: "REPLACE", // How the video is inserted in the target element 'video-container'
-          mirror: true, // Whether to mirror your local video or not
+          audioSource: undefined, // 기본 마이크 사용
+          videoSource: undefined, // 기본 웹캠 사용
+          publishAudio: true,
+          publishVideo: true,
+          resolution: "1260x720",
+          frameRate: 30,
+          insertMode: "REPLACE",
+          mirror: true,
         });
         session.publish(publisher);
         setOpenvidu((p) => ({
@@ -150,61 +151,56 @@ export default function TeacherBroadcast() {
         }));
       })
       .catch((error) => {
-        // console.log(
-        //   "There was an error connecting to the session:",
-        //   error.code,
-        //   error.message
-        // );
+        console.error("There was an error connecting to the session:", error);
       });
   };
 
-
   return (
     <div className="relative flex flex-col justify-center items-center w-screen h-screen min-w-[1000px] overflow-hidden">
-    <img src={MeetingBackground} className="absolute top-0 left-0 w-full h-full object-cover" />
-    <div className="relative z-10 w-full h-full flex flex-col items-center">
-      <TeacherHeader />
-      {openvidu.session ? (
-        <div className="relative w-full h-full flex">
-          <div className="absolute top-[150px] left-0 w-[700px] h-auto rounded-lg border border-black">
-            <h1>내 화면</h1>
-            {openvidu.mainStreamManager && (
-              <OpenViduVideoComponent streamManager={openvidu.mainStreamManager} />
-            )}
+      <img src={MeetingBackground} className="absolute top-0 left-0 w-full h-full object-cover" />
+      <div className="relative z-10 w-full h-full flex flex-col items-center">
+        <TeacherHeader />
+        {openvidu.session ? (
+          <div className="relative w-full h-full flex">
+            <div className="absolute top-[150px] left-0 w-[700px] h-auto rounded-lg border border-black">
+              <h1>내 화면</h1>
+              {openvidu.mainStreamManager && (
+                <OpenViduVideoComponent streamManager={openvidu.mainStreamManager} />
+              )}
+            </div>
+            <div className="absolute top-[150px] right-0 w-[700px] h-auto rounded-lg border border-black">
+              <h1>상대 화면</h1>
+              {openvidu.subscribers.map((sub, i) => (
+                <OpenViduVideoComponent
+                  key={i}
+                  streamManager={sub}
+                  muted={control.muted}
+                  volume={control.volume}
+                />
+              ))}
+            </div>
           </div>
-          <div className="absolute top-[150px] right-0 w-[700px] h-auto rounded-lg border border-black">
-            <h1>상대 화면</h1>
-            {openvidu.subscribers.map((sub, i) => (
-              <OpenViduVideoComponent
-                key={i}
-                streamManager={sub}
-                muted={control.muted}
-                volume={control.volume}
-              />
-            ))}
+        ) : (
+          <div className="flex flex-col justify-center items-center w-full h-full">
+            <input
+              name="sessionId"
+              value={user.sessionId || ""}
+              onChange={handleUserChange}
+            />
+            <input
+              name="username"
+              value={user.username || ""}
+              onChange={handleUserChange}
+            />
+            <button onClick={joinSession}>연결</button>
           </div>
-        </div>
-      ) : (
-        <div className="flex flex-col justify-center items-center w-full h-full">
-          <input
-            name="sessionId"
-            value={user.sessionId || ""}
-            onChange={handleUserChange}
-          />
-          <input
-            name="username"
-            value={user.username || ""}
-            onChange={handleUserChange}
-          />
-          <button onClick={joinSession}>연결</button>
-        </div>
-      )}
-      <MeetingFooter
-        control={control}
-        handleControl={setControl}
-        close={leaveSession}
-      />
+        )}
+        <MeetingFooter
+          control={control}
+          handleControl={setControl}
+          close={leaveSession}
+        />
+      </div>
     </div>
-  </div>
   );
 }

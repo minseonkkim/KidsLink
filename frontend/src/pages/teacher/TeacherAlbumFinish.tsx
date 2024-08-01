@@ -4,9 +4,14 @@ import TeacherHeader from "../../components/teacher/common/TeacherHeader";
 import Title from "../../components/teacher/common/Title";
 import { BsSend } from "react-icons/bs";
 import { FaTrash } from "react-icons/fa";
-import ExampleImg from "../../assets/teacher/example_img_1.jpg"
+import ExampleImg from "../../assets/teacher/example_img_1.jpg";
+import { useLocation } from 'react-router-dom';
 
 export default function TeacherAlbumFinish(){
+  const location = useLocation();
+  const result = location.state?.result;
+  console.log(result);
+  
     return <>
         <TeacherHeader/>
         <div className="mt-[120px] px-[150px]">
