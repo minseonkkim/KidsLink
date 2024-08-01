@@ -9,6 +9,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Repository
-public interface TeacherScheduleRepository extends JpaRepository<TeacherSchedule, Long> {
+public interface TeacherScheduleRepository extends JpaRepository<TeacherSchedule, Integer> {
     List<TeacherSchedule> findByTeacherAndTeacherScheduleDate(Teacher teacher, LocalDate date);
 }

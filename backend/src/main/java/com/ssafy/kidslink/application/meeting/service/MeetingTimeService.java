@@ -18,8 +18,10 @@ import com.ssafy.kidslink.application.parent.repository.ParentRepository;
 import com.ssafy.kidslink.application.teacher.domain.Teacher;
 import com.ssafy.kidslink.application.teacher.repository.TeacherRepository;
 import com.ssafy.kidslink.common.enums.NotificationCode;
+import com.ssafy.kidslink.common.exception.InvalidPrincipalException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -55,16 +57,26 @@ public class MeetingTimeService {
         }
     }
 
-    public List<MeetingTimeDTO> getMeetingTimes(String parentUsername) {
-        int classId = parentRepository.findByParentUsername(parentUsername).getChildren().stream().findFirst().get()
-                .getKindergartenClass().getKindergartenClassId();
+    public List<MeetingTimeDTO> getMeetingTimes(UserDetails userDetails) {
+        String usernmae = userDetails.getUsername();
+        String role = userDetails.getAuthorities().iterator().next().getAuthority();
         List<MeetingTimeDTO> meetingTimes = new ArrayList<>();
-        for(MeetingTime meetingTime : meetingTimeRepository.findByClassId(classId)) {
-            meetingTimes.add(meetingTimeMapper.toDTO(meetingTime));
+        int classId;
+        if ("ROLE_PARENT".equals(role)) {
+            classId = parentRepository.findByParentUsername(usernmae).getChildren().stream().findFirst().orElseThrow()
+                    .getKindergartenClass().getKindergartenClassId();
+            for (MeetingTime meetingTime : meetingTimeRepository.findByClassId(classId)) {
+                meetingTimes.add(meetingTimeMapper.toDTO(meetingTime));
+            }
+        } else if ("ROLE_TEACHER".equals(role)) {
+            Teacher teacher = teacherRepository.findByTeacherUsername(usernmae);
+            for (MeetingTime meetingTime : meetingTimeRepository.findByTeacher(teacher)) {
+                meetingTimes.add(meetingTimeMapper.toDTO(meetingTime));
+            }
+        } else {
+            throw new InvalidPrincipalException("Invalid user principal");
         }
-
         return meetingTimes;
-
     }
 
     public void selectMeeting(String parentUsername, List<ReserveMeetingDTO> reserveMeetingDTOS) {
@@ -121,7 +133,7 @@ public class MeetingTimeService {
             meetingScheduleRepository.save(meetingSchedule);
         }
 
-        // 부모한테 예약 확정 알림 보내기
+        // TODO #1 부모한테 예약 확정 알림 보내기 -> 부모 한명에게만 보내기
         for (Parent parent : parentRepository.findByKindergartenClassId(teacher.getKindergartenClass().getKindergartenClassId())) {
             ParentNotification parentNotification = new ParentNotification();
 

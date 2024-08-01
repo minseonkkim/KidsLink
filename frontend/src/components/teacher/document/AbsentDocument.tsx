@@ -5,9 +5,10 @@ import { checkAbsentDocument, getAbsentDocument } from "../../../api/document";
 interface AbsentDocumentProps {
   absentId: number;
   onUpdate: () => void;
+  isOurClass: boolean;
 }
 
-export default function AbsentDocument({ absentId, onUpdate }: AbsentDocumentProps) {
+export default function AbsentDocument({ absentId, onUpdate, isOurClass }: AbsentDocumentProps) {
   const [absentDocument, setAbsentDocument] = useState(null);
 
   useEffect(() => {
@@ -40,10 +41,11 @@ export default function AbsentDocument({ absentId, onUpdate }: AbsentDocumentPro
   }
 
   return (
-    <div className="font-KoPubDotum w-[720px] h-[520px] rounded-[20px] bg-[#ffffff] border-[#B2D170] border-[3px] p-8">
+    <div className="font-KoPubDotum w-[720px] h-[520px] rounded-[20px] bg-[#ffffff] p-8">
       <div className="flex flex-row justify-between">
         <span className="rounded-[10px] bg-[#FFDFDF] flex items-center justify-center w-[75px] h-[40px] font-bold text-[20px]">결석</span>
-        <div className="flex flex-row items-center h-[30px]">
+        {isOurClass === false &&
+          <div className="flex flex-row items-center h-[30px]">
           <input
             type="checkbox"
             className="mx-[3px] w-[20px] h-[20px] accent-[#363636]"
@@ -53,6 +55,7 @@ export default function AbsentDocument({ absentId, onUpdate }: AbsentDocumentPro
           />
           <span className="font-bold text-[18px] mx-3">확인완료</span>
         </div>
+        }
       </div>
       <div className="text-[20px] my-8">
         <DocumentItem title="기간" content={`${absentDocument.startDate} ~ ${absentDocument.endDate}`} />

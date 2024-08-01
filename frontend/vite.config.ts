@@ -8,6 +8,11 @@ export default defineConfig({
     port: 5173,
     host : "0.0.0.0",
   },
+  css: {
+    modules: {
+      localsConvention: 'camelCase', // 이 옵션은 CSS 클래스 이름을 camelCase로 변환합니다.
+    },
+  },
   plugins: [react(),
     VitePWA({ 
       registerType: 'autoUpdate',

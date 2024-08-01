@@ -35,9 +35,10 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Service
+
 @RequiredArgsConstructor
 @Slf4j
+@Service
 public class AlbumService {
     private final ImageRepository imageRepository;
     private final ChildRepository childRepository;
@@ -191,4 +192,9 @@ public class AlbumService {
         Child child = childRepository.findById(childId).orElseThrow(() -> new RuntimeException("Child not found with id " + childId));
         return albumRepository.findByChild(child).stream().map(albumMapper::toDTO).collect(Collectors.toList());
     }
+
+    public AlbumDTO getAlbumById(int albumId) {
+        return albumMapper.toDTO(albumRepository.findById(albumId).orElseThrow(() -> new RuntimeException("Album not found with id " + albumId)));
+    }
+
 }

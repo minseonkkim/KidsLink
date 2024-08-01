@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import CommonHeader from '../../components/parent/common/CommonHeader';
 import InfoSection from "../../components/parent/common/InfoSection";
 import daramgi from '../../assets/parent/document-daramgi.png';
 import pill from '../../assets/parent/pill.png';
@@ -20,6 +19,7 @@ interface MappedDocument {
   documentId: number;
   title: string;
   details: string;
+  childId: number;
 }
 
 export default function ParentDocument() {
@@ -48,7 +48,8 @@ export default function ParentDocument() {
                   endDate: item.dosage.endDate,
                   documentId: item.dosage.dosageId,
                   title: item.dosage.name,
-                  details: item.dosage.details
+                  details: item.dosage.details,
+                  childId:childId
                 };
               } else if (item.absent) {
                 return {
@@ -60,7 +61,8 @@ export default function ParentDocument() {
                   endDate: item.absent.endDate,
                   documentId: item.absent.absentId,
                   title: item.absent.reason,
-                  details: item.absent.details
+                  details: item.absent.details,
+                  childId:childId
                 };
               } else {
                 throw new Error("Document must have either dosage or absent data");
@@ -101,13 +103,12 @@ export default function ParentDocument() {
     navigate('/document/submit');
   };
 
-  const navigateToDetailPage = (type: string, id: number) => {
-    navigate(`/document/${type}/${id}`);
+  const navigateToDetailPage = (docType: string, docId: number) => {
+    navigate(`/document/${docType}/${docId}`);
   };
 
   return (
     <div className="min-h-[100dvh] flex flex-col items-center bg-[#FFEC8A]">
-      <CommonHeader title="서류" />
       <div className="w-full flex flex-col items-center mt-16 flex-grow">
         <InfoSection
           main1="아이의 소식"

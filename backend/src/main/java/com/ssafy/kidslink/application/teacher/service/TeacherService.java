@@ -11,8 +11,10 @@ import com.ssafy.kidslink.application.teacher.dto.TeacherJoinDTO;
 import com.ssafy.kidslink.application.teacher.dto.TeacherDTO;
 import com.ssafy.kidslink.application.teacher.mapper.TeacherMapper;
 import com.ssafy.kidslink.application.teacher.repository.TeacherRepository;
+import com.ssafy.kidslink.common.exception.NotFoundException;
 import com.ssafy.kidslink.common.exception.PasswordMismatchException;
 import com.ssafy.kidslink.common.jwt.JWTUtil;
+import com.ssafy.kidslink.common.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -30,12 +32,16 @@ public class TeacherService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final ImageService imageService;
 
-    private final JWTUtil jwtUtil;
     private final TeacherMapper teacherMapper;
     private final KindergartenService kindergartenService;
+    private final UserService userService;
 
     // 선생님 회원가입
     public void joinProcess(TeacherJoinDTO joinDTO){
+        if (userService.isExistUser(joinDTO.getUsername())) {
+            throw new RuntimeException("이미 존재하는 아이디 입니다.");
+        }
+
         if(!joinDTO.getPassword().equals(joinDTO.getPasswordConfirm())){
             throw new PasswordMismatchException("비밀번호와 비밀번호 확인이 다릅니다.");
         }
@@ -55,9 +61,7 @@ public class TeacherService {
             }
         }
 
-        KindergartenClass kindergartenClass = kindergartenClassRepository.findByKindergartenKindergartenNameAndKindergartenClassName(
-                joinDTO.getKindergartenName(), joinDTO.getKindergartenClassName()
-        );
+        KindergartenClass kindergartenClass = kindergartenClassRepository.findById(joinDTO.getKindergartenClassId()).orElseThrow(NotFoundException::new);
         teacher.setKindergartenClass(kindergartenClass);
 
         teacherRepository.save(teacher);

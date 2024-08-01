@@ -1,29 +1,74 @@
+import { useState } from "react";
+import useModal from "../../../hooks/teacher/useModal";
+import AbsentDocument from "../document/AbsentDocument";
+import DosageDocument from "../document/DosageDocument";
+
 interface ChildCardProps {
     name: string;
     gender: string;
     age: number;
     absent: boolean;
     dosage: boolean;
+    absentId: number;
+    dosageId: number[];
     profileImgPath: string;
 }
 
-export default function ChildCard({ name, gender, age, absent, dosage, profileImgPath }: ChildCardProps) {
+export default function ChildCard({ name, gender, age, absent, dosage, profileImgPath, absentId, dosageId }: ChildCardProps) {
+    const { openModal, Modal, isModalOpen, closeModal } = useModal();
+    const [currentDosageIndex, setCurrentDosageIndex] = useState(0);
+
+    const openAbsentModal = () => {
+        openModal(
+            <AbsentDocument absentId={absentId} onUpdate={() => {}} isOurClass={true}/>
+        );
+    }
+
+    const openDosageModal = (index: number) => {
+        setCurrentDosageIndex(index);
+        openModal(
+            <div>
+                <DosageDocument dosageId={dosageId[index]} onUpdate={() => {}} isOurClass={true}/>
+                {dosageId.length > 1 && (
+                    <div className="flex justify-between mt-4">
+                        <span onClick={previousDosage} className="cursor-pointer text-2xl">
+                            &#9664; {/* Left arrow icon */}
+                        </span>
+                        <span onClick={nextDosage} className="cursor-pointer text-2xl">
+                            &#9654; {/* Right arrow icon */}
+                        </span>
+                    </div>
+                )}
+            </div>
+        );
+    };
+
+    const nextDosage = () => {
+        const newIndex = currentDosageIndex + 1 < dosageId.length ? currentDosageIndex + 1 : currentDosageIndex;
+        setCurrentDosageIndex(newIndex);
+        openDosageModal(newIndex);
+    };
+
+    const previousDosage = () => {
+        const newIndex = currentDosageIndex - 1 >= 0 ? currentDosageIndex - 1 : currentDosageIndex;
+        setCurrentDosageIndex(newIndex);
+        openDosageModal(newIndex);
+    };
+
     return (
-        <div className="w-[180px] h-[250px] m-2 relative drop-shadow-md">
+        <div className="w-[200px] h-[250px] m-2 relative drop-shadow-md">
             <div className="w-[180px] h-[250px] absolute inset-0 rounded-[10px] bg-[#fff9d7]" />
             <p className="w-[90px] absolute left-[45px] top-[170px] text-xl font-bold text-center text-[#363636]">
                 {name}
             </p>
             <p className="w-[100px] absolute left-[40px] top-[190px] text-l mt-3 font-medium text-center text-[#363636]">
-                {gender} / 만 {age}세
+                {gender === "M" ? "남자" : "여자"} / 만 {age}세
             </p>
             {absent && (
-                <>
-                    <div className="w-[60px] h-[30px] absolute left-[10px] top-[5px] rounded-[5px] bg-[#ffdfdf]" />
-                    <p className="w-[50px] h-[25px] absolute left-[15px] top-[10px] text-s font-bold text-center text-[#363636]">
-                        결석
-                    </p>
-                </>
+                <div onClick={openAbsentModal}
+                className="w-[60px] h-[30px] absolute left-[10px] top-[10px] rounded-[5px] bg-[#ffdfdf] cursor-pointer flex justify-center items-center font-bold">
+                    결석
+                </div>
             )}
             <div className="w-[100px] h-[100px] absolute left-[40px] top-[40px]">
                 <img
@@ -32,13 +77,12 @@ export default function ChildCard({ name, gender, age, absent, dosage, profileIm
                 />
             </div>
             {dosage && (
-                <>
-                    <div className="w-[60px] h-[30px] absolute left-[110px] top-[5px] rounded-[5px] bg-[#e7dfff]" />
-                    <p className="w-[50px] h-[25px] absolute left-[115px] top-[10px] text-s font-bold text-center text-[#363636]">
-                        복용
-                    </p>
-                </>
+                <div onClick={() => openDosageModal(0)} 
+                className="cursor-pointer w-[60px] h-[30px] absolute left-[110px] top-[10px] rounded-[5px] bg-[#e7dfff] flex justify-center items-center font-bold">
+                    투약
+                </div>
             )}
+            <Modal/>
         </div>
     );
 }

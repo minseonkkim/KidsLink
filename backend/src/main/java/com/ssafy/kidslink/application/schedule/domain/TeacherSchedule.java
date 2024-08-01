@@ -1,6 +1,7 @@
 package com.ssafy.kidslink.application.schedule.domain;
 
 import com.ssafy.kidslink.application.teacher.domain.Teacher;
+import com.ssafy.kidslink.common.enums.ConfirmationStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,6 +23,10 @@ public class TeacherSchedule {
 
     @Column(name = "teacher_schedule_contents")
     private String teacherScheduleContents;
+
+    @Column(name = "confirmation_status")
+    @Enumerated(EnumType.STRING)
+    private ConfirmationStatus confirmationStatus;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "teacher_id", nullable = false)

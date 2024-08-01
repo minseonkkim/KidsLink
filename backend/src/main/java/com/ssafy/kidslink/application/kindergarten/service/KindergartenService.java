@@ -56,4 +56,9 @@ public class KindergartenService {
         List<ChildDTO> children = childRepository.findByKindergartenClass(kindergartenClass).stream().map(childMapper::toDTO).collect(Collectors.toList());
         return new ResponseClassInfoDTO(kindergartenClassDTO, teacher, children);
     }
+
+    public TeacherDTO findTeacherByKindergartenClass(int classId) {
+        return teacherMapper.toDTO(teacherRepository.findByKindergartenClass(kindergartenClassRepository.findById(classId).orElseThrow()));
+    }
+
 }
