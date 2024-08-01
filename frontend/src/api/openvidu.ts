@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from "axios";
 
 const APPLICATION_SERVER_URL = import.meta.env.VITE_OPENVIDU_URL
 
@@ -20,6 +20,7 @@ const createSession = async (sessionId: string): Promise<string> => {
 };
 
 const createToken = async (sessionId: string): Promise<string> => {
+  console.log(APPLICATION_SERVER_URL)
   const response = await axios.post(
     `${APPLICATION_SERVER_URL}/sessions/${sessionId}/connections`,
     {},

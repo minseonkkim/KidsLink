@@ -39,7 +39,6 @@ public class SecurityConfig {
     private String activeProfile;
     @Value("${frontend.server.url}")
     private String frontendServerUrl;
-
     private final JWTUtil jwtUtil;
     private final AuthenticationConfiguration authenticationConfiguration;
     private final RefreshTokenService refreshTokenService;
@@ -82,6 +81,7 @@ public class SecurityConfig {
     private CorsConfigurationSource apiConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(List.of(frontendServerUrl));
+
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
