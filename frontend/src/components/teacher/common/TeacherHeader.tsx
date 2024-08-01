@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import useModal from "../../../hooks/teacher/useModal";
 import { FaRegTrashAlt } from "react-icons/fa";
+import { getAlarmCount } from "../../../api/alarm";
 
 interface Alert {
     time: string;
@@ -20,7 +21,8 @@ const initialAlerts: Alert[] = [
 export default function TeacherHeader() {
     const { openModal, closeModal, Modal, isModalOpen } = useModal();
     const [alertList, setAlertList] = useState<Alert[]>(initialAlerts);
-
+    const [alertNum, setAlertNum] = useState(0);
+ 
     const deleteItem = (index: number) => {
         setAlertList(prevList => prevList.filter((_, i) => i !== index));
     };
@@ -82,6 +84,14 @@ export default function TeacherHeader() {
         }
     };
 
+    useEffect(() => {
+        const fetchAlarmCount = async () => {
+            setAlertNum(await getAlarmCount());
+        }
+
+        fetchAlarmCount();
+    }, [])
+
     return (
         <>
             <header className="z-10 fixed top-0 w-full flex items-center justify-between h-[85px] bg-[#ffffff] shadow-md">
@@ -91,7 +101,7 @@ export default function TeacherHeader() {
                     <div className="relative max-sm:mr-[30px] mr-[150px]" onClick={openCreateModal}>
                         <BiBell className="w-[30px] h-[30px] cursor-pointer" style={{ color: '#363636' }} />
                         <span className="absolute top-0 right-0 w-4 h-4 bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center">
-                            {alertList.filter(alert => !alert.isChecked).length}
+                            {alertNum}
                         </span>
                     </div>
                 </div>
