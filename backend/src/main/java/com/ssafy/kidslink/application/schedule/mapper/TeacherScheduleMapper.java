@@ -11,6 +11,7 @@ public class TeacherScheduleMapper {
         dto.setId(teacherSchedule.getTeacherScheduleId());
         dto.setDate(teacherSchedule.getTeacherScheduleDate());
         dto.setContent(teacherSchedule.getTeacherScheduleContents());
+        dto.setConfirmationStatus(teacherSchedule.getConfirmationStatus().getCode());
         return dto;
     }
 }
