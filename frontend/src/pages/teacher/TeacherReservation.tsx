@@ -140,6 +140,13 @@ export default function TeacherReservation() {
     }
   };
 
+  // 지난날짜인지 검증
+  const isPastDate = (date) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Set the time to midnight
+    return date < today;
+  };
+
   return (
     <>
       <TeacherHeader />
@@ -154,6 +161,7 @@ export default function TeacherReservation() {
             formatDay={(locale: string, date: Date) => date.toLocaleString("en", {day: "numeric"})}
             next2Label={null}
             prev2Label={null}
+            tileDisabled={({ date, view }) => view === 'month' && isPastDate(date)}
           />
 
           <div className="w-[637px]">
@@ -180,25 +188,39 @@ export default function TeacherReservation() {
               </div>
               <p className="mb-3 font-bold text-[18px]">오전</p>
               <div className="flex flex-row flex-wrap">
-                {allTimes.slice(0, 6).map((time) => (
-                  <ReservationTime 
-                    key={time} 
-                    time={time} 
-                    isActive={selectedTimes.includes(time) || (reservations[date && moment(date).format("YYYY-MM-DD")]?.includes(time) || false)}
-                    onClick={() => handleTimeClick(time)}
-                  />
-                ))}
+                {allTimes.slice(0, 6).map((time) => {
+                  const formattedDate = date && moment(date).format("YYYY-MM-DD");
+                  const isFetched = fetchedReservations[formattedDate]?.includes(time) || false;
+                  const isActive = selectedTimes.includes(time) || isFetched;
+
+                  return (
+                    <ReservationTime 
+                      key={time} 
+                      time={time} 
+                      isActive={isActive}
+                      isFetched={isFetched}
+                      onClick={() => handleTimeClick(time)}
+                    />
+                  );
+                })}
               </div>
               <p className="mt-5 mb-3 font-bold text-[18px]">오후</p>
               <div className="flex flex-row flex-wrap">
-                {allTimes.slice(6).map((time) => (
-                  <ReservationTime 
-                    key={time} 
-                    time={time} 
-                    isActive={selectedTimes.includes(time) || (reservations[date && moment(date).format("YYYY-MM-DD")]?.includes(time) || false)}
-                    onClick={() => handleTimeClick(time)}
-                  />
-                ))}
+                {allTimes.slice(6).map((time) => {
+                  const formattedDate = date && moment(date).format("YYYY-MM-DD");
+                  const isFetched = fetchedReservations[formattedDate]?.includes(time) || false;
+                  const isActive = selectedTimes.includes(time) || isFetched;
+
+                  return (
+                    <ReservationTime 
+                      key={time} 
+                      time={time} 
+                      isActive={isActive}
+                      isFetched={isFetched}
+                      onClick={() => handleTimeClick(time)}
+                    />
+                  );
+                })}
               </div>
           </div>
         </div>
