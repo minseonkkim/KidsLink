@@ -30,7 +30,7 @@ export default function ParentMyPage() {
       <div className="w-full h-[807px] absolute left-0 top-[93px]">
         <div className="w-full h-full absolute left-0 top-0 rounded-tl-[20px] rounded-tr-[20px] bg-white shadow-top px-5">
           <div
-            className="mt-3 text-[17px] flex flex-row justify-end items-center py-3 px-1"
+            className="mt-3 text-[17px] flex flex-row justify-end items-center py-3 px-1 cursor-pointer"
             onClick={handleLogout}
           >
             <IoLogOutOutline className="mr-1" /> 로그아웃

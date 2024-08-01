@@ -7,7 +7,6 @@ export default function ParentLayout() {
   const location = useLocation()
   const params = useParams()
 
-  // 메인 헤더를 사용할 경로들
   const noHeaderPaths = ['/bus', `/meeting/${params.meetingId}`]
   const mainHeaderPaths = ['/', '/schedule', '/mypage']
   const useMainHeader = mainHeaderPaths.includes(location.pathname)
