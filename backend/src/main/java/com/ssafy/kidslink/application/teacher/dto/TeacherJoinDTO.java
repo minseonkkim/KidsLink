@@ -16,7 +16,7 @@ public class TeacherJoinDTO {
     private String name;
     private String nickname;
     private String tel;
-    private String kindergartenName;
-    private String kindergartenClassName;
+    private int kindergartenId;
+    private int kindergartenClassId;
     private MultipartFile profile;
 }
