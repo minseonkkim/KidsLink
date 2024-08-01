@@ -6,6 +6,7 @@ import com.ssafy.kidslink.application.schedule.dto.TeacherScheduleDTO;
 import com.ssafy.kidslink.application.schedule.service.ScheduleService;
 import com.ssafy.kidslink.common.dto.APIError;
 import com.ssafy.kidslink.common.dto.APIResponse;
+import com.ssafy.kidslink.common.exception.InvalidPrincipalException;
 import com.ssafy.kidslink.common.security.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -206,5 +207,20 @@ public class ScheduleController {
         );
 
         return new ResponseEntity<>(responseData, HttpStatus.BAD_REQUEST);
+    }
+
+    @PostMapping("/teacher/{teacherScheduleId}/check")
+    public ResponseEntity<APIResponse<Void>> teacherCheckSchedule(@AuthenticationPrincipal Object principal, @PathVariable int teacherScheduleId){
+        if(principal instanceof CustomUserDetails userDetails){
+            scheduleService.changeStatusTeacherSchedule(teacherScheduleId);
+            APIResponse<Void> responseData = new APIResponse<>(
+                    "success",
+                    null,
+                    "상태 변경 성공",
+                    null
+            );
+            return ResponseEntity.status(HttpStatus.OK).body(responseData);
+        }
+        throw new InvalidPrincipalException("Invalid principal type");
     }
 }

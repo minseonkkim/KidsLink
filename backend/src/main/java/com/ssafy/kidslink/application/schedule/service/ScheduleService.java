@@ -139,4 +139,15 @@ public class ScheduleService {
         teacherSchedule.setConfirmationStatus(ConfirmationStatus.F);
         teacherScheduleRepository.save(teacherSchedule);
     }
+
+    public void changeStatusTeacherSchedule(int teacherScheduleId) {
+        TeacherSchedule teacherSchedule = teacherScheduleRepository.findById(teacherScheduleId).orElseThrow();
+
+        if (ConfirmationStatus.T.equals(teacherSchedule.getConfirmationStatus())) {
+            teacherSchedule.setConfirmationStatus(ConfirmationStatus.F);
+        } else {
+            teacherSchedule.setConfirmationStatus(ConfirmationStatus.T);
+        }
+        teacherScheduleRepository.save(teacherSchedule);
+    }
 }
