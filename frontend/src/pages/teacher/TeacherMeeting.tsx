@@ -1,13 +1,57 @@
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { IoMdCalendar } from "react-icons/io";
+import { GetConfirmedMeeting, ParentTeacherMeeting } from "../../api/meeting";
 import NavigateBack from "../../components/teacher/common/NavigateBack";
 import TeacherHeader from "../../components/teacher/common/TeacherHeader";
 import Title from "../../components/teacher/common/Title";
 import ScheduledConsulting from "../../components/teacher/consulting/ScheduledConsulting";
 import ProfileImg from '../../assets/teacher/profile_img.jpg';
-import { Link } from "react-router-dom"
-import { IoMdCalendar } from "react-icons/io";
+import { getOneParentInfo } from "../../api/Info";
 
 export default function TeacherMeeting() {
-  const teacherId = 123; // 실제 teacherId를 가져와야 합니다.
+  const [meetings, setMeetings] = useState<ParentTeacherMeeting[]>([]);
+  const [parentNames, setParentNames] = useState<{ [key: number]: string }>({});
+
+  useEffect(() => {
+    const fetchMeetings = async () => {
+      try {
+        const data = await GetConfirmedMeeting();
+        setMeetings(data);
+
+        const parentNamesData = await Promise.all(
+          data.map(async (meeting) => {
+            try {
+              const parentInfo = await getOneParentInfo(meeting.parentId);
+              return { parentId: meeting.parentId, name: parentInfo.name };
+            } catch (error) {
+              console.error(`Error fetching parent info for ID ${meeting.parentId}:`, error);
+              return { parentId: meeting.parentId, name: "알 수 없음" };
+            }
+          })
+        );
+
+        const parentNamesMap = parentNamesData.reduce((acc, curr) => {
+          acc[curr.parentId] = curr.name;
+          return acc;
+        }, {});
+        setParentNames(parentNamesMap);
+      } catch (error) {
+        console.error("Failed to fetch confirmed meetings:", error);
+      }
+    };
+
+    fetchMeetings();
+  }, []);
+
+  const isMeetingActive = (meetingTime: string): boolean => {
+    const currentTime = new Date();
+    const meetingDate = new Date(meetingTime);
+    const timeDiff = meetingDate.getTime() - currentTime.getTime();
+
+    // Meeting is active if it is within the next 10 minutes
+    return timeDiff <= 10 * 60 * 1000 && timeDiff > 0;
+  };
 
   return (
     <>
@@ -22,30 +66,16 @@ export default function TeacherMeeting() {
           </button>
         </Link>
         <div className="flex flex-row flex-wrap justify-between items-start">
-          <Link to={`/meeting/${teacherId}`}>
-            <ScheduledConsulting 
-              time="2024.07.18 17:00" 
-              name="김민선" 
-              profileImgPath={ProfileImg} 
-              isActivate={true}
-            />
-          </Link>
-          <Link to={`/meeting/${teacherId}`}>
-            <ScheduledConsulting 
-              time="2024.07.18 14:00" 
-              name="김범수" 
-              profileImgPath={ProfileImg} 
-              isActivate={false}
-            />
-          </Link>
-          <Link to={`/meeting/${teacherId}`}>
-            <ScheduledConsulting 
-              time="2024.07.18 16:00" 
-              name="이상민" 
-              profileImgPath={ProfileImg} 
-              isActivate={false}
-            />
-          </Link>
+          {meetings.map((meeting) => (
+            <Link to={`/meeting/${meeting.meetingId}`} key={meeting.meetingId}>
+              <ScheduledConsulting 
+                time={meeting.meetingTime}
+                name={parentNames[meeting.parentId] || "알 수 없음"}
+                profileImgPath={ProfileImg}
+                isActivate={isMeetingActive(meeting.meetingTime)}
+              />
+            </Link>
+          ))}
         </div>
       </div>
     </>

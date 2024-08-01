@@ -6,7 +6,7 @@ import NavigateBack from "../../components/teacher/common/NavigateBack";
 import TeacherHeader from "../../components/teacher/common/TeacherHeader";
 import Title from "../../components/teacher/common/Title";
 import ReservationTime from "../../components/teacher/consulting/ReservationTime";
-import { PostTeacherReservations, TeacherMeetingReservation, getAllPossibleReservations } from "../../api/meeting";
+import { ConfirmMeeting, PostTeacherReservations, TeacherMeetingReservation, getAllPossibleReservations } from "../../api/meeting";
 import styled from 'styled-components';
 
 const StyledCalendar = styled(Calendar)`
@@ -344,6 +344,12 @@ export default function TeacherReservation() {
                 <FaRegCalendar className="mr-3"/>
                 {formatDate(date)}
               </div>
+              <button 
+                className="mt-2 h-[40px] border-2 border-[#7C7C7C] bg-[#E3EEFF] px-3 py-1 font-bold rounded-[10px] hover:bg-[#D4DDEA]"
+                onClick={ConfirmMeeting}
+              >
+                상담일자 확정하기
+              </button>
               <button 
                 className="mt-2 h-[40px] border-2 border-[#7C7C7C] bg-[#E3EEFF] px-3 py-1 font-bold rounded-[10px] hover:bg-[#D4DDEA]"
                 onClick={isEditing ? handleSaveClick : handleEditClick}
