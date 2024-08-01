@@ -8,7 +8,7 @@ import Title from "../../components/teacher/common/Title";
 import moment from "moment";
 import { FaRegCalendar, FaXmark } from "react-icons/fa6";
 import styled from 'styled-components';
-import { getTeacherSchedules } from "../../api/schedule";
+import { createTeacherSchedule, getTeacherSchedules } from "../../api/schedule";
 
 const StyledCalendar = styled(Calendar)`
   display: flex;
@@ -238,7 +238,7 @@ const ScheduleItem: React.FC<ScheduleItemProps> = ({ id, content, confirmationSt
                 disabled={confirmationStatus === "T"}
                 onChange={() => toggleComplete(id)}
             />
-            <p className={`${confirmationStatus ? 'text-[#B8B8B8]' : ''} text-[18px] flex-grow`}>{content}</p>
+            <p className={`${confirmationStatus === "T" ? 'text-[#B8B8B8]' : ''} text-[18px] flex-grow`}>{content}</p>
             <button onClick={() => deleteItem(id)} className="text-red-500 hover:text-red-700">
                 <FaXmark />
             </button>
@@ -259,6 +259,18 @@ const TeacherSchedule: React.FC = () => {
         const fetchSchedules = async () => {
             try{
                 const fetchedSchedules = (await getTeacherSchedules(formatDate(date))).teacherSchedules;
+                fetchedSchedules.sort((a, b) => {
+                    // 우선순위: completed === "T"
+                    if (a.confirmationStatus === "T" && b.confirmationStatus !== "T") return -1;
+                    if (a.confirmationStatus !== "T" && b.confirmationStatus === "T") return 1;
+                
+                    // 2차 정렬: content 값
+                    if (a.content < b.content) return -1;
+                    if (a.content > b.content) return 1;
+                
+                    // 모든 조건이 같을 경우
+                    return 0;
+                });
                 setScheduleItems(fetchedSchedules);
             } catch (error) {
                 console.error("Failed to fetch schedules:", error);
@@ -288,16 +300,32 @@ const TeacherSchedule: React.FC = () => {
         setScheduleItems(updatedItems);
     }, [scheduleItems]);
 
-    const handleAddScheduleItem = () => {
-        if (todo) {
-            const newScheduleItem = {
-                id: scheduleItems.length + 1,
-                content: `${time} ${todo}`,
-                confirmationStatus: "F",
-            };
-            setScheduleItems([...scheduleItems, newScheduleItem]);
+    const handleAddScheduleItem = async () => {
+        const scheduleData = {
+            date: formatDate(date),
+            content: time + ' ' + todo,
+        };
+
+        try {
+            await createTeacherSchedule(scheduleData);
+            const fetchedSchedules = (await getTeacherSchedules(formatDate(date))).teacherSchedules;
+            fetchedSchedules.sort((a, b) => {
+                // 우선순위: completed === "T"
+                if (a.confirmationStatus === "T" && b.confirmationStatus !== "T") return -1;
+                if (a.confirmationStatus !== "T" && b.confirmationStatus === "T") return 1;
+            
+                // 2차 정렬: content 값
+                if (a.content < b.content) return -1;
+                if (a.content > b.content) return 1;
+            
+                // 모든 조건이 같을 경우
+                return 0;
+            });
+            setScheduleItems(fetchedSchedules);
             setTime('');
             setTodo('');
+        } catch (error) {
+            console.error('Failed to create notice:', error);
         }
     };
 
@@ -328,7 +356,8 @@ const TeacherSchedule: React.FC = () => {
                                 {formatDate(date)}
                             </div>
                         </div>
-                        <div className="p-3 border-[2px] border-[#8CAD1E] rounded-[10px] h-[330px] overflow-y-auto">
+                        <div className="border-[2px] border-[#8CAD1E] rounded-[10px] h-[330px]">
+                            <div className="overflow-y-auto custom-scrollbar h-[310px] m-[10px]">
                             {
                                 scheduleItems.map(({ id, content, confirmationStatus }, index) => (
                                     <ScheduleItem
@@ -343,6 +372,7 @@ const TeacherSchedule: React.FC = () => {
                                     />
                                 ))
                             }
+                            </div>
                         </div>
                         <div className="flex flex-row justify-between items-center mt-3">
                             <input
