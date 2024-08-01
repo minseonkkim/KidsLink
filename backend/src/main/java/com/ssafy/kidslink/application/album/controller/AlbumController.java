@@ -84,9 +84,9 @@ public class AlbumController {
     })
     @PostMapping("/classify")
     public ResponseEntity<APIResponse<List<ClassifyImageDTO>>> classifyImages(
-            @AuthenticationPrincipal Object principal,
-            @RequestPart MultipartRequest request
+            @AuthenticationPrincipal Object principal, MultipartRequest request
     ) throws IOException {
+        log.info("AlbumController.classifyImages");
         if (principal instanceof CustomUserDetails userDetails) {
             String teacherUsername = userDetails.getUsername();
             List<ClassifyImageDTO> classifiedImages = albumService.classifyImages(teacherUsername, request);
