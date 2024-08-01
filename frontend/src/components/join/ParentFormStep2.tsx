@@ -8,8 +8,6 @@ import {
   getKindergartenClasses,
 } from "../../api/kindergarten";
 
-
-
 interface ParentFormStep2Props {
   onNext: () => void;
   onBack: () => void;
@@ -35,10 +33,8 @@ const ParentFormStep2: FC<ParentFormStep2Props> = ({ onBack, onNext }) => {
     setChildName,
     birth,
     setBirth,
-    kindergartenName,
-    setKindergartenName,
-    className,
-    setClassName,
+    // setKindergartenId,
+    // setKindergartenClassId,
     username,
     password,
     passwordConfirm,
@@ -49,16 +45,20 @@ const ParentFormStep2: FC<ParentFormStep2Props> = ({ onBack, onNext }) => {
     profile,
   } = useAppStore();
 
-  const [childProfilePreview, setChildProfilePreview] = useState<string | null>(null);
+  const [childProfilePreview, setChildProfilePreview] = useState<string | null>(
+    null
+  );
   const [kindergartens, setKindergartens] = useState<Kindergarten[]>([]);
   const [classes, setClasses] = useState<KindergartenClass[]>([]);
   const [selectedKindergartenId, setSelectedKindergartenId] = useState<
     number | null
   >(null);
+  const [selectedClassId, setSelectedClassId] = useState<number | null>(null);
   const [birthYear, setBirthYear] = useState<string>("");
   const [birthMonth, setBirthMonth] = useState<string>("");
   const [birthDay, setBirthDay] = useState<string>("");
 
+  // 이미지 업로드 핸들러
   const handleImageUpload = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -66,7 +66,14 @@ const ParentFormStep2: FC<ParentFormStep2Props> = ({ onBack, onNext }) => {
       setChildProfilePreview(newImage);
       setChildProfile(file);
     }
-  }
+  };
+
+  useEffect(() => {
+    const storedProfile = localStorage.getItem("childProfileImage");
+    if (storedProfile) {
+      setChildProfilePreview(storedProfile);
+    }
+  }, []);
 
   useEffect(() => {
     const fetchKindergartens = async () => {
@@ -106,24 +113,21 @@ const ParentFormStep2: FC<ParentFormStep2Props> = ({ onBack, onNext }) => {
   };
 
   const handleKindergartenChange = (event: ChangeEvent<HTMLSelectElement>) => {
-    const selectedKindergartenName = event.target.value;
-    setKindergartenName(selectedKindergartenName);
+    const selectedKindergartenId = parseInt(event.target.value, 10);
+    setSelectedKindergartenId(selectedKindergartenId);
+  };
 
-    const selectedKindergarten = kindergartens.find(
-      (kg) => kg.kindergartenName === selectedKindergartenName
-    );
-
-    if (selectedKindergarten) {
-      setSelectedKindergartenId(selectedKindergarten.kindergartenId);
-    }
+  const handleClassChange = (event: ChangeEvent<HTMLSelectElement>) => {
+    const selectedClassId = parseInt(event.target.value, 10);
+    setSelectedClassId(selectedClassId);
   };
 
   const handleSignup = async () => {
     if (
       !childProfile ||
       !childName ||
-      !kindergartenName ||
-      !className ||
+      selectedKindergartenId === null ||
+      selectedClassId === null ||
       !gender ||
       !birthYear ||
       !birthMonth ||
@@ -145,8 +149,8 @@ const ParentFormStep2: FC<ParentFormStep2Props> = ({ onBack, onNext }) => {
       childProfile,
       child: {
         name: childName,
-        kindergartenClassName: className,
-        kindergartenName,
+        kindergartenClassId: selectedClassId,
+        kindergartenId: selectedKindergartenId,
         gender,
         birth,
       },
@@ -355,30 +359,30 @@ const ParentFormStep2: FC<ParentFormStep2Props> = ({ onBack, onNext }) => {
         <div className="flex mt-2 space-x-2">
           <select
             className="w-1/2 border border-gray-400 rounded-md p-2 bg-white focus:ring-2 focus:ring-[#F8DE56]"
-            value={kindergartenName}
+            value={selectedKindergartenId || ""}
             onChange={handleKindergartenChange}
           >
             <option value="" disabled>
-              유치원 선택 
+              유치원 선택
             </option>
             {kindergartens.map((kg) => (
-              <option key={kg.kindergartenId} value={kg.kindergartenName}>
+              <option key={kg.kindergartenId} value={kg.kindergartenId}>
                 {kg.kindergartenName}
               </option>
             ))}
           </select>
           <select
             className="w-1/2 border border-gray-400 rounded-md p-2 bg-white focus:ring-2 focus:ring-[#F8DE56]"
-            value={className}
-            onChange={(e) => setClassName(e.target.value)}
+            value={selectedClassId || ""}
+            onChange={handleClassChange}
           >
             <option value="" disabled>
-              반 선택 
+              반 선택
             </option>
             {classes.map((cls) => (
               <option
                 key={cls.kindergartenClassId}
-                value={cls.kindergartenClassName}
+                value={cls.kindergartenClassId}
               >
                 {cls.kindergartenClassName}
               </option>
