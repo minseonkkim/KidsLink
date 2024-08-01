@@ -1,3 +1,4 @@
+import { IoEllipseSharp } from 'react-icons/io5';
 import axiosInstance from './token/axiosInstance';
 
 interface KindergartenSchedule {
@@ -126,5 +127,20 @@ export async function createTeacherSchedule(newSchedule: NewSchedule){
   } catch (error) {
     console.error(error);
     throw new Error('Failed to fetch schedule');
+  }
+}
+
+// 선생님 일정 완료 체크 함수
+export async function createTeacherScheduleCheck(teacherScheduleId: number){
+  try{
+    const response = await axiosInstance.post(`schedule/teacher/${teacherScheduleId}/check`);
+    if(response.data.status === "success"){
+      console.log(response.data.data);
+    } else{
+      throw new Error('Failed to fetch schedule check');
+    }
+  } catch (error) {
+    console.error(error);
+    throw new Error('Failed to fetch schedule check');
   }
 }
