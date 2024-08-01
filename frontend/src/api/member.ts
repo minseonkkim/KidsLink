@@ -96,7 +96,7 @@ export async function parentSignup(user: ParentSignupData) {
     "child.kindergartenClassId",
     user.child.kindergartenClassId.toString()
   );
-  formData.append("child.kindergartenName", user.child.kindergartenId.toString());
+  formData.append("child.kindergartenId", user.child.kindergartenId.toString());
   formData.append("child.gender", user.child.gender);
   formData.append("child.birth", user.child.birth);
 

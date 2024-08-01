@@ -1,3 +1,4 @@
+import { IoEllipseSharp } from 'react-icons/io5';
 import axiosInstance from './token/axiosInstance';
 
 interface KindergartenSchedule {
@@ -49,14 +50,20 @@ interface ParentSchedules {
 }
 
 interface TeacherPersonalSchedule {
-  date: string;
+  id: number;
   content: string;
+  confirmationStatus: string;
 }
 
 interface TeacherSchedules{
   kindergartenSchedules: KindergartenSchedule[],
   teacherSchedules: TeacherPersonalSchedule[];
   meetingSchedules: MeetingSchedule[];
+}
+
+interface NewSchedule{
+  date: string;
+  content: string;
 }
 
 // 부모 일정 전체 조회 함수
@@ -104,5 +111,36 @@ export async function getTeacherSchedules(date: string): Promise<TeacherSchedule
   } catch (error) {
     console.error(error);
     throw new Error('Failed to fetch schedule');
+  }
+}
+
+// 선생님 일정 등록 함수
+export async function createTeacherSchedule(newSchedule: NewSchedule){
+  try{
+    const response = await axiosInstance.post('schedule/teacher', newSchedule);
+    if (response.data.status === "success") {
+      console.log(response.data.data); // 확인 후 삭제
+      return response.data.data;
+    } else {
+      throw new Error('Failed to fetch schedule');
+    }
+  } catch (error) {
+    console.error(error);
+    throw new Error('Failed to fetch schedule');
+  }
+}
+
+// 선생님 일정 완료 체크 함수
+export async function createTeacherScheduleCheck(teacherScheduleId: number){
+  try{
+    const response = await axiosInstance.post(`schedule/teacher/${teacherScheduleId}/check`);
+    if(response.data.status === "success"){
+      console.log(response.data.data);
+    } else{
+      throw new Error('Failed to fetch schedule check');
+    }
+  } catch (error) {
+    console.error(error);
+    throw new Error('Failed to fetch schedule check');
   }
 }

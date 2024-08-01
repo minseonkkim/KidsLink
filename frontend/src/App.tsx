@@ -81,7 +81,7 @@ export default function App() {
           <Route path="/ourclass" element={<TeacherOurClass />} />
           <Route path="/schedule" element={<TeacherSchedule />} />
           <Route path="/mypage" element={<TeacherMyPage />} />
-          <Route path="/meeting/:meetingNo" element={<TeacherBroadcast />} />
+          <Route path="/meeting/:meetingId" element={<TeacherBroadcast />} />
         </>
       ) : (
         <>

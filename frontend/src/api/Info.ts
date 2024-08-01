@@ -53,6 +53,21 @@ export async function getParentInfo(): Promise<ParentInfo> {
   }
 }
 
+export async function getOneParentInfo(parentId: number): Promise<ParentInfo> {
+  try {
+    const response = await axiosInstance.get(`/parent/${parentId}`);
+
+    if (response.data.status === 'success') {
+      return response.data.data
+    } else {
+      throw new Error('Failed to fetch parent-info')
+    }
+  } catch (error) {
+    console.error(error)
+    throw error
+  }
+}
+
 // 선생님 정보 조회 함수
 export async function getTeacherInfo(): Promise<TeacherInfo> {
   try {

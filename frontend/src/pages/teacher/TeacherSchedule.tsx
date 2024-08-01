@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef } from "react";
+import React, { useState, useCallback, useRef, useEffect } from "react";
 import { DndProvider, useDrag, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import Calendar from "react-calendar";
@@ -8,6 +8,7 @@ import Title from "../../components/teacher/common/Title";
 import moment from "moment";
 import { FaRegCalendar, FaXmark } from "react-icons/fa6";
 import styled from 'styled-components';
+import { createTeacherSchedule, createTeacherScheduleCheck, getTeacherSchedules } from "../../api/schedule";
 
 const StyledCalendar = styled(Calendar)`
   display: flex;
@@ -186,14 +187,8 @@ const StyledCalendar = styled(Calendar)`
 interface ScheduleItemType {
     id: number;
     content: string;
-    completed: boolean;
+    confirmationStatus: string;
 }
-
-const initialScheduleItems: ScheduleItemType[] = [
-    { id: 1, content: "08:30 등원 및 인사", completed: true },
-    { id: 2, content: "09:00 김여준 학부모 상담", completed: false },
-    { id: 3, content: "10:00 블록놀이", completed: false },
-];
 
 const ItemType = {
     SCHEDULE_ITEM: 'scheduleItem',
@@ -202,14 +197,14 @@ const ItemType = {
 interface ScheduleItemProps {
     id: number;
     content: string;
-    completed: boolean;
+    confirmationStatus: string;
     index: number;
     moveItem: (fromIndex: number, toIndex: number) => void;
     deleteItem: (id: number) => void;
     toggleComplete: (id: number) => void;
 }
 
-const ScheduleItem: React.FC<ScheduleItemProps> = ({ id, content, completed, index, moveItem, deleteItem, toggleComplete }) => {
+const ScheduleItem: React.FC<ScheduleItemProps> = ({ id, content, confirmationStatus, index, moveItem, deleteItem, toggleComplete }) => {
     const ref = useRef<HTMLDivElement>(null);
     const [, drop] = useDrop({
         accept: ItemType.SCHEDULE_ITEM,
@@ -239,10 +234,11 @@ const ScheduleItem: React.FC<ScheduleItemProps> = ({ id, content, completed, ind
             <input
                 type="checkbox"
                 className="mr-2 w-[19px] h-[19px] accent-[#757575]"
-                checked={completed === true}
+                checked={confirmationStatus === "T"}
+                disabled={confirmationStatus === "T"}
                 onChange={() => toggleComplete(id)}
             />
-            <p className={`${completed ? 'text-[#B8B8B8]' : ''} text-[18px] flex-grow`}>{content}</p>
+            <p className={`${confirmationStatus === "T" ? 'text-[#B8B8B8]' : ''} text-[18px] flex-grow`}>{content}</p>
             <button onClick={() => deleteItem(id)} className="text-red-500 hover:text-red-700">
                 <FaXmark />
             </button>
@@ -254,15 +250,46 @@ type ValuePiece = Date | null;
 
 const TeacherSchedule: React.FC = () => {
     const [date, setDate] = useState<ValuePiece | [ValuePiece, ValuePiece]>(new Date());
-    const [scheduleItems, setScheduleItems] = useState<ScheduleItemType[]>(initialScheduleItems);
+    const [scheduleItems, setScheduleItems] = useState<ScheduleItemType[]>([]);
     const [time, setTime] = useState('');
     const [todo, setTodo] = useState('');
 
+    const fetchSchedules = async () => {
+        try{
+            const fetchedSchedules = (await getTeacherSchedules(formatDate(date))).teacherSchedules;
+            fetchedSchedules.sort((a, b) => {
+                // 우선순위: completed === "T"
+                if (a.confirmationStatus === "T" && b.confirmationStatus !== "T") return -1;
+                if (a.confirmationStatus !== "T" && b.confirmationStatus === "T") return 1;
+
+                // 2차 정렬: content 값
+                const isANumeric = /^\d/.test(a.content);
+                const isBNumeric = /^\d/.test(b.content);
+
+                if (isANumeric && !isBNumeric) return -1;
+                if (!isANumeric && isBNumeric) return 1;
+                if (a.content < b.content) return -1;
+                if (a.content > b.content) return 1;
+
+                // 모든 조건이 같을 경우
+                return 0;
+            });
+            setScheduleItems(fetchedSchedules);
+        } catch (error) {
+            console.error("Failed to fetch schedules:", error);
+        }
+    }
+
+
+    useEffect(() => {
+        fetchSchedules();
+    }, [date])
+
     const formatDate = (date: ValuePiece | [ValuePiece, ValuePiece]): string => {
         if (date instanceof Date) {
-            return moment(date).format("YYYY년 MM월 DD일");
+            return moment(date).format("YYYY-MM-DD");
         } else if (Array.isArray(date) && date[0] instanceof Date) {
-            return moment(date[0]).format("YYYY년 MM월 DD일");
+            return moment(date[0]).format("YYYY-MM-DD");
         }
         return '';
     };
@@ -278,23 +305,25 @@ const TeacherSchedule: React.FC = () => {
         setScheduleItems(updatedItems);
     }, [scheduleItems]);
 
-    const handleAddScheduleItem = () => {
-        if (todo) {
-            const newScheduleItem = {
-                id: scheduleItems.length + 1,
-                content: `${time} ${todo}`,
-                completed: false,
-            };
-            setScheduleItems([...scheduleItems, newScheduleItem]);
+    const handleAddScheduleItem = async () => {
+        const scheduleData = {
+            date: formatDate(date),
+            content: time + ' ' + todo,
+        };
+
+        try {
+            await createTeacherSchedule(scheduleData);
+            fetchSchedules();
             setTime('');
             setTodo('');
+        } catch (error) {
+            console.error('Failed to create notice:', error);
         }
     };
 
-    const toggleComplete = (id: number) => {
-        setScheduleItems(scheduleItems.map(item =>
-            item.id === id ? { ...item, completed: !item.completed } : item
-        ));
+    const toggleComplete = async (id: number) => {
+        await createTeacherScheduleCheck(id);
+        fetchSchedules();
     };
 
     return (
@@ -303,7 +332,7 @@ const TeacherSchedule: React.FC = () => {
             <div className="flex flex-col mt-[90px]">
                 <NavigateBack backPage="홈" backLink='/' />
                 <Title title="일정" />
-                <div className="px-[150px] mt-5 flex flex-row justify-between mt-15">
+                <div className="px-[150px] mt-5 flex flex-row justify-between items-center mt-10">
                     <StyledCalendar
                         onChange={setDate}
                         value={date}
@@ -318,21 +347,27 @@ const TeacherSchedule: React.FC = () => {
                                 {formatDate(date)}
                             </div>
                         </div>
-                        <div className="p-3 border-[2px] border-[#8CAD1E] rounded-[10px] h-[330px] overflow-y-auto">
-                            {
-                                scheduleItems.map(({ id, content, completed }, index) => (
-                                    <ScheduleItem
-                                        key={id}
-                                        id={id}
-                                        content={content}
-                                        completed={completed}
-                                        index={index}
-                                        moveItem={moveItem}
-                                        deleteItem={deleteItem}
-                                        toggleComplete={toggleComplete}
-                                    />
+                        <div className="border-[2px] border-[#8CAD1E] rounded-[10px] h-[330px]">
+                            <div className="overflow-y-auto custom-scrollbar h-[310px] m-[10px]">
+                            {scheduleItems.length === 0 ? (
+                                <div className="flex justify-center items-center h-[310px]">
+                                일정이 없어요.
+                                </div>
+                                ) : (
+                                scheduleItems.map(({ id, content, confirmationStatus }, index) => (
+                                <ScheduleItem
+                                    key={id}
+                                    id={id}
+                                    content={content}
+                                    confirmationStatus={confirmationStatus}
+                                    index={index}
+                                    moveItem={moveItem}
+                                    deleteItem={deleteItem}
+                                    toggleComplete={toggleComplete}
+                                />
                                 ))
-                            }
+                            )}
+                            </div>
                         </div>
                         <div className="flex flex-row justify-between items-center mt-3">
                             <input

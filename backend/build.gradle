@@ -46,6 +46,7 @@ dependencies {
 
 	// OpenVidu Dependency
 	implementation 'io.openvidu:openvidu-java-client:2.30.0'
+	implementation 'org.apache.httpcomponents:httpclient:4.5.14'
 
     // Web Socket
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
