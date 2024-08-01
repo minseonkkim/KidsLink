@@ -1,11 +1,11 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom"
 
 export default function JoinHeader() {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   const handleHomeClick = () => {
-    navigate("/");
-  };
+    navigate("/")
+  }
 
   return (
     <header className="fixed top-0 w-full h-[67px] border-b bg-white border-gray-300 p-4 shadow-md flex items-center justify-between z-50">
@@ -16,5 +16,5 @@ export default function JoinHeader() {
         키즈링크
       </p>
     </header>
-  );
+  )
 }

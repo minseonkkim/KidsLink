@@ -111,7 +111,7 @@ export async function parentSignup(user: ParentSignupData) {
   try {
     const response = await noAuthAxios.post(`${API_BASE_URL}/parent`, formData, {
       headers: {
-        "Content-Type": "multipart/form-data", // File들어가 있어서 form-data
+        "Content-Type": "multipart/form-data",
       },
     });
 
