@@ -22,17 +22,19 @@ export default function TeacherDocument() {
       try {
         const fetchedDocuments = await getClassAllDocuments();
         console.log(fetchedDocuments);
-        
+  
         setDocuments(fetchedDocuments);
         if (fetchedDocuments.length > 0) {
-          setSelectedDocumentType(fetchedDocuments[fetchedDocuments.length - 1].type);
-          if (fetchedDocuments[0].type === "Absent") {
-            setSelectedDocumentId(fetchedDocuments[fetchedDocuments.length - 1].details.absentId);
+          const lastDocument = fetchedDocuments[fetchedDocuments.length - 1];
+          setSelectedDocumentType(lastDocument.type);
+  
+          if (lastDocument.type === "Absent") {
+            setSelectedDocumentId(lastDocument.details.absentId);
           } else {
-            setSelectedDocumentId(fetchedDocuments[fetchedDocuments.length - 1].details.dosageId);
+            setSelectedDocumentId(lastDocument.details.dosageId);
           }
         }
-
+  
         // Fetch and store child images
         const images = {};
         for (const document of fetchedDocuments) {
@@ -44,10 +46,10 @@ export default function TeacherDocument() {
         console.error('Failed to fetch documents:', error);
       }
     };
-
+  
     fetchDocuments();
   }, []);
-
+  
   useEffect(() => {
     setFilteredDocuments(
       documents.filter(document =>

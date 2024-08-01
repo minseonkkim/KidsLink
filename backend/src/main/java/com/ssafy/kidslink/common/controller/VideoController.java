@@ -105,4 +105,60 @@ public class VideoController {
         }
     }
 
+
+
+    /**
+     * Start recording a session
+     * @param sessionId The Session ID
+     * @return The Recording ID
+     */
+    @PostMapping("/sessions/{sessionId}/recordings/start")
+    public ResponseEntity<String> startRecording(@PathVariable("sessionId") String sessionId)
+            throws OpenViduJavaClientException, OpenViduHttpException {
+        System.out.println("녹화시작");
+        RecordingProperties properties = new RecordingProperties.Builder()
+                .outputMode(Recording.OutputMode.COMPOSED)
+                .build();
+        Recording recording = openvidu.startRecording(sessionId, properties);
+        return new ResponseEntity<>(recording.getId(), HttpStatus.OK);
+    }
+
+    /**
+     * Stop recording a session
+     * @param recordingId The Recording ID
+     * @return The stopped Recording
+     */
+    @PostMapping("/recordings/stop/{recordingId}")
+    public ResponseEntity<Recording> stopRecording(@PathVariable("recordingId") String recordingId)
+            throws OpenViduJavaClientException, OpenViduHttpException {
+        System.out.println("녹화중지");
+        Recording recording = openvidu.stopRecording(recordingId);
+        return new ResponseEntity<>(recording, HttpStatus.OK);
+    }
+
+
+
+    /**
+     * Get a list of all recordings
+     * @return The list of recordings
+     */
+    @GetMapping("/recordings")
+    public ResponseEntity<List<Recording>> listRecordings() throws OpenViduJavaClientException, OpenViduHttpException {
+        List<Recording> recordings = openvidu.listRecordings();
+        return new ResponseEntity<>(recordings, HttpStatus.OK);
+    }
+
+    /**
+     * Get a specific recording by ID
+     * @param recordingId The Recording ID
+     * @return The Recording
+     */
+    @GetMapping("/recordings/{recordingId}")
+    public ResponseEntity<Recording> getRecording(@PathVariable("recordingId") String recordingId)
+            throws OpenViduJavaClientException, OpenViduHttpException {
+        Recording recording = openvidu.getRecording(recordingId);
+        return new ResponseEntity<>(recording, HttpStatus.OK);
+    }
+
+
 }

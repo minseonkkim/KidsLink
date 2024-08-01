@@ -1,7 +1,10 @@
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { FaArrowLeft } from 'react-icons/fa';
 import AlaramBell from './AlaramBell';
 
+interface CommonHeaderProps {
+  title: string;
+}
 
 // 나중에 data 타입 다 한곳에 모아서 export 시키기
 interface Notification {
@@ -11,11 +14,11 @@ interface Notification {
   code: 'NOTICE' | 'DIARY' | 'ALBUM' | 'BUS' |'MEETING' | 'DOCUMENT';
 }
 
-const HomeHeader: React.FC = () => {
+const SubHeader: React.FC<CommonHeaderProps> = ({ title }) => {
   const navigate = useNavigate();
 
-  const handleHomeClick = () => {
-    navigate('/');
+  const handleBack = () => {
+    navigate(-1); // 뒤로가기
   };
 
   const notificationCount = 5;
@@ -49,20 +52,20 @@ const HomeHeader: React.FC = () => {
       title: '시스템 업데이트',
       contents: '시스템 업데이트가 완료되었습니다. 재로그인 해주세요.',
       code: 'BUS'
-    },
+    }
   ];
 
   return (
-    <header className="fixed z-10 w-full h-[67px] border-b bg-white border-gray-300 p-4 shadow-md flex items-center justify-between">
-      <p
-        className="text-[30px] font-bold text-left font-Cafe24Ssurround gradient-text cursor-pointer"
-        onClick={handleHomeClick}
-      >
-        키즈링크
+    <div className="z-50 fixed w-full h-[67px] border-b bg-white border-gray-300 p-4 shadow-md flex items-center justify-between">
+      <button onClick={handleBack} className="flex items-center justify-center w-10 h-10">
+        <FaArrowLeft className="w-6 h-6  text-gray-700" />
+      </button>
+      <p className="text-[22px] font-bold text-[#212121]">
+        {title}
       </p>
       <AlaramBell notificationCount={notificationCount} notifications={notifications} />
-    </header>
+    </div>
   );
 };
 
-export default HomeHeader;
+export default SubHeader;

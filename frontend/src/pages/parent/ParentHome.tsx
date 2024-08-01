@@ -1,5 +1,4 @@
 import { useNavigate } from "react-router-dom"
-import ParentHeader from "../../components/parent/common/HomeHeader"
 import InfoSection from "../../components/parent/common/InfoSection"
 import Menu from "../../components/parent/main/Menu"
 import daramgi from "../../assets/parent/daramgi.png"
@@ -16,8 +15,6 @@ export default function ParentHome() {
 
   return (
     <div className="min-h-screen flex flex-col items-center bg-[#FFEC8A]">
-      <ParentHeader />
-
       <div className="w-full flex flex-col items-center my-16 flex-grow">
         <InfoSection
           main1="김민선 학부모님"

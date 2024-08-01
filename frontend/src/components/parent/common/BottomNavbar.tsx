@@ -4,12 +4,12 @@ import { IoChatbubbleEllipsesOutline, IoChatbubbleEllipsesSharp, IoCalendarClear
 import { FaRegUser, FaUser } from 'react-icons/fa6';
 import { useNavigate, useLocation } from 'react-router-dom';
 
-const Footer: React.FC = () => {
+const BottomNavbar: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
   const handleScheduleClick = () => {
-    navigate('/ParentSchedule');
+    navigate('/schedule');
   };
 
   const handleHomeClick = () => {
@@ -22,8 +22,7 @@ const Footer: React.FC = () => {
 
   const isCurrentPage = (path: string) => location.pathname === path;
 
-  const iconColor = '#FFC107'; // 오렌지 색상
-
+  const iconColor = '#FFC107'; 
   return (
     <div className="z-40 footer fixed bottom-0 w-full bg-white text-gray-700 h-[66px] flex justify-around items-center shadow-md">
       <div className="footer-item flex flex-col items-center" onClick={handleHomeClick}>
@@ -41,7 +40,7 @@ const Footer: React.FC = () => {
         )}
       </div>
       <div className="footer-item flex flex-col items-center" onClick={handleScheduleClick}>
-        {isCurrentPage('/ParentSchedule') ? (
+        {isCurrentPage('/schedule') ? (
           <IoCalendarClear className="w-8 h-8" style={{ color: iconColor }} />
         ) : (
           <IoCalendarClearOutline className="w-8 h-8 text-gray-300" />
@@ -58,4 +57,4 @@ const Footer: React.FC = () => {
   );
 };
 
-export default Footer;
+export default BottomNavbar;
