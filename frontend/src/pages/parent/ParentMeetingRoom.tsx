@@ -33,8 +33,6 @@ interface ControlState {
 }
 
 export default function ParentMeeting() {
-  const [isMicOn, setIsMicOn] = useState<boolean>(true);
-  const [isVideoOn, setIsVideoOn] = useState<boolean>(true);
   const [user, setUser] = useState<User>({
     sessionId: undefined,
     username: "user1",
@@ -151,9 +149,6 @@ export default function ParentMeeting() {
         // );
       });
   };
-
-  const toggleMic = () => setIsMicOn(prev => !prev);
-  const toggleVideo = () => setIsVideoOn(prev => !prev);
 
   return (
     <div className="min-h-[100dvh] bg-cover bg-center bg-no-repeat" style={{ backgroundImage: `url(${bgImg})` }}>
