@@ -24,6 +24,7 @@ public class TeacherNotification {
     private Teacher teacher;
 
     @Column(name = "code")
+    @Enumerated(EnumType.STRING)
     private NotificationCode code;
 
     @Column(name = "teacher_notification_text")
