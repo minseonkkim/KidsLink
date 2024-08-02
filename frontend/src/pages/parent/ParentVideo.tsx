@@ -160,8 +160,8 @@ export default function ParentVideo() {
   };
 
   return (
-    <div className="min-h-[100dvh] bg-cover bg-center bg-no-repeat" style={{ backgroundImage: `url(${bgImg})` }}>
-      <div className="absolute bg-black bg-opacity-50 min-h-full flex flex-col justify-center items-center text-white z-5">
+    <div className="relative min-h-[100dvh] bg-cover bg-center bg-no-repeat" style={{ backgroundImage: `url(${bgImg})` }}>
+      <div className="absolute inset-0 bg-black bg-opacity-50"></div>
         {openvidu.session ? (
           <div className="w-full h-full flex">
             <div className="top-[150px] left-0 w-[700px] h-auto rounded-lg border border-white">
@@ -170,7 +170,7 @@ export default function ParentVideo() {
                 <OpenViduVideoComponent streamManager={openvidu.mainStreamManager} />
               )}
             </div>
-            <div className="top-[150px] right-0 w-[700px] h-auto rounded-lg border border-white">
+            <div className="absolute top-[50px] h-full w-[1200px] h-auto rounded-lg border border-white">
               <h1>상대 화면</h1>
               {openvidu.subscribers.map((sub, i) => (
                 <OpenViduVideoComponent
@@ -190,8 +190,7 @@ export default function ParentVideo() {
             <button onClick={joinSession}>연결</button>
           </div>
         )}
-        <ParentMeetingFooter control={control} handleControl={setControl} close={leaveSession} />
+        <ParentMeetingFooter control={control} handleControl={setControl} close={leaveSession}/>
       </div>
-    </div>
   );
 }
