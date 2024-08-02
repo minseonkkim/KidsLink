@@ -80,7 +80,7 @@ public class CustomOAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHa
         Optional<Cookie> oCookie = Arrays.stream(request.getCookies()).filter(cookie -> cookie.getName().equals(REDIRECT_URI_PARAM)).findFirst();
         Optional<String> redirectUri = oCookie.map(Cookie::getValue);
 
-        response.sendRedirect(redirectUri.orElseGet(() -> frontendServerUrl) + "o/login?access=" + access + "&expiredAt=" + String.valueOf(System.currentTimeMillis() + JWTUtil.ACCESS_TOKEN_VALIDITY_SECONDS));
+        response.sendRedirect(redirectUri.orElseGet(() -> frontendServerUrl) + "social/login?access=" + access + "&expiredAt=" + String.valueOf(System.currentTimeMillis() + JWTUtil.ACCESS_TOKEN_VALIDITY_SECONDS));
     }
 
     private void notJoinOAuth2(HttpServletResponse response, Authentication authentication) throws IOException {
@@ -90,7 +90,7 @@ public class CustomOAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHa
         String email = (String) httpSession.getAttribute("email");
 
         // 로그인 성공 후 프론트엔드로 리다이렉트
-        String redirectUrl = String.format("%s/register?registrationId=%s&username=%s&email=%s", frontendServerUrl, registrationId, username, email);
+        String redirectUrl = String.format("%s/social/join?registrationId=%s&username=%s&email=%s", frontendServerUrl, registrationId, username, email);
         response.sendRedirect(redirectUrl);
     }
 
