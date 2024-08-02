@@ -8,7 +8,7 @@ import Title from "../../components/teacher/common/Title";
 import moment from "moment";
 import { FaRegCalendar, FaXmark } from "react-icons/fa6";
 import styled from 'styled-components';
-import { createTeacherSchedule, createTeacherScheduleCheck, getTeacherSchedules } from "../../api/schedule";
+import { createTeacherSchedule, createTeacherScheduleCheck, deleteTeacherSchedule, getTeacherSchedules } from "../../api/schedule";
 
 const StyledCalendar = styled(Calendar)`
   display: flex;
@@ -224,7 +224,7 @@ const ScheduleItem: React.FC<ScheduleItemProps> = ({ id, content, confirmationSt
         }),
     });
 
-    drag(drop(ref));
+    // drag(drop(ref));  // 주석 해제하면 드래그앤드롭 할수있음
 
     return (
         <div
@@ -294,8 +294,9 @@ const TeacherSchedule: React.FC = () => {
         return '';
     };
 
-    const deleteItem = (id: number) => {
-        setScheduleItems(scheduleItems.filter(item => item.id !== id));
+    const deleteItem = async (id: number) => {
+        await deleteTeacherSchedule(id);
+        fetchSchedules();
     };
 
     const moveItem = useCallback((fromIndex: number, toIndex: number) => {
