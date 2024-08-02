@@ -1,27 +1,34 @@
 import { CgProfile } from "react-icons/cg";
 import { BiBell } from "react-icons/bi";
-import { Link } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import useModal from "../../../hooks/teacher/useModal";
 import { FaRegTrashAlt } from "react-icons/fa";
-import { getAlarmCount } from "../../../api/alarm";
+import { getAlarmCount, getAllAlarms } from "../../../api/alarm";
 
-interface Alert {
-    time: string;
-    content: string;
-    isChecked: boolean;
-}
+interface Alarm{
+    id: number;
+    contents: string;
+    date: string;
+    code: string;
+  }
 
-const initialAlerts: Alert[] = [
-    { time: '오후 14:25', content: "김민선 학부모로부터 투약 서류가 도착했습니다.", isChecked: false },
-    { time: '오후 14:21', content: "2024.08.05 16:00 김민선 학부모와 상담이 예약되었습니다.", isChecked: false },
-    { time: '오전 10:40', content: "사진 분류가 완료되었습니다.", isChecked: true }
-];
+
 
 export default function TeacherHeader() {
     const { openModal, closeModal, Modal, isModalOpen } = useModal();
-    const [alertList, setAlertList] = useState<Alert[]>(initialAlerts);
+    const [alertList, setAlertList] = useState<Alarm[]>([]);
     const [alertNum, setAlertNum] = useState(0);
+
+    const fetchAlarmList = async () => {
+        const fetchedAlarmList = await getAllAlarms();
+        const sortedAlarmList = fetchedAlarmList.sort((a, b) => b.id - a.id);
+        setAlertList(sortedAlarmList);
+    }
+
+    useEffect(() => {
+        fetchAlarmList();
+    }, [])
  
     const deleteItem = (index: number) => {
         setAlertList(prevList => prevList.filter((_, i) => i !== index));
@@ -31,8 +38,23 @@ export default function TeacherHeader() {
         setAlertList([]);
     };
 
-    const renderModalContent = () => (
-        <div className="w-[550px] max-h-[530px] p-2">
+    let navigate = useNavigate();
+
+    const handleClick = (code: string) => {
+        return (event: React.MouseEvent<HTMLDivElement>) => {
+            if (code === "DOCUMENT") {
+                navigate('/document');
+            } else if (code === "MEETING") {
+                navigate('/meeting');
+            } else {
+                navigate('/');
+            }
+        };
+    };
+
+    const renderModalContent = (alertList: Alarm[]) => (
+
+        <div className="w-[550px] max-h-[450px] p-2 custom-scrollbar">
                 <div className="flex flex-row justify-between">
                     <div className="text-[23px] font-bold mb-4">알림 목록</div>
                     {alertList.length > 0 && 
@@ -48,22 +70,21 @@ export default function TeacherHeader() {
                 
                 {alertList.length > 0 ? (
                     <div>
-                        <ul>
                             {alertList.map((alert, index) => (
                                 <div
                                     key={index}
-                                    className="flex flex-row justify-between items-center my-5"
+                                    className="flex flex-row justify-between items-center my-5 cursor-pointer"
+                                    onClick={handleClick(alert.code)}
                                 >
                                     <div>
-                                        <p className={`${alert.isChecked? 'text-[#B8B8B8]' : 'text-[#363636]'} text-[17px] mb-1`}>{alert.content}</p>
-                                        <span className={`${alert.isChecked? 'text-[#B8B8B8]' : 'text-gray-600'} text-[14px]`}>{alert.time}</span>
+                                        <p className="text-[17px] mb-[1px]">{alert.contents}</p>
+                                        <span className="text-[#B8B8B8] text-[13px]">{alert.date}</span>
                                     </div>
                                     <FaRegTrashAlt className="text-[18px] cursor-pointer"
                                         onClick={() => deleteItem(index)}
                                         />
                                 </div>
                             ))}
-                        </ul>
                     </div>
                 ) : (
                     <p>알림이 없습니다.</p>
@@ -71,24 +92,26 @@ export default function TeacherHeader() {
             </div>
     );
 
+    const fetchAlarmCount = async () => {
+        setAlertNum(await getAlarmCount());
+    }
+
     useEffect(() => {
         if (isModalOpen) {
             closeModal();
-            openModal(renderModalContent());
+            fetchAlarmCount();
+            openModal(renderModalContent(alertList));
         }
     }, [alertList, isModalOpen]);
 
-    const openCreateModal = () => {
+    const openAlarmModal = () => {
         if (!isModalOpen) {
-            openModal(renderModalContent());
+            fetchAlarmList();
+            openModal(renderModalContent(alertList));
         }
     };
 
     useEffect(() => {
-        const fetchAlarmCount = async () => {
-            setAlertNum(await getAlarmCount());
-        }
-
         fetchAlarmCount();
     }, [])
 
@@ -98,7 +121,7 @@ export default function TeacherHeader() {
                 <Link to='/'><p className="max-sm:ml-[30px] ml-[150px] text-[40px] font-bold text-left font-Cafe24Ssurround gradient-text cursor-pointer">키즈링크</p></Link>
                 <div className="flex flex-row">
                     <Link to='/mypage'><CgProfile className="w-[30px] h-[30px] mr-8 cursor-pointer" style={{ color: '#363636' }} /></Link>
-                    <div className="relative max-sm:mr-[30px] mr-[150px]" onClick={openCreateModal}>
+                    <div className="relative max-sm:mr-[30px] mr-[150px]" onClick={openAlarmModal}>
                         <BiBell className="w-[30px] h-[30px] cursor-pointer" style={{ color: '#363636' }} />
                         <span className="absolute top-0 right-0 w-4 h-4 bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center">
                             {alertNum}

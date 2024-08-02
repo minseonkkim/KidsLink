@@ -70,6 +70,15 @@ body {
   #chk{ position: absolute; left: -999em; }
 
 
+.hide-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+}
+.hide-scrollbar::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera*/
+}
+
+
 
 /* custom-scrollbar 클래스 정의 */
 .custom-scrollbar {
