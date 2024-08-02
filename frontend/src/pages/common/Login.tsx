@@ -11,8 +11,8 @@ import { RiKakaoTalkFill } from "react-icons/ri";
 
 
 export default function Login() {
-  const isDesktopOrLaptop = useMediaQuery({ query: '(min-width: 740px)' });
-  const isTabletOrMobile = useMediaQuery({ query: '(max-width: 740px)' });
+  const isDesktopOrLaptop = useMediaQuery({ query: "(min-width: 740px)" });
+  const isTabletOrMobile = useMediaQuery({ query: "(max-width: 740px)" });
 
   return (
     <>
@@ -24,11 +24,28 @@ export default function Login() {
 
 // 웹 화면으로 볼 경우
 const DesktopComponent = () => {
+  const location = useLocation()
+  const setUserType = useAppStore((state) => state.setUserType);
+
+  useEffect(() => {
+      const state = location.state;
+      if (state) {
+          const { accessToken, expiredAt, role } = state;
+          if (accessToken && expiredAt) {
+              localStorage.setItem('accessToken', accessToken);
+              localStorage.setItem('expiredAt', expiredAt);
+              console.log("role", role)
+              setUserType(role);
+          }
+      }
+  }, [location.state]);
+
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
-  const setUserType = useAppStore((state) => state.setUserType);
+  // const setUserType = useAppStore((state) => state.setUserType);
   const setIsSocialLogin = useAppStore((state) => state.setIsSocialLogin); // 추가
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -46,17 +63,16 @@ const DesktopComponent = () => {
 
   // 추가
   const handleSocialLogin = (provider: string) => {
-    setIsSocialLogin(true);
-    // 소셜 로그인 로직을 여기에 추가
-    console.log(`소셜 로그인: ${provider}`);
-    window.location.href=`${import.meta.env.VITE_API}/oauth2/authorization/naver`
-    // navigate("/join");
-  };
-  
+    console.log(`소셜 로그인: ${provider}`)
+    window.location.href = `${
+      import.meta.env.VITE_API
+    }/oauth2/authorization/${provider}`
+  }
+
   const handleJoinLinkClick = () => {
     setIsSocialLogin(false);
-    navigate("/join");
-  };
+    navigate("/join")
+  }
 
   return (
     <>
@@ -66,7 +82,9 @@ const DesktopComponent = () => {
           <div className="text-[38px] font-bold text-left text-[#363636] mb-[63px] h-[120px]">
             <Typewriter
               options={{
-                strings: ['소중한 추억을 기록하며<br>교육의 모든 순간을 함께하세요.'],
+                strings: [
+                  "소중한 추억을 기록하며<br>교육의 모든 순간을 함께하세요.",
+                ],
                 autoStart: true,
                 loop: true,
               }}

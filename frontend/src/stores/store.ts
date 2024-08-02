@@ -99,4 +99,5 @@ const useAppStore = create<AppState>()(
 )
 
 export default useAppStore
+export type { AppState }
 
