@@ -37,8 +37,10 @@ import TeacherSchedule from "./pages/teacher/TeacherSchedule"
 import JoinDetails from "./pages/common/JoinDetails"
 import TeacherAlbumFinish from "./pages/teacher/TeacherAlbumFinish"
 import TeacherMyPage from "./pages/teacher/TeacherMyPage"
-import TeacherVideo from "./pages/teacher/TeacherVideo"
-import ParentVideo from "./pages/parent/ParentVideo"
+import TeacherAlbumSendFinish from "./pages/teacher/TeacherAlbumSendFinish";
+import TeacherBroadcast from "./pages/teacher/TeacherVideo"
+import TeacherVideo from "./pages/teacher/TeacherVideo";
+import ParentVideo from "./pages/parent/ParentVideo";
 
 export default function App() {
   const userType = useAppStore((state: AppState) => state.userType)
@@ -75,7 +77,7 @@ export default function App() {
           <Route path="/document" element={<TeacherDocument />} />
           <Route path="/notice" element={<TeacherNotice />} />
           <Route path="/album" element={<TeacherAlbum />} />
-          <Route path="/album/finish" element={<TeacherAlbumFinish />} />
+          <Route path="/album/classify_finish" element={<TeacherAlbumFinish />} />
           <Route path="/growth" element={<TeacherGrowth />} />
           <Route path="/meeting" element={<TeacherMeeting />} />
           <Route path="/meeting/reservation" element={<TeacherReservation />} />
@@ -83,6 +85,7 @@ export default function App() {
           <Route path="/ourclass" element={<TeacherOurClass />} />
           <Route path="/schedule" element={<TeacherSchedule />} />
           <Route path="/mypage" element={<TeacherMyPage />} />
+          <Route path="/album/send_finish" element={<TeacherAlbumSendFinish/>} />
           <Route path="/meeting/:meetingId" element={<TeacherVideo />} />
         </>
       ) : (
