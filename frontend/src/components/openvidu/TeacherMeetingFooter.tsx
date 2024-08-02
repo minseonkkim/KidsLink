@@ -20,11 +20,9 @@ interface TeacherMeetingFooterProps {
   isRecording: boolean; // 현재 녹음 상태를 나타내는 프로퍼티 추가
 }
 
-<<<<<<< HEAD
-const MeetingFooter: React.FC<MeetingFooterProps> = ({ control, handleControl, close, startRecording, stopRecording, isRecording }) => {
-=======
-const TeacherMeetingFooter: React.FC<TeacherMeetingFooterProps> = ({ control, handleControl, close }) => {
->>>>>>> fae8702a4a666deea208544633fa79b3ea09b146
+
+const TeacherMeetingFooter: React.FC<TeacherMeetingFooterProps> = ({ control, handleControl, close, startRecording, stopRecording, isRecording }) => {
+
   const isMuted = control.muted || control.volume === 0;
 
   return (
