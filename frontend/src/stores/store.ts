@@ -2,7 +2,7 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
 
-interface AppState {
+export interface AppState {
   // 학부모 or 선생님 회원가입 시 공통 데이터 타입
   username: string;
   password: string;
