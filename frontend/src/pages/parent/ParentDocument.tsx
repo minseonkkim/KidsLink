@@ -6,10 +6,9 @@ import pill from '../../assets/parent/pill.png';
 import absentIcon from '../../assets/parent/absent.png';
 import checkedIcon from '../../assets/parent/check.png';
 import handWithPen from '../../assets/parent/pen.png';
-import { getKidAllDocuments } from '../../api/document';
-import type { ParentDocument } from '../../api/document';
-
+import { getKidAllDocuments, ParentDocumentData } from '../../api/document';
 import { useParentInfoStore } from '../../stores/useParentInfoStore';
+import { getParentInfo } from '../../api/Info'
 
 interface MappedDocument {
   id: number;
@@ -31,56 +30,64 @@ export default function ParentDocument() {
   const navigate = useNavigate();
   const divRef = useRef<HTMLDivElement>(null);
 
-  const childId = useParentInfoStore((state) => state.parentInfo?.child.childId);
+  const parentInfo = useParentInfoStore((state) => state.parentInfo);
+  const setParentInfo = useParentInfoStore((state) => state.setParentInfo);
+  const childId = parentInfo?.child.childId;
 
   useEffect(() => {
-    async function fetchDocuments() {
-      if (childId) {
-        try {
-          const response: ParentDocument[] = await getKidAllDocuments(childId);
-          if (response) {
-            const parsedDocuments = response.map((item: ParentDocument): MappedDocument => {
-              console.log("item: ", item)
-              if (item.dosage) {
-                return {
-                  id: item.id,
-                  date: item.date,
-                  type: 'dosage',
-                  checked: item.dosage.confirmationStatus === "T",
-                  startDate: item.dosage.startDate,
-                  endDate: item.dosage.endDate,
-                  documentId: item.dosage.dosageId,
-                  title: item.dosage.name,
-                  details: item.dosage.details,
-                  childId:childId
-                };
-              } else if (item.absent) {
-                return {
-                  id: item.id,
-                  date: item.date,
-                  type: 'absent',
-                  checked: item.absent.confirmationStatus === "T",
-                  startDate: item.absent.startDate,
-                  endDate: item.absent.endDate,
-                  documentId: item.absent.absentId,
-                  title: item.absent.reason,
-                  details: item.absent.details,
-                  childId:childId
-                };
-              } else {
-                throw new Error("Document must have either dosage or absent data");
-              }
-            });
-            setDocuments(parsedDocuments);
+    async function fetchParentInfoAndDocuments() {
+      try {
+          let currentChildId = childId;
+          if (!currentChildId) {
+              const fetchedParentInfo = await getParentInfo();
+              setParentInfo(fetchedParentInfo);
+              currentChildId = fetchedParentInfo.child.childId;
           }
-        } catch (error) {
-          console.error("Failed to fetch documents", error);
-        }
+
+          if (currentChildId) {
+              const response: ParentDocumentData[] = await getKidAllDocuments(currentChildId);
+              if (response) {
+                  const parsedDocuments = response.map((item: ParentDocumentData): MappedDocument => {
+                      if (item.dosage) {
+                          return {
+                              id: item.id,
+                              date: item.date,
+                              type: 'dosage',
+                              checked: item.dosage.confirmationStatus === "T",
+                              startDate: item.dosage.startDate,
+                              endDate: item.dosage.endDate,
+                              documentId: item.dosage.dosageId,
+                              title: item.dosage.name,
+                              details: item.dosage.details,
+                              childId: currentChildId
+                          };
+                      } else if (item.absent) {
+                          return {
+                              id: item.id,
+                              date: item.date,
+                              type: 'absent',
+                              checked: item.absent.confirmationStatus === "T",
+                              startDate: item.absent.startDate,
+                              endDate: item.absent.endDate,
+                              documentId: item.absent.absentId,
+                              title: item.absent.reason,
+                              details: item.absent.details,
+                              childId: currentChildId
+                          };
+                      } else {
+                          throw new Error("Document must have either dosage or absent data");
+                      }
+                  });
+                  setDocuments(parsedDocuments);
+              }
+          }
+      } catch (error) {
+        console.error("Failed to fetch documents", error);
       }
     }
 
-    fetchDocuments();
-  }, [childId]);
+    fetchParentInfoAndDocuments();
+  }, [childId, setParentInfo]);
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
@@ -147,7 +154,7 @@ export default function ParentDocument() {
                     <p className="text-base font-bold text-[#757575]">
                       {`${doc.startDate} ~ ${doc.endDate}`}
                     </p>
-                    <div className="flex items-center"> 
+                    <div className="flex items-center">
                       <img
                         src={doc.type === 'dosage' ? pill : absentIcon}
                         alt={doc.type === 'dosage' ? 'pill' : 'absent'}

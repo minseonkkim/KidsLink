@@ -6,7 +6,7 @@ import NavigateBack from "../../components/teacher/common/NavigateBack";
 import TeacherHeader from "../../components/teacher/common/TeacherHeader";
 import Title from "../../components/teacher/common/Title";
 import ReservationTime from "../../components/teacher/consulting/ReservationTime";
-import { PostTeacherReservations, TeacherMeetingReservation, getAllPossibleReservations } from "../../api/meeting";
+import { ConfirmMeeting, PostTeacherReservations, TeacherMeetingReservation, getAllPossibleReservations } from "../../api/meeting";
 import styled from 'styled-components';
 
 const StyledCalendar = styled(Calendar)`
@@ -289,22 +289,32 @@ export default function TeacherReservation() {
       const nonEmptyTempSelectedTimes = Object.fromEntries(
         Object.entries(tempSelectedTimes).filter(([key, value]) => value.length > 0)
       );
-
+  
+      // 시간 정렬
+      const sortedTempSelectedTimes = Object.entries(nonEmptyTempSelectedTimes).reduce((acc, [date, times]) => {
+        acc[date] = (times as string[]).sort((a, b) => {
+          const timeA = moment(a, 'HH:mm');
+          const timeB = moment(b, 'HH:mm');
+          return timeA.diff(timeB);
+        });
+        return acc;
+      }, {} as { [key: string]: string[] });
+  
       // API 요청 데이터 준비
-      const requestData: TeacherMeetingReservation[] = Object.entries(tempSelectedTimes).map(
+      const requestData: TeacherMeetingReservation[] = Object.entries(sortedTempSelectedTimes).map(
         ([date, times]) => ({ date, times })
       );
       console.log("requestData");
       console.log(requestData);
-
+  
       // API 호출
       await PostTeacherReservations(requestData);
-
+  
       console.log('예약이 저장되었습니다:', requestData);
-
+  
       // 최신 데이터 다시 가져오기
       await fetchData();
-
+  
       // 상태 초기화 및 편집 모드 종료
       setTempSelectedTimes({});
       setIsEditing(false);
@@ -344,6 +354,12 @@ export default function TeacherReservation() {
                 <FaRegCalendar className="mr-3"/>
                 {formatDate(date)}
               </div>
+              <button 
+                className="mt-2 h-[40px] border-2 border-[#7C7C7C] bg-[#E3EEFF] px-3 py-1 font-bold rounded-[10px] hover:bg-[#D4DDEA]"
+                onClick={ConfirmMeeting}
+              >
+                상담일자 확정하기
+              </button>
               <button 
                 className="mt-2 h-[40px] border-2 border-[#7C7C7C] bg-[#E3EEFF] px-3 py-1 font-bold rounded-[10px] hover:bg-[#D4DDEA]"
                 onClick={isEditing ? handleSaveClick : handleEditClick}

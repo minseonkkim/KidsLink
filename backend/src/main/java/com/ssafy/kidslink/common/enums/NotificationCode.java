@@ -4,12 +4,12 @@ import lombok.Getter;
 
 @Getter
 public enum NotificationCode {
-    DIARY("diary"),
-    NOTICE("notice"),
-    ALBUM("album"),
-    BUS("bus"),
-    MEETING("meeting"),
-    DOCUMENT("document");
+    DIARY("DIARY"),
+    NOTICE("NOTICE"),
+    ALBUM("ALBUM"),
+    BUS("BUS"),
+    MEETING("MEETING"),
+    DOCUMENT("DOCUMENT");
 
     private final String code;
 
