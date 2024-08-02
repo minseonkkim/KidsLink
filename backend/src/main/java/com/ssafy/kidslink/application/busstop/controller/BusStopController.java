@@ -27,6 +27,7 @@ import java.util.List;
 @Slf4j
 @RequestMapping("/api/busstop")
 public class BusStopController {
+
     private final BusStopService busStopService;
 
 
@@ -109,6 +110,35 @@ public class BusStopController {
 
     }
 
+    @GetMapping("/child")
+    public ResponseEntity<APIResponse<BusStopChildDTO>> getBusStopChild(@AuthenticationPrincipal Object principal){
+        if (principal instanceof CustomUserDetails) {
+            CustomUserDetails userDetails = (CustomUserDetails) principal;
+
+            BusStopChildDTO busStopChildDTO = busStopService.getBusStopChild(userDetails.getUsername());
+            APIResponse<BusStopChildDTO> responseData = new APIResponse<>(
+                    "success",
+                    busStopChildDTO,
+                    "아이 버스 정보 조회에 성공하였습니다.",
+                    null
+            );
+            return new ResponseEntity<>(responseData, HttpStatus.OK);
+        }
+        APIError apiError = new APIError("UNAUTHORIZED", "유효한 JWT 토큰이 필요합니다.");
+
+        APIResponse<BusStopChildDTO> responseData = new APIResponse<>(
+                "fail",
+                null,
+                "아이 버스 정보 조회에 실패했습니다.",
+                apiError
+        );
+
+        return new ResponseEntity<>(responseData, HttpStatus.BAD_REQUEST);
+
+    }
+
+
+
     @PostMapping("/notification")
     public ResponseEntity<APIResponse<Void>> sendBusNotification(@AuthenticationPrincipal Object principal){
         if (principal instanceof CustomUserDetails) {
@@ -135,4 +165,5 @@ public class BusStopController {
         return new ResponseEntity<>(responseData, HttpStatus.BAD_REQUEST);
 
     }
+
 }
