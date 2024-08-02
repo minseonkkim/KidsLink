@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import LoginHeader from "../../components/login/LoginHeader";
 import mainImg from "../../assets/teacher/main_img.png";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { login as loginAPI } from "../../api/member";
 import useAppStore from "../../stores/store";
 import { useMediaQuery } from 'react-responsive';
@@ -24,7 +24,7 @@ export default function Login() {
 
 // 웹 화면으로 볼 경우
 const DesktopComponent = () => {
-  const location = useLocation()
+  const location = useLocation();
   const setUserType = useAppStore((state) => state.setUserType);
 
   useEffect(() => {
