@@ -122,6 +122,10 @@ public class MeetingTimeService {
 
     }
 
+    public void deleteMeeting(String teacherUsername){
+        Teacher teacher = teacherRepository.findByTeacherUsername(teacherUsername);
+        selectedMeetingRepository.deleteByTeacher(teacher);
+    }
 
 
     public void confirmMeeting(String teacherUsername) {
