@@ -43,24 +43,31 @@ export default function TeacherFormStep1({ onNext }: TeacherFormStep1Props) {
     navigate("/join")
   }
 
+
   const handleNext = async (event: React.FormEvent) => {
     event.preventDefault()
 
-    if (!isUsernameChecked) {
+    if (!isSocialLogin &&!isUsernameChecked) { // 추가
       alert("아이디 중복 확인을 해주세요.")
       return
     }
 
-    if (password !== passwordConfirm) {
+    if (!isSocialLogin && password !== passwordConfirm) { // 추가
       alert("비밀번호가 일치하지 않습니다.")
       return
     }
-
-    if (!username || !password || !passwordConfirm || !name) {
+    
+    if (!isSocialLogin && (!username || !password || !passwordConfirm || !name)) { // 추가
       alert("모든 필수 항목을 입력해주세요.")
       return
     }
 
+    if (isSocialLogin && !name) { // 추가
+      alert("모든 필수 항목을 입력해주세요.")
+      return
+    }
+
+    // 프로필 이미지 등록 안했을 경우 기본 이미지 대체
     if (!profile) {
       const response = await fetch(defaultProfileImg)
       const blob = await response.blob()
@@ -70,6 +77,7 @@ export default function TeacherFormStep1({ onNext }: TeacherFormStep1Props) {
       setProfile(defaultProfileFile)
     }
 
+    // 닉네임 입력 안했을 경우 이름으로 닉네임 지정
     if (!nickname) {
       setNickname(name)
     }
@@ -109,16 +117,18 @@ export default function TeacherFormStep1({ onNext }: TeacherFormStep1Props) {
       {/* 프로필 이미지 업로드 */}
       <ProfileImageUpload profile={profile} setProfile={setProfile} />
 
-      {/* 아이디 및 비밀번호 입력 */}
-      <MainInfo
-        username={username}
-        password={password}
-        passwordConfirm={passwordConfirm}
-        setUsername={setUsername}
-        setPassword={setPassword}
-        setPasswordConfirm={setPasswordConfirm}
-        setIsUsernameChecked={setIsUsernameChecked}
-      />
+      {/* 아이디 및 비밀번호 입력 (소셜 로그인 사용자가 아닌 경우에만) */} 
+      {!isSocialLogin && ( // 추가
+        <MainInfo
+          username={username}
+          password={password}
+          passwordConfirm={passwordConfirm}
+          setUsername={setUsername}
+          setPassword={setPassword}
+          setPasswordConfirm={setPasswordConfirm}
+          setIsUsernameChecked={setIsUsernameChecked}
+        />
+      )}
 
       {/* 이름, 닉네임, 이메일, 휴대폰 번호 입력 */}
       <SubInfo
@@ -137,7 +147,7 @@ export default function TeacherFormStep1({ onNext }: TeacherFormStep1Props) {
         setTelSecond={setTelSecond}
         setTelThird={setTelThird}
         handleEmailChange={handleEmailChange}
-        isSocialLogin={isSocialLogin} // 추가
+        isSocialLogin={isSocialLogin} // 추가 - 이메일 필드 빼기 위함
       />
 
       <div className="border-b-2 border-black mt-8"></div>

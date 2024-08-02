@@ -13,7 +13,6 @@ export default function ParentBus() {
   const wsRef = useRef<WebSocket | null>(null);
   const [location, setLocation] = useState({ lat: 37.5665, lng: 126.9780 });
   const [isBusMoving, setIsBusMoving] = useState(false);
-  const [hasBoarded, setHasBoarded] = useState(false);
   const [willTakeBus, setWillTakeBus] = useState(false);
 
   useEffect(() => {
@@ -84,7 +83,7 @@ export default function ParentBus() {
           </button>
         </div>
         <div className="flex flex-col items-center justify-between">
-          <div className="text-lg font-bold mb-2">
+          <div className="text-lg font-base mb-2">
             {isBusMoving ? "오늘 자녀가 버스에 탑승하지 않습니다." : "오늘 자녀가 버스에 탑승합니다."}
           </div>
         </div>
