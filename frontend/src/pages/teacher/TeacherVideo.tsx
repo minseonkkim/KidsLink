@@ -257,7 +257,8 @@ export default function TeacherVideo() {
           control={control}
           handleControl={setControl}
           close={leaveSession}
-          stopRecording={handleStopRecording} // 녹음 중지 버튼에 대한 함수 전달
+          stopRecording={handleStopRecording}
+          isRecording = {true}
         />
       {/* 녹화 파일 목록 추가 */}
       <div className="recordings-list mt-4">
