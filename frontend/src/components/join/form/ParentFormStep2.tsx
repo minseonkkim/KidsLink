@@ -71,6 +71,7 @@ export default function ParentFormStep2({ onBack, onNext }: ParentFormStep2Props
     }
 
     const socialData = { // 추가
+      role: "ROLE_PARENT",
       profile,
       name,
       nickname,
