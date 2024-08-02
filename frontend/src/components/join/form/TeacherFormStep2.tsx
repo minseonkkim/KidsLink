@@ -19,6 +19,8 @@ export default function TeacherFormStep2({ onBack, onNext }: TeacherFormStep2Pro
     nickname,
     tel,
     profile,
+
+    isSocialLogin // 추가
   } = useAppStore()
 
   const [selectedKindergartenId, setSelectedKindergartenId] = useState<number | null>(null)
@@ -46,11 +48,26 @@ export default function TeacherFormStep2({ onBack, onNext }: TeacherFormStep2Pro
       kindergartenId: selectedKindergartenId,
     }
 
+    const socialData = { // 추가
+      role: "ROLE_TEACHER",
+      profile,
+      name,
+      nickname,
+      tel,
+      kindergartenClassId: selectedKindergartenClassId,
+      kindergartenId: selectedKindergartenId,
+    }
+    
     try {
-      await teacherSignup(teacherData)
-      onNext();
+      if (!isSocialLogin) {
+        await teacherSignup(teacherData); // 일반 사용자용 함수 호출
+      } else {
+        // 소셜 로그인을 위한 회원가입 함수 호출 (socialData 사용)
+      }
+      console.log(socialData) // socialData 확인용
+      onNext(); // 지금은 소셜 회원가입 함수에서 error안걸려서 다음 페이지 넘아감
     } catch (error) {
-      console.error("Signup failed", error)
+      console.error("Signup failed", error);
     }
   }
 
