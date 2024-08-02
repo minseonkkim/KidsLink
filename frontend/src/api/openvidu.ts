@@ -4,6 +4,12 @@ import axiosInstance from "./token/axiosInstance";
 const APPLICATION_SERVER_URL = import.meta.env.VITE_OPENVIDU_URL
 const OPENVIDU_SERVER_SECRET = "MY_SECRET";
 
+interface Recording {
+  id: string;
+  name: string;
+  url: string; // Assuming the URL to access the recording is available
+}
+
 export const getToken = async (mySessionId: string): Promise<string> => {
   const sessionId = await createSession(mySessionId);
   return await createToken(sessionId);
@@ -104,7 +110,6 @@ export const handleSpeechRecognition = async (sessionId: string) => {
   const recognition = new SpeechRecognition();
   recognition.continuous = true;
   recognition.interimResults = true;
-
   recognition.onresult = async (event) => {
     for (let i = event.resultIndex; i < event.results.length; i++) {
       if (event.results[i].isFinal) {
@@ -121,4 +126,15 @@ export const handleSpeechRecognition = async (sessionId: string) => {
   };
 
   recognition.start();
+};
+
+export const stopSpeechRecognition = () => {
+  let recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+  if (recognition) {
+    recognition.onresult = null;
+    recognition.onerror = null;
+    recognition.onend = null;
+    recognition.stop();
+    recognition = null;
+  }
 };
