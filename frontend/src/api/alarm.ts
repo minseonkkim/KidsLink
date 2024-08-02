@@ -61,7 +61,7 @@ export async function deleteAlarm(alarmId: number) {
 // 전체 알림 삭제
 export async function deleteAllAlarms() {
   try  {
-    const response = await axiosInstance.delete('nontification')
+    const response = await axiosInstance.delete('notification')
 
     if (response.data.status === 'success') {
       console.log(response.data.data) // 확인 후 삭제

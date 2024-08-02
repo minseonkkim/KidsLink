@@ -1,19 +1,17 @@
 import { CgProfile } from "react-icons/cg";
 import { BiBell } from "react-icons/bi";
-import { Link, Navigate, useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useState, useEffect, useCallback } from "react";
 import useModal from "../../../hooks/teacher/useModal";
 import { FaRegTrashAlt } from "react-icons/fa";
-import { getAlarmCount, getAllAlarms } from "../../../api/alarm";
+import { deleteAlarm, deleteAllAlarms, getAlarmCount, getAllAlarms } from "../../../api/alarm";
 
-interface Alarm{
+interface Alarm {
     id: number;
     contents: string;
     date: string;
     code: string;
-  }
-
-
+}
 
 export default function TeacherHeader() {
     const { openModal, closeModal, Modal, isModalOpen } = useModal();
@@ -24,18 +22,27 @@ export default function TeacherHeader() {
         const fetchedAlarmList = await getAllAlarms();
         const sortedAlarmList = fetchedAlarmList.sort((a, b) => b.id - a.id);
         setAlertList(sortedAlarmList);
-    }
+    };
+
+    const fetchAlarmCount = async () => {
+        setAlertNum(await getAlarmCount());
+    };
 
     useEffect(() => {
         fetchAlarmList();
-    }, [])
- 
-    const deleteItem = (index: number) => {
-        setAlertList(prevList => prevList.filter((_, i) => i !== index));
+        fetchAlarmCount();
+    }, []);
+
+    const deleteItem = async (id: number) => {
+        await deleteAlarm(id);
+        await fetchAlarmList();
+        await fetchAlarmCount();
     };
 
-    const deleteAllItems = () => {
-        setAlertList([]);
+    const deleteAllItems = async () => {
+        await deleteAllAlarms();
+        await fetchAlarmList();
+        await fetchAlarmCount();
     };
 
     let navigate = useNavigate();
@@ -52,68 +59,64 @@ export default function TeacherHeader() {
         };
     };
 
-    const renderModalContent = (alertList: Alarm[]) => (
-
+    const renderModalContent = useCallback(() => (
         <div className="w-[550px] max-h-[450px] p-2 custom-scrollbar">
-                <div className="flex flex-row justify-between">
-                    <div className="text-[23px] font-bold mb-4">알림 목록</div>
-                    {alertList.length > 0 && 
-                        <button
-                            className="mb-4 px-3.5 py-2 rounded-lg flex flex-row items-center bg-[#DF6767] text-white"
-                            onClick={deleteAllItems}
-                        >
-                            <FaRegTrashAlt className="mr-2 text-[16px] font-bold"/>
-                            전체 삭제
-                        </button>
-                    }
-                </div>
-                
-                {alertList.length > 0 ? (
-                    <div>
-                            {alertList.map((alert, index) => (
-                                <div
-                                    key={index}
-                                    className="flex flex-row justify-between items-center my-5 cursor-pointer"
-                                    onClick={handleClick(alert.code)}
-                                >
-                                    <div>
-                                        <p className="text-[17px] mb-[1px]">{alert.contents}</p>
-                                        <span className="text-[#B8B8B8] text-[13px]">{alert.date}</span>
-                                    </div>
-                                    <FaRegTrashAlt className="text-[18px] cursor-pointer"
-                                        onClick={() => deleteItem(index)}
-                                        />
-                                </div>
-                            ))}
-                    </div>
-                ) : (
-                    <p>알림이 없습니다.</p>
-                )}
+            <div className="flex flex-row justify-between">
+                <div className="text-[23px] font-bold mb-4">알림 목록</div>
+                {alertList.length > 0 &&
+                    <button
+                        className="mb-4 px-3.5 py-2 rounded-lg flex flex-row items-center bg-[#DF6767] text-white"
+                        onClick={async () => {
+                            await deleteAllItems();
+                        }}
+                    >
+                        <FaRegTrashAlt className="mr-2 text-[16px] font-bold" />
+                        전체 삭제
+                    </button>
+                }
             </div>
-    );
+            {alertList.length > 0 ? (
+                <div>
+                    {alertList.map((alert, index) => (
+                        <div
+                            key={index}
+                            className="flex flex-row justify-between items-center my-5 cursor-pointer"
+                            onClick={handleClick(alert.code)}
+                        >
+                            <div>
+                                <p className="text-[17px] mb-[1px]">{alert.contents}</p>
+                                <span className="text-[#B8B8B8] text-[13px]">{alert.date}</span>
+                            </div>
+                            <FaRegTrashAlt
+                                className="text-[18px] cursor-pointer"
+                                onClick={async (e) => {
+                                    e.stopPropagation(); // Prevent triggering handleClick
+                                    await deleteItem(alert.id);
+                                }}
+                            />
+                        </div>
+                    ))}
+                </div>
+            ) : (
+                <p>알림이 없습니다.</p>
+            )}
+        </div>
+    ), [alertList]);
 
-    const fetchAlarmCount = async () => {
-        setAlertNum(await getAlarmCount());
-    }
-
-    useEffect(() => {
-        if (isModalOpen) {
-            closeModal();
-            fetchAlarmCount();
-            openModal(renderModalContent(alertList));
-        }
-    }, [alertList, isModalOpen]);
-
-    const openAlarmModal = () => {
-        if (!isModalOpen) {
-            fetchAlarmList();
-            openModal(renderModalContent(alertList));
-        }
+    const openAlarmModal = async () => {
+        await fetchAlarmList();
+        openModal(renderModalContent());
+        await fetchAlarmCount();
     };
 
     useEffect(() => {
-        fetchAlarmCount();
-    }, [])
+        if (isModalOpen) {
+            openModal(renderModalContent());
+        }
+        return () => {
+            fetchAlarmCount();
+        };
+    }, [alertList, isModalOpen]);
 
     return (
         <>
@@ -134,3 +137,4 @@ export default function TeacherHeader() {
         </>
     );
 }
+
