@@ -31,7 +31,8 @@ export interface Document {
   details: AbsentData | DosageData;
 }
 
-export interface DosageData {
+
+export interface ParentDosageData {
   dosageId: number;
   name: string;
   confirmationStatus: string;
@@ -42,8 +43,22 @@ export interface DosageData {
   times: string;
   storageInfo: string;
   volume: string;
-  childId: number;
-  childName: string;
+}
+
+export interface ParentAbsentData {
+  absentId: number;
+  reason: string;
+  confirmationStatus: string;
+  startDate: string;
+  endDate: string;
+  details: string;
+}
+
+export interface ParentDocument {
+  id: number;
+  date: string;
+  dosage?: ParentDosageData;
+  absent?: ParentAbsentData;
 }
 
 

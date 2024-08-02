@@ -51,7 +51,14 @@ const detectProfanity = (text: string): boolean => {
 
 // Speech recognition and profanity detection
 export const handleSpeechRecognition = async (sessionId: string) => {
-  const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+  // 타입 단언을 사용하여 타입스크립트가 올바르게 인식하도록 합니다.
+  const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+
+  if (!SpeechRecognition) {
+    throw new Error('Speech recognition not supported in this browser.');
+  }
+
+  const recognition = new SpeechRecognition();
   recognition.continuous = true;
   recognition.interimResults = true;
 

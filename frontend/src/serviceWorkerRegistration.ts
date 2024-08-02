@@ -25,8 +25,8 @@ type Config = {
 
 export function register(config?: Config) {
   console.log("islocalhost:",isLocalhost);
-  console.log("process.env.NODE_ENV:",process.env.NODE_ENV);
-  if (process.env.NODE_ENV === 'production' && 'serviceWorker' in navigator) {
+  console.log("process.env.PUBLIC_URL:",process.env.PUBLIC_URL);
+  if (process.env.PUBLIC_URL === 'production' && 'serviceWorker' in navigator) {
     // The URL constructor is available in all browsers that support SW.
     const publicUrl = new URL(process.env.PUBLIC_URL, window.location.href);
     console.log('Public URL:', publicUrl);  
