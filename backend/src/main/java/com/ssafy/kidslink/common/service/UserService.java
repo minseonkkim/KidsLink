@@ -26,19 +26,4 @@ public class UserService {
     public boolean isExistByUsernameForTeacher(String username) {
         return teacherRepository.existsByTeacherUsername(username);
     }
-
-    public Map<String, Object> getOAuth2Info(HttpSession httpSession) {
-        log.info("Fetching OAuth2 info from session");
-        Map<String, Object> map = new HashMap<>();
-        OAuth2User oauth2User = (OAuth2User) httpSession.getAttribute("oauth2User");
-        String registrationId = (String) httpSession.getAttribute("registrationId");
-        String username = (String) httpSession.getAttribute("username");
-        String email = (String) httpSession.getAttribute("email");
-        map.put("oauth2User", oauth2User);
-        map.put("registrationId", registrationId);
-        map.put("username", username);
-        map.put("email", email);
-        log.info("Stored OAuth2 info: oauth2User={}, registrationId={}, username={}, email={}", oauth2User, registrationId, username, email);
-        return map;
-    }
 }
