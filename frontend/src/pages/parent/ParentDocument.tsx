@@ -37,50 +37,50 @@ export default function ParentDocument() {
   useEffect(() => {
     async function fetchParentInfoAndDocuments() {
       try {
-        let currentChildId = childId;
-        if (!currentChildId) {
-          const fetchedParentInfo = await getParentInfo();
-          setParentInfo(fetchedParentInfo);
-          currentChildId = fetchedParentInfo.child.childId;
-        }
-
-        if (currentChildId) {
-          const response: ParentDocumentData[] = await getKidAllDocuments(currentChildId);
-          if (response) {
-            const parsedDocuments = response.map((item: ParentDocumentData): MappedDocument => {
-              if (item.dosage) {
-                return {
-                  id: item.id,
-                  date: item.date,
-                  type: 'dosage',
-                  checked: item.dosage.confirmationStatus === "T",
-                  startDate: item.dosage.startDate,
-                  endDate: item.dosage.endDate,
-                  documentId: item.dosage.dosageId,
-                  title: item.dosage.name,
-                  details: item.dosage.details,
-                  childId: currentChildId
-                };
-              } else if (item.absent) {
-                return {
-                  id: item.id,
-                  date: item.date,
-                  type: 'absent',
-                  checked: item.absent.confirmationStatus === "T",
-                  startDate: item.absent.startDate,
-                  endDate: item.absent.endDate,
-                  documentId: item.absent.absentId,
-                  title: item.absent.reason,
-                  details: item.absent.details,
-                  childId: currentChildId
-                };
-              } else {
-                throw new Error("Document must have either dosage or absent data");
-              }
-            });
-            setDocuments(parsedDocuments);
+          let currentChildId = childId;
+          if (!currentChildId) {
+              const fetchedParentInfo = await getParentInfo();
+              setParentInfo(fetchedParentInfo);
+              currentChildId = fetchedParentInfo.child.childId;
           }
-        }
+
+          if (currentChildId) {
+              const response: ParentDocumentData[] = await getKidAllDocuments(currentChildId);
+              if (response) {
+                  const parsedDocuments = response.map((item: ParentDocumentData): MappedDocument => {
+                      if (item.dosage) {
+                          return {
+                              id: item.id,
+                              date: item.date,
+                              type: 'dosage',
+                              checked: item.dosage.confirmationStatus === "T",
+                              startDate: item.dosage.startDate,
+                              endDate: item.dosage.endDate,
+                              documentId: item.dosage.dosageId,
+                              title: item.dosage.name,
+                              details: item.dosage.details,
+                              childId: currentChildId
+                          };
+                      } else if (item.absent) {
+                          return {
+                              id: item.id,
+                              date: item.date,
+                              type: 'absent',
+                              checked: item.absent.confirmationStatus === "T",
+                              startDate: item.absent.startDate,
+                              endDate: item.absent.endDate,
+                              documentId: item.absent.absentId,
+                              title: item.absent.reason,
+                              details: item.absent.details,
+                              childId: currentChildId
+                          };
+                      } else {
+                          throw new Error("Document must have either dosage or absent data");
+                      }
+                  });
+                  setDocuments(parsedDocuments);
+              }
+          }
       } catch (error) {
         console.error("Failed to fetch documents", error);
       }

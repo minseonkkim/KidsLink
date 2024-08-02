@@ -8,8 +8,8 @@ import TeacherHeader from "../../components/teacher/common/TeacherHeader";
 import MeetingBackground from "../../assets/teacher/meeting_background.png";
 import { useTeacherInfoStore } from "../../stores/useTeacherInfoStore";
 import { getTeacherInfo } from "../../api/Info";
-
-const APPLICATION_SERVER_URL = "http://localhost:8080/api/video"; // 이 부분을 추가
+import axios from 'axios';
+const APPLICATION_SERVER_URL = import.meta.env.VITE_OPENVIDU_URL
 
 interface User {
   sessionId?: string;
@@ -89,6 +89,7 @@ export default function TeacherVideo() {
   useEffect(() => {
     fetchRecordingsList();
   }, []);
+
   useEffect(() => {
     // 녹화 파일 목록 불러오기
     fetchRecordings();
