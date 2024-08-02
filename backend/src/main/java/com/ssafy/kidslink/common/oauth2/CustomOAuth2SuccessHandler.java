@@ -80,7 +80,7 @@ public class CustomOAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHa
         Optional<Cookie> oCookie = Arrays.stream(request.getCookies()).filter(cookie -> cookie.getName().equals(REDIRECT_URI_PARAM)).findFirst();
         Optional<String> redirectUri = oCookie.map(Cookie::getValue);
 
-        response.sendRedirect(redirectUri.orElseGet(() -> frontendServerUrl) + "?token=" + access);
+        response.sendRedirect(redirectUri.orElseGet(() -> frontendServerUrl) + "o/login?access=" + access + "&expiredAt=" + String.valueOf(System.currentTimeMillis() + JWTUtil.ACCESS_TOKEN_VALIDITY_SECONDS));
     }
 
     private void notJoinOAuth2(HttpServletResponse response, Authentication authentication) throws IOException {
