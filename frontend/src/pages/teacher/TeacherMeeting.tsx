@@ -10,9 +10,10 @@ import { getOneParentInfo } from "../../api/Info";
 import TeacherMeetingSchedule from "../../components/teacher/consulting/TeacherMeetingSchedule";
 
 export default function TeacherMeeting() {
+  
   const [meetings, setMeetings] = useState<ParentTeacherMeeting[]>([]);
   const [parentNames, setParentNames] = useState<{ [key: number]: string }>({});
-  // 
+  
   useEffect(() => {
     const fetchMeetings = async () => {
       try {
@@ -23,7 +24,7 @@ export default function TeacherMeeting() {
           data.map(async (meeting) => {
             try {
               const parentInfo = await getOneParentInfo(meeting.parentId);
-              return { parentId: meeting.parentId, name: parentInfo.name };
+              return { parentId: meeting.parentId, name: parentInfo.child.name };
             } catch (error) {
               console.error(`Error fetching parent info for ID ${meeting.parentId}:`, error);
               return { parentId: meeting.parentId, name: "알 수 없음" };
@@ -67,7 +68,11 @@ export default function TeacherMeeting() {
         </Link>
         <div className="flex flex-row flex-wrap justify-between items-start">
           {meetings.map((meeting) => (
-            <Link to={`/meeting/${meeting.meetingId}`} key={meeting.meetingId}>
+            <Link
+              to={`/meeting/${meeting.meetingId}`}
+              state={{ parentName: parentNames[meeting.parentId] || "알 수 없음" }}
+              key={meeting.meetingId}
+            >
               <TeacherMeetingSchedule
                 time={meeting.meetingTime}
                 name={parentNames[meeting.parentId] || "알 수 없음"}
