@@ -86,8 +86,10 @@ public class VideoController {
         System.out.println("녹화시작");
         RecordingProperties properties = new RecordingProperties.Builder()
                 .outputMode(Recording.OutputMode.COMPOSED)
+                .hasAudio(true)
+                .hasVideo(true)
                 .build();
-        Recording recording = openvidu.startRecording(sessionId, properties);
+        Recording recording = this.openvidu.startRecording(sessionId, properties);
         return new ResponseEntity<>(recording.getId(), HttpStatus.OK);
     }
 

@@ -9,6 +9,7 @@ import MeetingBackground from "../../assets/teacher/meeting_background.png";
 import { useTeacherInfoStore } from "../../stores/useTeacherInfoStore";
 import { getTeacherInfo } from "../../api/Info";
 import axios from 'axios';
+
 const APPLICATION_SERVER_URL = import.meta.env.VITE_OPENVIDU_URL
 
 interface User {
@@ -68,6 +69,7 @@ export default function TeacherVideo() {
   });
   const [recordings, setRecordings] = useState<Recording[]>([]);
   const [currentRecordingId, setCurrentRecordingId] = useState<string | null>(null);
+  
   useEffect(() => {
     async function fetchTeacherInfo() {
       try {
@@ -91,11 +93,6 @@ export default function TeacherVideo() {
   }, []);
 
   useEffect(() => {
-    // 녹화 파일 목록 불러오기
-    fetchRecordings();
-  }, []);
-
-  useEffect(() => {
     if (openvidu.publisher) {
       openvidu.publisher.publishAudio(control.mic);
       openvidu.publisher.publishVideo(control.video);
@@ -106,7 +103,10 @@ export default function TeacherVideo() {
     setUser((prevUser) => ({ ...prevUser, [event.target.name]: event.target.value }));
   };
 
-  const leaveSession = () => {
+  const leaveSession = async () => {
+    if (currentRecordingId) {
+      await stopRecording(currentRecordingId);
+    }
     if (openvidu.session) {
       openvidu.session.disconnect();
       setOpenvidu((prevOpenvidu) => ({ ...prevOpenvidu, session: undefined, mainStreamManager: undefined, publisher: undefined, subscribers: [] }));
@@ -139,14 +139,15 @@ export default function TeacherVideo() {
     session.on("exception", (exception) => {
       console.warn(exception);
     });
+
     const token = await getToken(user.sessionId);
 
     session
       .connect(token, { clientData: user.username })
       .then(async () => {
         const publisher = await OV.initPublisherAsync(undefined, {
-          audioSource: undefined, // 기본 마이크 사용
-          videoSource: undefined, // 기본 웹캠 사용
+          audioSource: undefined, 
+          videoSource: undefined, 
           publishAudio: true,
           publishVideo: true,
           resolution: "1260x720",
@@ -163,21 +164,13 @@ export default function TeacherVideo() {
         }));
 
         // 음성 인식 및 비속어 감지 시작
-        await handleSpeechRecognition(user.sessionId);
+        await handleSpeechRecognition(user.sessionId,setCurrentRecordingId);
       })
       .catch((error) => {
         console.error("There was an error connecting to the session:", error);
       });
   };
 
-  const fetchRecordings = async () => {
-    try {
-      const response = await axios.get(`${APPLICATION_SERVER_URL}/recordings`);
-      setRecordings(response.data);
-    } catch (error) {
-      console.error('Error fetching recordings:', error);
-    }
-  };
 
   const fetchRecordingsList = async () => {
     try {
@@ -236,6 +229,7 @@ export default function TeacherVideo() {
           control={control}
           handleControl={setControl}
           close={leaveSession}
+          stopRecording={handleStopRecording} // 녹음 중지 버튼에 대한 함수 전달
         />
       {/* 녹화 파일 목록 추가 */}
       <div className="recordings-list mt-4">
