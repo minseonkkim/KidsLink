@@ -51,17 +51,4 @@ public class UserController {
             throw new RequestDataException("요청 데이터 문제 발생");
         }
     }
-
-    @GetMapping("/oauth2")
-    public ResponseEntity<APIResponse<Map<String, Object>>> getOAuth2InfoBySession(){
-        Map<String, Object> oauth2Info = userService.getOAuth2Info(httpSession);
-        APIResponse<Map<String, Object>> responseData = new APIResponse<>(
-                "success",
-                oauth2Info,
-                "현재 OAuth2 User 정보 관련 응답입니다.",
-                null
-        );
-
-        return ResponseEntity.status(HttpStatus.OK).body(responseData);
-    }
 }
