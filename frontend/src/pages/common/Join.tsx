@@ -1,5 +1,6 @@
-import { useState } from "react"
-import { useNavigate } from "react-router-dom"
+import { useState, useEffect } from "react"
+import { useNavigate, useLocation } from "react-router-dom"
+import useAppStore from "../../stores/store"
 import JoinHeader from "../../components/join/JoinHeader"
 import MemberCard from "../../components/join/MemberCard"
 import parentImg from "../../assets/join/joinParentImg.png"
@@ -15,7 +16,20 @@ const members = [
 
 export default function Join() {
   const navigate = useNavigate()
+  const location = useLocation()
+  const { setIsSocialLogin, setUsername, setEmail } = useAppStore()
   const [selectedRole, setSelectedRole] = useState<string | null>(null)
+
+  useEffect(() => {
+    // location.state에서 데이터 추출
+    if (location.state) {
+      const { username, email } = location.state as { username: string; email: string }
+      
+      setIsSocialLogin(true)
+      setUsername(username)
+      setEmail(email)
+    }
+  }, [location.state, setIsSocialLogin, setUsername, setEmail])
 
   const handleCardClick = (role: string) => {
     setSelectedRole(role)

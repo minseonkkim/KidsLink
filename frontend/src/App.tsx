@@ -1,9 +1,10 @@
 import { Routes, Route} from "react-router-dom"
-import useAppStore, { UserState } from "./stores/store";
+import useAppStore, { AppState } from "./stores/store"
 
 import Join from "./pages/common/Join"
-import SocialJoin from "./pages/common/SocialJoin"
 import Login from "./pages/common/Login"
+import SocialJoinRedirect from "./components/join/SocialJoinRedirect"
+import SocialLoginRedirect from "./components/login/SocialLoginRedirect"
 
 import ParentLayout from './layouts/ParentLayout'
 import ParentHome from "./pages/parent/ParentHome"
@@ -20,7 +21,6 @@ import ParentDiaryDetail from "./pages/parent/ParentDiaryDetail"
 import ParentBus from "./pages/parent/ParentBus"
 import ParentMeeting from "./pages/parent/ParentMeetingList"
 import ParentMeetingSubmit from "./pages/parent/ParentMeetingSubmit"
-import ParentMeetingRoom from "./pages/parent/ParentVideo"
 import ParentSchedule from "./pages/parent/ParentSchedule"
 import ParentMyPage from "./pages/parent/ParentMyPage"
 
@@ -43,7 +43,7 @@ import TeacherVideo from "./pages/teacher/TeacherVideo";
 import ParentVideo from "./pages/parent/ParentVideo";
 
 export default function App() {
-  const userType = useAppStore((state: UserState) => state.userType) 
+  const userType = useAppStore((state: AppState) => state.userType)
 
   return (
     <Routes>
@@ -93,7 +93,10 @@ export default function App() {
           {/* 기본 사용자의 라우트 */}
           <Route path="/" element={<Login />} />
           <Route path="/join" element={<Join />} />
-          <Route path="/social-join" element={<SocialJoin />} />
+          <Route path="/social/join" element={<SocialJoinRedirect />} />
+          {/* <Route path="/register" element={<SocialJoinRedirect />} /> */}
+          <Route path="/social/login" element={<SocialLoginRedirect />} />
+          {/* <Route path="/o/login" element={<SocialLoginRedirect />} /> */}
           <Route path="/join/:role" element={<JoinDetails />} />
         </>
       )}
