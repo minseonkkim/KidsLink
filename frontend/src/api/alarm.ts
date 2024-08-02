@@ -1,5 +1,12 @@
 import axiosInstance from './token/axiosInstance'
 
+interface Alarm{
+  id: number;
+  contents: string;
+  date: string;
+  code: string;
+}
+
 // 알람 개수 조회
 export async function getAlarmCount() {
   try  {
@@ -18,7 +25,7 @@ export async function getAlarmCount() {
 }
 
 // 알림 조회
-export async function getAllAlarms() {
+export async function getAllAlarms():Promise<Alarm[]> {
   try  {
     const response = await axiosInstance.get('notification')
 
