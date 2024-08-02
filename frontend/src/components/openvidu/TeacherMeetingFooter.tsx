@@ -13,13 +13,13 @@ interface ControlState {
   volume: number;
 }
 
-interface MeetingFooterProps {
+interface TeacherMeetingFooterProps {
   control: ControlState;
   handleControl: (update: (prev: ControlState) => ControlState) => void;
   close: () => void;
 }
 
-const MeetingFooter: React.FC<MeetingFooterProps> = ({ control, handleControl, close }) => {
+const TeacherMeetingFooter: React.FC<TeacherMeetingFooterProps> = ({ control, handleControl, close }) => {
   const isMuted = control.muted || control.volume === 0;
 
   return (
@@ -101,4 +101,4 @@ const MeetingFooter: React.FC<MeetingFooterProps> = ({ control, handleControl, c
   );
 };
 
-export default MeetingFooter;
+export default TeacherMeetingFooter;
