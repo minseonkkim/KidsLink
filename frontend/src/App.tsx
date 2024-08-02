@@ -2,6 +2,7 @@ import { Routes, Route} from "react-router-dom"
 import useAppStore, { UserState } from "./stores/store";
 
 import Join from "./pages/common/Join"
+import SocialJoin from "./pages/common/SocialJoin"
 import Login from "./pages/common/Login"
 
 import ParentLayout from './layouts/ParentLayout'
@@ -90,6 +91,7 @@ export default function App() {
           {/* 기본 사용자의 라우트 */}
           <Route path="/" element={<Login />} />
           <Route path="/join" element={<Join />} />
+          <Route path="/social-join" element={<SocialJoin />} />
           <Route path="/join/:role" element={<JoinDetails />} />
         </>
       )}
