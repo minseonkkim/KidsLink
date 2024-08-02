@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import Calendar from 'react-calendar';
-import moment from 'moment';
-import 'moment/locale/ko'; // 한글 설정
-import { getAllParentSchedules, getParentSchedules } from '../../api/schedule'; // API 함수 불러오기
-import styled from 'styled-components';
+import React, { useState, useEffect } from "react";
+import Calendar from "react-calendar";
+import moment from "moment";
+import "moment/locale/ko"; // 한글 설정
+import { getAllParentSchedules, getParentSchedules } from "../../api/schedule"; // API 함수 불러오기
+import styled from "styled-components";
 
 const StyledCalendar = styled(Calendar)`
-    * {
+  * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -149,22 +149,25 @@ const StyledCalendar = styled(Calendar)`
 
   .parent-schedule-calendar__month-view {
     padding: 12px 32px;
+    text-align: center;
   }
 
   .parent-schedule-calendar__month-view__weekdays {
     font-size: 18px;
     font-weight: 900;
     color: #6f48eb;
+    text-align: center;
   }
 
   .parent-schedule-calendar__month-view__weekdays__weekday {
     text-transform: uppercase;
+    text-align: center;
   }
 
   .react-calendar__tile {
     display: flex !important;
     align-items: flex-center !important; /* items-start 대신 flex-start 사용 */
-    justify-content: flex-start !important; /* 왼쪽 정렬 */
+    justify-content: flex-start; /* 왼쪽 정렬 */
     width: 90px;
     height: 90px;
     padding: 10px;
@@ -230,13 +233,13 @@ const StyledCalendar = styled(Calendar)`
 
   .react-calendar__tile--now {
     background-color: #ffffa6 !important;
+    justify-content: center;
   }
 
   .custom-icon {
     height: 30px;
     width: 24px;
   }
-
 `;
 
 interface KindergartenSchedule {
@@ -292,7 +295,7 @@ type Value = Date | [Date, Date];
 const ParentSchedule: React.FC = () => {
   const [value, setValue] = useState<Value>(new Date());
   const [selectedDate, setSelectedDate] = useState<string | null>(
-    moment(value instanceof Array ? value[0] : value).format('YYYY-MM-DD')
+    moment(value instanceof Array ? value[0] : value).format("YYYY-MM-DD")
   );
   const [schedules, setSchedules] = useState<string[]>([]);
   const [detailedSchedules, setDetailedSchedules] =
@@ -303,7 +306,7 @@ const ParentSchedule: React.FC = () => {
       const fetchedSchedules = await getAllParentSchedules(year, month);
       setSchedules(fetchedSchedules);
     } catch (error) {
-      console.error('Failed to fetch schedules:', error);
+      console.error("Failed to fetch schedules:", error);
     }
   };
 
@@ -311,9 +314,13 @@ const ParentSchedule: React.FC = () => {
     try {
       const detailedSchedule = await getParentSchedules(date);
       setDetailedSchedules(detailedSchedule);
-      console.log('Fetched detailed schedules for date:', date, detailedSchedule);
+      console.log(
+        "Fetched detailed schedules for date:",
+        date,
+        detailedSchedule
+      );
     } catch (error) {
-      console.error('Failed to fetch detailed schedule:', error);
+      console.error("Failed to fetch detailed schedule:", error);
     }
   };
 
@@ -322,7 +329,7 @@ const ParentSchedule: React.FC = () => {
     const year = moment(current).year();
     const month = moment(current).month() + 1;
     fetchSchedules(year, month);
-    fetchDetailedSchedules(moment(current).format('YYYY-MM-DD'));
+    fetchDetailedSchedules(moment(current).format("YYYY-MM-DD"));
   }, [value]);
 
   useEffect(() => {
@@ -336,7 +343,7 @@ const ParentSchedule: React.FC = () => {
       return;
     }
 
-    const formattedDate = moment(value).format('YYYY-MM-DD');
+    const formattedDate = moment(value).format("YYYY-MM-DD");
     setSelectedDate(formattedDate);
     setValue(value);
   };
@@ -348,7 +355,7 @@ const ParentSchedule: React.FC = () => {
   };
 
   const addContent = ({ date }: { date: Date }) => {
-    const dateString = moment(date).format('YYYY-MM-DD');
+    const dateString = moment(date).format("YYYY-MM-DD");
     const hasSchedule = schedules.includes(dateString);
     return hasSchedule ? <div className="custom-icon">😊</div> : null;
   };
@@ -365,7 +372,9 @@ const ParentSchedule: React.FC = () => {
                 value={value}
                 next2Label={null}
                 prev2Label={null}
-                formatDay={(locale: string, date: Date) => moment(date).format('D')}
+                formatDay={(locale: string, date: Date) =>
+                  moment(date).format("D")
+                }
                 tileContent={addContent}
                 showNeighboringMonth={false}
                 onActiveStartDateChange={({ activeStartDate }) =>

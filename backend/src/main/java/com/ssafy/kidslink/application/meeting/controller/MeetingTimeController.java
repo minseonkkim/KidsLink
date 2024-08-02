@@ -205,6 +205,7 @@ public class MeetingTimeController {
             CustomUserDetails userDetails = (CustomUserDetails) principal;
 
             meetingTimeService.confirmMeeting(userDetails.getUsername());
+            meetingTimeService.deleteMeeting(userDetails.getUsername());
             APIResponse<Void> responseData = new APIResponse<>(
                     "success",
                     null,

@@ -144,3 +144,18 @@ export async function createTeacherScheduleCheck(teacherScheduleId: number){
     throw new Error('Failed to fetch schedule check');
   }
 }
+
+// 선생님 일정 삭제 함수
+export async function deleteTeacherSchedule(teacherScheduleId: number){
+  try{
+    const response = await axiosInstance.delete(`schedule/teacher/${teacherScheduleId}`);
+    if(response.data.status === "success"){
+      console.log(response.data.data);
+    } else{
+      throw new Error('Failed to fetch schedule check');
+    }
+  } catch (error) {
+    console.error(error);
+    throw new Error('Failed to fetch schedule delete');
+  }
+}
