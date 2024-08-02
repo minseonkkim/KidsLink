@@ -5,6 +5,9 @@ import com.ssafy.kidslink.common.jwt.CustomLogoutFilter;
 import com.ssafy.kidslink.common.jwt.JWTAuthenticationFilter;
 import com.ssafy.kidslink.common.jwt.JWTAuthorizationFilter;
 import com.ssafy.kidslink.common.jwt.JWTUtil;
+import com.ssafy.kidslink.common.oauth2.CustomOAuth2FailureHandler;
+import com.ssafy.kidslink.common.oauth2.CustomOAuth2SuccessHandler;
+import com.ssafy.kidslink.common.oauth2.CustomOAuth2UserService;
 import com.ssafy.kidslink.common.security.CustomUserDetailsService;
 import com.ssafy.kidslink.common.service.RefreshTokenService;
 import lombok.RequiredArgsConstructor;
@@ -43,6 +46,9 @@ public class SecurityConfig {
     private final AuthenticationConfiguration authenticationConfiguration;
     private final RefreshTokenService refreshTokenService;
 
+    private final CustomOAuth2UserService customOAuth2UserService;
+    private final CustomOAuth2SuccessHandler customOAuth2SuccessHandler;
+    private final CustomOAuth2FailureHandler customOAuth2FailureHandler;
     private final CustomUserDetailsService customUserDetailsService;
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
@@ -58,7 +64,7 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http
+        http
                 .cors(corsConfigurer -> corsConfigurer.configurationSource(apiConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .headers(AbstractHttpConfigurer::disable)
@@ -68,14 +74,28 @@ public class SecurityConfig {
                         .authenticationEntryPoint(customAuthenticationEntryPoint))
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .oauth2Login((oauth2) -> oauth2
+                        .userInfoEndpoint((userInfoEndpointConfig) -> userInfoEndpointConfig
+                                .userService(customOAuth2UserService))
+                        .successHandler(customOAuth2SuccessHandler)
+                        .failureHandler(customOAuth2FailureHandler))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/").permitAll()
                         .requestMatchers(POST, "/api/user/**").permitAll()
                         .anyRequest().permitAll())
                 .addFilterAt(new JWTAuthenticationFilter(authenticationManager(authenticationConfiguration), jwtUtil, refreshTokenService), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new JWTAuthorizationFilter(jwtUtil, customUserDetailsService), UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(new CustomLogoutFilter(jwtUtil, refreshTokenService), LogoutFilter.class)
-                .build();
+                .addFilterBefore(new CustomLogoutFilter(jwtUtil, refreshTokenService), LogoutFilter.class);
+
+        if (isOAuth2Configured()) {
+            http.oauth2Login(oauth2 -> oauth2
+                    .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig
+                            .userService(customOAuth2UserService))
+                    .successHandler(customOAuth2SuccessHandler)
+                    .failureHandler(customOAuth2FailureHandler));
+        }
+
+        return http.build();
     }
 
     private CorsConfigurationSource apiConfigurationSource() {
@@ -92,6 +112,13 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", configuration);
 
         return source;
+    }
+
+    private boolean isOAuth2Configured() {
+        return !System.getenv().getOrDefault("OAUTH2_NAVER_CLIENT_ID", "").isEmpty() &&
+                !System.getenv().getOrDefault("OAUTH2_NAVER_CLIENT_SECRET", "").isEmpty() &&
+                !System.getenv().getOrDefault("OAUTH2_GOOGLE_CLIENT_ID", "").isEmpty() &&
+                !System.getenv().getOrDefault("OAUTH2_GOOGLE_CLIENT_SECRET", "").isEmpty();
     }
 
 }

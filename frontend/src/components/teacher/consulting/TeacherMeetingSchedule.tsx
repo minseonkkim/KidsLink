@@ -1,11 +1,11 @@
-interface ScheduledConsultingProps {
+interface TeacherMeetingScheduleProps {
     time: string;
     name: string;
     profileImgPath: string;
     isActivate: boolean;
 }
 
-export default function ScheduledConsulting({time, name, profileImgPath, isActivate}:ScheduledConsultingProps){
+export default function TeacherMeetingSchedule({time, name, profileImgPath, isActivate}:TeacherMeetingScheduleProps){
     return <>
         <div className={`font-KoPubDotum w-[340px] h-[230px] m-[20px] ${isActivate? 'bg-gradient-to-br from-[#FFF9D7] to-[#D5E4B4]' : 'bg-[#f4f4f4]'} rounded-[20px] flex flex-col items-center justify-around p-5`}>
             <p className="text-[18px]">{time}</p>

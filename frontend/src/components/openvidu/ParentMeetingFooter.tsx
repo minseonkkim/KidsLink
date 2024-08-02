@@ -3,7 +3,7 @@ import { IoVideocam, IoVideocamOff, IoVolumeHigh, IoVolumeMute } from "react-ico
 import { RxCrossCircled } from "react-icons/rx";
 import { Slider } from "@mui/material";
 import { FaMicrophone, FaMicrophoneSlash } from "react-icons/fa";
-import TeacherBroadcast from "../../pages/teacher/TeacherBroadcast";
+import TeacherBroadcast from "../../pages/teacher/TeacherVideo";
 
 // Define the types for the props
 interface ControlState {
@@ -19,7 +19,7 @@ interface MeetingFooterProps {
   close: () => void;
 }
 
-const MeetingFooter: React.FC<MeetingFooterProps> = ({ control, handleControl, close }) => {
+const ParentMeetingFooter: React.FC<MeetingFooterProps> = ({ control, handleControl, close }) => {
   const isMuted = control.muted || control.volume === 0;
 
   return (
@@ -101,4 +101,4 @@ const MeetingFooter: React.FC<MeetingFooterProps> = ({ control, handleControl, c
   );
 };
 
-export default MeetingFooter;
+export default ParentMeetingFooter;

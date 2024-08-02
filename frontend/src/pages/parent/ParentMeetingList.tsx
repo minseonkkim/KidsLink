@@ -1,216 +1,137 @@
-import {
-    LocalVideoTrack,
-    RemoteParticipant,
-    RemoteTrack,
-    RemoteTrackPublication,
-    Room,
-    RoomEvent
-} from "livekit-client";
-import "../../components/meeting/Meeting.css";
-import { useState } from "react";
-import VideoComponent from "../../components/meeting/VideoComponent";
-import AudioComponent from "../../components/meeting/AudioComponent";
-import { LayoutContextProvider } from '@livekit/components-react';
-import MyLiveKitApp from "../../components/meeting/MyLiveKitComponent";
-type TrackInfo = {
-    trackPublication: RemoteTrackPublication;
-    participantIdentity: string;
-};
+import { useEffect, useRef, useState } from "react";
+import InfoSection from "../../components/parent/common/InfoSection";
+import daramgi from "../../assets/parent/meeting-daramgi.png";
+import meetingTimeIcon from "../../assets/parent/meeting.png";
+import { GetConfirmedMeeting, ParentTeacherMeeting, GetMeetingInfo } from "../../api/meeting";
+import ParentMeetingSchedule from "../../components/teacher/consulting/ParentMeetingSchedule";
+import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
-// For local development, leave these variables empty
-// For production, configure them with correct URLs depending on your deployment
-let APPLICATION_SERVER_URL = "";
-let LIVEKIT_URL = "";
-configureUrls();
-
-function configureUrls() {
-    // If APPLICATION_SERVER_URL is not configured, use default value from local development
-    if (!APPLICATION_SERVER_URL) {
-        if (window.location.hostname === "localhost") {
-            APPLICATION_SERVER_URL = "http://localhost:6080/";
-        } else {
-            APPLICATION_SERVER_URL = "https://" + window.location.hostname + ":6443/";
-        }
-    }
-
-    // If LIVEKIT_URL is not configured, use default value from local development
-    if (!LIVEKIT_URL) {
-        if (window.location.hostname === "localhost") {
-            LIVEKIT_URL = "ws://localhost:7880/";
-        } else {
-            LIVEKIT_URL = "wss://" + window.location.hostname + ":7443/";
-        }
-    }
+export interface MeetingInfo {
+  id: number;
+  date: string;
+  time: string;
+  teacherId: number;
+  teacherName: string;
+  parentId: number;
+  childName: string;
 }
 
-function Meeting() {
-    const [room, setRoom] = useState<Room | undefined>(undefined);
-    const [localTrack, setLocalTrack] = useState<LocalVideoTrack | undefined>(undefined);
-    const [remoteTracks, setRemoteTracks] = useState<TrackInfo[]>([]);
+export default function ParentMeeting() {
+  const navigate = useNavigate();
+  const [meetings, setMeetings] = useState<ParentTeacherMeeting[]>([]);
+  const [teacherNames, setTeacherNames] = useState<{ [key: number]: string }>({});
+  const [scroll, setScroll] = useState(false);
+  const divRef = useRef<HTMLDivElement>(null);
 
-    const [participantName, setParticipantName] = useState("Participant" + Math.floor(Math.random() * 100));
-    const [roomName, setRoomName] = useState("Test Room");
+  const isMeetingActive = (date: string, time: string): boolean => {
+    const currentTime = new Date();
+    const meetingDate = new Date(`${date}T${time}`);
+    const timeDiff = meetingDate.getTime() - currentTime.getTime();
+    return timeDiff <= 10 * 60 * 1000 && timeDiff > 0;
+  };
 
-    async function joinRoom() {
-        // Initialize a new Room object
-        const room = new Room();
-        setRoom(room);
+  const navigateToSubmitPage = () => {
+    navigate("/meeting/submit");
+  }
 
-        // Specify the actions when events take place in the room
-        // On every new Track received...
-        room.on(
-            RoomEvent.TrackSubscribed,
-            (_track: RemoteTrack, publication: RemoteTrackPublication, participant: RemoteParticipant) => {
-                setRemoteTracks((prev) => [
-                    ...prev,
-                    { trackPublication: publication, participantIdentity: participant.identity }
-                ]);
+  useEffect(() => {
+    const fetchMeetings = async () => {
+      try {
+        const data = await GetConfirmedMeeting();
+        setMeetings(data);
+
+        const teacherNamesData = await Promise.all(
+          data.map(async (meeting) => {
+            try {
+              const meetingInfo: MeetingInfo = await GetMeetingInfo(meeting.meetingId);
+              console.log("meetingInfo")
+              console.log(meetingInfo)
+              return { teacherId: meetingInfo.teacherId, name: meetingInfo.teacherName };
+            } catch (error) {
+              console.error(`Error fetching meeting info for ID ${meeting.meetingId}:`, error);
+              return { teacherId: meeting.meetingId, name: "알 수 없음" };
             }
+          })
         );
 
-        // On every Track destroyed...
-        room.on(RoomEvent.TrackUnsubscribed, (_track: RemoteTrack, publication: RemoteTrackPublication) => {
-            setRemoteTracks((prev) => prev.filter((track) => track.trackPublication.trackSid !== publication.trackSid));
-        });
+        const teacherNamesMap = teacherNamesData.reduce((acc, curr) => {
+          acc["teacherName"] = curr.name;
+          return acc;
+        }, {} as { [key: number]: string });
+        setTeacherNames(teacherNamesMap);
+      } catch (error) {
+        console.error("Failed to fetch confirmed meetings:", error);
+      }
+    };
 
-        try {
-            // Get a token from your application server with the room name and participant name
-            const token = await getToken(roomName, participantName);
+    fetchMeetings();
+  }, []);
 
-            // Connect to the room with the LiveKit URL and the token
-            await room.connect(LIVEKIT_URL, token);
+  useEffect(() => {
+    const handleScroll = () => {
+      if (divRef.current) {
+        const topPosition = divRef.current.getBoundingClientRect().top;
+        setScroll(topPosition <= 200);
+      }
+    };
 
-            // Publish your camera and microphone
-            await room.localParticipant.enableCameraAndMicrophone();
-            setLocalTrack(room.localParticipant.videoTrackPublications.values().next().value.videoTrack);
-        } catch (error) {
-            console.log("There was an error connecting to the room:", (error as Error).message);
-            await leaveRoom();
-        }
-    }
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
-    async function leaveRoom() {
-        // Leave the room by calling 'disconnect' method over the Room object
-        await room?.disconnect();
+  return (
+    <div className="min-h-[100dvh] flex flex-col items-center bg-[#FFEC8A]">
+      <div className="w-full flex flex-col items-center mt-16 flex-grow">
+        <InfoSection
+          main1="예약부터 상담까지"
+          main2=""
+          description2="온라인으로 한번에"
+          imageSrc={daramgi}
+          altText="다람쥐"
+        />
 
-        // Reset the state
-        setRoom(undefined);
-        setLocalTrack(undefined);
-        setRemoteTracks([]);
-    }
-
-    /**
-     * --------------------------------------------
-     * GETTING A TOKEN FROM YOUR APPLICATION SERVER
-     * --------------------------------------------
-     * The method below request the creation of a token to
-     * your application server. This prevents the need to expose
-     * your LiveKit API key and secret to the client side.
-     *
-     * In this sample code, there is no user control at all. Anybody could
-     * access your application server endpoints. In a real production
-     * environment, your application server must identify the user to allow
-     * access to the endpoints.
-     */
-    async function getToken(roomName: string, participantName: string) {
-        const response = await fetch(APPLICATION_SERVER_URL + "token", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                roomName: roomName,
-                participantName: participantName
-            })
-        });
-
-        if (!response.ok) {
-            const error = await response.json();
-            throw new Error(`Failed to get token: ${error.errorMessage}`);
-        }
-
-        const data = await response.json();
-        return data.token;
-    }
-
-    return (
-        <>
-            {!room ? (
-                <div id="join">
-                    <div id="join-dialog">
-                        <h2>Join a Video Room</h2>
-                        <form
-                            onSubmit={(e) => {
-                                joinRoom();
-                                e.preventDefault();
-                            }}
-                        >
-                            <div>
-                                <label htmlFor="participant-name">Participant</label>
-                                <input
-                                    id="participant-name"
-                                    className="form-control"
-                                    type="text"
-                                    value={participantName}
-                                    onChange={(e) => setParticipantName(e.target.value)}
-                                    required
-                                />
-                            </div>
-                            <div>
-                                <label htmlFor="room-name">Room</label>
-                                <input
-                                    id="room-name"
-                                    className="form-control"
-                                    type="text"
-                                    value={roomName}
-                                    onChange={(e) => setRoomName(e.target.value)}
-                                    required
-                                />
-                            </div>
-                            <button
-                                className="btn btn-lg btn-success"
-                                type="submit"
-                                disabled={!roomName || !participantName}
-                            >
-                                Join!
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            ) : (
-                <LayoutContextProvider>
-                    <div id="room">
-                        <div id="room-header">
-                            <h2 id="room-title">{roomName}</h2>
-                            <button className="btn btn-danger" id="leave-room-button" onClick={leaveRoom}>
-                                Leave Room
-                            </button>
-                        </div>
-                        <div id="layout-container">
-                            {localTrack && (
-                                <VideoComponent track={localTrack} participantIdentity={participantName} local={true} />
-                            )}
-                            {remoteTracks.map((remoteTrack) =>
-                                remoteTrack.trackPublication.kind === "video" ? (
-                                    <VideoComponent
-                                        key={remoteTrack.trackPublication.trackSid}
-                                        track={remoteTrack.trackPublication.videoTrack!}
-                                        participantIdentity={remoteTrack.participantIdentity}
-                                    />
-                                ) : (
-                                    <AudioComponent
-                                        key={remoteTrack.trackPublication.trackSid}
-                                        track={remoteTrack.trackPublication.audioTrack!}
-                                    />
-                                )
-                            )}
-                        </div>
-                        <MyLiveKitApp />
-                    </div>
-                </LayoutContextProvider>
-            )}
-        </>
-    );
+        <div
+          ref={divRef}
+          className="w-full bg-white rounded-tl-[20px] rounded-tr-[20px] py-12 px-12 shadow-top flex-grow overflow-hidden animate-slideUp"
+          style={{ marginTop: "-40px" }}
+        >
+          <div
+            className={`space-y-6 ${scroll ? "overflow-y-auto" : "overflow-hidden"}`}
+            style={{
+              maxHeight: scroll ? "calc(100vh - 200px)" : "auto",
+              paddingBottom: "100px",
+              scrollbarWidth: "none",
+              msOverflowStyle: "none",
+            }}
+          >
+            {meetings.map((meeting) => (
+              <Link to={`/meeting/${meeting.meetingId}`} key={meeting.meetingId}>
+              <ParentMeetingSchedule
+                key={meeting.meetingId}
+                meetingId={meeting.meetingId}
+                date={meeting.meetingDate}
+                time={meeting.meetingTime}
+                teacherName={teacherNames["teacherName"] || "알 수 없음"}
+                isActive={isMeetingActive(meeting.meetingDate, meeting.meetingTime)}
+              />
+              </Link>
+            ))}
+          </div>
+        </div>
+      </div>
+      <div className="fixed right-10 z-50 bottom-20"
+      onClick={navigateToSubmitPage}>
+        <div
+          className="w-[70px] h-[70px] rounded-full bg-[#ffec8a] flex items-center justify-center"
+          style={{
+            boxShadow:
+              "0px 13px 27px -5px rgba(50,50,93,0.25), 0px 8px 16px -8px rgba(0,0,0,0.3)",
+          }}
+        >
+          <img src={meetingTimeIcon} alt="상담 아이콘" className="w-[35px] h-[35px] object-contain" />
+        </div>
+      </div>
+    </div>
+  );
 }
-
-export default Meeting;
