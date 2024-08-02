@@ -1,13 +1,15 @@
-import { useParams } from "react-router-dom";
 import { OpenVidu, Publisher, Session, StreamEvent, StreamManager, Subscriber } from "openvidu-browser";
+import { useParams } from "react-router-dom";
 import React, { ChangeEvent, useEffect, useState } from "react";
 import OpenViduVideoComponent from "../../components/openvidu/Ovvideo";
 import MeetingFooter from "../../components/openvidu/MeetingFooter";
-import { getToken } from "../../api/openvidu";
+import { getToken, handleSpeechRecognition, stopRecording, fetchRecordings } from '../../api/openvidu'; 
 import TeacherHeader from "../../components/teacher/common/TeacherHeader";
-import MeetingBackground from "../../assets/teacher/meeting_background.png";
+import axios from 'axios';
+import MeetingBackground from "../../assets/teacher/meeting_background.png"
 import useTeacherStore from "../../stores/teacher";
 import { useTeacherInfoStore } from "../../stores/useTeacherInfoStore";
+const APPLICATION_SERVER_URL = "http://localhost:8080/api/video"; // 이 부분을 추가
 
 interface User {
   sessionId?: string;
@@ -34,6 +36,12 @@ interface ControlState {
   volume: number;
 }
 
+interface Recording {
+  id: string;
+  name: string;
+  url: string;
+}
+
 export default function TeacherBroadcast() {
   const { meetingId } = useParams<{ meetingId: string }>(); // useParams 훅을 사용하여 URL 파라미터에서 meetingId를 가져옴
   const { teacherInfo } = useTeacherInfoStore()
@@ -58,12 +66,22 @@ export default function TeacherBroadcast() {
     muted: false,
     volume: 0.2,
   });
-
+  const [recordings, setRecordings] = useState<Recording[]>([]);
+  const [currentRecordingId, setCurrentRecordingId] = useState<string | null>(null);
   useEffect(() => {
     // URL에서 meetingId를 sessionId로 설정
     
     setUser((prevUser) => ({ ...prevUser, sessionId: meetingId }));
+    return () => { leaveSession(); };
   }, [meetingId]);
+
+  useEffect(() => {
+    fetchRecordingsList();
+  }, []);
+  useEffect(() => {
+    // 녹화 파일 목록 불러오기
+    fetchRecordings();
+  }, []);
 
   useEffect(() => {
     if (openvidu.publisher) {
@@ -73,22 +91,13 @@ export default function TeacherBroadcast() {
   }, [control, openvidu.publisher]);
 
   const handleUserChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setUser((prevUser) => ({
-      ...prevUser,
-      [event.target.name]: event.target.value,
-    }));
+    setUser((prevUser) => ({ ...prevUser, [event.target.name]: event.target.value }));
   };
 
   const leaveSession = () => {
     if (openvidu.session) {
       openvidu.session.disconnect();
-      setOpenvidu((prevOpenvidu) => ({
-        ...prevOpenvidu,
-        session: undefined,
-        mainStreamManager: undefined,
-        publisher: undefined,
-        subscribers: [],
-      }));
+      setOpenvidu((prevOpenvidu) => ({ ...prevOpenvidu, session: undefined, mainStreamManager: undefined, publisher: undefined, subscribers: [] }));
     }
   };
 
@@ -98,15 +107,12 @@ export default function TeacherBroadcast() {
     const OV = new OpenVidu();
     OV.enableProdMode();
     const session = OV.initSession();
-
+    
     // 이벤트 등록
     session.on("streamCreated", (event: StreamEvent) => {
       try {
         const subscriber = session.subscribe(event.stream, undefined);
-        setOpenvidu((prevOpenvidu) => ({
-          ...prevOpenvidu,
-          subscribers: [...prevOpenvidu.subscribers, subscriber],
-        }));
+        setOpenvidu((prevOpenvidu) => ({ ...prevOpenvidu, subscribers: [...prevOpenvidu.subscribers, subscriber] }));
       } catch (error) {
         console.error("Error during stream subscription:", error);
       }
@@ -115,17 +121,13 @@ export default function TeacherBroadcast() {
     session.on("streamDestroyed", (event: StreamEvent) => {
       setOpenvidu((prevOpenvidu) => {
         const streamManager = event.stream.streamManager;
-        return {
-          ...prevOpenvidu,
-          subscribers: prevOpenvidu.subscribers.filter((sub) => sub !== streamManager),
-        };
+        return { ...prevOpenvidu, subscribers: prevOpenvidu.subscribers.filter((sub) => sub !== streamManager) };
       });
     });
 
     session.on("exception", (exception) => {
       console.warn(exception);
     });
-
     const token = await getToken(user.sessionId);
     console.log(token)
 
@@ -149,58 +151,102 @@ export default function TeacherBroadcast() {
           mainStreamManager: publisher,
           publisher: publisher,
         }));
+
+        // 음성 인식 및 비속어 감지 시작
+        await handleSpeechRecognition(user.sessionId);
       })
       .catch((error) => {
         console.error("There was an error connecting to the session:", error);
       });
   };
 
+  const fetchRecordings = async () => {
+    try {
+      const response = await axios.get(`${APPLICATION_SERVER_URL}/recordings`);
+      setRecordings(response.data);
+    } catch (error) {
+      console.error('Error fetching recordings:', error);
+    }
+  };
+
+  const fetchRecordingsList = async () => {
+    try {
+      const recordings = await fetchRecordings();
+      setRecordings(recordings);
+    } catch (error) {
+      console.error("Error fetching recordings:", error);
+    }
+  };
+  const handleStopRecording = async () => {
+    if (currentRecordingId) {
+      try {
+        const stoppedRecording = await stopRecording(currentRecordingId);
+        console.log(`Recording stopped: ${stoppedRecording.id}`);
+        setCurrentRecordingId(null);
+        fetchRecordingsList();
+      } catch (error) {
+        console.error("Error stopping recording:", error);
+      }
+    }
+  };
   return (
     <div className="relative flex flex-col justify-center items-center w-screen h-screen min-w-[1000px] overflow-hidden">
-      <img src={MeetingBackground} className="absolute top-0 left-0 w-full h-full object-cover" />
-      <div className="relative z-10 w-full h-full flex flex-col items-center">
-        <TeacherHeader />
-        {openvidu.session ? (
-          <div className="relative w-full h-full flex">
-            <div className="absolute top-[150px] left-0 w-[700px] h-auto rounded-lg border border-black">
-              <h1>내 화면</h1>
-              {openvidu.mainStreamManager && (
-                <OpenViduVideoComponent streamManager={openvidu.mainStreamManager} />
-              )}
-            </div>
-            <div className="absolute top-[150px] right-0 w-[700px] h-auto rounded-lg border border-black">
-              <h1>상대 화면</h1>
-              {openvidu.subscribers.map((sub, i) => (
-                <OpenViduVideoComponent
-                  key={i}
-                  streamManager={sub}
-                  muted={control.muted}
-                  volume={control.volume}
-                />
-              ))}
-            </div>
+    <img src={MeetingBackground} className="absolute top-0 left-0 w-full h-full object-cover" />
+    <div className="relative z-10 w-full h-full flex flex-col items-center">
+      <TeacherHeader />
+      {openvidu.session ? (
+        <div className="relative w-full h-full flex">
+          <div className="absolute top-[150px] left-0 w-[700px] h-auto rounded-lg border border-black">
+            <h1>내 화면</h1>
+            {openvidu.mainStreamManager && (
+              <OpenViduVideoComponent streamManager={openvidu.mainStreamManager} />
+            )}
           </div>
-        ) : (
-          <div className="flex flex-col justify-center items-center w-full h-full">
-            <input
-              name="sessionId"
-              value={user.sessionId || ""}
-              onChange={handleUserChange}
-            />
-            <input
-              name="username"
-              value={user.username || ""}
-              onChange={handleUserChange}
-            />
-            <button onClick={joinSession}>연결</button>
+          <div className="absolute top-[150px] right-0 w-[700px] h-auto rounded-lg border border-black">
+            <h1>상대 화면</h1>
+            {openvidu.subscribers.map((sub, i) => (
+              <OpenViduVideoComponent
+                key={i}
+                streamManager={sub}
+                muted={control.muted}
+                volume={control.volume}
+              />
+            ))}
           </div>
-        )}
-        <MeetingFooter
-          control={control}
-          handleControl={setControl}
-          close={leaveSession}
-        />
+        </div>
+      ) : (
+        <div className="flex flex-col justify-center items-center w-full h-full">
+          <input
+            name="sessionId"
+            value={user.sessionId || ""}
+            onChange={handleUserChange}
+          />
+          <input
+            name="username"
+            value={user.username || ""}
+            onChange={handleUserChange}
+          />
+          <button onClick={joinSession}>연결</button>
+        </div>
+      )}
+      <MeetingFooter
+        control={control}
+        handleControl={setControl}
+        close={leaveSession}
+      />
+
+      {/* 녹화 파일 목록 추가 */}
+      <div className="recordings-list mt-4">
+        <h2>녹화 파일 목록</h2>
+        <ul>
+          {recordings.map((recording) => (
+            <li key={recording.id}>
+              {recording.name} - <a href={recording.url} target="_blank" rel="noopener noreferrer">다운로드</a>
+            </li>
+          ))}
+        </ul>
       </div>
     </div>
+  </div>
   );
 }
