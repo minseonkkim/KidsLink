@@ -6,8 +6,7 @@ import { getToken, handleSpeechRecognition } from '../../api/openvidu'; // 이 �
 import TeacherHeader from "../../components/teacher/common/TeacherHeader";
 import axios from 'axios';
 import MeetingBackground from "../../assets/teacher/meeting_background.png"
-
-const APPLICATION_SERVER_URL = "http://localhost:8080/api/video"; // 이 부분을 추가
+const APPLICATION_SERVER_URL = import.meta.env.VITE_OPENVIDU_URL
 
 interface User {
   sessionId?: string;
@@ -73,6 +72,8 @@ export default function TeacherBroadcast() {
   }, []);
 
   useEffect(() => {
+    console.log(import.meta.env); // 환경 변수 출력
+      console.log('Current mode:', import.meta.env.MODE); // 현재 모드 출력
     // 녹화 파일 목록 불러오기
     fetchRecordings();
   }, []);
