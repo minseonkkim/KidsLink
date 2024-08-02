@@ -1,14 +1,14 @@
 import { OpenVidu, Publisher, Session, StreamEvent, StreamManager, Subscriber } from "openvidu-browser";
-import { useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import React, { ChangeEvent, useEffect, useState } from "react";
 import OpenViduVideoComponent from "../../components/openvidu/VideoComponent";
-import MeetingFooter from "../../components/openvidu/TeacherMeetingFooter";
-import { getToken, handleSpeechRecognition, stopRecording, fetchRecordings } from "../../api/openvidu";
+import { getToken, handleSpeechRecognition, stopRecording, fetchRecordings, stopSpeechRecognition } from "../../api/openvidu";
 import TeacherHeader from "../../components/teacher/common/TeacherHeader";
 import MeetingBackground from "../../assets/teacher/meeting_background.png";
 import { useTeacherInfoStore } from "../../stores/useTeacherInfoStore";
 import { getTeacherInfo } from "../../api/Info";
-import axios from 'axios';
+import axiosInstance from "../../api/token/axiosInstance";
+import TeacherMeetingFooter from "../../components/openvidu/TeacherMeetingFooter";
 
 const APPLICATION_SERVER_URL = import.meta.env.VITE_OPENVIDU_URL
 
@@ -40,10 +40,12 @@ interface ControlState {
 interface Recording {
   id: string;
   name: string;
-  url: string;
+  url: string; // Assuming the URL to access the recording is available
 }
 
 export default function TeacherVideo() {
+  const location = useLocation();
+  const { parentName } = location.state || {};
   const { meetingId } = useParams<{ meetingId: string }>(); // useParams 훅을 사용하여 URL 파라미터에서 meetingId를 가져옴
   const { teacherInfo, setTeacherInfo } = useTeacherInfoStore();
   const [user, setUser] = useState<User>({
@@ -90,6 +92,11 @@ export default function TeacherVideo() {
 
   useEffect(() => {
     fetchRecordingsList();
+    console.log(teacherInfo)
+  }, []);
+  useEffect(() => {
+    // 녹화 파일 목록 불러오기
+    fetchRecordings();
   }, []);
 
   useEffect(() => {
@@ -103,13 +110,23 @@ export default function TeacherVideo() {
     setUser((prevUser) => ({ ...prevUser, [event.target.name]: event.target.value }));
   };
 
-  const leaveSession = async () => {
-    if (currentRecordingId) {
-      await stopRecording(currentRecordingId);
-    }
+  const leaveSession = () => {
+    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    console.log("세션 떠나기")
+    console.log(recognition)
+    console.log("recognition")
+    stopSpeechRecognition();
+    console.log("recognition 스탑")
+    
     if (openvidu.session) {
       openvidu.session.disconnect();
-      setOpenvidu((prevOpenvidu) => ({ ...prevOpenvidu, session: undefined, mainStreamManager: undefined, publisher: undefined, subscribers: [] }));
+      setOpenvidu((prevOpenvidu) => ({
+        ...prevOpenvidu,
+        session: undefined,
+        mainStreamManager: undefined,
+        publisher: undefined,
+        subscribers: [],
+      }));
     }
   };
 
@@ -132,7 +149,10 @@ export default function TeacherVideo() {
     session.on("streamDestroyed", (event: StreamEvent) => {
       setOpenvidu((prevOpenvidu) => {
         const streamManager = event.stream.streamManager;
-        return { ...prevOpenvidu, subscribers: prevOpenvidu.subscribers.filter((sub) => sub !== streamManager) };
+        return {
+          ...prevOpenvidu,
+          subscribers: prevOpenvidu.subscribers.filter((sub) => sub !== streamManager),
+        };
       });
     });
 
@@ -171,6 +191,14 @@ export default function TeacherVideo() {
       });
   };
 
+  // const fetchRecordings = async () => {
+  //   try {
+  //     const response = await axiosInstance.get('/video/recordings');
+  //     setRecordings(response.data);
+  //   } catch (error) {
+  //     console.error('Error fetching recordings:', error);
+  //   }
+  // };
 
   const fetchRecordingsList = async () => {
     try {
@@ -199,14 +227,14 @@ export default function TeacherVideo() {
     <TeacherHeader />
         {openvidu.session ? (
           <div className="relative w-full h-full flex">
-            <div className="absolute top-[150px] left-0 w-[700px] h-auto rounded-lg border border-black">
-              <h1>내 화면</h1>
+            <div className="absolute top-[200px] left-[100px] w-[800px] h-auto rounded-lg border border-black text-center">
+              <h1>{user.username}님 화면</h1>
               {openvidu.mainStreamManager && (
                 <OpenViduVideoComponent streamManager={openvidu.mainStreamManager} />
               )}
             </div>
-            <div className="absolute top-[150px] right-0 w-[700px] h-auto rounded-lg border border-black">
-              <h1>상대 화면</h1>
+            <div className="absolute top-[200px] right-[100px] w-[800px] h-auto rounded-lg border border-black text-center">
+              <h1>{parentName}학부모님 화면</h1>
               {openvidu.subscribers.map((sub, i) => (
                 <OpenViduVideoComponent
                   key={i}
@@ -225,7 +253,7 @@ export default function TeacherVideo() {
             <button onClick={joinSession}>연결</button>
           </div>
         )}
-        <MeetingFooter
+        <TeacherMeetingFooter
           control={control}
           handleControl={setControl}
           close={leaveSession}
