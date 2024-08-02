@@ -6,6 +6,8 @@ import { login as loginAPI } from "../../api/member";
 import useAppStore from "../../stores/store";
 import { useMediaQuery } from 'react-responsive';
 import Typewriter from 'typewriter-effect';
+import { FcGoogle } from "react-icons/fc";
+import { RiKakaoTalkFill } from "react-icons/ri";
 
 
 export default function Login() {
@@ -60,8 +62,8 @@ const DesktopComponent = () => {
     <>
       <LoginHeader />
       <div className="flex flex-row bg-[#fff9d7] min-h-[calc(100vh-85px)] h-full font-KoPubDotum z-1">
-        <div className="mx-[150px] py-[100px]">
-          <div className="text-[38px] font-bold text-left text-[#363636] mb-[65px] h-[120px]">
+        <div className="mx-[150px] py-[97px]">
+          <div className="text-[38px] font-bold text-left text-[#363636] mb-[63px] h-[120px]">
             <Typewriter
               options={{
                 strings: ['소중한 추억을 기록하며<br>교육의 모든 순간을 함께하세요.'],
@@ -74,10 +76,10 @@ const DesktopComponent = () => {
           <form className="flex flex-col" onSubmit={handleLogin}>
             <input
               type="text"
-              placeholder="로그인"
+              placeholder="아이디"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="w-[440px] h-[60px] rounded-[20px] p-5 bg-white border border-[#b9b9b9] mb-3 text-[22px] font-medium text-left text-[#b9b9b9]"
+              className="w-[430px] h-[60px] rounded-[18px] p-5 bg-[#f7f7f7] border border-[#7c7c7c] mb-3 text-[21px] font-medium text-left text-[#7c7c7c]"
               autoComplete="username"
             />
             <input
@@ -85,12 +87,12 @@ const DesktopComponent = () => {
               placeholder="비밀번호"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-[440px] h-[60px] rounded-[20px] p-5 bg-white border border-[#b9b9b9] mb-5 text-[22px] font-medium text-left text-[#b9b9b9]"
+              className="w-[430px] h-[60px] rounded-[18px] p-5 bg-[#f7f7f7] border border-[#7c7c7c] mb-4 text-[21px] font-medium text-left text-[#7c7c7c]"
               autoComplete="current-password"
             />
             <button
               type="submit"
-              className="w-[440px] h-[57px] rounded-[20px] bg-[#ffe96f] text-[23px] font-bold mb-3"
+              className="w-[430px] h-[56px] rounded-[18px] bg-[#FFE96F] text-[23px] text-[#363636] font-bold mb-5"
             >
               로그인
             </button>
@@ -100,41 +102,38 @@ const DesktopComponent = () => {
               {error}
             </p>
           )}
+
+          {/* 테스트용: 로그인 안될 경우 회원가입 => 우선은 로그인 말고 바로 회원가입 페이지 이어지게 해놓음*/}
+          <div className="mt-2 flex flex-row">
+            <button
+              type="button"
+              className="mr-[10px] border-[1px] border-[#A1A1A1] w-[210px] h-[38px] rounded-[7px] text-[15px] font-bold mb-3 bg-[#fff] flex flex-row items-center justify-center"
+              onClick={() => handleSocialLogin("google")}
+            >
+              <FcGoogle className="mr-3 text-[20px]"/>
+              구글로 로그인
+            </button>
+            <button
+              type="button"
+              className="border-[1px] border-[#A1A1A1] w-[210px] h-[38px] rounded-[7px] text-[15px] font-bold mb-3 bg-[#fff] flex flex-row items-center justify-center"
+              onClick={() => handleSocialLogin("kakao")}
+            >
+              <RiKakaoTalkFill className="mr-3 text-[20px]"/>
+              카카오로 로그인
+            </button>
+          </div>
+
           <Link to="/join" onClick={handleJoinLinkClick}>
-            <p className="text-[21px] font-medium text-left text-[#363636]">
+            <p className="text-[20px] font-medium text-left text-[#363636]">
               키즈링크가 처음이라면?
             </p>
           </Link>
 
-          {/* 테스트용: 로그인 안될 경우 회원가입 => 우선은 로그인 말고 바로 회원가입 페이지 이어지게 해놓음*/}
-          <div className="mt-2">
-            <button
-              type="button"
-              className="w-[100px] h-[30px] rounded-[20px] text-[15px] font-bold mb-3"
-              onClick={() => handleSocialLogin("google")}
-            >
-              구글
-            </button>
-            <button
-              type="button"
-              className="w-[100px] h-[30px] rounded-[20px] text-[15px] font-bold mb-3"
-              onClick={() => handleSocialLogin("naver")}
-            >
-              네이버
-            </button>
-            <button
-              type="button"
-              className="w-[100px] h-[30px] rounded-[20px] text-[15px] font-bold mb-3"
-              onClick={() => handleSocialLogin("kakao")}
-            >
-              카카오
-            </button>
-          </div>
         </div>
 
         <img
           src={mainImg}
-          className="w-[630px] absolute left-[660px] top-[180px] object-cover"
+          className="w-[620px] absolute left-[660px] top-[180px] object-cover"
         />
       </div>
     </>
