@@ -44,7 +44,7 @@ public class CustomOAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHa
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-        log.info("CustomSuccessHandler.onAuthenticationSuccess");
+        log.debug("CustomSuccessHandler.onAuthenticationSuccess");
 
         //OAuth2User
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
@@ -56,8 +56,6 @@ public class CustomOAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHa
 
 
         String username = customUserDetails.getUsername();
-
-        System.out.println(username);
 
         String role = customUserDetails
                 .getAuthorities()
@@ -80,7 +78,11 @@ public class CustomOAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHa
         Optional<Cookie> oCookie = Arrays.stream(request.getCookies()).filter(cookie -> cookie.getName().equals(REDIRECT_URI_PARAM)).findFirst();
         Optional<String> redirectUri = oCookie.map(Cookie::getValue);
 
-        response.sendRedirect(redirectUri.orElseGet(() -> frontendServerUrl) + "social/login?accessToken=" + access + "&expiredAt=" + String.valueOf(System.currentTimeMillis() + JWTUtil.ACCESS_TOKEN_VALIDITY_SECONDS));
+        response.sendRedirect(redirectUri.orElseGet(() -> frontendServerUrl)
+                + "social/login"
+                + "?accessToken=" + access
+                + "&expiredAt=" + String.valueOf(System.currentTimeMillis() + JWTUtil.ACCESS_TOKEN_VALIDITY_SECONDS)
+                + "&role=" + role);
     }
 
     private void notJoinOAuth2(HttpServletResponse response, Authentication authentication) throws IOException {
