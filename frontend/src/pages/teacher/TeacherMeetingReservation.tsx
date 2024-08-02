@@ -289,22 +289,32 @@ export default function TeacherReservation() {
       const nonEmptyTempSelectedTimes = Object.fromEntries(
         Object.entries(tempSelectedTimes).filter(([key, value]) => value.length > 0)
       );
-
+  
+      // 시간 정렬
+      const sortedTempSelectedTimes = Object.entries(nonEmptyTempSelectedTimes).reduce((acc, [date, times]) => {
+        acc[date] = (times as string[]).sort((a, b) => {
+          const timeA = moment(a, 'HH:mm');
+          const timeB = moment(b, 'HH:mm');
+          return timeA.diff(timeB);
+        });
+        return acc;
+      }, {} as { [key: string]: string[] });
+  
       // API 요청 데이터 준비
-      const requestData: TeacherMeetingReservation[] = Object.entries(tempSelectedTimes).map(
+      const requestData: TeacherMeetingReservation[] = Object.entries(sortedTempSelectedTimes).map(
         ([date, times]) => ({ date, times })
       );
       console.log("requestData");
       console.log(requestData);
-
+  
       // API 호출
       await PostTeacherReservations(requestData);
-
+  
       console.log('예약이 저장되었습니다:', requestData);
-
+  
       // 최신 데이터 다시 가져오기
       await fetchData();
-
+  
       // 상태 초기화 및 편집 모드 종료
       setTempSelectedTimes({});
       setIsEditing(false);

@@ -1,14 +1,14 @@
 import { OpenVidu, Publisher, Session, StreamEvent, StreamManager, Subscriber } from "openvidu-browser";
 import { useParams } from "react-router-dom";
 import React, { ChangeEvent, useEffect, useState } from "react";
-import OpenViduVideoComponent from "../../components/openvidu/Ovvideo";
-import MeetingFooter from "../../components/openvidu/MeetingFooter";
-import { getToken, handleSpeechRecognition, stopRecording, fetchRecordings } from '../../api/openvidu'; 
+import OpenViduVideoComponent from "../../components/openvidu/VideoComponent";
+import MeetingFooter from "../../components/openvidu/TeacherMeetingFooter";
+import { getToken, handleSpeechRecognition, stopRecording, fetchRecordings } from "../../api/openvidu";
 import TeacherHeader from "../../components/teacher/common/TeacherHeader";
-import axios from 'axios';
-import MeetingBackground from "../../assets/teacher/meeting_background.png"
-import useTeacherStore from "../../stores/teacher";
+import MeetingBackground from "../../assets/teacher/meeting_background.png";
 import { useTeacherInfoStore } from "../../stores/useTeacherInfoStore";
+import { getTeacherInfo } from "../../api/Info";
+
 const APPLICATION_SERVER_URL = "http://localhost:8080/api/video"; // 이 부분을 추가
 
 interface User {
@@ -42,12 +42,12 @@ interface Recording {
   url: string;
 }
 
-export default function TeacherBroadcast() {
+export default function TeacherVideo() {
   const { meetingId } = useParams<{ meetingId: string }>(); // useParams 훅을 사용하여 URL 파라미터에서 meetingId를 가져옴
-  const { teacherInfo } = useTeacherInfoStore()
+  const { teacherInfo, setTeacherInfo } = useTeacherInfoStore();
   const [user, setUser] = useState<User>({
     sessionId: meetingId, // meetingId를 sessionId로 설정
-    username: teacherInfo.name,
+    username: teacherInfo?.name || '',
   });
   const [openvidu, setOpenvidu] = useState<OpenViduState>({
     session: undefined,
@@ -69,11 +69,22 @@ export default function TeacherBroadcast() {
   const [recordings, setRecordings] = useState<Recording[]>([]);
   const [currentRecordingId, setCurrentRecordingId] = useState<string | null>(null);
   useEffect(() => {
-    // URL에서 meetingId를 sessionId로 설정
-    
-    setUser((prevUser) => ({ ...prevUser, sessionId: meetingId }));
-    return () => { leaveSession(); };
-  }, [meetingId]);
+    async function fetchTeacherInfo() {
+      try {
+        const fetchedTeacherInfo = await getTeacherInfo();
+        setTeacherInfo(fetchedTeacherInfo);
+        setUser(prevUser => ({ ...prevUser, username: fetchedTeacherInfo.name }));
+      } catch (error) {
+        console.error('Failed to fetch teacher info:', error);
+      }
+    }
+
+    if (!teacherInfo) {
+      fetchTeacherInfo();
+    } else {
+      setUser(prevUser => ({ ...prevUser, username: teacherInfo.name }));
+    }
+  }, [teacherInfo, setTeacherInfo]);
 
   useEffect(() => {
     fetchRecordingsList();
@@ -102,7 +113,6 @@ export default function TeacherBroadcast() {
   };
 
   const joinSession = async () => {
-    
     if (!user.sessionId) return;
     const OV = new OpenVidu();
     OV.enableProdMode();
@@ -129,7 +139,6 @@ export default function TeacherBroadcast() {
       console.warn(exception);
     });
     const token = await getToken(user.sessionId);
-    console.log(token)
 
     session
       .connect(token, { clientData: user.username })
@@ -193,48 +202,40 @@ export default function TeacherBroadcast() {
     <div className="relative flex flex-col justify-center items-center w-screen h-screen min-w-[1000px] overflow-hidden">
     <img src={MeetingBackground} className="absolute top-0 left-0 w-full h-full object-cover" />
     <div className="relative z-10 w-full h-full flex flex-col items-center">
-      <TeacherHeader />
-      {openvidu.session ? (
-        <div className="relative w-full h-full flex">
-          <div className="absolute top-[150px] left-0 w-[700px] h-auto rounded-lg border border-black">
-            <h1>내 화면</h1>
-            {openvidu.mainStreamManager && (
-              <OpenViduVideoComponent streamManager={openvidu.mainStreamManager} />
-            )}
+    <TeacherHeader />
+        {openvidu.session ? (
+          <div className="relative w-full h-full flex">
+            <div className="absolute top-[150px] left-0 w-[700px] h-auto rounded-lg border border-black">
+              <h1>내 화면</h1>
+              {openvidu.mainStreamManager && (
+                <OpenViduVideoComponent streamManager={openvidu.mainStreamManager} />
+              )}
+            </div>
+            <div className="absolute top-[150px] right-0 w-[700px] h-auto rounded-lg border border-black">
+              <h1>상대 화면</h1>
+              {openvidu.subscribers.map((sub, i) => (
+                <OpenViduVideoComponent
+                  key={i}
+                  streamManager={sub}
+                  muted={control.muted}
+                  volume={control.volume}
+                />
+              ))}
+            </div>
           </div>
-          <div className="absolute top-[150px] right-0 w-[700px] h-auto rounded-lg border border-black">
-            <h1>상대 화면</h1>
-            {openvidu.subscribers.map((sub, i) => (
-              <OpenViduVideoComponent
-                key={i}
-                streamManager={sub}
-                muted={control.muted}
-                volume={control.volume}
-              />
-            ))}
+        ) : (
+          <div className="flex flex-col justify-center items-center w-full h-full">
+            <p>상담번호 : {user.sessionId}</p>
+            <p>참가자 : {user.username}</p>
+            <p>안내문안내문안내문안내문안내문안내문</p>
+            <button onClick={joinSession}>연결</button>
           </div>
-        </div>
-      ) : (
-        <div className="flex flex-col justify-center items-center w-full h-full">
-          <input
-            name="sessionId"
-            value={user.sessionId || ""}
-            onChange={handleUserChange}
-          />
-          <input
-            name="username"
-            value={user.username || ""}
-            onChange={handleUserChange}
-          />
-          <button onClick={joinSession}>연결</button>
-        </div>
-      )}
-      <MeetingFooter
-        control={control}
-        handleControl={setControl}
-        close={leaveSession}
-      />
-
+        )}
+        <MeetingFooter
+          control={control}
+          handleControl={setControl}
+          close={leaveSession}
+        />
       {/* 녹화 파일 목록 추가 */}
       <div className="recordings-list mt-4">
         <h2>녹화 파일 목록</h2>
