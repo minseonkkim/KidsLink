@@ -1,8 +1,8 @@
 import axios from "axios";
-import axiosInstance from "./token/axiosInstance";
+
 
 const APPLICATION_SERVER_URL = import.meta.env.VITE_OPENVIDU_URL
-const OPENVIDU_SERVER_SECRET = "MY_SECRET";
+const OPENVIDU_SERVER_SECRET = import.meta.env.VITE_OPENVIDU_SECRET;
 
 interface Recording {
   id: string;
@@ -63,7 +63,7 @@ const startRecording = async (sessionId: string): Promise<string> => {
 };
 
 // 녹화 중지
-export const stopRecording = async (recordingId: string): Promise<Recording> => {
+export const stopRecording = async (recordingId: string): Promise<any> => {
   try {
     const response = await axios.post(
       `${APPLICATION_SERVER_URL}/recordings/stop/${recordingId}`,
@@ -79,7 +79,7 @@ export const stopRecording = async (recordingId: string): Promise<Recording> => 
 
 
 //녹화된 영상 가져오기
-export const fetchRecordings = async (): Promise<Recording[]> => {
+export const fetchRecordings = async (): Promise<any[]> => {
   try {
     const response = await axios.get(`${APPLICATION_SERVER_URL}/recordings`);
     return response.data;
@@ -97,17 +97,10 @@ const detectProfanity = (text: string): boolean => {
   const profanityList = ['김범수', '바보']; // Add more words as needed
   return profanityList.some(word => text.includes(word));
 };
+// stt()
+export const handleSpeechRecognition = async (sessionId: string, setRecordingId: React.Dispatch<React.SetStateAction<string | null>>) => {
+  const recognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
 
-// Speech recognition and profanity detection
-export const handleSpeechRecognition = async (sessionId: string) => {
-  // 타입 단언을 사용하여 타입스크립트가 올바르게 인식하도록 합니다.
-  const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-
-  if (!SpeechRecognition) {
-    throw new Error('Speech recognition not supported in this browser.');
-  }
-
-  const recognition = new SpeechRecognition();
   recognition.continuous = true;
   recognition.interimResults = true;
   recognition.onresult = async (event) => {
@@ -118,7 +111,7 @@ export const handleSpeechRecognition = async (sessionId: string) => {
         if (detectProfanity(transcript)) {
           console.log("Profanity detected. Starting recording...");
           const recordingId = await startRecording(sessionId);
-          console.log(`Recording started with ID: ${recordingId}`);
+          console.log('Recording started with ID:',recordingId);
           setRecordingId(recordingId);
         }
       }
