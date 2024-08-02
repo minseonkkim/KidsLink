@@ -5,6 +5,7 @@ import { logout } from "../../api/member";
 import { useNavigate } from "react-router-dom";
 import useAppStore from "../../stores/store";
 import { useParentInfoStore } from "../../stores/useParentInfoStore";
+import TestButton from "../../components/TestButton";
 
 export default function ParentMyPage() {
   const { parentInfo } = useParentInfoStore();
@@ -29,6 +30,7 @@ export default function ParentMyPage() {
     <div className="min-h-[100dvh] flex flex-col items-center bg-[#FFEC8A]">
       <div className="w-full h-[807px] absolute left-0 top-[93px]">
         <div className="w-full h-full absolute left-0 top-0 rounded-tl-[20px] rounded-tr-[20px] bg-white shadow-top px-5">
+          <TestButton />
           <div
             className="mt-3 text-[17px] flex flex-row justify-end items-center py-3 px-1 cursor-pointer"
             onClick={handleLogout}
