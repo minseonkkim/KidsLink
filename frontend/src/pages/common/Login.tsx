@@ -8,10 +8,10 @@ import { useMediaQuery } from 'react-responsive';
 import Typewriter from 'typewriter-effect';
 
 
-export default function Login(){
+export default function Login() {
   const isDesktopOrLaptop = useMediaQuery({ query: '(min-width: 740px)' });
   const isTabletOrMobile = useMediaQuery({ query: '(max-width: 740px)' });
-  
+
   return (
     <>
       {isDesktopOrLaptop && <DesktopComponent />}
@@ -20,25 +20,40 @@ export default function Login(){
   );
 }
 
+// 웹 화면으로 볼 경우
 const DesktopComponent = () => {
-
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
-  const setUserType = useAppStore((state) => state.setUserType); // Update here
+  const setUserType = useAppStore((state) => state.setUserType);
+  const setIsSocialLogin = useAppStore((state) => state.setIsSocialLogin); // 추가
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       const data = await loginAPI({ username, password });
       console.log("Login successful:", data);
-      setUserType(data.role); // userType을 Zustand 스토어에 저장
+      setUserType(data.role);
       navigate("/"); // 로그인 성공 후 이동할 경로
     } catch (error) {
       console.error("Error during login:", error);
       setError("로그인에 실패했습니다. 다시 시도해주세요.");
     }
+  };
+
+  // 추가
+  const handleSocialLogin = (provider: string) => {
+    setIsSocialLogin(true);
+    // 소셜 로그인 로직을 여기에 추가
+    console.log(`소셜 로그인: ${provider}`);
+    window.location.href=`${import.meta.env.VITE_API}/oauth2/authorization/naver`
+    // navigate("/join");
+  };
+  
+  const handleJoinLinkClick = () => {
+    setIsSocialLogin(false);
+    navigate("/join");
   };
 
   return (
@@ -48,12 +63,12 @@ const DesktopComponent = () => {
         <div className="mx-[150px] py-[100px]">
           <div className="text-[38px] font-bold text-left text-[#363636] mb-[65px] h-[120px]">
             <Typewriter
-                options={{
-                  strings: ['소중한 추억을 기록하며<br>교육의 모든 순간을 함께하세요.'],
-                  autoStart: true,
-                  loop: true,
-                }}
-              />
+              options={{
+                strings: ['소중한 추억을 기록하며<br>교육의 모든 순간을 함께하세요.'],
+                autoStart: true,
+                loop: true,
+              }}
+            />
           </div>
 
           <form className="flex flex-col" onSubmit={handleLogin}>
@@ -63,6 +78,7 @@ const DesktopComponent = () => {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               className="w-[440px] h-[60px] rounded-[20px] p-5 bg-white border border-[#b9b9b9] mb-3 text-[22px] font-medium text-left text-[#b9b9b9]"
+              autoComplete="username"
             />
             <input
               type="password"
@@ -70,6 +86,7 @@ const DesktopComponent = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-[440px] h-[60px] rounded-[20px] p-5 bg-white border border-[#b9b9b9] mb-5 text-[22px] font-medium text-left text-[#b9b9b9]"
+              autoComplete="current-password"
             />
             <button
               type="submit"
@@ -83,11 +100,36 @@ const DesktopComponent = () => {
               {error}
             </p>
           )}
-          <Link to="/join">
+          <Link to="/join" onClick={handleJoinLinkClick}>
             <p className="text-[21px] font-medium text-left text-[#363636]">
               키즈링크가 처음이라면?
             </p>
           </Link>
+
+          {/* 테스트용: 로그인 안될 경우 회원가입 => 우선은 로그인 말고 바로 회원가입 페이지 이어지게 해놓음*/}
+          <div className="mt-2">
+            <button
+              type="button"
+              className="w-[100px] h-[30px] rounded-[20px] text-[15px] font-bold mb-3"
+              onClick={() => handleSocialLogin("google")}
+            >
+              구글
+            </button>
+            <button
+              type="button"
+              className="w-[100px] h-[30px] rounded-[20px] text-[15px] font-bold mb-3"
+              onClick={() => handleSocialLogin("naver")}
+            >
+              네이버
+            </button>
+            <button
+              type="button"
+              className="w-[100px] h-[30px] rounded-[20px] text-[15px] font-bold mb-3"
+              onClick={() => handleSocialLogin("kakao")}
+            >
+              카카오
+            </button>
+          </div>
         </div>
 
         <img
@@ -97,27 +139,42 @@ const DesktopComponent = () => {
       </div>
     </>
   );
-}
+};
 
+// 모바일 화면으로 볼 경우
 const TabletOrMobileComponent = () => {
   const [isContentVisible, setIsContentVisible] = useState(true);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
-  const setUserType = useAppStore((state) => state.setUserType); // Update here
+  const setUserType = useAppStore((state) => state.setUserType);
+  const setIsSocialLogin = useAppStore((state) => state.setIsSocialLogin); // 추가
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       const data = await loginAPI({ username, password });
       console.log("Login successful:", data);
-      setUserType(data.role); // userType을 Zustand 스토어에 저장
+      setUserType(data.role);
       navigate("/"); // 로그인 성공 후 이동할 경로
     } catch (error) {
       console.error("Error during login:", error);
       setError("로그인에 실패했습니다. 다시 시도해주세요.");
     }
+  };
+
+  // 추가
+  const handleSocialLogin = (provider: string) => {
+    setIsSocialLogin(true);
+    // 소셜 로그인 로직을 여기에 추가
+    console.log(`소셜 로그인: ${provider}`);
+    navigate("/join");
+  };
+
+  const handleJoinLinkClick = () => {
+    setIsSocialLogin(false);
+    navigate("/join");
   };
 
   useEffect(() => {
@@ -130,56 +187,80 @@ const TabletOrMobileComponent = () => {
 
   return (
     <>
-      <LoginHeader/>
+      <LoginHeader />
       <div className="bg-[#FFF9D7] w-[100vw] h-[100vh] flex flex-col items-center justify-center">
         {isContentVisible ? (
           <div className="transition-transform transform grow-animation">
             <p className="text-[27px] font-bold text-center text-[#363636] mb-[65px] h-[80px]">
-              <span>소중한 추억을 기록하며</span><br/><span>교육의 모든 순간을 함께하세요.</span>
-
+              <span>소중한 추억을 기록하며</span>
+              <br />
+              <span>교육의 모든 순간을 함께하세요.</span>
             </p>
-            <img
-              src={mainImg}
-              className="w-[330px] object-cover"
-            />
-          </div>): (
-            <div>
-                <form className="flex flex-col" onSubmit={handleLogin}>
-                  <input
-                    type="text"
-                    placeholder="로그인"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    className="w-[330px] h-[58px] rounded-[20px] p-5 bg-white border border-[#b9b9b9] mb-3 text-[22px] font-medium text-left text-[#b9b9b9]"
-                  />
-                  <input
-                    type="password"
-                    placeholder="비밀번호"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="w-[330px] h-[58px] rounded-[20px] p-5 bg-white border border-[#b9b9b9] mb-2 text-[22px] font-medium text-left text-[#b9b9b9]"
-                  />
-                  {error && (
-                  <p className="text-[17px] font-medium text-left text-red-500">
-                    {error}
-                  </p>
-                )}
-                  <button
-                    type="submit"
-                    className="mt-5 w-[330px] h-[55px] rounded-[20px] bg-[#ffe96f] text-[23px] font-bold mb-2"
-                  >
-                    로그인
-                  </button>
-                </form>
-                
-                <Link to="/join">
-                  <p className="text-[20px] font-medium text-left text-[#363636]">
-                    키즈링크가 처음이라면?
-                  </p>
-                </Link>
+            <img src={mainImg} className="w-[330px] object-cover" />
+          </div>
+        ) : (
+          <div>
+            <form className="flex flex-col" onSubmit={handleLogin}>
+              <input
+                type="text"
+                placeholder="로그인"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                className="w-[330px] h-[58px] rounded-[20px] p-5 bg-white border border-[#b9b9b9] mb-3 text-[22px] font-medium text-left text-[#b9b9b9]"
+                autoComplete="username"
+              />
+              <input
+                type="password"
+                placeholder="비밀번호"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-[330px] h-[58px] rounded-[20px] p-5 bg-white border border-[#b9b9b9] mb-2 text-[22px] font-medium text-left text-[#b9b9b9]"
+                autoComplete="current-password"
+              />
+              {error && (
+                <p className="text-[17px] font-medium text-left text-red-500">
+                  {error}
+                </p>
+              )}
+              <button
+                type="submit"
+                className="mt-5 w-[330px] h-[55px] rounded-[20px] bg-[#ffe96f] text-[23px] font-bold mb-2"
+              >
+                로그인
+              </button>
+            </form>
+
+            <Link to="/join" onClick={handleJoinLinkClick}>
+              <p className="text-[20px] font-medium text-left text-[#363636]">
+                키즈링크가 처음이라면?
+              </p>
+            </Link>
+            <div className="mt-2">
+              <button
+                type="button"
+                className="w-[100px] h-[30px] rounded-[20px] text-[15px] font-bold mb-3"
+                onClick={() => handleSocialLogin("google")}
+              >
+                구글
+              </button>
+              <button
+                type="button"
+                className="w-[100px] h-[30px] rounded-[20px] text-[15px] font-bold mb-3"
+                onClick={() => handleSocialLogin("naver")}
+              >
+                네이버
+              </button>
+              <button
+                type="button"
+                className="w-[100px] h-[30px] rounded-[20px] text-[15px] font-bold mb-3"
+                onClick={() => handleSocialLogin("kakao")}
+              >
+                카카오
+              </button>
             </div>
-          )
-        }
-    </div>
-    </>)
-}
+          </div>
+        )}
+      </div>
+    </>
+  );
+};

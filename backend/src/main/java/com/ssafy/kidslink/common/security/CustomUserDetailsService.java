@@ -13,6 +13,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -46,6 +48,6 @@ public class CustomUserDetailsService implements UserDetailsService {
         }
         log.debug("CustomUserDetailsService.loadUserByUsername userData - {} ", userData);
 
-        return new CustomUserDetails(userData);
+        return new CustomUserDetails(userData, Collections.emptyMap());
     }
 }

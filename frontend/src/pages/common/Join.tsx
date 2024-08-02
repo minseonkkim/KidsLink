@@ -1,26 +1,26 @@
-import parentImg from "../../assets/join/joinParentImg.png";
-import teacherImg from "../../assets/join/joinTeacherImg.png";
-import ownerImg from "../../assets/join/joinOwnerImg.png";
-import MemberCard from "../../components/join/MemberCard";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import JoinHeader from "../../components/join/JoinHeader";
+import { useState } from "react"
+import { useNavigate } from "react-router-dom"
+import JoinHeader from "../../components/join/JoinHeader"
+import MemberCard from "../../components/join/MemberCard"
+import parentImg from "../../assets/join/joinParentImg.png"
+import teacherImg from "../../assets/join/joinTeacherImg.png"
+import ownerImg from "../../assets/join/joinOwnerImg.png"
 
+// 사용자 구분
 const members = [
   { role: "parent", img: parentImg, displayName: "학부모" },
   { role: "teacher", img: teacherImg, displayName: "선생님" },
   { role: "director", img: ownerImg, displayName: "원장님" },
-];
+]
 
 export default function Join() {
-  const [selectedRole, setSelectedRole] = useState<string | null>(null);
-  const navigate = useNavigate();
+  const navigate = useNavigate()
+  const [selectedRole, setSelectedRole] = useState<string | null>(null)
 
   const handleCardClick = (role: string) => {
-    setSelectedRole(role);
-    // 여기서 role을 URL 파라미터로 전달하는 방식으로 수정합니다.
-    navigate(`/join/${role}`);
-  };
+    setSelectedRole(role)
+    navigate(`/join/${role}`)
+  }
 
   return (
     <div className="min-h-screen flex flex-col items-center">
@@ -36,7 +36,7 @@ export default function Join() {
           {members.map((item, index) => (
             <div key={index} className="w-[300px] mb-8">
               <MemberCard
-                role={item.displayName}  // 역할 이름을 displayName으로 설정
+                role={item.displayName}  
                 img={item.img}
                 isSelected={selectedRole === item.role}
                 onClick={() => handleCardClick(item.role)}
@@ -46,5 +46,5 @@ export default function Join() {
         </div>
       </div>
     </div>
-  );
+  )
 }

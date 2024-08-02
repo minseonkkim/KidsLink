@@ -42,12 +42,10 @@ public class VideoController {
     public ResponseEntity<String> initializeSession(@RequestBody(required = false) Map<String, Object> params)
             throws OpenViduJavaClientException, OpenViduHttpException {
 
-        // 디버깅 로그 추가
-        log.info("Received request to initialize session with params: {}", params);
-        params.put("forcedVideoCodec", "VP8"); // 올바른 값으로 변경
-
-        // 디버깅 로그 추가
-        log.info("Modified params: {}", params);
+        // 파라미터 수정
+        if (params != null && "MEDIA_SERVER_PREFERRED".equals(params.get("forcedVideoCodec"))) {
+            params.put("forcedVideoCodec", "VP8"); // 올바른 값으로 변경
+        }
 
         SessionProperties properties = SessionProperties.fromJson(params).build();
         Session session = openvidu.createSession(properties);
@@ -75,6 +73,7 @@ public class VideoController {
         log.info("connection: {}", connection);
         return new ResponseEntity<>(connection.getToken(), HttpStatus.OK);
     }
+
 
 
     /**
@@ -128,5 +127,6 @@ public class VideoController {
         Recording recording = openvidu.getRecording(recordingId);
         return new ResponseEntity<>(recording, HttpStatus.OK);
     }
+
 
 }
