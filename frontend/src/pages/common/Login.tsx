@@ -1,16 +1,18 @@
 import React, { useState, useEffect } from "react";
 import LoginHeader from "../../components/login/LoginHeader";
 import mainImg from "../../assets/teacher/main_img.png";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { login as loginAPI } from "../../api/member";
 import useAppStore from "../../stores/store";
 import { useMediaQuery } from 'react-responsive';
 import Typewriter from 'typewriter-effect';
+import { FcGoogle } from "react-icons/fc";
+import { RiKakaoTalkFill } from "react-icons/ri";
 
 
 export default function Login() {
-  const isDesktopOrLaptop = useMediaQuery({ query: '(min-width: 740px)' });
-  const isTabletOrMobile = useMediaQuery({ query: '(max-width: 740px)' });
+  const isDesktopOrLaptop = useMediaQuery({ query: "(min-width: 740px)" });
+  const isTabletOrMobile = useMediaQuery({ query: "(max-width: 740px)" });
 
   return (
     <>
@@ -22,11 +24,28 @@ export default function Login() {
 
 // 웹 화면으로 볼 경우
 const DesktopComponent = () => {
+  const location = useLocation();
+  const setUserType = useAppStore((state) => state.setUserType);
+
+  useEffect(() => {
+      const state = location.state;
+      if (state) {
+          const { accessToken, expiredAt, role } = state;
+          if (accessToken && expiredAt) {
+              localStorage.setItem('accessToken', accessToken);
+              localStorage.setItem('expiredAt', expiredAt);
+              console.log("role", role)
+              setUserType(role);
+          }
+      }
+  }, [location.state]);
+
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
-  const setUserType = useAppStore((state) => state.setUserType);
+  // const setUserType = useAppStore((state) => state.setUserType);
   const setIsSocialLogin = useAppStore((state) => state.setIsSocialLogin); // 추가
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -44,27 +63,28 @@ const DesktopComponent = () => {
 
   // 추가
   const handleSocialLogin = (provider: string) => {
-    setIsSocialLogin(true);
-    // 소셜 로그인 로직을 여기에 추가
-    console.log(`소셜 로그인: ${provider}`);
-    window.location.href=`${import.meta.env.VITE_API}/oauth2/authorization/naver`
-    // navigate("/join");
-  };
-  
+    console.log(`소셜 로그인: ${provider}`)
+    window.location.href = `${
+      import.meta.env.VITE_API
+    }/oauth2/authorization/${provider}`
+  }
+
   const handleJoinLinkClick = () => {
     setIsSocialLogin(false);
-    navigate("/join");
-  };
+    navigate("/join")
+  }
 
   return (
     <>
       <LoginHeader />
       <div className="flex flex-row bg-[#fff9d7] min-h-[calc(100vh-85px)] h-full font-KoPubDotum z-1">
-        <div className="mx-[150px] py-[100px]">
-          <div className="text-[38px] font-bold text-left text-[#363636] mb-[65px] h-[120px]">
+        <div className="mx-[150px] py-[97px]">
+          <div className="text-[38px] font-bold text-left text-[#363636] mb-[63px] h-[120px]">
             <Typewriter
               options={{
-                strings: ['소중한 추억을 기록하며<br>교육의 모든 순간을 함께하세요.'],
+                strings: [
+                  "소중한 추억을 기록하며<br>교육의 모든 순간을 함께하세요.",
+                ],
                 autoStart: true,
                 loop: true,
               }}
@@ -74,10 +94,10 @@ const DesktopComponent = () => {
           <form className="flex flex-col" onSubmit={handleLogin}>
             <input
               type="text"
-              placeholder="로그인"
+              placeholder="아이디"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="w-[440px] h-[60px] rounded-[20px] p-5 bg-white border border-[#b9b9b9] mb-3 text-[22px] font-medium text-left text-[#b9b9b9]"
+              className="w-[430px] h-[60px] rounded-[18px] p-5 bg-[#f7f7f7] border border-[#7c7c7c] mb-3 text-[21px] font-medium text-left text-[#7c7c7c]"
               autoComplete="username"
             />
             <input
@@ -85,12 +105,12 @@ const DesktopComponent = () => {
               placeholder="비밀번호"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-[440px] h-[60px] rounded-[20px] p-5 bg-white border border-[#b9b9b9] mb-5 text-[22px] font-medium text-left text-[#b9b9b9]"
+              className="w-[430px] h-[60px] rounded-[18px] p-5 bg-[#f7f7f7] border border-[#7c7c7c] mb-4 text-[21px] font-medium text-left text-[#7c7c7c]"
               autoComplete="current-password"
             />
             <button
               type="submit"
-              className="w-[440px] h-[57px] rounded-[20px] bg-[#ffe96f] text-[23px] font-bold mb-3"
+              className="w-[430px] h-[56px] rounded-[18px] bg-[#FFE96F] text-[23px] text-[#363636] font-bold mb-5"
             >
               로그인
             </button>
@@ -100,41 +120,38 @@ const DesktopComponent = () => {
               {error}
             </p>
           )}
+
+          {/* 테스트용: 로그인 안될 경우 회원가입 => 우선은 로그인 말고 바로 회원가입 페이지 이어지게 해놓음*/}
+          <div className="mt-2 flex flex-row">
+            <button
+              type="button"
+              className="mr-[10px] border-[1px] border-[#A1A1A1] w-[210px] h-[38px] rounded-[7px] text-[15px] font-bold mb-3 bg-[#fff] flex flex-row items-center justify-center"
+              onClick={() => handleSocialLogin("google")}
+            >
+              <FcGoogle className="mr-3 text-[20px]"/>
+              구글로 로그인
+            </button>
+            <button
+              type="button"
+              className="border-[1px] border-[#A1A1A1] w-[210px] h-[38px] rounded-[7px] text-[15px] font-bold mb-3 bg-[#fff] flex flex-row items-center justify-center"
+              onClick={() => handleSocialLogin("kakao")}
+            >
+              <RiKakaoTalkFill className="mr-3 text-[20px]"/>
+              카카오로 로그인
+            </button>
+          </div>
+
           <Link to="/join" onClick={handleJoinLinkClick}>
-            <p className="text-[21px] font-medium text-left text-[#363636]">
+            <p className="text-[20px] font-medium text-left text-[#363636]">
               키즈링크가 처음이라면?
             </p>
           </Link>
 
-          {/* 테스트용: 로그인 안될 경우 회원가입 => 우선은 로그인 말고 바로 회원가입 페이지 이어지게 해놓음*/}
-          <div className="mt-2">
-            <button
-              type="button"
-              className="w-[100px] h-[30px] rounded-[20px] text-[15px] font-bold mb-3"
-              onClick={() => handleSocialLogin("google")}
-            >
-              구글
-            </button>
-            <button
-              type="button"
-              className="w-[100px] h-[30px] rounded-[20px] text-[15px] font-bold mb-3"
-              onClick={() => handleSocialLogin("naver")}
-            >
-              네이버
-            </button>
-            <button
-              type="button"
-              className="w-[100px] h-[30px] rounded-[20px] text-[15px] font-bold mb-3"
-              onClick={() => handleSocialLogin("kakao")}
-            >
-              카카오
-            </button>
-          </div>
         </div>
 
         <img
           src={mainImg}
-          className="w-[630px] absolute left-[660px] top-[180px] object-cover"
+          className="w-[620px] absolute left-[660px] top-[180px] object-cover"
         />
       </div>
     </>

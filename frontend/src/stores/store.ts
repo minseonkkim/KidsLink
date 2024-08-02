@@ -1,9 +1,8 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
-
 export interface AppState {
-  // 학부모 or 선생님 회원가입 시 공통 데이터 타입
+  // 공통 데이터 타입
   username: string;
   password: string;
   passwordConfirm: string;
@@ -20,8 +19,8 @@ export interface AppState {
   setNickname: (nickname: string) => void;
   setTel: (tel: string) => void;
   setProfile: (profile: File | undefined) => void;
-  
-  // 학부모 회원가입 시 추가로 필요한 자녀 데이터 타입
+
+  // 자녀 데이터 타입
   gender: string;
   childName: string;
   birth: string;
@@ -32,24 +31,22 @@ export interface AppState {
   setChildName: (childName: string) => void;
   setBirth: (birth: string) => void;
   setKindergartenId: (kindergartenId: number) => void;
-  setKindergartenClassId: (className: number) => void;
+  setKindergartenClassId: (kindergartenClassId: number) => void;
   setChildProfile: (childProfile: File | undefined) => void;
 
   // 사용자 분리(학부모/선생님)
   userType: string;
   setUserType: (userType: string) => void;
 
-  // 추가
   // 소셜 로그인을 위해 회원가입하는 사용자 구분
   isSocialLogin: boolean;
   setIsSocialLogin: (isSocialLogin: boolean) => void;
 }
 
-
 const useAppStore = create<AppState>()(
   persist(
     (set) => ({
-      // 학부모 or 선생님 회원가입 시 공통 데이터 상태 및 메서드
+      // 공통 데이터 상태 및 메서드
       username: '',
       password: '',
       passwordConfirm: '',
@@ -67,7 +64,7 @@ const useAppStore = create<AppState>()(
       setTel: (tel) => set(() => ({ tel })),
       setProfile: (profile) => set(() => ({ profile })),
 
-      // 학부모 회원가입 시 추가로 필요한 자녀 데이터 상태 및 메서드
+      // 자녀 데이터 상태 및 메서드
       gender: '',
       childName: '',
       birth: '',
@@ -85,18 +82,25 @@ const useAppStore = create<AppState>()(
       userType: '',
       setUserType: (userType) => set(() => ({ userType })),
 
-      // 추가
-      // 소셜 로그인을 위해 회원가입 하는 사용자 상태 및 메서드
+      // 소셜 로그인을 위해 회원가입하는 사용자 상태 및 메서드
       isSocialLogin: false,
       setIsSocialLogin: (isSocialLogin) => set({ isSocialLogin }),
     }),
-
     {
-      name: 'user-storage', 
-      partialize: (state) => ({ userType: state.userType }), // userType만 local Storage에 저장
+      name: 'user-storage',
+      partialize: (state) => ({ userType: state.userType }), // userType만 저장
+      storage: {
+        getItem: (name) => {
+          const item = sessionStorage.getItem(name)
+          return item ? JSON.parse(item) : null
+        },
+        setItem: (name, value) => {
+          sessionStorage.setItem(name, JSON.stringify(value))
+        },
+        removeItem: (name) => sessionStorage.removeItem(name),
+      },
     }
   )
 )
 
 export default useAppStore
-
