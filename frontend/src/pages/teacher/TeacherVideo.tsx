@@ -10,7 +10,7 @@ import { useTeacherInfoStore } from "../../stores/useTeacherInfoStore";
 import { getTeacherInfo } from "../../api/Info";
 import axios from 'axios';
 
-const APPLICATION_SERVER_URL = "http://localhost:8080/api/video"; // 이 부분을 추가
+const APPLICATION_SERVER_URL = import.meta.env.VITE_OPENVIDU_URL
 
 interface User {
   sessionId?: string;

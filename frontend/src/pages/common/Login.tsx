@@ -47,7 +47,8 @@ const DesktopComponent = () => {
     setIsSocialLogin(true);
     // 소셜 로그인 로직을 여기에 추가
     console.log(`소셜 로그인: ${provider}`);
-    navigate("/join");
+    window.location.href=`${import.meta.env.VITE_API}/oauth2/authorization/naver`
+    // navigate("/join");
   };
   
   const handleJoinLinkClick = () => {
