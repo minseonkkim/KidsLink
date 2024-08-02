@@ -6,6 +6,7 @@ import DiaryList from "../../components/parent/diary/DiaryList";
 import daramgi from "../../assets/parent/growth-daramgi.png";
 import { getKidAllGrowthDiarys } from "../../api/growthdiary";
 import { useParentInfoStore } from "../../stores/useParentInfoStore";
+import { getParentInfo } from "../../api/Info";
 
 export default function ParentDiary() {
   const [growthEntries, setGrowthEntries] = useState<any[]>([]);
@@ -13,26 +14,34 @@ export default function ParentDiary() {
   const [scroll, setScroll] = useState(false);
   const divRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
-  const childId = useParentInfoStore(
-    (state) => state.parentInfo?.child.childId
-  );
+
+  const parentInfo = useParentInfoStore((state) => state.parentInfo);
+  const setParentInfo = useParentInfoStore((state) => state.setParentInfo);
+  const childId = parentInfo?.child.childId;
 
   useEffect(() => {
-    async function fetchGrowthDiarys() {
-      if (childId) {
-        try {
-          const response = await getKidAllGrowthDiarys(childId);
+    async function fetchParentInfoAndDiarys() {
+      try {
+        let currentChildId = childId;
+        if (!currentChildId) {
+          const fetchedParentInfo = await getParentInfo();
+          setParentInfo(fetchedParentInfo);
+          currentChildId = fetchedParentInfo.child.childId;
+        }
+
+        if (currentChildId) {
+          const response = await getKidAllGrowthDiarys(currentChildId);
           if (response) {
             setGrowthEntries(response);
           }
-        } catch (error) {
-          console.error("Failed to fetch growth diarys", error);
         }
+      } catch (error) {
+        console.error("Failed to fetch growth diarys", error);
       }
     }
 
-    fetchGrowthDiarys();
-  }, [childId]);
+    fetchParentInfoAndDiarys();
+  }, [childId, setParentInfo]);
 
   const filteredEntries = growthEntries.filter((entry) =>
     entry.createDate.includes(searchDate)

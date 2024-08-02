@@ -3,6 +3,7 @@ import { IoVideocam, IoVideocamOff, IoVolumeHigh, IoVolumeMute } from "react-ico
 import { RxCrossCircled } from "react-icons/rx";
 import { Slider } from "@mui/material";
 import { FaMicrophone, FaMicrophoneSlash } from "react-icons/fa";
+import TeacherBroadcast from "../../pages/teacher/TeacherBroadcast";
 
 // Define the types for the props
 interface ControlState {

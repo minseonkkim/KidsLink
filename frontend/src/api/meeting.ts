@@ -16,6 +16,19 @@ export interface TeacherMeetingReservation {
   times: string[];
 }
 
+export interface SessionData {
+  id: number;
+}
+
+export interface ParentTeacherMeeting {
+  meetingId: number;
+  meetingDate: string;
+  meetingTime: string;
+  parentId: number;
+  teacherId: number;
+}
+
+
 
 // 전체 상담 가능날짜 조회
 export async function getAllPossibleReservations(): Promise<Reservation[]> {
@@ -23,7 +36,6 @@ export async function getAllPossibleReservations(): Promise<Reservation[]> {
     const response = await axiosInstance.get('meeting')
 
     if (response.data.status === 'success') {
-      console.log(response.data.data) // 확인 후 삭제
       return response.data.data
     } else {
       throw new Error('Failed to get reservations')
@@ -31,6 +43,16 @@ export async function getAllPossibleReservations(): Promise<Reservation[]> {
   } catch (error) {
     console.error(error)
     throw error
+  }
+}
+
+export async function fetchSessionId(): Promise<SessionData> {
+  try {
+    const response = await axiosInstance.get('/meeting/reservation');
+    return response.data.data;
+  } catch (error) {
+    console.error("Failed to fetch session data:", error);
+    throw error;
   }
 }
 
@@ -70,5 +92,36 @@ export async function PostTeacherReservations(data: TeacherMeetingReservation[])
   } catch (error) {
     console.error(error)
     throw error
+  }
+}
+
+//상담일자 확정하기
+export async function ConfirmMeeting() {
+  console.log("상담일자 확정하기")
+  try {
+    const response = await axiosInstance.post('meeting/confirm')
+    if (response.data.status === 'success') {
+      console.log(response.data)
+      return response.data.data
+    } else {
+      throw new Error('Failed to confirmMeeting')
+    }
+  } catch (error) {
+    console.log(error)
+    throw error
+  }
+}
+
+export async function GetConfirmedMeeting(): Promise<ParentTeacherMeeting[]> {
+  try {
+    const response = await axiosInstance.get('/meeting/reservation');
+    if (response.data.status === 'success') {
+      return response.data.data as ParentTeacherMeeting[];
+    } else {
+      throw new Error('Failed to get confirmed meetings');
+    }
+  } catch (error) {
+    console.error("Error fetching confirmed meetings:", error);
+    throw error;
   }
 }
