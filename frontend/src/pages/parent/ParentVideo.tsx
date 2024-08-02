@@ -161,7 +161,7 @@ export default function ParentVideo() {
 
   return (
     <div className="relative min-h-[100dvh] bg-cover bg-center bg-no-repeat" style={{ backgroundImage: `url(${bgImg})` }}>
-      <div className="absolute inset-0 bg-black bg-opacity-50"></div>
+      <div className="absolute inset-0 bg-black bg-opacity-75"></div>
         {openvidu.session ? (
           <div className="w-full h-full flex">
             <div className="top-[150px] left-0 w-[700px] h-auto rounded-lg border border-white">
@@ -183,11 +183,27 @@ export default function ParentVideo() {
             </div>
           </div>
         ) : (
-          <div className="flex flex-col justify-center items-center w-full h-full">
-            <p>상담번호 : {user.sessionId}</p>
-            <p>참가자 : {user.username} 보호자</p>
-            <p>안내문안내문안내문안내문안내문안내문</p>
-            <button onClick={joinSession}>연결</button>
+            <div className="absolute flex flex-col justify-center items-center w-full h-full px-6 mb-8">
+              <div className="relative w-full bg-[#fff9d7] rounded-[20px] px-6 py-8 shadow-lg border-2 border-[#ffec8a] bg-notebook-pattern">
+              {/* 테이프 효과 */}
+              <div className="absolute -top-4 -left-4 w-16 h-8 bg-yellow-300 rotate-12 transform z-10"></div>
+              <div className="absolute -top-4 -right-4 w-16 h-8 bg-yellow-300 -rotate-12 transform z-10"></div>
+              <div className="absolute -bottom-4 -left-4 w-16 h-8 bg-yellow-300 -rotate-12 transform z-10"></div>
+              <div className="absolute -bottom-4 -right-4 w-16 h-8 bg-yellow-300 rotate-12 transform z-10"></div>
+
+              <p className="text-xl font-bold text-[#212121] mb-2">
+                상담번호 : {user.sessionId}
+              </p>
+              <p className="text-l font-light text-[#353c4e] mb-6">
+                {user.username} 보호자님과의 면담입니다.
+              </p>
+              <div className="text-base text-[#212121] space-y-4 whitespace-pre-line">
+                안내문안내문안내문안내문안내문안내문안내문
+              </div>
+              <div className="flex justify-center">
+                  <button onClick={joinSession} className="mt-5 w-[99px] h-[40px] bg-[#ffec8a] rounded-full flex items-center justify-center text-base font-medium text-[#212121]">연결</button>
+                </div>
+            </div>
           </div>
         )}
         <ParentMeetingFooter control={control} handleControl={setControl} close={leaveSession}/>
