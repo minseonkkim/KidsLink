@@ -49,7 +49,7 @@ const startRecording = async (sessionId: string): Promise<string> => {
       },
       { headers: { 'Content-Type': 'application/json' } }
     );
-    return response.data; 
+    return response.data;
   } catch (error) {
     console.error("Error starting recording:", error);
     throw error;
@@ -64,7 +64,7 @@ export const stopRecording = async (recordingId: string): Promise<Recording> => 
       {},
       { headers: { 'Content-Type': 'application/json' } }
     );
-    return response.data; 
+    return response.data;
   } catch (error) {
     console.error("Error stopping recording:", error);
     throw error;
@@ -92,9 +92,16 @@ const detectProfanity = (text: string): boolean => {
   return profanityList.some(word => text.includes(word));
 };
 
-// stt()
-export const handleSpeechRecognition = async (sessionId: string, setRecordingId: React.Dispatch<React.SetStateAction<string | null>>) => {
-  const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+// Speech recognition and profanity detection
+export const handleSpeechRecognition = async (sessionId: string) => {
+  // 타입 단언을 사용하여 타입스크립트가 올바르게 인식하도록 합니다.
+  const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+
+  if (!SpeechRecognition) {
+    throw new Error('Speech recognition not supported in this browser.');
+  }
+
+  const recognition = new SpeechRecognition();
   recognition.continuous = true;
   recognition.interimResults = true;
 
