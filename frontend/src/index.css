@@ -79,6 +79,41 @@ body {
 }
 
 
+.loading {
+  display: inline-block;
+  margin: 0 -.05em;
+  animation: loading 1.2s infinite alternate;
+}
+.loading:nth-child(2) {
+  animation-delay: .2s;
+}
+.loading:nth-child(3) {
+  animation-delay: .4s;
+}
+.loading:nth-child(4) {
+  animation-delay: .6s;
+}
+.loading:nth-child(5) {
+  animation-delay: .8s;
+}
+.loading:nth-child(6) {
+  animation-delay: 1s;
+}
+.loading:nth-child(7) {
+  animation-delay: 1.2s;
+}
+@keyframes loading {
+  0% {
+    filter: blur(0);
+    opacity: 1;
+  }
+  100% {
+    filter: blur(5px);
+    opacity: .2;
+  }
+}
+
+
 
 /* custom-scrollbar 클래스 정의 */
 .custom-scrollbar {
