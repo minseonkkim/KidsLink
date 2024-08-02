@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import profileImg from '../../assets/teacher/profile_img.jpg';
 import MenuButton from "../../components/teacher/main/MenuButton";
 import growthdiaryBtnImg from "../../assets/teacher/growthdiary_btn_img.png";
 import noticeBtnImg from "../../assets/teacher/notice_btn_img.png";
@@ -74,8 +73,8 @@ export default function TeacherHome() {
                             <div>...</div>
                         </div>
                         <div className="flex flex-row justify-around">
-                            <Link to="/schedule"><button className="bg-[#f1f1f1] w-[125px] h-[38px] rounded-[10px] text-center text-[#7C7C7C] font-bold text-[17px] mx-2 my-3 hover:bg-[#F3F3F3]">모든 일정 보기</button></Link>
-                            <Link to="/ourclass"><button className="bg-[#f1f1f1] w-[125px] h-[38px] rounded-[10px] text-center text-[#7C7C7C] font-bold text-[17px] mx-2 my-3 hover:bg-[#F3F3F3]">우리반 보기</button></Link>
+                            <Link to="/schedule"><button className="bg-[#f1f1f1] w-[125px] h-[38px] rounded-[10px] text-center text-[#7C7C7C] font-bold text-[17px] mx-2 my-3 hover:bg-[#E9E9E9]">모든 일정 보기</button></Link>
+                            <Link to="/ourclass"><button className="bg-[#f1f1f1] w-[125px] h-[38px] rounded-[10px] text-center text-[#7C7C7C] font-bold text-[17px] mx-2 my-3 hover:bg-[#E9E9E9]">우리반 보기</button></Link>
                         </div>
                     </div>
                 </div>
