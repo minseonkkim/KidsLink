@@ -11,7 +11,7 @@ interface ControlState {
   volume: number;
 }
 
-interface MeetingFooterProps {
+interface TeacherMeetingFooterProps {
   control: ControlState;
   handleControl: (update: (prev: ControlState) => ControlState) => void;
   close: () => void;
@@ -19,7 +19,9 @@ interface MeetingFooterProps {
   isRecording: boolean; // 현재 녹음 상태를 나타내는 프로퍼티 추가
 }
 
-const MeetingFooter: React.FC<MeetingFooterProps> = ({ control, handleControl, close, stopRecording, isRecording }) => {
+
+const TeacherMeetingFooter: React.FC<TeacherMeetingFooterProps> = ({ control, handleControl, close, startRecording, stopRecording, isRecording }) => {
+
   const isMuted = control.muted || control.volume === 0;
 
   return (
@@ -107,4 +109,4 @@ const MeetingFooter: React.FC<MeetingFooterProps> = ({ control, handleControl, c
   );
 };
 
-export default MeetingFooter;
+export default TeacherMeetingFooter;
