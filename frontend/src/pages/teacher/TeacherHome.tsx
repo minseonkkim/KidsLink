@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import profileImg from '../../assets/teacher/profile_img.jpg';
 import MenuButton from "../../components/teacher/main/MenuButton";
 import growthdiaryBtnImg from "../../assets/teacher/growthdiary_btn_img.png";
 import noticeBtnImg from "../../assets/teacher/notice_btn_img.png";
