@@ -5,14 +5,14 @@ import { GetConfirmedMeeting, ParentTeacherMeeting } from "../../api/meeting";
 import NavigateBack from "../../components/teacher/common/NavigateBack";
 import TeacherHeader from "../../components/teacher/common/TeacherHeader";
 import Title from "../../components/teacher/common/Title";
-import ScheduledConsulting from "../../components/teacher/consulting/ScheduledConsulting";
 import ProfileImg from '../../assets/teacher/profile_img.jpg';
 import { getOneParentInfo } from "../../api/Info";
+import TeacherMeetingSchedule from "../../components/teacher/consulting/TeacherMeetingSchedule";
 
 export default function TeacherMeeting() {
   const [meetings, setMeetings] = useState<ParentTeacherMeeting[]>([]);
   const [parentNames, setParentNames] = useState<{ [key: number]: string }>({});
-
+  // 
   useEffect(() => {
     const fetchMeetings = async () => {
       try {
@@ -68,11 +68,11 @@ export default function TeacherMeeting() {
         <div className="flex flex-row flex-wrap justify-between items-start">
           {meetings.map((meeting) => (
             <Link to={`/meeting/${meeting.meetingId}`} key={meeting.meetingId}>
-              <ScheduledConsulting 
+              <TeacherMeetingSchedule
                 time={meeting.meetingTime}
                 name={parentNames[meeting.parentId] || "알 수 없음"}
                 profileImgPath={ProfileImg}
-                isActivate={isMeetingActive(meeting.meetingTime)}
+                isActivate={true}
               />
             </Link>
           ))}

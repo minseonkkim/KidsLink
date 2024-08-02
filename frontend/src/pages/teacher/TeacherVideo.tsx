@@ -1,13 +1,13 @@
 import { useParams } from "react-router-dom";
 import { OpenVidu, Publisher, Session, StreamEvent, StreamManager, Subscriber } from "openvidu-browser";
 import React, { ChangeEvent, useEffect, useState } from "react";
-import OpenViduVideoComponent from "../../components/openvidu/Ovvideo";
-import MeetingFooter from "../../components/openvidu/MeetingFooter";
+import OpenViduVideoComponent from "../../components/openvidu/VideoComponent";
+import MeetingFooter from "../../components/openvidu/TeacherMeetingFooter";
 import { getToken } from "../../api/openvidu";
 import TeacherHeader from "../../components/teacher/common/TeacherHeader";
 import MeetingBackground from "../../assets/teacher/meeting_background.png";
-import useTeacherStore from "../../stores/teacher";
 import { useTeacherInfoStore } from "../../stores/useTeacherInfoStore";
+import { getTeacherInfo } from "../../api/Info";
 
 interface User {
   sessionId?: string;
@@ -34,12 +34,12 @@ interface ControlState {
   volume: number;
 }
 
-export default function TeacherBroadcast() {
+export default function TeacherVideo() {
   const { meetingId } = useParams<{ meetingId: string }>(); // useParams 훅을 사용하여 URL 파라미터에서 meetingId를 가져옴
-  const { teacherInfo } = useTeacherInfoStore()
+  const { teacherInfo, setTeacherInfo } = useTeacherInfoStore();
   const [user, setUser] = useState<User>({
     sessionId: meetingId, // meetingId를 sessionId로 설정
-    username: teacherInfo.name,
+    username: teacherInfo?.name || '',
   });
   const [openvidu, setOpenvidu] = useState<OpenViduState>({
     session: undefined,
@@ -60,10 +60,22 @@ export default function TeacherBroadcast() {
   });
 
   useEffect(() => {
-    // URL에서 meetingId를 sessionId로 설정
-    
-    setUser((prevUser) => ({ ...prevUser, sessionId: meetingId }));
-  }, [meetingId]);
+    async function fetchTeacherInfo() {
+      try {
+        const fetchedTeacherInfo = await getTeacherInfo();
+        setTeacherInfo(fetchedTeacherInfo);
+        setUser(prevUser => ({ ...prevUser, username: fetchedTeacherInfo.name }));
+      } catch (error) {
+        console.error('Failed to fetch teacher info:', error);
+      }
+    }
+
+    if (!teacherInfo) {
+      fetchTeacherInfo();
+    } else {
+      setUser(prevUser => ({ ...prevUser, username: teacherInfo.name }));
+    }
+  }, [teacherInfo, setTeacherInfo]);
 
   useEffect(() => {
     if (openvidu.publisher) {
@@ -93,7 +105,6 @@ export default function TeacherBroadcast() {
   };
 
   const joinSession = async () => {
-    
     if (!user.sessionId) return;
     const OV = new OpenVidu();
     OV.enableProdMode();
@@ -127,7 +138,6 @@ export default function TeacherBroadcast() {
     });
 
     const token = await getToken(user.sessionId);
-    console.log(token)
 
     session
       .connect(token, { clientData: user.username })
@@ -182,16 +192,9 @@ export default function TeacherBroadcast() {
           </div>
         ) : (
           <div className="flex flex-col justify-center items-center w-full h-full">
-            <input
-              name="sessionId"
-              value={user.sessionId || ""}
-              onChange={handleUserChange}
-            />
-            <input
-              name="username"
-              value={user.username || ""}
-              onChange={handleUserChange}
-            />
+            <p>상담번호 : {user.sessionId}</p>
+            <p>참가자 : {user.username}</p>
+            <p>안내문안내문안내문안내문안내문안내문</p>
             <button onClick={joinSession}>연결</button>
           </div>
         )}
