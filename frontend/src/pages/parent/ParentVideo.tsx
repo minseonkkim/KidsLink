@@ -1,11 +1,15 @@
 import { useState, useEffect, ChangeEvent } from 'react';
 import { IoMicOutline, IoMicOffOutline, IoVideocamOffOutline, IoVideocamOutline } from "react-icons/io5";
 import bgImg from "../../assets/parent/meeting_bg.png";
-import OpenViduVideoComponent from "../../components/openvidu/Ovvideo";
-import MeetingFooter from "../../components/openvidu/MeetingFooter";
+import OpenViduVideoComponent from "../../components/openvidu/VideoComponent";
+import MeetingFooter from "../../components/openvidu/TeacherMeetingFooter";
 import TeacherHeader from "../../components/teacher/common/TeacherHeader";
 import { OpenVidu, Publisher, Session, StreamEvent, StreamManager, Subscriber } from "openvidu-browser";
 import { getToken } from "../../api/openvidu";
+import { useParams } from 'react-router-dom';
+import { useParentInfoStore } from '../../stores/useParentInfoStore';
+import ParentMeetingFooter from '../../components/openvidu/ParentMeetingFooter';
+import { getParentInfo } from '../../api/Info';
 
 interface User {
   sessionId?: string;
@@ -32,10 +36,12 @@ interface ControlState {
   volume: number;
 }
 
-export default function ParentMeeting() {
+export default function ParentVideo() {
+  const { meetingId } = useParams<{ meetingId: string }>(); // useParams 훅을 사용하여 URL 파라미터에서 meetingId를 가져옴
+  const { parentInfo, setParentInfo } = useParentInfoStore();
   const [user, setUser] = useState<User>({
-    sessionId: undefined,
-    username: "user1",
+    sessionId: meetingId,
+    username: parentInfo?.child?.name || ''
   });
   const [openvidu, setOpenvidu] = useState<OpenViduState>({
     session: undefined,
@@ -51,12 +57,22 @@ export default function ParentMeeting() {
   });
 
   useEffect(() => {
-    // sessionId 받아오기
-    setUser((prevUser) => ({ ...prevUser, sessionId: "sessionC" }));
-    return () => {
-      leaveSession();
-    };
-  }, []);
+    async function fetchParentInfo() {
+      try {
+        const fetchedParentInfo = await getParentInfo();
+        setParentInfo(fetchedParentInfo);
+        setUser(prevUser => ({ ...prevUser, username: fetchedParentInfo.child.name }));
+      } catch (error) {
+        console.error('Failed to fetch parent info:', error);
+      }
+    }
+
+    if (!parentInfo) {
+      fetchParentInfo();
+    } else {
+      setUser(prevUser => ({ ...prevUser, username: parentInfo.child.name }));
+    }
+  }, [parentInfo, setParentInfo]);
 
   useEffect(() => {
     if (openvidu.publisher) {
@@ -64,13 +80,6 @@ export default function ParentMeeting() {
       openvidu.publisher.publishVideo(control.video);
     }
   }, [control, openvidu.publisher]);
-
-  const handleUserChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setUser((prevUser) => ({
-      ...prevUser,
-      [event.target.name]: event.target.value,
-    }));
-  };
 
   const leaveSession = () => {
     if (openvidu.session) {
@@ -142,18 +151,17 @@ export default function ParentMeeting() {
         }));
       })
       .catch((error) => {
-        // console.log(
-        //   "There was an error connecting to the session:",
-        //   error.code,
-        //   error.message
-        // );
+        console.log(
+          "There was an error connecting to the session:",
+          error.code,
+          error.message
+        );
       });
   };
 
   return (
     <div className="min-h-[100dvh] bg-cover bg-center bg-no-repeat" style={{ backgroundImage: `url(${bgImg})` }}>
-      <TeacherHeader />
-      <div className="absolute top-[200px] bg-black bg-opacity-50 min-h-full flex flex-col justify-center items-center text-white z-5">
+      <div className="absolute bg-black bg-opacity-50 min-h-full flex flex-col justify-center items-center text-white z-5">
         {openvidu.session ? (
           <div className="w-full h-full flex">
             <div className="top-[150px] left-0 w-[700px] h-auto rounded-lg border border-white">
@@ -176,20 +184,13 @@ export default function ParentMeeting() {
           </div>
         ) : (
           <div className="flex flex-col justify-center items-center w-full h-full">
-            <input
-              name="sessionId"
-              value={user.sessionId || ""}
-              onChange={handleUserChange}
-            />
-            <input
-              name="username"
-              value={user.username || ""}
-              onChange={handleUserChange}
-            />
+            <p>상담번호 : {user.sessionId}</p>
+            <p>참가자 : {user.username} 보호자</p>
+            <p>안내문안내문안내문안내문안내문안내문</p>
             <button onClick={joinSession}>연결</button>
           </div>
         )}
-        <MeetingFooter control={control} handleControl={setControl} close={leaveSession} />
+        <ParentMeetingFooter control={control} handleControl={setControl} close={leaveSession} />
       </div>
     </div>
   );

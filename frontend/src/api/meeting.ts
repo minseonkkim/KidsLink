@@ -28,6 +28,16 @@ export interface ParentTeacherMeeting {
   teacherId: number;
 }
 
+export interface MeetingInfo {
+  id: number;
+  date: string;
+  time: string;
+  teacherId: number;
+  teacherName: string;
+  parentId: number;
+  childName: string;
+}
+
 
 
 // 전체 상담 가능날짜 조회
@@ -46,6 +56,7 @@ export async function getAllPossibleReservations(): Promise<Reservation[]> {
   }
 }
 
+// 상담예약일자 가져오기
 export async function fetchSessionId(): Promise<SessionData> {
   try {
     const response = await axiosInstance.get('/meeting/reservation');
@@ -122,6 +133,21 @@ export async function GetConfirmedMeeting(): Promise<ParentTeacherMeeting[]> {
     }
   } catch (error) {
     console.error("Error fetching confirmed meetings:", error);
+    throw error;
+  }
+}
+
+// 미팅 PK로 정보 조회하기
+export async function GetMeetingInfo(meetingId: number): Promise<MeetingInfo> {
+  try {
+    const response = await axiosInstance.get(`/meeting/${meetingId}`);
+    if (response.data.status === 'success') {
+      return response.data.data;
+    } else {
+      throw new Error('Failed to get meetingInfo');
+    }
+  } catch (error) {
+    console.error('Error fetching meeting info:', error);
     throw error;
   }
 }

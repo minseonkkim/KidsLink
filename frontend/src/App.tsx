@@ -17,9 +17,9 @@ import ParentAlbumDecorate from "./pages/parent/ParentAlbumDecorate"
 import ParentDiary from "./pages/parent/ParentDiary"
 import ParentDiaryDetail from "./pages/parent/ParentDiaryDetail"
 import ParentBus from "./pages/parent/ParentBus"
-import ParentMeeting from "./pages/parent/ParentMeeting"
+import ParentMeeting from "./pages/parent/ParentMeetingList"
 import ParentMeetingSubmit from "./pages/parent/ParentMeetingSubmit"
-import ParentMeetingRoom from "./pages/parent/ParentMeetingRoom"
+import ParentMeetingRoom from "./pages/parent/ParentVideo"
 import ParentSchedule from "./pages/parent/ParentSchedule"
 import ParentMyPage from "./pages/parent/ParentMyPage"
 
@@ -30,13 +30,15 @@ import TeacherGrowth from "./pages/teacher/TeacherGrowth"
 import TeacherMeeting from "./pages/teacher/TeacherMeeting"
 import TeacherBus from "./pages/teacher/TeacherBus"
 import TeacherHome from "./pages/teacher/TeacherHome"
-import TeacherReservation from "./pages/teacher/TeacherReservation"
+import TeacherReservation from "./pages/teacher/TeacherMeetingReservation"
 import TeacherOurClass from "./pages/teacher/TeacherOurClass"
 import TeacherSchedule from "./pages/teacher/TeacherSchedule"
 import JoinDetails from "./pages/common/JoinDetails"
 import TeacherAlbumFinish from "./pages/teacher/TeacherAlbumFinish"
 import TeacherMyPage from "./pages/teacher/TeacherMyPage"
-import TeacherBroadcast from "./pages/teacher/TeacherBroadcast"
+import TeacherBroadcast from "./pages/teacher/TeacherVideo"
+import TeacherVideo from "./pages/teacher/TeacherVideo";
+import ParentVideo from "./pages/parent/ParentVideo";
 
 export default function App() {
   const userType = useAppStore((state: UserState) => state.userType) 
@@ -61,7 +63,7 @@ export default function App() {
             <Route path="/bus" element={<ParentBus />} />
             <Route path="/meeting" element={<ParentMeeting />} />
             <Route path="/meeting/submit" element={<ParentMeetingSubmit />} />
-            <Route path="/meeting/:meetingId" element={<ParentMeetingRoom />} />
+            <Route path="/meeting/:meetingId" element={<ParentVideo />} />
             <Route path="/schedule" element={<ParentSchedule />} />
             <Route path="/mypage" element={<ParentMyPage />} />
           </Route>
@@ -81,7 +83,7 @@ export default function App() {
           <Route path="/ourclass" element={<TeacherOurClass />} />
           <Route path="/schedule" element={<TeacherSchedule />} />
           <Route path="/mypage" element={<TeacherMyPage />} />
-          <Route path="/meeting/:meetingId" element={<TeacherBroadcast />} />
+          <Route path="/meeting/:meetingId" element={<TeacherVideo />} />
         </>
       ) : (
         <>
