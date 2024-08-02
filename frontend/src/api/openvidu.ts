@@ -1,6 +1,8 @@
-import axios from 'axios';
+import axios from "axios";
+import axiosInstance from "./token/axiosInstance";
 
 const APPLICATION_SERVER_URL = import.meta.env.VITE_OPENVIDU_URL
+const OPENVIDU_SERVER_SECRET = "MY_SECRET";
 
 export const getToken = async (mySessionId: string): Promise<string> => {
   const sessionId = await createSession(mySessionId);
@@ -20,13 +22,15 @@ const createSession = async (sessionId: string): Promise<string> => {
 };
 
 const createToken = async (sessionId: string): Promise<string> => {
+  console.log(APPLICATION_SERVER_URL)
   const response = await axios.post(
     `${APPLICATION_SERVER_URL}/sessions/${sessionId}/connections`,
     {},
     {
-      headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', },
     }
   );
+  console.log(response)
   return response.data; // 토큰 반환
 };
 

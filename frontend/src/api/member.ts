@@ -9,8 +9,8 @@ const API_BASE_URL = import.meta.env.VITE_API_KEY;
 // 학부모 회원가입 데이터 형식
 interface ChildData {
   name: string;
-  kindergartenClassName: string;
-  kindergartenName: string;
+  kindergartenClassId: number;
+  kindergartenId: number;
   gender: string;
   birth: string;
 }
@@ -39,8 +39,8 @@ interface TeacherSignupData {
   name: string;
   password: string;
   passwordConfirm: string;
-  kindergartenName: string;
-  kindergartenClassName: string;
+  kindergartenId: number;
+  kindergartenClassId: number;
   email?: string;
   profile?: File;
   nickname?: string;
@@ -93,10 +93,10 @@ export async function parentSignup(user: ParentSignupData) {
 
   formData.append("child.name", user.child.name);
   formData.append(
-    "child.kindergartenClassName",
-    user.child.kindergartenClassName
+    "child.kindergartenClassId",
+    user.child.kindergartenClassId.toString()
   );
-  formData.append("child.kindergartenName", user.child.kindergartenName);
+  formData.append("child.kindergartenId", user.child.kindergartenId.toString());
   formData.append("child.gender", user.child.gender);
   formData.append("child.birth", user.child.birth);
 
@@ -111,7 +111,7 @@ export async function parentSignup(user: ParentSignupData) {
   try {
     const response = await noAuthAxios.post(`${API_BASE_URL}/parent`, formData, {
       headers: {
-        "Content-Type": "multipart/form-data", // File들어가 있어서 form-data
+        "Content-Type": "multipart/form-data",
       },
     });
 
@@ -133,8 +133,8 @@ export async function teacherSignup(user: TeacherSignupData) {
   formData.append("name", user.name);
   formData.append("nickname", user.nickname || user.name);
   formData.append("tel", user.tel || "");
-  formData.append("kindergartenName", user.kindergartenName);
-  formData.append("kindergartenClassName", user.kindergartenClassName);
+  formData.append("kindergartenId", user.kindergartenId.toString());
+  formData.append("kindergartenClassId", user.kindergartenClassId.toString());
   if (user.profile) {
     formData.append("profile", user.profile);
   }
