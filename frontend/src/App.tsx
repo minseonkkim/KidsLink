@@ -1,5 +1,5 @@
 import { Routes, Route} from "react-router-dom"
-import useAppStore, { UserState } from "./stores/store";
+import useAppStore,{AppState} from "./stores/store";
 
 import Join from "./pages/common/Join"
 import SocialJoin from "./pages/common/SocialJoin"
@@ -20,7 +20,6 @@ import ParentDiaryDetail from "./pages/parent/ParentDiaryDetail"
 import ParentBus from "./pages/parent/ParentBus"
 import ParentMeeting from "./pages/parent/ParentMeetingList"
 import ParentMeetingSubmit from "./pages/parent/ParentMeetingSubmit"
-import ParentMeetingRoom from "./pages/parent/ParentVideo"
 import ParentSchedule from "./pages/parent/ParentSchedule"
 import ParentMyPage from "./pages/parent/ParentMyPage"
 
@@ -37,12 +36,11 @@ import TeacherSchedule from "./pages/teacher/TeacherSchedule"
 import JoinDetails from "./pages/common/JoinDetails"
 import TeacherAlbumFinish from "./pages/teacher/TeacherAlbumFinish"
 import TeacherMyPage from "./pages/teacher/TeacherMyPage"
-import TeacherBroadcast from "./pages/teacher/TeacherVideo"
 import TeacherVideo from "./pages/teacher/TeacherVideo";
 import ParentVideo from "./pages/parent/ParentVideo";
 
 export default function App() {
-  const userType = useAppStore((state: UserState) => state.userType) 
+  const userType = useAppStore((state: AppState) => state.userType) 
 
   return (
     <Routes>
