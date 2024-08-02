@@ -61,6 +61,11 @@ export default function ParentFormStep1({ onNext }: ParentFormStep1Props) {
       return
     }
 
+    if (isSocialLogin && !name) { // 추가
+      alert("모든 필수 항목을 입력해주세요.")
+      return
+    }
+
     // 프로필 이미지 등록 안했을 경우 기본 이미지 대체
     if (!profile) {
       const response = await fetch(defaultProfileImg)
