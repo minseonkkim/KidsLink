@@ -7,8 +7,7 @@ export default function ParentLayout() {
   const location = useLocation()
   const params = useParams()
 
-  // 메인 헤더를 사용할 경로들
-  const noHeaderPaths = ['/bus', `/meeting/${params.meetingId}`]
+  const noHeaderPaths = [`/meeting/${params.meetingId}`]
   const mainHeaderPaths = ['/', '/schedule', '/mypage']
   const useMainHeader = mainHeaderPaths.includes(location.pathname)
 
@@ -34,6 +33,8 @@ export default function ParentLayout() {
       return '성장일지'
     } else if (location.pathname.startsWith('/diary')) {
       return '성장일지'
+    } else if (location.pathname.startsWith('/bus')) {
+      return '등하원 관리'
     }  else if (location.pathname.startsWith('/meeting/submit')) {
       return '상담 예약'
     } else if (location.pathname.startsWith('/meeting')) {

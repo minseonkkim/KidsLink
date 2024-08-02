@@ -1,5 +1,5 @@
-import create from 'zustand';
-import { getTeacherInfo, TeacherInfo } from '../api/Info';
+import { create } from 'zustand';
+import { TeacherInfo } from '../api/Info';
 
 interface TeacherState {
   teacherInfo: TeacherInfo | null;
