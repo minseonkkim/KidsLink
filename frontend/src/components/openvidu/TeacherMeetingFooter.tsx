@@ -3,9 +3,7 @@ import { IoVideocam, IoVideocamOff, IoVolumeHigh, IoVolumeMute } from "react-ico
 import { RxCrossCircled } from "react-icons/rx";
 import { Slider } from "@mui/material";
 import { FaMicrophone, FaMicrophoneSlash } from "react-icons/fa";
-import TeacherBroadcast from "../../pages/teacher/TeacherVideo";
 
-// Define the types for the props
 interface ControlState {
   video: boolean;
   mic: boolean;
@@ -17,9 +15,12 @@ interface MeetingFooterProps {
   control: ControlState;
   handleControl: (update: (prev: ControlState) => ControlState) => void;
   close: () => void;
+  startRecording: () => void; // 녹음 시작 함수 추가
+  stopRecording: () => void; // 녹음 중지 함수 추가
+  isRecording: boolean; // 현재 녹음 상태를 나타내는 프로퍼티 추가
 }
 
-const MeetingFooter: React.FC<MeetingFooterProps> = ({ control, handleControl, close }) => {
+const MeetingFooter: React.FC<MeetingFooterProps> = ({ control, handleControl, close, startRecording, stopRecording, isRecording }) => {
   const isMuted = control.muted || control.volume === 0;
 
   return (
@@ -66,32 +67,38 @@ const MeetingFooter: React.FC<MeetingFooterProps> = ({ control, handleControl, c
             />
           )}
           <div className="w-48 py-2 items-center">
-          <Slider
-            value={control.volume}
-            step={0.1}
-            min={0.0}
-            max={1.0}
-            onChange={(event, newVal) =>
-              handleControl((prev) => ({ ...prev, volume: newVal as number }))
-            }
-            sx={{
-              width: '100%',
-              color: 'yellow',
-              '& .MuiSlider-thumb': {
-                backgroundColor: '#FFD700',
-              },
-              '& .MuiSlider-track': {
-                backgroundColor: '#FFD700',
-              },
-              '& .MuiSlider-rail': {
-                backgroundColor: '#FFD700',
-              },
-            }}
-          />
+            <Slider
+              value={control.volume}
+              step={0.1}
+              min={0.0}
+              max={1.0}
+              onChange={(event, newVal) =>
+                handleControl((prev) => ({ ...prev, volume: newVal as number }))
+              }
+              sx={{
+                width: '100%',
+                color: 'yellow',
+                '& .MuiSlider-thumb': {
+                  backgroundColor: '#FFD700',
+                },
+                '& .MuiSlider-track': {
+                  backgroundColor: '#FFD700',
+                },
+                '& .MuiSlider-rail': {
+                  backgroundColor: '#FFD700',
+                },
+              }}
+            />
           </div>
         </div>
       </div>
-      <div>
+      <div className="flex items-center gap-4">
+        <button
+          className={`text-2xl ${isRecording ? 'text-red-600' : 'text-black'}`}
+          onClick={isRecording ? stopRecording : startRecording}
+        >
+          {isRecording ? '녹음 중지' : '녹음 시작'}
+        </button>
         <RxCrossCircled
           className="ml-3 text-3xl cursor-pointer text-red-600"
           onClick={close}
