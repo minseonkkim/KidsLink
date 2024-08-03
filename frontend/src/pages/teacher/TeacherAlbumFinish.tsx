@@ -9,35 +9,12 @@ import NavigateBack from '../../components/teacher/common/NavigateBack';
 import Title from '../../components/teacher/common/Title';
 import { sendAlbumToParent } from '../../api/album';
 import { showToast, showToastError } from '../../components/teacher/common/ToastNotification';
+import { ImageItem, Child, AlbumItem, DragItem } from '../../types/album';
+import { transformData } from '../../utils/album';
 
 const ItemTypes = {
   IMAGE: 'image',
 };
-
-interface ImageItem {
-  path: string;
-  imageId: number;
-}
-
-interface Child {
-  childId: number;  // Changed from string to number
-  name: string;
-  kindergartenClass: string;
-  gender: string;
-  birth: string;
-  profile: string;
-}
-
-interface AlbumItem {
-  child: Child | null;
-  images: ImageItem[];
-}
-
-interface DragItem {
-  index: number;
-  itemIndex: number;
-  type: string;
-}
 
 const AlbumChild: React.FC<{
   item: AlbumItem;
@@ -155,19 +132,10 @@ export default function TeacherAlbumFinish() {
     setResult(updatedResult);
   };
 
-  const transformData = () => {
-    return result
-      .filter((item) => item.child !== null)
-      .map((item) => ({
-        childId: item.child.childId,
-        photos: item.images.map((image) => image.imageId),
-      }));
-  };
-
   const navigate = useNavigate();
   
   const sendToParents = async() => {
-    const transformedData = transformData();
+    const transformedData = transformData(result);
     const sendData = {
       albumName: albumName,
       taggedPhotos: transformedData,
