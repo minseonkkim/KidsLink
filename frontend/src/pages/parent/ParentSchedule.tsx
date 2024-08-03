@@ -4,6 +4,7 @@ import moment from "moment";
 import "moment/locale/ko"; // 한글 설정
 import { getAllParentSchedules, getParentSchedules } from "../../api/schedule"; // API 함수 불러오기
 import styled from "styled-components";
+import 'react-calendar/dist/Calendar.css'; // react-calendar 기본 스타일
 
 const StyledCalendar = styled(Calendar)`
   * {
@@ -12,294 +13,93 @@ const StyledCalendar = styled(Calendar)`
     box-sizing: border-box;
   }
 
-  .parent-schedule-calendar {
-    padding: 0 !important;
-    margin: 0 !important;
-  }
-
-  .parent-schedule-calendar-container {
-    padding: 0 !important;
-    margin: 0 !important;
-  }
-
-  /* Reset margin and padding for calendar tiles */
-  .react-calendar__tile,
-  .react-calendar__tile--active,
-  .react-calendar__tile--range,
-  .react-calendar__tile--rangeStart,
-  .react-calendar__tile--rangeEnd,
-  .react-calendar__tile--rangeBothEnds,
-  .react-calendar__month-view__days__day {
-    margin: 5px 0px !important; /* Override any default margin */
-    padding: 3px 0px !important; /* Override any default padding */
-    box-sizing: border-box; /* Ensure padding does not affect the element's size */
-  }
-
-  /* Additional custom styles */
-  .react-calendar__tile {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    width: 100px; /* Adjust as needed */
-    height: 100px; /* Adjust as needed */
-  }
-
-  .react-datepicker {
-    font-family: "Arial", sans-serif;
-  }
-
-  .react-datepicker__day--selected,
-  .react-datepicker__day--in-selecting-range,
-  .react-datepicker__day--in-range {
-    background-color: #ffec8a;
-    border-radius: 50%;
-  }
-
-  .react-datepicker__day--selected:hover,
-  .react-datepicker__day--in-selecting-range:hover,
-  .react-datepicker__day--in-range:hover {
-    background-color: #ffda6e;
-  }
-
-  .react-datepicker__day--keyboard-selected {
-    outline: none;
-    box-shadow: 0 0 0 2px #ffda6e;
-  }
-
-  .react-datepicker__input-container input {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 16px;
-  }
-
-  .react-datepicker__day-name,
-  .react-datepicker__day,
-  .react-datepicker__time-name {
-    width: 3.5rem; /* Increased width */
-    line-height: 3.5rem; /* Increased line-height */
-    font-size: 1.5rem; /* Adjusted font-size */
-  }
-
-  .react-datepicker__current-month,
-  .react-datepicker-time__header,
-  .react-datepicker-year-header {
-    font-size: 1.2rem;
-    color: #353c4e;
-  }
-
-  .react-datepicker__header {
-    background-color: #fff9d7;
-    border-bottom: none;
-  }
-
-  .react-datepicker__day:hover {
-    background-color: #ffda6e;
-    border-radius: 50%;
-  }
-
-  .react-datepicker__day--keyboard-selected {
-    border: 2px solid #fdda6e; /* 키보드 선택 시 테두리 색상 */
-  }
-
-  /* Calendar 컨테이너 스타일 */
-  .parent-schedule-calendar-container {
-    box-shadow: 0px 54px 55px 0 rgba(0, 0, 0, 0.25),
-      0px -12px 30px 0 rgba(0, 0, 0, 0.12), 0px 4px 6px 0 rgba(0, 0, 0, 0.12),
-      0px 12px 13px 0 rgba(0, 0, 0, 0.17), 0px -3px 5px 0 rgba(0, 0, 0, 0.09);
-  }
-
-  /* 커스텀 캘린더 스타일 */
-  .parent-schedule-calendar {
-    width: 100%;
-    max-width: 100%;
-    background-color: #fffbf0;
+  .react-calendar {
+    width: 80%; /* 너비 조정 */
+    background-color: transparent;
     border: none;
     font-family: Arial, Helvetica, sans-serif;
     line-height: 1.125em;
     border-radius: 20px;
+    box-shadow: none;
+    margin: auto; /* 중앙 정렬 */
   }
 
-  .parent-schedule-calendar__navigation {
+  .react-calendar__navigation {
     display: flex;
     justify-content: space-between;
-    background: #ffc0cb; /* 핑크색 */
-    border-bottom: none; /* 테두리 제거 */
-    height: 90px;
     border-radius: 20px 20px 0 0;
+    height: 50px; /* 높이 조정 */
+    background: none;
   }
 
-  .parent-schedule-calendar__navigation__label > span {
-    font-size: 24px;
+  .react-calendar__navigation__label {
+    font-size: 1.2rem; /* 글꼴 크기 조정 */
     font-weight: 600;
-    color: #6f48eb;
+    color: #353c4e;
   }
 
-  .parent-schedule-calendar__navigation button:disabled {
-    background-color: #ffc0cb; /* 핑크색 */
-    border-radius: 20px 20px 0 0;
+  .react-calendar__navigation button:enabled:hover,
+  .react-calendar__navigation button:enabled:focus {
+    background-color: none;
   }
 
-  .parent-schedule-calendar__navigation button:enabled:hover,
-  .parent-schedule-calendar__navigation button:enabled:focus {
-    background-color: #ffc0cb; /* 핑크색 */
-    border-radius: 20px 20px 0 0;
-  }
-
-  .parent-schedule-calendar__month-view {
-    padding: 12px 32px;
-    text-align: center;
-  }
-
-  .parent-schedule-calendar__month-view__weekdays {
-    font-size: 18px;
-    font-weight: 900;
-    color: #6f48eb;
-    text-align: center;
-  }
-
-  .parent-schedule-calendar__month-view__weekdays__weekday {
-    text-transform: uppercase;
+  .react-calendar__month-view__weekdays {
+    font-size: 0.9rem; /* 글꼴 크기 조정 */
+    font-weight: 700;
+    color: #353c4e;
     text-align: center;
   }
 
   .react-calendar__tile {
     display: flex !important;
-    align-items: flex-center !important; /* items-start 대신 flex-start 사용 */
-    justify-content: flex-start; /* 왼쪽 정렬 */
-    width: 90px;
-    height: 90px;
-    padding: 10px;
-    border: none !important; /* 테두리 제거 */
-  }
-
-  .parent-schedule-calendar {
-    padding: 0;
-    margin: 0;
-  }
-
-  .parent-schedule-calendar__tile {
-    text-align: center;
-    display: flex;
     flex-direction: column;
-    justify-content: center; /* 높이 동일하게 유지 */
-    align-items: center;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    width: 60px; /* 칸 너비 조정 */
+    height: 60px; /* 칸 높이 조정 */
+    margin: 2px; /* 간격 조정 */
+    border-radius: 10px;
+    background: transparent;
     position: relative;
+    border: none;
+    padding-top: 5px;
   }
 
-  .parent-schedule-calendar__tile .day-number {
-    position: absolute;
-    top: 20%;
-    font-size: 1.5rem; /* Adjusted font-size */
-  }
-
-  .parent-schedule-calendar__tile .emoji {
-    margin-top: 25px; /* 이모티콘과 숫자 사이의 간격 조정 */
-    font-size: 1.5rem; /* Adjusted font-size */
-  }
-
-  .parent-schedule-calendar__tile:enabled:hover,
-  .parent-schedule-calendar__tile:enabled:focus,
-  .parent-schedule-calendar__tile--active {
-    background: #ffc0cb; /* 핑크색 */
-    border-radius: 14px;
-    border: none; /* 테두리 제거 */
-  }
-
-  .parent-schedule-calendar__tile--now {
-    background: #ffffa6;
-    border-radius: 14px;
-  }
-
-  .parent-schedule-calendar__tile--now:enabled:hover,
-  .parent-schedule-calendar__tile--now:enabled:focus {
-    background: #ffc0cb; /* 핑크색 */
-    border-radius: 14px;
-  }
-
-  .react-calendar__month-view__weekdays__weekday {
-    margin: 0 !important;
-    padding: 0 !important;
-  }
-
+  .react-calendar__tile:enabled:hover,
+  .react-calendar__tile:enabled:focus,
   .react-calendar__tile--active {
-    margin: 0;
-    border: none !important; /* 테두리 제거 */
-    background-color: #ffc0cb !important; /* 핑크색 */
-    color: #000000;
-    border-radius: 20%;
+    background: #ffc0cb;
+    border-radius: 10px;
   }
 
   .react-calendar__tile--now {
-    background-color: #ffffa6 !important;
-    justify-content: center;
+    background: #ffffa6;
+    border-radius: 10px;
+  }
+
+  .react-calendar__tile--now:enabled:hover,
+  .react-calendar__tile--now:enabled:focus {
+    background: #ffc0cb;
+    border-radius: 10px;
   }
 
   .custom-icon {
-    height: 30px;
-    width: 24px;
+    margin-top: 5px;
+    font-size: 1.5rem;
+  }
+
+  .react-calendar__tile > abbr {
+    margin-bottom: auto;
   }
 `;
 
-interface KindergartenSchedule {
-  id: number;
-  content: string;
-  date: string;
-}
-
-interface MeetingSchedule {
-  meetingId: number;
-  meetingDate: string;
-  meetingTime: string;
-  parentId: number;
-  teacherId: number;
-}
-
-interface AbsentSchedule {
-  absentId: number;
-  startDate: string;
-  endDate: string;
-  reason: string;
-  details: string;
-  confirmationStatus: string;
-  childId: number;
-  childName: string;
-}
-
-interface DosageSchedule {
-  dosageId: number;
-  startDate: string;
-  endDate: string;
-  name: string;
-  volume: string;
-  num: string;
-  times: string;
-  storageInfo: string;
-  details: string;
-  confirmationStatus: string;
-  childId: number;
-  childName: string;
-}
-
-interface DetailedSchedule {
-  date: string;
-  kindergartenSchedules: KindergartenSchedule[];
-  meetingSchedules: MeetingSchedule[];
-  absentSchedules: AbsentSchedule[];
-  dosageSchedules: DosageSchedule[];
-}
-
-type Value = Date | [Date, Date];
-
 const ParentSchedule: React.FC = () => {
-  const [value, setValue] = useState<Value>(new Date());
+  const [value, setValue] = useState<Date>(new Date());
   const [selectedDate, setSelectedDate] = useState<string | null>(
-    moment(value instanceof Array ? value[0] : value).format("YYYY-MM-DD")
+    moment(value).format("YYYY-MM-DD")
   );
   const [schedules, setSchedules] = useState<string[]>([]);
-  const [detailedSchedules, setDetailedSchedules] =
-    useState<DetailedSchedule | null>(null);
+  const [detailedSchedules, setDetailedSchedules] = useState<DetailedSchedule | null>(null);
 
   const fetchSchedules = async (year: number, month: number) => {
     try {
@@ -325,7 +125,7 @@ const ParentSchedule: React.FC = () => {
   };
 
   useEffect(() => {
-    const current = value instanceof Array ? value[0] : value;
+    const current = value;
     const year = moment(current).year();
     const month = moment(current).month() + 1;
     fetchSchedules(year, month);
@@ -338,11 +138,7 @@ const ParentSchedule: React.FC = () => {
     }
   }, [selectedDate]);
 
-  const handleDateClick = (value: Value) => {
-    if (Array.isArray(value)) {
-      return;
-    }
-
+  const handleDateClick = (value: Date) => {
     const formattedDate = moment(value).format("YYYY-MM-DD");
     setSelectedDate(formattedDate);
     setValue(value);
@@ -361,25 +157,21 @@ const ParentSchedule: React.FC = () => {
   };
 
   return (
-    <div className="min-h-[100vh] flex flex-col items-center bg-[#FFEC8A]">
-      <div className="w-full h-[100vh] mt-24 flex flex-col items-center">
-        <div className="w-full h-full bg-white shadow-top px-5 rounded-tl-[20px] rounded-tr-[20px]">
+    <div className="min-h-screen flex flex-col items-center bg-[#FFEC8A]">
+      <div className="w-full h-screen mt-24 flex flex-col items-center">
+        <div className="w-full h-full bg-white shadow-top px-5 rounded-t-2xl">
           <div className="flex flex-col justify-start items-center pt-4 bg-white">
-            <div className="w-full relative overflow-hidden rounded-[20px]">
+            <div className="w-full relative overflow-hidden rounded-2xl">
               <StyledCalendar
                 locale="ko"
                 onChange={handleDateClick}
                 value={value}
                 next2Label={null}
                 prev2Label={null}
-                formatDay={(locale: string, date: Date) =>
-                  moment(date).format("D")
-                }
+                formatDay={(locale: string, date: Date) => moment(date).format("D")}
                 tileContent={addContent}
                 showNeighboringMonth={false}
-                onActiveStartDateChange={({ activeStartDate }) =>
-                  getActiveMonth(activeStartDate!)
-                }
+                onActiveStartDateChange={({ activeStartDate }) => getActiveMonth(activeStartDate!)}
               />
             </div>
           </div>
@@ -392,7 +184,7 @@ const ParentSchedule: React.FC = () => {
                     {detailedSchedules.dosageSchedules.map((schedule) => (
                       <div
                         key={schedule.dosageId}
-                        className="flex flex-col p-4 rounded-2xl bg-[#FFF9D7] border-1 border-[#FFEC8A] hover:bg-[#FFEC8A] transition-colors duration-200 cursor-pointer"
+                        className="flex flex-col p-4 rounded-2xl bg-[#FFF9D7] border border-[#FFEC8A] hover:bg-[#FFEC8A] transition-colors duration-200 cursor-pointer"
                       >
                         <p className="text-base font-bold text-[#757575]">
                           {`[투약] ${schedule.startDate} - ${schedule.endDate}`}
@@ -411,7 +203,7 @@ const ParentSchedule: React.FC = () => {
                     {detailedSchedules.absentSchedules.map((schedule) => (
                       <div
                         key={schedule.absentId}
-                        className="flex flex-col p-4 rounded-2xl bg-[#FFF9D7] border-1 border-[#FFEC8A] hover:bg-[#FFEC8A] transition-colors duration-200 cursor-pointer"
+                        className="flex flex-col p-4 rounded-2xl bg-[#FFF9D7] border border-[#FFEC8A] hover:bg-[#FFEC8A] transition-colors duration-200 cursor-pointer"
                       >
                         <p className="text-base font-bold text-[#757575]">
                           {`[결석] ${schedule.startDate} - ${schedule.endDate}`}
@@ -430,7 +222,7 @@ const ParentSchedule: React.FC = () => {
                     {detailedSchedules.kindergartenSchedules.map((schedule) => (
                       <div
                         key={schedule.id}
-                        className="flex flex-col p-4 rounded-2xl bg-[#FFF9D7] border-1 border-[#FFEC8A] hover:bg-[#FFEC8A] transition-colors duration-200 cursor-pointer"
+                        className="flex flex-col p-4 rounded-2xl bg-[#FFF9D7] border border-[#FFEC8A] hover:bg-[#FFEC8A] transition-colors duration-200 cursor-pointer"
                       >
                         <p className="text-base font-bold text-[#757575]">
                           {schedule.date}
@@ -449,7 +241,7 @@ const ParentSchedule: React.FC = () => {
                     {detailedSchedules.meetingSchedules.map((schedule) => (
                       <div
                         key={schedule.meetingId}
-                        className="flex flex-col p-4 rounded-2xl bg-[#FFF9D7] border-1 border-[#FFEC8A] hover:bg-[#FFEC8A] transition-colors duration-200 cursor-pointer"
+                        className="flex flex-col p-4 rounded-2xl bg-[#FFF9D7] border border-[#FFEC8A] hover:bg-[#FFEC8A] transition-colors duration-200 cursor-pointer"
                       >
                         <p className="text-base font-bold text-[#757575]">
                           {schedule.meetingDate}

@@ -80,7 +80,7 @@ export default function Album() {
         >
           <SearchTitleBar searchTitle={searchTitle} handleSearch={handleSearch} />
           <div
-            className={`grid grid-cols-1 sm:grid-cols-2 gap-4 ${scroll ? 'overflow-y-auto' : 'overflow-hidden'}`}
+            className={`grid grid-cols-2 sm:grid-cols-4 gap-4 ${scroll ? 'overflow-y-auto' : 'overflow-hidden'}`}
             style={{
               maxHeight: scroll ? 'calc(100vh - 200px)' : 'auto',
               paddingBottom: '100px',
@@ -92,34 +92,29 @@ export default function Album() {
               filteredAlbums.map((album) => (
                 <div
                   key={album.albumId}
-                  className="relative w-full group bg-white shadow-lg rounded-[20px] overflow-hidden transition-transform duration-200 ease-in-out transform hover:scale-105"
+                  className="relative w-full group shadow-lg rounded-[20px] overflow-hidden transition-transform duration-200 ease-in-out transform hover:scale-105"
                   onClick={() => handleAlbumClick(album.albumId)}
                   style={{
-                    height: '0',
-                    paddingBottom: '56.25%', // 16:9 비율
+                    paddingBottom: '100%', // Square aspect ratio
                   }}
                 >
                   <img
                     src={album.images[0].path}
                     alt={`${album.albumName}`}
-                    className="absolute top-0 left-0 w-full h-full object-cover transition-opacity duration-200 ease-in-out group-hover:opacity-100"
+                    className="absolute top-0 left-0 w-full h-full object-cover transition-opacity duration-200 ease-in-out group-hover:opacity-90"
                   />
-                  <div className="absolute top-0 left-0 w-full h-full bg-[#7c7c7c]/50 opacity-80 group-hover:opacity-0 transition-opacity duration-200 ease-in-out rounded-[20px]" />
-                  <p className="absolute left-[50%] top-[50%] transform -translate-x-[50%] -translate-y-[50%] text-2xl sm:text-4xl font-bold text-center text-white opacity-80 group-hover:opacity-0 transition-opacity duration-200 ease-in-out">
-                    +{album.images.length - 1}
-                  </p>
-                  <div className="absolute bottom-0 left-0 w-full bg-white bg-opacity-90 p-4 rounded-bl-[20px] rounded-br-[20px] shadow-md">
-                    <p className="text-md sm:text-lg font-bold text-[#353c4e]">
+                  <div className="absolute bottom-0 left-0 w-full bg-[#FFF9D7] bg-opacity-80 p-2 text-center">
+                    <p className="text-md font-bold text-[#353c4e]">
                       {album.albumName}
                     </p>
-                    <p className="text-xs sm:text-sm font-medium text-[#757575]">
+                    <p className="text-xs font-medium text-[#757575]">
                       {new Date(album.albumDate).toLocaleDateString()}
                     </p>
                   </div>
                 </div>
               ))
             ) : (
-              <p className="text-center text-lg col-span-3">
+              <p className="text-center text-lg col-span-4">
                 해당 제목의 앨범이 없습니다.
               </p>
             )}
