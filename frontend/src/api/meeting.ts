@@ -1,44 +1,5 @@
+import { MeetingInfo, ParentReservation, ParentTeacherMeeting, Reservation, SessionData, TeacherMeetingReservation } from "../types/meeting";
 import axiosInstance from "./token/axiosInstance";
-
-export interface Reservation {
-  meetingId: number;
-  date: string;
-  time: string;
-}
-
-export interface ParentReservation {
-  meetingDate: string;
-  meetingTime: string;
-}
-
-export interface TeacherMeetingReservation {
-  date: string;
-  times: string[];
-}
-
-export interface SessionData {
-  id: number;
-}
-
-export interface ParentTeacherMeeting {
-  meetingId: number;
-  meetingDate: string;
-  meetingTime: string;
-  parentId: number;
-  teacherId: number;
-}
-
-export interface MeetingInfo {
-  id: number;
-  date: string;
-  time: string;
-  teacherId: number;
-  teacherName: string;
-  parentId: number;
-  childName: string;
-}
-
-
 
 // 전체 상담 가능날짜 조회
 export async function getAllPossibleReservations(): Promise<Reservation[]> {
@@ -69,7 +30,6 @@ export async function fetchSessionId(): Promise<SessionData> {
 
 // 학부모 상담 예약 제출
 export async function postAllPossibleReservations(selectedReservations: ParentReservation[]): Promise<ParentReservation[]> {
-  console.log(selectedReservations)
   try {
     const response = await axiosInstance.post('meeting', selectedReservations)
 

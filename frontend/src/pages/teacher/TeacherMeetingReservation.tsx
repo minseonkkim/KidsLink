@@ -6,11 +6,12 @@ import NavigateBack from "../../components/teacher/common/NavigateBack";
 import TeacherHeader from "../../components/teacher/common/TeacherHeader";
 import Title from "../../components/teacher/common/Title";
 import ReservationTime from "../../components/teacher/consulting/ReservationTime";
-import { ConfirmMeeting, PostTeacherReservations, TeacherMeetingReservation, getAllPossibleReservations } from "../../api/meeting";
 import styled from 'styled-components';
 import { IoSendSharp } from "react-icons/io5";
 import { useNavigate } from 'react-router-dom';
 import ToastNotification, { showToastSuccess, showToastError } from "../../components/teacher/common/ToastNotification.tsx";
+import { ConfirmMeeting, getAllPossibleReservations, PostTeacherReservations } from "../../api/meeting.ts";
+import { TeacherMeetingReservation } from "../../types/meeting.ts";
 
 const StyledCalendar = styled(Calendar)`
   display: flex;

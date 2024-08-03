@@ -1,10 +1,4 @@
-interface TeacherMeetingScheduleProps {
-    date: string;
-    time: string;
-    name: string;
-    profileImgPath: string;
-    isActivate: boolean;
-}
+import { TeacherMeetingScheduleProps } from "../../../types/meeting";
 
 export default function TeacherMeetingSchedule({date, time, name, profileImgPath, isActivate}:TeacherMeetingScheduleProps){
     return <>

@@ -1,13 +1,15 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { IoMdCalendar } from "react-icons/io";
-import { GetConfirmedMeeting, ParentTeacherMeeting } from "../../api/meeting";
 import NavigateBack from "../../components/teacher/common/NavigateBack";
 import TeacherHeader from "../../components/teacher/common/TeacherHeader";
 import Title from "../../components/teacher/common/Title";
 import ProfileImg from '../../assets/teacher/profile_img.jpg';
 import { getOneParentInfo } from "../../api/Info";
 import TeacherMeetingSchedule from "../../components/teacher/consulting/TeacherMeetingSchedule";
+import { isMeetingActive, isMeetingVisible } from "../../utils/meeting";
+import { ParentTeacherMeeting } from "../../types/meeting";
+import { GetConfirmedMeeting } from "../../api/meeting";
 
 export default function TeacherMeeting() {
   
@@ -45,36 +47,6 @@ export default function TeacherMeeting() {
     fetchMeetings();
   }, []);
 
-  const isMeetingActive = (meetingTime: string): boolean => {
-    const currentTime = new Date();
-    const meetingDate = new Date(meetingTime);
-    const timeDiff = meetingDate.getTime() - currentTime.getTime();
-
-    // 상담 시간 30분 전후로 활성화 상태로 설정
-    return timeDiff > -30 * 60 * 1000 && timeDiff < 30 * 60 * 1000;
-  };
-
-  const isMeetingVisible = (meetingTime: string): boolean => {
-    const currentTime = new Date();
-    const meetingDate = new Date(meetingTime);
-
-    const currentDate = new Date(currentTime);
-    currentDate.setHours(0, 0, 0, 0);
-
-    // 날짜가 지난 상담은 보이지 않게 설정
-    if (meetingDate < currentDate) {
-      return false;
-    }
-
-    // 날짜가 같은 경우, 상담 시간이 지난 것만 보이지 않게 설정
-    if (meetingDate.toDateString() === currentTime.toDateString()) {
-      return meetingDate >= currentTime;
-    }
-
-    // 날짜가 지나지 않은 경우 모두 보이게 설정
-    return true;
-  };
-
   // 비활성화 된 경우, 클릭되지 않는 로직 추가해야함.
   return (
     <>
@@ -90,7 +62,7 @@ export default function TeacherMeeting() {
         </Link>
         <div className="flex flex-row flex-wrap justify-between items-start">
           {meetings
-            .filter(meeting => isMeetingVisible(meeting.meetingTime))
+            .filter(meeting => isMeetingVisible(meeting.meetingDate, meeting.meetingTime))
             .map((meeting) => (
               <Link
                 to={`/meeting/${meeting.meetingId}`}
@@ -102,7 +74,7 @@ export default function TeacherMeeting() {
                   time={meeting.meetingTime}
                   name={parentNames[meeting.parentId] || "알 수 없음"}
                   profileImgPath={ProfileImg}
-                  isActivate={isMeetingActive(meeting.meetingTime)}
+                  isActivate={isMeetingActive(meeting.meetingDate, meeting.meetingTime)}
                 />
               </Link>
           ))}
