@@ -3,6 +3,8 @@ package com.ssafy.kidslink.common.jwt;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.kidslink.common.dto.APIError;
 import com.ssafy.kidslink.common.dto.APIResponse;
+import com.ssafy.kidslink.common.dto.User;
+import com.ssafy.kidslink.common.security.CustomUserDetails;
 import com.ssafy.kidslink.common.security.CustomUserDetailsService;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
@@ -12,6 +14,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -61,7 +64,15 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
         String role = jwtUtil.getRole(token);
 
         if (jwtUtil.isOAuth2(token)) {
-            // OAuth2 Login Logic
+            User user = new User();
+            user.setUsername(username);
+            user.setRole(role);
+            CustomUserDetails userDetails = new CustomUserDetails(user, null);
+
+            //스프링 시큐리티 인증 토큰 생성
+            Authentication authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+            //세션에 사용자 등록
+            SecurityContextHolder.getContext().setAuthentication(authToken);
         } else {
             UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
