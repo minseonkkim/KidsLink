@@ -11,6 +11,7 @@ import com.ssafy.kidslink.common.oauth2.CustomOAuth2UserService;
 import com.ssafy.kidslink.common.security.CustomUserDetailsService;
 import com.ssafy.kidslink.common.service.RefreshTokenService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -36,6 +37,7 @@ import static org.springframework.http.HttpMethod.POST;
 @EnableWebSecurity
 @EnableMethodSecurity(securedEnabled = true)
 @RequiredArgsConstructor
+@Slf4j
 public class SecurityConfig {
     @Value("${spring.profiles.active}")
     private String activeProfile;
@@ -77,6 +79,7 @@ public class SecurityConfig {
                 .addFilterBefore(new CustomLogoutFilter(jwtUtil, refreshTokenService), LogoutFilter.class);
 
         if (isOAuth2Configured()) {
+            log.info("OAuth2 Configuration Success");
             http.oauth2Login(oauth2 -> oauth2
                     .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig
                             .userService(customOAuth2UserService))

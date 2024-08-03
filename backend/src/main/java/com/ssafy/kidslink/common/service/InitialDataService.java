@@ -2,10 +2,13 @@ package com.ssafy.kidslink.common.service;
 
 import com.ssafy.kidslink.application.album.domain.Album;
 import com.ssafy.kidslink.application.album.repository.AlbumRepository;
+import com.ssafy.kidslink.application.busstop.repository.BusStopRepository;
+import com.ssafy.kidslink.application.busstopchild.repository.BusStopChildRepository;
 import com.ssafy.kidslink.application.child.domain.Child;
 import com.ssafy.kidslink.application.child.repository.ChildRepository;
 import com.ssafy.kidslink.application.diary.domain.Diary;
 import com.ssafy.kidslink.application.diary.repository.DiaryRepository;
+import com.ssafy.kidslink.application.diary.repository.ImageDiaryRepository;
 import com.ssafy.kidslink.application.document.domain.Absent;
 import com.ssafy.kidslink.application.document.domain.Dosage;
 import com.ssafy.kidslink.application.document.repository.AbsentRepository;
@@ -15,12 +18,14 @@ import com.ssafy.kidslink.application.image.dto.ImageDTO;
 import com.ssafy.kidslink.application.image.mapper.ImageMapper;
 import com.ssafy.kidslink.application.image.repository.ImageRepository;
 import com.ssafy.kidslink.application.image.service.ImageService;
+import com.ssafy.kidslink.application.imagealbum.repository.ImageAlbumRepository;
 import com.ssafy.kidslink.application.kindergarten.domain.Kindergarten;
 import com.ssafy.kidslink.application.kindergarten.domain.KindergartenClass;
 import com.ssafy.kidslink.application.kindergarten.repository.KindergartenClassRepository;
 import com.ssafy.kidslink.application.kindergarten.repository.KindergartenRepository;
 import com.ssafy.kidslink.application.meeting.repository.MeetingScheduleRepository;
 import com.ssafy.kidslink.application.meeting.repository.MeetingTimeRepository;
+import com.ssafy.kidslink.application.meeting.repository.SelectedMeetingRepository;
 import com.ssafy.kidslink.application.noticeboard.domain.NoticeBoard;
 import com.ssafy.kidslink.application.noticeboard.repository.NoticeBoardRepository;
 import com.ssafy.kidslink.application.notification.respository.ParentNotificationRepository;
@@ -74,15 +79,25 @@ public class InitialDataService {
     private final MeetingScheduleRepository meetingScheduleRepository;
     private final ImageRepository imageRepository;
     private final ImageMapper imageMapper;
+    private final SelectedMeetingRepository selectedMeetingRepository;
+    private final BusStopRepository busStopRepository;
+    private final BusStopChildRepository busStopChildRepository;
+    private final ImageDiaryRepository imageDiaryRepository;
+    private final ImageAlbumRepository imageAlbumRepository;
 
     @Value("${server.url}")
     private String serverUrl;
-
     @Value("${file.profile-dir}")
     private String profileDir;
+
+    private List<ImageDTO> initProfiles = new ArrayList<>();
+
     @Transactional
     public String initializeData() {
         deleteAll();
+
+        // TODO #0 초기 이미지 삽입
+        saveInitProfiles();
 
         // TODO #1 유치원 초기 데이터 삽입
         List<Kindergarten> kindergartens = getKindergartens();
@@ -143,28 +158,32 @@ public class InitialDataService {
         return "데이터 세팅 성공";
     }
 
+    private void saveInitProfiles() {
+        String[] imageFiles = {"child1.jpg", "child2.jpg", "child3.jpg", "child4.jpg", "child5.jpg", "child6.jpg", "child7.jpg", "child8.jpg", "child9.jpg", "child10.jpg", "child11.jpg", "child12.jpg", "child13.jpg"};
+        for (String imageFile : imageFiles) {
+            File imageFileObj = new File(profileDir, imageFile);
+            try {
+                MultipartFile multipartFile = convertFileToMultipartFile(imageFileObj);
+                ImageDTO imageDTO = imageService.storeFile(multipartFile);
+                initProfiles.add(imageDTO);
+            } catch (IOException e) {
+                throw new RuntimeException("앨범 초기화 중 사진 저장 오류", e);
+            }
+        }
+    }
+
     private List<Album> getAlbums(Child child) {
         List<Album> albums = new ArrayList<>();
         String[] albumNames = {"봄 소풍", "여름 캠프", "가을 운동회", "겨울 발표회"};
-        String[] imageFiles = {"child1.jpg", "child2.jpg", "child3.jpg", "child4.jpg", "child5.jpg", "child6.jpg", "child7.jpg", "child8.jpg", "child9.jpg", "child10.jpg"};
         for (String albumName : albumNames) {
             Album album = new Album();
             album.setAlbumName(albumName);
             album.setChild(child);
 
             Set<Image> images = new HashSet<>();
-            for (String imageFile : imageFiles) {
-                File imageFileObj = new File(profileDir, imageFile);
-                try {
-                    MultipartFile multipartFile = convertFileToMultipartFile(imageFileObj);
-                    // Store the image file
-                    ImageDTO imageDTO = imageService.storeFile(multipartFile);
-                    // Retrieve the saved image and add to the album
-                    Image image = imageRepository.findById(imageDTO.getImageId()).orElseThrow(() -> new RuntimeException("Image not found"));
-                    images.add(image);
-                } catch (IOException e) {
-                    throw new RuntimeException("앨범 초기화 중 사진 저장 오류", e);
-                }
+            for (ImageDTO imageDTO : initProfiles) {
+                Image image = imageMapper.toEntity(imageDTO);
+                images.add(image);
             }
             album.setImages(images);
             albums.add(album);
@@ -217,20 +236,28 @@ public class InitialDataService {
                 .collect(Collectors.toList());
     }
 
-    private void deleteAll(){
+    private void deleteAll() {
+        // TODO #1 관계 테이블 클래스 정의 제대로 확인하기 (IdClass 또는 PK 생성)
+//        imageDiaryRepository.findAll().forEach(imageDiary -> imageDiaryRepository.delete(imageDiary));
+//        imageAlbumRepository.findAll().forEach(imageAlbum -> imageAlbumRepository.delete(imageAlbum));
+        // TODO #2 위와 같은 이유로 Bus Table 초기화 시 삭제도 정의 제대로 하기
+//        busStopChildRepository.deleteAll();
+//        busStopRepository.deleteAll();
         teacherNotificationRepository.deleteAll();
         parentNotificationRepository.deleteAll();
-        albumRepository.deleteAll();
-        meetingTimeRepository.deleteAll();
         meetingScheduleRepository.deleteAll();
-        scheduleRepository.deleteAll();
+        selectedMeetingRepository.deleteAll();
+        meetingTimeRepository.deleteAll();
+        albumRepository.deleteAll();
+        diaryRepository.deleteAll();
         absentRepository.deleteAll();
         dosageRepository.deleteAll();
-        diaryRepository.deleteAll();
+        scheduleRepository.deleteAll();
         noticeBoardRepository.deleteAll();
         childRepository.deleteAll();
-        parentRepository.deleteAll();
         teacherRepository.deleteAll();
+        parentRepository.deleteAll();
+        imageRepository.deleteAll();
         kindergartenClassRepository.deleteAll();
         kindergartenRepository.deleteAll();
     }
@@ -269,6 +296,7 @@ public class InitialDataService {
             parent.setParentNickname(nicknames[i]);
             parent.setParentTel(tels[i]);
             parent.setParentEmail(emails[i]);
+            parent.setParentProfile(initProfiles.get(i).getPath());
             parents.add(parent);
         }
 
@@ -293,6 +321,7 @@ public class InitialDataService {
             teacher.setTeacherTel(tels[i]);
             teacher.setTeacherEmail(emails[i]);
             teacher.setKindergartenClass(kindergartenClasses.get(i));
+            teacher.setTeacherProfile(initProfiles.get(i).getPath());
             teachers.add(teacher);
         }
 
@@ -304,24 +333,13 @@ public class InitialDataService {
         String[] childNames = {"김하늘", "이민호", "박서연", "최우진", "장예빈", "강지후", "오수아", "윤도현", "정수지", "한지우"};
         Gender[] genders = {Gender.F, Gender.M, Gender.F, Gender.M, Gender.F, Gender.M, Gender.F, Gender.M, Gender.F, Gender.F};
         String[] births = {"2015-05-01", "2016-08-15", "2014-11-20", "2015-01-30", "2016-02-14", "2015-07-07", "2016-09-09", "2014-12-25", "2015-04-04", "2016-03-03"};
-        String[] profiles = {"child1.jpg", "child2.jpg", "child3.jpg", "child4.jpg", "child5.jpg", "child6.jpg", "child7.jpg", "child8.jpg", "child9.jpg", "child10.jpg"};
 
         for (int i = 0; i < parents.size(); i++) {
             Child child = new Child();
             child.setChildName(childNames[i]);
             child.setChildGender(genders[i]);
             child.setChildBirth(births[i]);
-            File profileFile = new File(profileDir, profiles[i]);
-            try {
-                MultipartFile multipartFile = convertFileToMultipartFile(profileFile);
-                // Store the file
-                ImageDTO imageDTO = imageService.storeFile(multipartFile);
-                // Set the profile URL after storing the file
-                child.setChildProfile(imageDTO.getPath());
-            } catch (IOException e) {
-                // Handle the exception appropriately
-                throw new RuntimeException("데이터 초기화 중 사진 저장 오류", e);
-            }
+            child.setChildProfile(initProfiles.get(i).getPath());
             child.setParent(parents.get(i));
             child.setKindergartenClass(kindergartenClass); // 유치원 반을 순환하며 할당
             children.add(child);
@@ -388,30 +406,24 @@ public class InitialDataService {
                 "오늘은 유치원에서 자연 탐험을 했어요. 주변의 식물과 동물을 관찰하며 자연을 사랑하게 되었습니다.",
                 "오늘은 유치원에서 숫자 공부를 했어요. 수학 문제를 풀며 논리적인 사고를 길렀습니다."
         };
-        String[] profiles = {"child1.jpg", "child2.jpg", "child3.jpg", "child4.jpg", "child5.jpg", "child6.jpg", "child7.jpg", "child8.jpg", "child9.jpg", "child10.jpg"};
-
 
         for (int i = 0; i < 30; i++) { // 100개의 테스트 데이터를 생성합니다.
             Diary diary = new Diary();
             diary.setDiaryDate(LocalDate.now().minusDays(i)); // 각 일지의 날짜를 다르게 설정합니다.
             diary.setDiaryContents(contents[i % contents.length]); // 다양한 내용을 순환하며 설정합니다.
             diary.setChild(child); // 주어진 child 객체를 설정합니다.
-            Set<Image> imageSet = new HashSet<>();
-            for (int j = 0; j < 3; j++) {
-                File profileFile = new File(profileDir, profiles[j]);
-                try {
-                    MultipartFile multipartFile = convertFileToMultipartFile(profileFile);
-                    // Store the file
-                    ImageDTO imageDTO = imageService.storeFile(multipartFile);
-                    imageSet.add(imageMapper.toEntity(imageDTO));
-                    if (j == 0) {
-                        diary.setDiaryThumbnail(imageDTO.getPath());
-                    }
-                } catch (IOException e) {
-                    // Handle the exception appropriately
-                    throw new RuntimeException("데이터 초기화 중 사진 저장 오류", e);
-                }
-            }
+            List<ImageDTO> randomProfiles = new Random().ints(0, initProfiles.size())
+                    .distinct()
+                    .limit(3)
+                    .mapToObj(initProfiles::get)
+                    .collect(Collectors.toList());
+
+            diary.setDiaryThumbnail(randomProfiles.get(0).getPath());
+
+            Set<Image> imageSet = randomProfiles.stream()
+                    .map(imageMapper::toEntity)
+                    .collect(Collectors.toSet());
+
             diary.setImages(imageSet);
             diaries.add(diary);
         }
@@ -421,7 +433,7 @@ public class InitialDataService {
 
     public List<Absent> getAbsent(Child child) {
         List<Absent> absentList = new ArrayList<>();
-        LocalDate startDate = LocalDate.of(2023, 1, 1); // 시작 날짜 설정
+        LocalDate startDate = LocalDate.of(2024, 4, 1); // 시작 날짜 설정
 
         String[] reasons = {
                 "병가", "휴가", "가족 행사", "의료 예약", "기타",
@@ -435,16 +447,26 @@ public class InitialDataService {
                 "친구 결혼식", "조부모 장례식", "해외 여행", "스포츠 대회 참가", "기타 이유"
         };
 
-        for (int i = 0; i < 15; i++) {
+        Random random = new Random();
+        int numAbsents = random.nextInt(15) + 1; // 1에서 15 사이의 랜덤 숫자
+        Set<Integer> selectedIndices = new HashSet<>();
+
+        while (selectedIndices.size() < numAbsents) {
+            selectedIndices.add(random.nextInt(15));
+        }
+
+        int i = 0;
+        for (int index : selectedIndices) {
             Absent absent = new Absent();
             absent.setAbsentStartdate(startDate.plusDays(i * 3));
             absent.setAbsentEnddate(startDate.plusDays(i * 3 + 1)); // 시작 날짜로부터 1일 뒤 종료
-            absent.setAbsentReason(reasons[i]);
-            absent.setAbsentDetails(details[i]);
+            absent.setAbsentReason(reasons[index]);
+            absent.setAbsentDetails(details[index]);
             absent.setConfirmationStatus(ConfirmationStatus.T);
             absent.setChild(child);
 
             absentList.add(absent);
+            i++;
         }
 
         return absentList;
@@ -452,7 +474,7 @@ public class InitialDataService {
 
     public List<Dosage> getDosage(Child child) {
         List<Dosage> dosageList = new ArrayList<>();
-        LocalDate startDate = LocalDate.of(2023, 1, 1); // 시작 날짜 설정
+        LocalDate startDate = LocalDate.of(2024, 3, 1); // 시작 날짜 설정
 
         String[] dosageNames = {
                 "아세트아미노펜", "이부프로펜", "항생제", "비타민C", "알러지약",
@@ -490,20 +512,30 @@ public class InitialDataService {
                 "발열 완화", "수면 유도", "불안 완화", "세균 감염 치료", "기타 증상 완화"
         };
 
-        for (int i = 0; i < 15; i++) {
+        Random random = new Random();
+        int numDosages = random.nextInt(15) + 1; // 1에서 15 사이의 랜덤 숫자
+        Set<Integer> selectedIndices = new HashSet<>();
+
+        while (selectedIndices.size() < numDosages) {
+            selectedIndices.add(random.nextInt(15));
+        }
+
+        int i = 0;
+        for (int index : selectedIndices) {
             Dosage dosage = new Dosage();
             dosage.setDosageStartdate(startDate.plusDays(i * 3));
             dosage.setDosageEnddate(startDate.plusDays(i * 3 + 2)); // 시작 날짜로부터 2일 뒤 종료
-            dosage.setDosageName(dosageNames[i]);
-            dosage.setDosageVolume(dosageVolumes[i]);
-            dosage.setDosageNum(dosageNums[i]);
-            dosage.setDosageTime(dosageTimes[i]);
-            dosage.setDosageStore(dosageStores[i]);
-            dosage.setDosageDetails(dosageDetails[i]);
+            dosage.setDosageName(dosageNames[index]);
+            dosage.setDosageVolume(dosageVolumes[index]);
+            dosage.setDosageNum(dosageNums[index]);
+            dosage.setDosageTime(dosageTimes[index]);
+            dosage.setDosageStore(dosageStores[index]);
+            dosage.setDosageDetails(dosageDetails[index]);
             dosage.setConfirmationStatus(ConfirmationStatus.T);
             dosage.setChild(child);
 
             dosageList.add(dosage);
+            i++;
         }
 
         return dosageList;
