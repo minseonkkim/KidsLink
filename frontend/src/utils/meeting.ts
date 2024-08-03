@@ -1,3 +1,6 @@
+import moment from "moment";
+export type ValuePiece = Date | null;
+
 // 현재시간을 문자열로 변환하는 함수
 export const getCurrentTimeString = (): string => {
     const currentTime = new Date();
@@ -38,4 +41,19 @@ export   const isMeetingVisible = (meetingDate: string, meetingTime: string): bo
 
   // 날짜가 지나지 않은 경우 모두 보이게 설정
   return true;
+};
+
+//날짜 변환
+export const formatDate = (date: ValuePiece): string => {
+  if (date instanceof Date) {
+    return moment(date).format("YYYY년 MM월 DD일");
+  }
+  return '';
+};
+
+// 과거인지 판별하는 함수
+export const isPastDate = (date: Date): boolean => {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  return date < today;
 };

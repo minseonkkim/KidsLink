@@ -1,4 +1,3 @@
-import { OpenVidu, Publisher, Session, StreamEvent, StreamManager, Subscriber } from "openvidu-browser";
 import { useLocation, useParams } from "react-router-dom";
 import React, { ChangeEvent, useEffect, useState } from "react";
 import OpenViduVideoComponent from "../../components/openvidu/VideoComponent";
@@ -9,39 +8,13 @@ import { useTeacherInfoStore } from "../../stores/useTeacherInfoStore";
 import { getTeacherInfo } from "../../api/Info";
 import axiosInstance from "../../api/token/axiosInstance";
 import TeacherMeetingFooter from "../../components/openvidu/TeacherMeetingFooter";
+import { OpenViduState, Recording, TabState, User } from "../../types/openvidu";
+import { ControlState } from "../../types/meeting";
+import { OpenVidu, StreamEvent } from "openvidu-browser";
 
 const APPLICATION_SERVER_URL = import.meta.env.VITE_OPENVIDU_URL
 
-interface User {
-  sessionId?: string;
-  username: string;
-}
 
-interface OpenViduState {
-  session?: Session;
-  mainStreamManager?: StreamManager;
-  publisher?: Publisher;
-  subscribers: Subscriber[];
-}
-
-interface TabState {
-  formTab: boolean;
-  profileTab: boolean;
-  chatTab: boolean;
-}
-
-interface ControlState {
-  video: boolean;
-  mic: boolean;
-  muted: boolean;
-  volume: number;
-}
-
-interface Recording {
-  id: string;
-  name: string;
-  url: string; // Assuming the URL to access the recording is available
-}
 
 export default function TeacherVideo() {
   const location = useLocation();
