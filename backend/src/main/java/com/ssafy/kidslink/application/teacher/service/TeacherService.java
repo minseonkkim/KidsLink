@@ -1,6 +1,5 @@
 package com.ssafy.kidslink.application.teacher.service;
 
-import com.ssafy.kidslink.application.child.repository.ChildRepository;
 import com.ssafy.kidslink.application.image.service.ImageService;
 import com.ssafy.kidslink.application.kindergarten.domain.KindergartenClass;
 import com.ssafy.kidslink.application.kindergarten.dto.ResponseClassInfoDTO;
@@ -13,7 +12,6 @@ import com.ssafy.kidslink.application.teacher.mapper.TeacherMapper;
 import com.ssafy.kidslink.application.teacher.repository.TeacherRepository;
 import com.ssafy.kidslink.common.exception.NotFoundException;
 import com.ssafy.kidslink.common.exception.PasswordMismatchException;
-import com.ssafy.kidslink.common.jwt.JWTUtil;
 import com.ssafy.kidslink.common.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +26,6 @@ import java.io.IOException;
 public class TeacherService {
     private final TeacherRepository teacherRepository;
     private final KindergartenClassRepository kindergartenClassRepository;
-    private final ChildRepository childRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final ImageService imageService;
 
@@ -67,7 +64,7 @@ public class TeacherService {
         teacherRepository.save(teacher);
     }
 
-    public TeacherDTO detailProcess(String teacherUsername){
+    public TeacherDTO getDetailByUsername(String teacherUsername){
         Teacher teacher = teacherRepository.findByTeacherUsername(teacherUsername);
         return teacherMapper.toDTO(teacher);
     }
