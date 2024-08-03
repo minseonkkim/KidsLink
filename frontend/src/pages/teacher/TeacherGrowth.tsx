@@ -126,7 +126,7 @@ export default function TeacherGrowth() {
 
   const openCreateModal = () => {
     if (currentChildId === null) {
-      showToastError("아이를 선택해주세요");
+      showToastError(<div>"아이를 선택해주세요"</div>);
     } else if (!isModalOpen) {
       openModal(
         renderModalContent(
@@ -236,7 +236,7 @@ function GrowthDiaryForm({
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (currentChildId === null) {
-      showToastError("아이를 선택해주세요");
+      showToastError(<div>"아이를 선택해주세요"</div>);
       return;
     }
 
@@ -246,7 +246,7 @@ function GrowthDiaryForm({
     if (!selectedChild) return;
 
     if (!dateValue) {
-      showToastError("날짜를 선택해주세요");
+      showToastError(<div>"날짜를 선택해주세요"</div>);
       return;
     }
 
@@ -266,7 +266,7 @@ function GrowthDiaryForm({
       fetchDiarys();
     } catch (error) {
       console.error("Failed to create diary:", error);
-      showToastError("성장일지 작성에 실패했습니다.");
+      showToastError(<div>"성장일지 작성에 실패했습니다."</div>);
     }
   };
 

@@ -1,21 +1,15 @@
+// src/pages/ParentMeeting.js
+
 import { useEffect, useRef, useState } from "react";
 import InfoSection from "../../components/parent/common/InfoSection";
 import daramgi from "../../assets/parent/meeting-daramgi.png";
 import meetingTimeIcon from "../../assets/parent/meeting.png";
-import { GetConfirmedMeeting, ParentTeacherMeeting, GetMeetingInfo } from "../../api/meeting";
 import ParentMeetingSchedule from "../../components/teacher/consulting/ParentMeetingSchedule";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
-
-export interface MeetingInfo {
-  id: number;
-  date: string;
-  time: string;
-  teacherId: number;
-  teacherName: string;
-  parentId: number;
-  childName: string;
-}
+import { isMeetingActive, isMeetingVisible } from "../../utils/meeting";
+import { MeetingInfo, ParentTeacherMeeting } from "../../types/meeting";
+import { GetConfirmedMeeting, GetMeetingInfo } from "../../api/meeting";
 
 export default function ParentMeeting() {
   const navigate = useNavigate();
@@ -23,13 +17,6 @@ export default function ParentMeeting() {
   const [teacherNames, setTeacherNames] = useState<{ [key: number]: string }>({});
   const [scroll, setScroll] = useState(false);
   const divRef = useRef<HTMLDivElement>(null);
-
-  const isMeetingActive = (date: string, time: string): boolean => {
-    const currentTime = new Date();
-    const meetingDate = new Date(`${date}T${time}`);
-    const timeDiff = meetingDate.getTime() - currentTime.getTime();
-    return timeDiff <= 10 * 60 * 1000 && timeDiff > 0;
-  };
 
   const navigateToSubmitPage = () => {
     navigate("/meeting/submit");
@@ -45,8 +32,6 @@ export default function ParentMeeting() {
           data.map(async (meeting) => {
             try {
               const meetingInfo: MeetingInfo = await GetMeetingInfo(meeting.meetingId);
-              console.log("meetingInfo")
-              console.log(meetingInfo)
               return { teacherId: meetingInfo.teacherId, name: meetingInfo.teacherName };
             } catch (error) {
               console.error(`Error fetching meeting info for ID ${meeting.meetingId}:`, error);
@@ -56,7 +41,7 @@ export default function ParentMeeting() {
         );
 
         const teacherNamesMap = teacherNamesData.reduce((acc, curr) => {
-          acc["teacherName"] = curr.name;
+          acc[curr.teacherId] = curr.name;
           return acc;
         }, {} as { [key: number]: string });
         setTeacherNames(teacherNamesMap);
@@ -105,7 +90,9 @@ export default function ParentMeeting() {
               msOverflowStyle: "none",
             }}
           >
-            {meetings.map((meeting) => (
+            {meetings
+            .filter(meeting => isMeetingVisible(meeting.meetingDate, meeting.meetingTime))
+            .map((meeting) => (
               <Link to={`/meeting/${meeting.meetingId}`} key={meeting.meetingId}>
               <ParentMeetingSchedule
                 key={meeting.meetingId}
