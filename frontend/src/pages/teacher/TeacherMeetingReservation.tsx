@@ -308,7 +308,7 @@ export default function TeacherReservation() {
   const handleConfirmMeetingClick = async () => {
     try {
       await ConfirmMeeting();
-      showToastSuccess(<div>상담일자가 확정되었습니다!<br/>3초 뒤 상담목록으로 이동합니다.</div>);
+      showToastSuccess(<div>상담일자가 확정되었습니다!<br/>상담목록으로 이동합니다.</div>);
 
       setTimeout(() => {
         navigate('/meeting');
