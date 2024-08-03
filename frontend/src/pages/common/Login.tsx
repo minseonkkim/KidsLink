@@ -121,7 +121,6 @@ const DesktopComponent = () => {
             </p>
           )}
 
-          {/* 테스트용: 로그인 안될 경우 회원가입 => 우선은 로그인 말고 바로 회원가입 페이지 이어지게 해놓음*/}
           <div className="mt-2 flex flex-row">
             <button
               type="button"

@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import profileImg from "../../assets/parent/notice-daramgi.png";
-import { getGrowthDiary } from "../../api/growthdiary"
+import { getGrowthDiary } from "../../api/growthdiary";
 
 interface DiaryEntry {
   diaryId: number;
@@ -15,25 +15,47 @@ interface DiaryEntry {
 const ParentDiaryDetail: React.FC = () => {
   const { diaryId } = useParams<{ diaryId: string }>();
   const [entry, setEntry] = useState<DiaryEntry | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchGrowthDiary() {
-      if (diaryId) {
-        try {
+      try {
+        if (diaryId) {
           const data = await getGrowthDiary(parseInt(diaryId));
           setEntry(data);
-        } catch (error) {
-          console.error("Failed to fetch growth diary", error);
+          setLoading(false);
         }
+      } catch (error) {
+        console.error("Failed to fetch growth diary", error);
+        setError("Failed to fetch growth diary");
+        setLoading(false);
       }
     }
 
     fetchGrowthDiary();
   }, [diaryId]);
 
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>{error}</div>;
+  }
+
   if (!entry) {
     return <p>해당 성장 기록을 찾을 수 없습니다.</p>;
   }
+
+  const formatDate = (dateString: string) => {
+    const options: Intl.DateTimeFormatOptions = {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    };
+    return new Date(dateString).toLocaleDateString("ko-KR", options);
+  };
 
   return (
     <div className="min-h-[100dvh] flex flex-col justify-between bg-white">
@@ -54,10 +76,7 @@ const ParentDiaryDetail: React.FC = () => {
 
           <div className="relative w-full bg-[#fff9d7] rounded-[20px] px-6 py-8 shadow-lg border-2 border-[#ffec8a] bg-notebook-pattern">
             {/* 테이프 효과 */}
-            <div className="absolute -top-4 -left-4 w-16 h-8 bg-yellow-300 rotate-12 transform z-10"></div>
-            <div className="absolute -top-4 -right-4 w-16 h-8 bg-yellow-300 -rotate-12 transform z-10"></div>
-            <div className="absolute -bottom-4 -left-4 w-16 h-8 bg-yellow-300 -rotate-12 transform z-10"></div>
-            <div className="absolute -bottom-4 -right-4 w-16 h-8 bg-yellow-300 rotate-12 transform z-10"></div>
+            <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 w-16 h-8 bg-yellow-300 z-10"></div>
 
             {entry.images.length > 0 && (
               <Carousel
@@ -77,10 +96,10 @@ const ParentDiaryDetail: React.FC = () => {
                 ))}
               </Carousel>
             )}
-            <p className="text-sm font-light text-[#353c4e] mb-4">
-              {entry.createDate}
+            <p className="text-[14px] font-light text-[#353c4e] mb-6 text-center">
+              {formatDate(entry.createDate)}
             </p>
-            <div className="text-base text-[#212121] space-y-4 whitespace-pre-line">
+            <div className="text-[16px] text-[#212121] space-y-4 whitespace-pre-line">
               {entry.content}
             </div>
           </div>

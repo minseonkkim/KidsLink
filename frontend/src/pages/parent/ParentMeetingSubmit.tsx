@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { getAllPossibleReservations, postAllPossibleReservations, Reservation, ParentReservation } from "../../api/meeting";
 import { useNavigate } from "react-router-dom";
 import Modal from "../../components/parent/common/Modal";
-import { FaClock } from 'react-icons/fa';
 
 const ParentMeetingSubmit = () => {
   const [reservations, setReservations] = useState<Reservation[]>([]);
@@ -28,7 +27,11 @@ const ParentMeetingSubmit = () => {
       if (newSelectedMeetings.has(meetingId)) {
         newSelectedMeetings.delete(meetingId);
       } else {
-        newSelectedMeetings.add(meetingId);
+        if (newSelectedMeetings.size < 3) {
+          newSelectedMeetings.add(meetingId);
+        } else {
+          alert("상담 시간은 최대 3개까지 선택하실 수 있습니다.");
+        }
       }
       return newSelectedMeetings;
     });
@@ -71,25 +74,24 @@ const ParentMeetingSubmit = () => {
 
   return (
     <div className="min-h-screen flex flex-col items-center bg-white">
-      <div className="w-full p-6 my-16">
-        <h2 className="text-xl font-bold mb-4 flex items-center">
-          <FaClock className="mr-2" />
-          상담 가능한 시간대
-        </h2>
-        <div className="space-y-6">
+      <div className="w-full max-w-3xl px-10 p-6 my-16 bg-white">
+        <p className="text-sm font-light mt-4 mb-10 text-center">
+          상담 시간은 최대 3개까지 선택하실 수 있습니다.
+        </p>
+        <div className="space-y-8">
           {Object.keys(groupedReservations).map((date) => (
             <div key={date}>
-              <p className="text-lg font-bold mb-2">{formatDateString(date)}</p>
-              <div className="grid grid-cols-4 gap-4">
+              <p className="text-lg font-semibold mb-4 text-left">{formatDateString(date)}</p>
+              <div className="grid grid-cols-3 gap-4">
                 {groupedReservations[date].map((reservation) => (
                   <div
                     key={reservation.meetingId}
                     onClick={() => handleTimeSlotClick(reservation.meetingId)}
-                    className={`cursor-pointer p-2 border rounded-lg text-center flex items-center justify-center ${
+                    className={`cursor-pointer p-2 border rounded-lg text-center flex items-center justify-center w-24 mx-auto ${
                       selectedMeetings.has(reservation.meetingId)
                         ? "bg-yellow-300 border-yellow-500 text-gray-800"
-                        : "bg-transparent border-gray-300 text-gray-800"
-                    }`}
+                        : "bg-transparent border-gray-300 text-gray-800 hover:bg-gray-100"
+                    } transition-colors duration-200 ease-in-out`}
                   >
                     <p className="text-lg">{reservation.time}</p>
                   </div>
@@ -100,7 +102,7 @@ const ParentMeetingSubmit = () => {
         </div>
         <div className="flex justify-center mt-10">
           <button
-            className="w-[99px] h-[40px] bg-[#ffec8a] rounded-full flex items-center justify-center text-base font-medium text-[#212121]"
+            className="w-32 h-12 bg-[#ffec8a] rounded-full flex items-center justify-center text-base font-medium text-[#212121] hover:bg-[#fdda6e] transition-colors"
             onClick={handleSubmit}
           >
             제출
