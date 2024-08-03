@@ -10,6 +10,7 @@ import com.ssafy.kidslink.application.parent.domain.Parent;
 import com.ssafy.kidslink.application.parent.repository.ParentRepository;
 import com.ssafy.kidslink.application.teacher.domain.Teacher;
 import com.ssafy.kidslink.application.teacher.repository.TeacherRepository;
+import com.ssafy.kidslink.common.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -31,17 +32,29 @@ public class NotificationService {
     public List<NotificationDTO> getNotifications(String role, String userName) {
         List<NotificationDTO> notifications = new ArrayList<>();
 
-        if(role.equals("ROLE_TEACHER")){
+        if (role.equals("ROLE_TEACHER")) {
             Teacher teacher = teacherRepository.findByTeacherUsername(userName);
-            for(TeacherNotification notification : teacherNotificationRepository.findByTeacher(teacher)){
-                notifications.add(notificationMapper.toDTO(notification));
+            if (teacher != null) {
+                for (TeacherNotification notification : teacherNotificationRepository.findByTeacher(teacher)) {
+                    notifications.add(notificationMapper.toDTO(notification));
+                }
+            } else {
+                // 적절한 예외 처리
+                throw new NotFoundException("Teacher not found for username: " + userName);
             }
-
-        }else{
+        } else if (role.equals("ROLE_PARENT")) {
             Parent parent = parentRepository.findByParentUsername(userName);
-            for(ParentNotification notification : parentNotificationRepository.findByParent(parent)){
-                notifications.add(notificationMapper.toDTO(notification));
+            if (parent != null) {
+                for (ParentNotification notification : parentNotificationRepository.findByParent(parent)) {
+                    notifications.add(notificationMapper.toDTO(notification));
+                }
+            } else {
+                // 적절한 예외 처리
+                throw new NotFoundException("Parent not found for username: " + userName);
             }
+        } else {
+            // 적절한 예외 처리
+            throw new IllegalArgumentException("Invalid role: " + role);
         }
         return notifications;
     }

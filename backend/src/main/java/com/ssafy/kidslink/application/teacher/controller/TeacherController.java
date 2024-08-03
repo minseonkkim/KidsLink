@@ -78,7 +78,7 @@ public class TeacherController {
     @GetMapping("")
     public ResponseEntity<APIResponse<TeacherDTO>> getProcess(@AuthenticationPrincipal Object principal) {
         if (principal instanceof CustomUserDetails userDetails) {
-            TeacherDTO teacherDTO = teacherService.detailProcess(userDetails.getUsername());
+            TeacherDTO teacherDTO = teacherService.getDetailByUsername(userDetails.getUsername());
             APIResponse<TeacherDTO> responseData = new APIResponse<>(
                     "success",
                     teacherDTO,
