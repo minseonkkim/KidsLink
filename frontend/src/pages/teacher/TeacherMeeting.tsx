@@ -50,10 +50,32 @@ export default function TeacherMeeting() {
     const meetingDate = new Date(meetingTime);
     const timeDiff = meetingDate.getTime() - currentTime.getTime();
 
-    // Meeting is active if it is within the next 10 minutes
-    return timeDiff <= 10 * 60 * 1000 && timeDiff > 0;
+    // 상담 시간 30분 전후로 활성화 상태로 설정
+    return timeDiff > -30 * 60 * 1000 && timeDiff < 30 * 60 * 1000;
   };
 
+  const isMeetingVisible = (meetingTime: string): boolean => {
+    const currentTime = new Date();
+    const meetingDate = new Date(meetingTime);
+
+    const currentDate = new Date(currentTime);
+    currentDate.setHours(0, 0, 0, 0);
+
+    // 날짜가 지난 상담은 보이지 않게 설정
+    if (meetingDate < currentDate) {
+      return false;
+    }
+
+    // 날짜가 같은 경우, 상담 시간이 지난 것만 보이지 않게 설정
+    if (meetingDate.toDateString() === currentTime.toDateString()) {
+      return meetingDate >= currentTime;
+    }
+
+    // 날짜가 지나지 않은 경우 모두 보이게 설정
+    return true;
+  };
+
+  // 비활성화 된 경우, 클릭되지 않는 로직 추가해야함.
   return (
     <>
       <TeacherHeader />
@@ -67,19 +89,22 @@ export default function TeacherMeeting() {
           </button>
         </Link>
         <div className="flex flex-row flex-wrap justify-between items-start">
-          {meetings.map((meeting) => (
-            <Link
-              to={`/meeting/${meeting.meetingId}`}
-              state={{ parentName: parentNames[meeting.parentId] || "알 수 없음" }}
-              key={meeting.meetingId}
-            >
-              <TeacherMeetingSchedule
-                time={meeting.meetingTime}
-                name={parentNames[meeting.parentId] || "알 수 없음"}
-                profileImgPath={ProfileImg}
-                isActivate={true}
-              />
-            </Link>
+          {meetings
+            .filter(meeting => isMeetingVisible(meeting.meetingTime))
+            .map((meeting) => (
+              <Link
+                to={`/meeting/${meeting.meetingId}`}
+                state={{ parentName: parentNames[meeting.parentId] || "알 수 없음" }}
+                key={meeting.meetingId}
+              >
+                <TeacherMeetingSchedule
+                  date={meeting.meetingDate}
+                  time={meeting.meetingTime}
+                  name={parentNames[meeting.parentId] || "알 수 없음"}
+                  profileImgPath={ProfileImg}
+                  isActivate={isMeetingActive(meeting.meetingTime)}
+                />
+              </Link>
           ))}
         </div>
       </div>
