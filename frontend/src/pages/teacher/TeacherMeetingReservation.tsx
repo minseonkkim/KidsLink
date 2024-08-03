@@ -12,6 +12,7 @@ import { useNavigate } from 'react-router-dom';
 import ToastNotification, { showToastSuccess, showToastError } from "../../components/teacher/common/ToastNotification.tsx";
 import { ConfirmMeeting, getAllPossibleReservations, PostTeacherReservations } from "../../api/meeting.ts";
 import { TeacherMeetingReservation } from "../../types/meeting.ts";
+import { formatDate, isPastDate, ValuePiece } from "../../utils/meeting.ts";
 
 const StyledCalendar = styled(Calendar)`
   display: flex;
@@ -188,7 +189,6 @@ const StyledCalendar = styled(Calendar)`
 `;
 
 export default function TeacherReservation() {
-  type ValuePiece = Date | null;
   const [date, setDate] = useState<ValuePiece>(new Date());
   const [selectedTimes, setSelectedTimes] = useState<string[]>([]);
   const [tempSelectedTimes, setTempSelectedTimes] = useState<{ [key: string]: string[] }>({});
@@ -223,13 +223,6 @@ export default function TeacherReservation() {
     "13:00", "13:30", "14:00", "14:30", "15:00", "15:30", "16:00", "16:30",
     "17:00", "17:30", "18:00", "18:30", "19:00", "19:30"
   ];
-
-  const formatDate = (date: ValuePiece) => {
-    if (date instanceof Date) {
-      return moment(date).format("YYYY년 MM월 DD일");
-    }
-    return '';
-  };
 
   const handleDateChange = (date: ValuePiece) => {
     setDate(date);
@@ -298,12 +291,6 @@ export default function TeacherReservation() {
     } catch (error) {
       console.error('예약을 저장하는 중 오류 발생:', error);
     }
-  };
-
-  const isPastDate = (date) => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    return date < today;
   };
 
   const handleConfirmMeetingClick = async () => {

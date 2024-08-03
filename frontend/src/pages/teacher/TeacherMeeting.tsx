@@ -12,7 +12,6 @@ import { ParentTeacherMeeting } from "../../types/meeting";
 import { GetConfirmedMeeting } from "../../api/meeting";
 
 export default function TeacherMeeting() {
-  
   const [meetings, setMeetings] = useState<ParentTeacherMeeting[]>([]);
   const [parentNames, setParentNames] = useState<{ [key: number]: string }>({});
   
