@@ -67,6 +67,8 @@ export const joinSession = async (
     .catch((error) => {
       console.log("There was an error connecting to the session:", error.code, error.message);
     });
+    console.log(session)
+    console.log("session")
 };
 
 export const leaveSession = (
