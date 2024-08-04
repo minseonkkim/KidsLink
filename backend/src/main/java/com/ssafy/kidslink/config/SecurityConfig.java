@@ -11,6 +11,7 @@ import com.ssafy.kidslink.common.oauth2.CustomOAuth2UserService;
 import com.ssafy.kidslink.common.security.CustomUserDetailsService;
 import com.ssafy.kidslink.common.service.RefreshTokenService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,7 +22,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
@@ -37,6 +37,7 @@ import static org.springframework.http.HttpMethod.POST;
 @EnableWebSecurity
 @EnableMethodSecurity(securedEnabled = true)
 @RequiredArgsConstructor
+@Slf4j
 public class SecurityConfig {
     @Value("${spring.profiles.active}")
     private String activeProfile;
@@ -58,11 +59,6 @@ public class SecurityConfig {
     }
 
     @Bean
-    public BCryptPasswordEncoder bCryptPasswordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .cors(corsConfigurer -> corsConfigurer.configurationSource(apiConfigurationSource()))
@@ -74,11 +70,6 @@ public class SecurityConfig {
                         .authenticationEntryPoint(customAuthenticationEntryPoint))
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .oauth2Login((oauth2) -> oauth2
-                        .userInfoEndpoint((userInfoEndpointConfig) -> userInfoEndpointConfig
-                                .userService(customOAuth2UserService))
-                        .successHandler(customOAuth2SuccessHandler)
-                        .failureHandler(customOAuth2FailureHandler))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/").permitAll()
                         .requestMatchers(POST, "/api/user/**").permitAll()
@@ -88,6 +79,7 @@ public class SecurityConfig {
                 .addFilterBefore(new CustomLogoutFilter(jwtUtil, refreshTokenService), LogoutFilter.class);
 
         if (isOAuth2Configured()) {
+            log.info("OAuth2 Configuration Success");
             http.oauth2Login(oauth2 -> oauth2
                     .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig
                             .userService(customOAuth2UserService))
@@ -117,6 +109,8 @@ public class SecurityConfig {
     private boolean isOAuth2Configured() {
         return !System.getenv().getOrDefault("OAUTH2_NAVER_CLIENT_ID", "").isEmpty() &&
                 !System.getenv().getOrDefault("OAUTH2_NAVER_CLIENT_SECRET", "").isEmpty() &&
+                !System.getenv().getOrDefault("OAUTH2_KAKAO_CLIENT_ID", "").isEmpty() &&
+                !System.getenv().getOrDefault("OAUTH2_KAKAO_CLIENT_SECRET", "").isEmpty() &&
                 !System.getenv().getOrDefault("OAUTH2_GOOGLE_CLIENT_ID", "").isEmpty() &&
                 !System.getenv().getOrDefault("OAUTH2_GOOGLE_CLIENT_SECRET", "").isEmpty();
     }

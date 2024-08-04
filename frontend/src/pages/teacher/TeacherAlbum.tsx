@@ -5,9 +5,8 @@ import { useState, ChangeEvent, useEffect } from "react";
 import { FiUpload } from "react-icons/fi";
 import { FaTrash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import { createClassifyImages } from "../../api/album";
 import PulseLoader from "react-spinners/PulseLoader";
-import { toast } from 'react-toastify';
+import { handleClassify, handleDeleteImage, handleImageUpload } from "../../utils/album";
 
 export default function TeacherAlbum() {
   const navigate = useNavigate();
@@ -25,28 +24,6 @@ export default function TeacherAlbum() {
     return () => clearInterval(interval);
   }, [loading]);
 
-  const handleImageUpload = (event: ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(event.target.files || []);
-    setImages(prevImages => [...prevImages, ...files]);
-  };
-
-  const handleDeleteImage = (index: number) => {
-    setImages(prevImages => prevImages.filter((_, i) => i !== index));
-  };
-
-  const handleClassify = async () => {
-    setLoading(true);
-    try {
-      const result = await createClassifyImages(images);
-      const sortedResult = result.reverse();
-      navigate('/album/classify_finish', { state: { sortedResult } });
-    } catch (error) {
-      console.error("Error classifying images:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
     <>
       <TeacherHeader/>
@@ -58,7 +35,7 @@ export default function TeacherAlbum() {
             <label className="flex flex-col items-center justify-center bg-[#FFF9D7] border-[#FFE96F] border-[2px] w-[300px] h-[300px] rounded-[360px] p-6 cursor-pointer">
               <FiUpload className="text-[70px] mb-5"/>
               <span className="text-[20px] font-bold">사진업로드</span>
-              <input type="file" multiple className="hidden" onChange={handleImageUpload} />
+              <input type="file" multiple className="hidden" onChange={(event) => handleImageUpload(event, setImages)} />
             </label>
           </div>
           {images.length > 0 && (
@@ -68,7 +45,7 @@ export default function TeacherAlbum() {
                   <div key={index} className="relative w-32 h-32 loading-container">
                     <img src={URL.createObjectURL(file)} alt={`upload-${index}`} className={`object-cover w-full h-full rounded-md ${loading ? 'loading' : ''}`} />
                     <button 
-                      onClick={() => handleDeleteImage(index)} 
+                      onClick={() => handleDeleteImage(index, setImages)} 
                       className={`absolute top-1 right-1 bg-red-600 text-white p-1 rounded-full ${loading ? 'loading' : ''}`}
                     >
                       <FaTrash />
@@ -82,7 +59,7 @@ export default function TeacherAlbum() {
                 </div>
               )}
               <button 
-                onClick={handleClassify} 
+                onClick={() => handleClassify(images, setLoading, navigate)} 
                 className="flex items-center justify-center mt-5 font-bold py-2 px-4 bg-gradient-to-br from-[#FFF3B1] to-[#D5E4B4] rounded-[10px] w-[240px] h-[50px]"
                 disabled={loading}
               >
