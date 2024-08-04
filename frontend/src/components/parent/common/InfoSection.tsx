@@ -9,7 +9,7 @@ interface InfoSectionProps {
 
 export default function InfoSection({ description1 = "", main1="", main2="", description2 = "", imageSrc, altText }: InfoSectionProps) {
   return (
-    <div className="flex items-center justify-center mt-4">
+    <div className="flex items-center justify-center pt-4">
       <div className="text-center ml-4 font-medium">
         <p className="text-xl">{description1}</p>
         <p className="text-2xl font-bold">{main1}<span className="text-xl font-medium">{main2}</span></p>

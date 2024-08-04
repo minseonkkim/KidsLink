@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { getAbsentDocument, getDosageDocument } from '../../api/document';
+import { useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom'
+import { getAbsentDocument, getDosageDocument } from '../../api/document'
 
 interface DosageDocument {
   startDate: string;
@@ -20,47 +20,41 @@ interface AbsentDocument {
 }
 
 const isDosageDocument = (document: DosageDocument | AbsentDocument): document is DosageDocument => {
-  return (document as DosageDocument).name !== undefined;
+  return (document as DosageDocument).name !== undefined
 };
 
 export default function DocumentDetail() {
-  const { docType, docId } = useParams<{ docType: string; docId: string }>();
-  const [document, setDocument] = useState<DosageDocument | AbsentDocument | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { docType, docId } = useParams<{ docType: string; docId: string }>()
+  const [document, setDocument] = useState<DosageDocument | AbsentDocument | null>(null)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     async function fetchDocument() {
       try {
         const documentId = parseInt(docId);
         if (docType === 'absent') {
-          const data = await getAbsentDocument(documentId);
-          setDocument(data);
+          const data = await getAbsentDocument(documentId)
+          setDocument(data)
         } else if (docType === 'dosage') {
-          const data = await getDosageDocument(documentId);
-          setDocument(data);
+          const data = await getDosageDocument(documentId)
+          setDocument(data)
         }
-        setLoading(false);
+        setLoading(false)
       } catch (error) {
-        console.error('Failed to fetch document', error);
-        setError('Failed to fetch document');
-        setLoading(false);
+        console.error('Failed to fetch document', error)
+        setLoading(false)
       }
     }
 
-    fetchDocument();
-  }, [docType, docId]);
+    fetchDocument()
+  }, [docType, docId])
 
   if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>{error}</div>;
+    return <div>Loading...</div>
   }
 
   if (!document) {
-    return <p>해당 문서를 찾을 수 없습니다.</p>;
+    return <p>해당 문서를 찾을 수 없습니다.</p>
   }
 
   const formatDate = (dateString: string) => {
@@ -75,7 +69,7 @@ export default function DocumentDetail() {
   return (
     <div className="min-h-[100dvh] flex flex-col justify-between bg-white">
       <div className="flex flex-1 flex-col my-16 items-center px-6">
-        <div className="relative w-full mt-16 mb-12">
+        <div className="relative w-full mb-12">
           <div className="relative w-full bg-[#fff9d7] rounded-[20px] px-6 py-8 shadow-lg border-2 border-[#ffec8a] bg-notebook-pattern">
             {/* 테이프 효과 */}
             <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 w-16 h-8 bg-yellow-300 z-10"></div>
@@ -106,5 +100,5 @@ export default function DocumentDetail() {
         </div>
       </div>
     </div>
-  );
+  )
 }
