@@ -7,35 +7,25 @@ export default function ParentLayout() {
   const location = useLocation()
   const params = useParams()
 
-  const noHeaderPaths = [`/meeting/${params.meetingId}`]
+  const noHeaderAndNavbarPaths = [`/meeting/${params.meetingId}`]
   const mainHeaderPaths = ['/', '/schedule', '/mypage']
   const useMainHeader = mainHeaderPaths.includes(location.pathname)
 
   // 각 경로에 대한 타이틀 설정(서브 헤더 params)
   const getTitle = () => {
     if (location.pathname.startsWith('/document/submit')) {
-      return '문서 제출'
-    } else if (location.pathname.startsWith('/document') && params.docId && params.docType) {
-      return '문서 내용'
+      return '문서 작성'
     } else if (location.pathname.startsWith('/document')) {
-      return '공유된 문서'
-    } else if (location.pathname.startsWith('/notice') && params.noticeId) {
-      return '알림장'
+      return '문서'
     } else if (location.pathname.startsWith('/notice')) {
       return '알림장'
-    } else if (location.pathname.startsWith('/album') && params.albumId && params.imageId) {
-      return '사진 꾸미기'
-    } else if (location.pathname.startsWith('/album') && params.albumId) {
-      return '앨범'
     } else if (location.pathname.startsWith('/album')) {
       return '앨범'
-    } else if (location.pathname.startsWith('/diary') && params.diaryId) {
-      return '성장일지'
     } else if (location.pathname.startsWith('/diary')) {
       return '성장일지'
     } else if (location.pathname.startsWith('/bus')) {
       return '등하원 관리'
-    }  else if (location.pathname.startsWith('/meeting/submit')) {
+    } else if (location.pathname.startsWith('/meeting/submit')) {
       return '상담 예약'
     } else if (location.pathname.startsWith('/meeting')) {
       return '상담'
@@ -44,22 +34,23 @@ export default function ParentLayout() {
     }
   }
 
-  // 현재 경로가 noHeaderPaths에 포함되어 있는지 확인
-  const useNoHeader = noHeaderPaths.some((path) => location.pathname.startsWith(path));
+  // 현재 경로가 noHeaderAndNavbarPaths에 포함되어 있는지 확인
+  const useNoHeaderAndNavbar = noHeaderAndNavbarPaths.some((path) => location.pathname.startsWith(path));
 
   return (
-    <>
-      {!useNoHeader && (
+    <div className='min-h-[100dvh] flex flex-col'>
+      {!useNoHeaderAndNavbar && (
         useMainHeader ? (
           <MainHeader />
         ) : (
           <SubHeader title={getTitle()} />
         )
       )}
-      <main>
+      {/* 헤더, 하단네비바 높이만큼 패딩 적용 */}
+      <main className={`${!useNoHeaderAndNavbar ? 'flex-grow pt-[67px] pb-[60px]' : 'flex-grow'}`}>
         <Outlet />
       </main>
-      <BottomNavbar />
-    </>
+      {!useNoHeaderAndNavbar && <BottomNavbar />}
+    </div>
   )
 }

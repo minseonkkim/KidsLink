@@ -99,8 +99,8 @@ const ParentDocument: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center bg-white">
-      <div className="w-full flex flex-col items-center my-16 flex-grow">
+    <div className="flex flex-col items-center">
+      <div className="w-full flex flex-col items-center flex-grow">
         <div className="flex flex-col items-center mt-10">
           <img
             src={daramgi}
@@ -109,7 +109,7 @@ const ParentDocument: React.FC = () => {
           />
           <p className="text-lg font-bold text-[#212121] mt-4">{childName}</p>
         </div>
-        <div className="w-full max-w-md p-8 mt-4 bg-white shadow-md rounded-lg">
+        <div className="w-full max-w-md p-8 mt-4">
           <div className="mb-6">
             <div className="flex justify-center items-center mb-4">
               <label className="mr-4">

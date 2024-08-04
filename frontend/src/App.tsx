@@ -15,11 +15,11 @@ import ParentNotice from "./pages/parent/ParentNotice"
 import ParentNoticeDetail from "./pages/parent/ParentNoticeDetail"
 import ParentAlbum from "./pages/parent/ParentAlbum"
 import ParentAlbumDetail from "./pages/parent/ParentAlbumDetail"
-import ParentAlbumDecorate from "./pages/parent/ParentAlbumDecorate"
+import AlbumDetailCard from "./pages/parent/AlbumDetailCard"
 import ParentDiary from "./pages/parent/ParentDiary"
 import ParentDiaryDetail from "./pages/parent/ParentDiaryDetail"
 import ParentBus from "./pages/parent/ParentBus"
-import ParentMeeting from "./pages/parent/ParentMeetingList"
+import ParentMeeting from "./pages/parent/ParentMeeting"
 import ParentMeetingSubmit from "./pages/parent/ParentMeetingSubmit"
 import ParentSchedule from "./pages/parent/ParentSchedule"
 import ParentMyPage from "./pages/parent/ParentMyPage"
@@ -38,7 +38,6 @@ import JoinDetails from "./pages/common/JoinDetails"
 import TeacherAlbumFinish from "./pages/teacher/TeacherAlbumFinish"
 import TeacherMyPage from "./pages/teacher/TeacherMyPage"
 import TeacherAlbumSendFinish from "./pages/teacher/TeacherAlbumSendFinish";
-import TeacherBroadcast from "./pages/teacher/TeacherVideo"
 import TeacherVideo from "./pages/teacher/TeacherVideo";
 import ParentVideo from "./pages/parent/ParentVideo";
 
@@ -59,7 +58,7 @@ export default function App() {
             <Route path="/notice/:noticeId" element={<ParentNoticeDetail />} />
             <Route path="/album" element={<ParentAlbum />} />
             <Route path="/album/:albumId" element={<ParentAlbumDetail />} />
-            <Route path="/album/:albumId/image/:imageId" element={<ParentAlbumDecorate />} />
+            <Route path="/album/:albumId/image/:imageId" element={<AlbumDetailCard />} />
             <Route path="/diary" element={<ParentDiary />} />
             <Route path="/diary/:diaryId" element={<ParentDiaryDetail />} />
             <Route path="/bus" element={<ParentBus />} />
