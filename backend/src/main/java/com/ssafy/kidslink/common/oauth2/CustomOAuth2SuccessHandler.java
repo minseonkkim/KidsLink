@@ -20,6 +20,8 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationSu
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -50,10 +52,10 @@ public class CustomOAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHa
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
 
         if (customUserDetails.getAuthorities().iterator().next().getAuthority().equals("ROLE_GUEST")) {
+            log.debug("OAuth2 Join Redirect");
             notJoinOAuth2(response, authentication);
             return;
         }
-
 
         String username = customUserDetails.getUsername();
 
@@ -78,11 +80,13 @@ public class CustomOAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHa
         Optional<Cookie> oCookie = Arrays.stream(request.getCookies()).filter(cookie -> cookie.getName().equals(REDIRECT_URI_PARAM)).findFirst();
         Optional<String> redirectUri = oCookie.map(Cookie::getValue);
 
+        log.debug("OAuth2 Login Success access - {}, refresh - {}", access, refresh);
+
         response.sendRedirect(redirectUri.orElseGet(() -> frontendServerUrl)
-                + "social/login"
-                + "?accessToken=" + access
-                + "&expiredAt=" + String.valueOf(System.currentTimeMillis() + JWTUtil.ACCESS_TOKEN_VALIDITY_SECONDS)
-                + "&role=" + role);
+                + "/social/login"
+                + "?accessToken=" + URLEncoder.encode(access, StandardCharsets.UTF_8.toString())
+                + "&expiredAt=" + (System.currentTimeMillis() + JWTUtil.ACCESS_TOKEN_VALIDITY_SECONDS)
+                + "&role=" + URLEncoder.encode(role, StandardCharsets.UTF_8.toString()));
     }
 
     private void notJoinOAuth2(HttpServletResponse response, Authentication authentication) throws IOException {

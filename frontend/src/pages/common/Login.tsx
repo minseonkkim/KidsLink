@@ -8,6 +8,8 @@ import { useMediaQuery } from 'react-responsive';
 import Typewriter from 'typewriter-effect';
 import { FcGoogle } from "react-icons/fc";
 import { RiKakaoTalkFill } from "react-icons/ri";
+import { FaRegEyeSlash } from "react-icons/fa";
+import { FaRegEye } from "react-icons/fa";
 
 
 export default function Login() {
@@ -47,6 +49,7 @@ const DesktopComponent = () => {
   const navigate = useNavigate();
   // const setUserType = useAppStore((state) => state.setUserType);
   const setIsSocialLogin = useAppStore((state) => state.setIsSocialLogin); // 추가
+  const [hide, setHide] = useState(true);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -100,14 +103,22 @@ const DesktopComponent = () => {
               className="w-[430px] h-[60px] rounded-[18px] p-5 bg-[#f7f7f7] border border-[#7c7c7c] mb-3 text-[21px] font-medium text-left text-[#7c7c7c]"
               autoComplete="username"
             />
-            <input
-              type="password"
-              placeholder="비밀번호"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-[430px] h-[60px] rounded-[18px] p-5 bg-[#f7f7f7] border border-[#7c7c7c] mb-4 text-[21px] font-medium text-left text-[#7c7c7c]"
-              autoComplete="current-password"
-            />
+            <div className="relative w-[430px]">
+              <input
+                type={hide ? 'password' : 'text'}
+                placeholder="비밀번호"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-[430px] h-[60px] rounded-[18px] p-5 bg-[#f7f7f7] border border-[#7c7c7c] mb-4 text-[21px] font-medium text-left text-[#7c7c7c]"
+                autoComplete="current-password"
+              />
+              {
+                hide ?
+                <div className="cursor-pointer absolute top-[21px] right-5 text-[21px] text-[#7c7c7c]" onClick={() => setHide(false)}><FaRegEyeSlash /></div>
+                : <div className="cursor-pointer absolute top-[21px] right-5 text-[21px] text-[#7c7c7c]" onClick={() => setHide(true)}><FaRegEye /></div>
+              }
+            </div>
+            
             <button
               type="submit"
               className="w-[430px] h-[56px] rounded-[18px] bg-[#FFE96F] text-[23px] text-[#363636] font-bold mb-5"
@@ -121,10 +132,11 @@ const DesktopComponent = () => {
             </p>
           )}
 
-          <div className="mt-2 flex flex-row">
+          {/* 테스트용: 로그인 안될 경우 회원가입 => 우선은 로그인 말고 바로 회원가입 페이지 이어지게 해놓음*/}
+          <div className="mt-1 flex flex-row">
             <button
               type="button"
-              className="mr-[10px] border-[1px] border-[#A1A1A1] w-[210px] h-[38px] rounded-[7px] text-[15px] font-bold mb-3 bg-[#fff] flex flex-row items-center justify-center"
+              className="mr-[6px] border-[1px] border-[#A1A1A1] w-[213px] h-[38px] rounded-[7px] text-[15px] font-bold mb-3 bg-[#fff] flex flex-row items-center justify-center"
               onClick={() => handleSocialLogin("google")}
             >
               <FcGoogle className="mr-3 text-[20px]"/>
@@ -132,7 +144,7 @@ const DesktopComponent = () => {
             </button>
             <button
               type="button"
-              className="border-[1px] border-[#A1A1A1] w-[210px] h-[38px] rounded-[7px] text-[15px] font-bold mb-3 bg-[#fff] flex flex-row items-center justify-center"
+              className="border-[1px] border-[#A1A1A1] w-[213px] h-[38px] rounded-[7px] text-[15px] font-bold mb-3 bg-[#fff] flex flex-row items-center justify-center"
               onClick={() => handleSocialLogin("kakao")}
             >
               <RiKakaoTalkFill className="mr-3 text-[20px]"/>
@@ -141,7 +153,7 @@ const DesktopComponent = () => {
           </div>
 
           <Link to="/join" onClick={handleJoinLinkClick}>
-            <p className="text-[20px] font-medium text-left text-[#363636]">
+            <p className="text-[19px] font-medium text-left text-[#363636] flex flex-row itmes-center">
               키즈링크가 처음이라면?
             </p>
           </Link>
@@ -150,7 +162,7 @@ const DesktopComponent = () => {
 
         <img
           src={mainImg}
-          className="w-[620px] absolute left-[660px] top-[180px] object-cover"
+          className="w-[620px] absolute left-[675px] top-[180px] object-cover"
         />
       </div>
     </>
@@ -165,7 +177,8 @@ const TabletOrMobileComponent = () => {
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
   const setUserType = useAppStore((state) => state.setUserType);
-  const setIsSocialLogin = useAppStore((state) => state.setIsSocialLogin); // 추가
+  const setIsSocialLogin = useAppStore((state) => state.setIsSocialLogin);
+  const [hide, setHide] = useState(true);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -225,14 +238,21 @@ const TabletOrMobileComponent = () => {
                 className="w-[330px] h-[58px] rounded-[20px] p-5 bg-white border border-[#b9b9b9] mb-3 text-[22px] font-medium text-left text-[#b9b9b9]"
                 autoComplete="username"
               />
-              <input
-                type="password"
-                placeholder="비밀번호"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-[330px] h-[58px] rounded-[20px] p-5 bg-white border border-[#b9b9b9] mb-2 text-[22px] font-medium text-left text-[#b9b9b9]"
-                autoComplete="current-password"
-              />
+              <div className="relative w-[330px]">
+                <input
+                  type={hide ? 'password' : 'text'}
+                  placeholder="비밀번호"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-[330px] h-[58px] rounded-[20px] p-5 bg-white border border-[#b9b9b9] mb-4 text-[22px] font-medium text-left text-[#b9b9b9]"
+                  autoComplete="current-password"
+                />
+                {
+                hide ?
+                <div className="cursor-pointer absolute top-[20px] right-5 text-[21px] text-[#7c7c7c]" onClick={() => setHide(false)}><FaRegEyeSlash /></div>
+                : <div className="cursor-pointer absolute top-[20px] right-5 text-[21px] text-[#7c7c7c]" onClick={() => setHide(true)}><FaRegEye /></div>
+              }
+              </div>
               {error && (
                 <p className="text-[17px] font-medium text-left text-red-500">
                   {error}
@@ -240,40 +260,35 @@ const TabletOrMobileComponent = () => {
               )}
               <button
                 type="submit"
-                className="mt-5 w-[330px] h-[55px] rounded-[20px] bg-[#ffe96f] text-[23px] font-bold mb-2"
+                className="w-[330px] h-[55px] rounded-[20px] bg-[#ffe96f] text-[23px] font-bold mb-5"
               >
                 로그인
               </button>
             </form>
 
-            <Link to="/join" onClick={handleJoinLinkClick}>
+            <div className="mt-2 flex flex-row">
+            <button
+              type="button"
+              className="mr-[10px] border-[1px] border-[#A1A1A1] w-[160px] h-[38px] rounded-[7px] text-[15px] font-bold mb-3 bg-[#fff] flex flex-row items-center justify-center"
+              onClick={() => handleSocialLogin("google")}
+            >
+              <FcGoogle className="mr-3 text-[20px]"/>
+              구글로 로그인
+            </button>
+            <button
+              type="button"
+              className="border-[1px] border-[#A1A1A1] w-[160px] h-[38px] rounded-[7px] text-[15px] font-bold mb-3 bg-[#fff] flex flex-row items-center justify-center"
+              onClick={() => handleSocialLogin("kakao")}
+            >
+              <RiKakaoTalkFill className="mr-3 text-[20px]"/>
+              카카오로 로그인
+            </button>
+          </div>
+          <Link to="/join" onClick={handleJoinLinkClick}>
               <p className="text-[20px] font-medium text-left text-[#363636]">
                 키즈링크가 처음이라면?
               </p>
             </Link>
-            <div className="mt-2">
-              <button
-                type="button"
-                className="w-[100px] h-[30px] rounded-[20px] text-[15px] font-bold mb-3"
-                onClick={() => handleSocialLogin("google")}
-              >
-                구글
-              </button>
-              <button
-                type="button"
-                className="w-[100px] h-[30px] rounded-[20px] text-[15px] font-bold mb-3"
-                onClick={() => handleSocialLogin("naver")}
-              >
-                네이버
-              </button>
-              <button
-                type="button"
-                className="w-[100px] h-[30px] rounded-[20px] text-[15px] font-bold mb-3"
-                onClick={() => handleSocialLogin("kakao")}
-              >
-                카카오
-              </button>
-            </div>
           </div>
         )}
       </div>

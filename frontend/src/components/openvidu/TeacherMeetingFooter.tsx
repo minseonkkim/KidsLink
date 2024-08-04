@@ -3,21 +3,7 @@ import { IoVideocam, IoVideocamOff, IoVolumeHigh, IoVolumeMute } from "react-ico
 import { RxCrossCircled } from "react-icons/rx";
 import { Slider } from "@mui/material";
 import { FaMicrophone, FaMicrophoneSlash } from "react-icons/fa";
-
-interface ControlState {
-  video: boolean;
-  mic: boolean;
-  muted: boolean;
-  volume: number;
-}
-
-interface TeacherMeetingFooterProps {
-  control: ControlState;
-  handleControl: (update: (prev: ControlState) => ControlState) => void;
-  close: () => void;
-  stopRecording: () => void; // 녹음 중지 함수 추가
-  isRecording: boolean; // 현재 녹음 상태를 나타내는 프로퍼티 추가
-}
+import { TeacherMeetingFooterProps } from "../../types/meeting";
 
 
 const TeacherMeetingFooter: React.FC<TeacherMeetingFooterProps> = ({ control, handleControl, close, startRecording, stopRecording, isRecording }) => {
