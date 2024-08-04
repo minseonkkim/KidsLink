@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { getAbsentDocument, getDosageDocument } from '../../api/document';
+import { useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom'
+import { getAbsentDocument, getDosageDocument } from '../../api/document'
 
 interface DosageDocument {
   startDate: string;
@@ -20,47 +20,41 @@ interface AbsentDocument {
 }
 
 const isDosageDocument = (document: DosageDocument | AbsentDocument): document is DosageDocument => {
-  return (document as DosageDocument).name !== undefined;
+  return (document as DosageDocument).name !== undefined
 };
 
 export default function DocumentDetail() {
-  const { docType, docId } = useParams<{ docType: string; docId: string }>();
-  const [document, setDocument] = useState<DosageDocument | AbsentDocument | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { docType, docId } = useParams<{ docType: string; docId: string }>()
+  const [document, setDocument] = useState<DosageDocument | AbsentDocument | null>(null)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     async function fetchDocument() {
       try {
         const documentId = parseInt(docId);
         if (docType === 'absent') {
-          const data = await getAbsentDocument(documentId);
-          setDocument(data);
+          const data = await getAbsentDocument(documentId)
+          setDocument(data)
         } else if (docType === 'dosage') {
-          const data = await getDosageDocument(documentId);
-          setDocument(data);
+          const data = await getDosageDocument(documentId)
+          setDocument(data)
         }
-        setLoading(false);
+        setLoading(false)
       } catch (error) {
-        console.error('Failed to fetch document', error);
-        setError('Failed to fetch document');
-        setLoading(false);
+        console.error('Failed to fetch document', error)
+        setLoading(false)
       }
     }
 
-    fetchDocument();
-  }, [docType, docId]);
+    fetchDocument()
+  }, [docType, docId])
 
   if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>{error}</div>;
+    return <div>Loading...</div>
   }
 
   if (!document) {
-    return <p>해당 문서를 찾을 수 없습니다.</p>;
+    return <p>해당 문서를 찾을 수 없습니다.</p>
   }
 
   const formatDate = (dateString: string) => {
@@ -106,5 +100,5 @@ export default function DocumentDetail() {
         </div>
       </div>
     </div>
-  );
+  )
 }
