@@ -8,7 +8,7 @@ import { UNSAFE_NavigationContext, useNavigate } from 'react-router-dom';
 import { createBrowserHistory } from 'history';
 
 export default function TeacherAlbumSendFinish() {
-    const { navigator } = useContext(UNSAFE_NavigationContext);
+  const { navigator } = useContext(UNSAFE_NavigationContext);
   const navigate = useNavigate();
   const history = createBrowserHistory();
 

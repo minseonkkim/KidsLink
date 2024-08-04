@@ -3,24 +3,11 @@ import { IoVideocam, IoVideocamOff, IoVolumeHigh, IoVolumeMute } from "react-ico
 import { RxCrossCircled } from "react-icons/rx";
 import { Slider } from "@mui/material";
 import { FaMicrophone, FaMicrophoneSlash } from "react-icons/fa";
+import { TeacherMeetingFooterProps } from "../../types/meeting";
 
-interface ControlState {
-  video: boolean;
-  mic: boolean;
-  muted: boolean;
-  volume: number;
-}
 
-interface MeetingFooterProps {
-  control: ControlState;
-  handleControl: (update: (prev: ControlState) => ControlState) => void;
-  close: () => void;
-  startRecording: () => void; // 녹음 시작 함수 추가
-  stopRecording: () => void; // 녹음 중지 함수 추가
-  isRecording: boolean; // 현재 녹음 상태를 나타내는 프로퍼티 추가
-}
+const TeacherMeetingFooter: React.FC<TeacherMeetingFooterProps> = ({ control, handleControl, close, startRecording, stopRecording, isRecording }) => {
 
-const MeetingFooter: React.FC<MeetingFooterProps> = ({ control, handleControl, close, startRecording, stopRecording, isRecording }) => {
   const isMuted = control.muted || control.volume === 0;
 
   return (
@@ -95,9 +82,9 @@ const MeetingFooter: React.FC<MeetingFooterProps> = ({ control, handleControl, c
       <div className="flex items-center gap-4">
         <button
           className={`text-2xl ${isRecording ? 'text-red-600' : 'text-black'}`}
-          onClick={isRecording ? stopRecording : startRecording}
+          onClick={stopRecording}
         >
-          {isRecording ? '녹음 중지' : '녹음 시작'}
+           '녹음 중지'
         </button>
         <RxCrossCircled
           className="ml-3 text-3xl cursor-pointer text-red-600"
@@ -108,4 +95,4 @@ const MeetingFooter: React.FC<MeetingFooterProps> = ({ control, handleControl, c
   );
 };
 
-export default MeetingFooter;
+export default TeacherMeetingFooter;

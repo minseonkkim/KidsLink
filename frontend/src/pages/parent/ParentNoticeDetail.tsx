@@ -47,6 +47,15 @@ export default function ParentNoticeDetail() {
     return <p>해당 알림장을 찾을 수 없습니다.</p>;
   }
 
+  const formatDate = (dateString: string) => {
+    const options: Intl.DateTimeFormatOptions = {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    };
+    return new Date(dateString).toLocaleDateString('ko-KR', options);
+  };
+
   return (
     <div className="min-h-[100dvh] flex flex-col justify-between bg-white">
       <div className="flex flex-1 flex-col my-16 items-center px-6">
@@ -59,25 +68,22 @@ export default function ParentNoticeDetail() {
                 alt="프로필 이미지"
               />
             </div>
-            <p className="text-lg font-medium text-[#353c4e]">
+            <p className="text-[16px] font-medium text-[#353c4e]">
               {notice.teacherName}
             </p>
           </div>
 
           <div className="relative w-full bg-[#fff9d7] rounded-[20px] px-6 py-8 shadow-lg border-2 border-[#ffec8a] bg-notebook-pattern">
             {/* 테이프 효과 */}
-            <div className="absolute -top-4 -left-4 w-16 h-8 bg-yellow-300 rotate-12 transform z-10"></div>
-            <div className="absolute -top-4 -right-4 w-16 h-8 bg-yellow-300 -rotate-12 transform z-10"></div>
-            <div className="absolute -bottom-4 -left-4 w-16 h-8 bg-yellow-300 -rotate-12 transform z-10"></div>
-            <div className="absolute -bottom-4 -right-4 w-16 h-8 bg-yellow-300 rotate-12 transform z-10"></div>
+            <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 w-16 h-8 bg-yellow-300 z-10"></div>
 
-            <p className="text-xl font-bold text-[#212121] mb-2">
+            <p className="text-[20px] font-bold text-[#212121] mb-2 text-center">
               {notice.title}
             </p>
-            <p className="text-sm font-light text-[#353c4e] mb-6">
-              {notice.noticeBoardDate}
+            <p className="text-[14px] font-light text-[#353c4e] mb-6 text-center">
+              {formatDate(notice.noticeBoardDate)}
             </p>
-            <div className="text-base text-[#212121] space-y-4 whitespace-pre-line">
+            <div className="text-[16px] text-[#212121] space-y-4 whitespace-pre-line">
               {notice.content}
             </div>
           </div>

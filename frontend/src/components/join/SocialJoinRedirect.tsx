@@ -14,7 +14,6 @@ const SocialJoinRedirect = () => {
     const email = queryParams.get('email')
 
     if (registrationId && username && email) {
-      setIsSocialLogin(true);
       navigate('/join', { state: { username, email } }) // username, email만 저장하려고 들고감
     } else {
       console.error('Missing query parameters')

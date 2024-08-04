@@ -47,7 +47,6 @@ public class ParentMapper {
         Iterator<Child> iterator = children.iterator();
         if (iterator.hasNext()) {
             Child child = iterator.next();
-            log.info("Child: {}", child);
             parentDTO.setChild(childMapper.toDTO(child));
         }
         parentDTO.setProfile(parent.getParentProfile());

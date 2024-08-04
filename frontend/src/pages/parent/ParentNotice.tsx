@@ -54,6 +54,15 @@ export default function ParentNotice() {
     } else {
       setFilteredNotices(notices);
     }
+  }
+
+  const formatDate = (dateString: string) => {
+    const options: Intl.DateTimeFormatOptions = {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    };
+    return new Date(dateString).toLocaleDateString('ko-KR', options);
   };
 
   useEffect(() => {
@@ -77,9 +86,9 @@ export default function ParentNotice() {
       <div className="w-full flex flex-col items-center mt-16 flex-grow">
         <div ref={infoSectionRef}>
           <InfoSection
-            main1="알림장"
+            main1="중요한 알림"
             main2="을"
-            description2="확인"
+            description2="확인하세요!"
             imageSrc={daramgi}
             altText="다람쥐"
           />
@@ -116,7 +125,7 @@ export default function ParentNotice() {
                 onClick={() => handleNoticeClick(notice.noticeBoardId)}
               >
                 <p className="text-base font-bold text-[#757575]">
-                  {notice.noticeBoardDate}
+                  {formatDate(notice.noticeBoardDate)}
                 </p>
                 <p className="text-lg font-medium text-[#353c4e]">
                   {notice.title}
