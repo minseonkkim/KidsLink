@@ -56,5 +56,5 @@ export default function JoinDetails() {
         {FormComponent}
       </div>
     </div>
-  );
+  )
 }

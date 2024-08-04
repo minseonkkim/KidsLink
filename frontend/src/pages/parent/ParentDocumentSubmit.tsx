@@ -107,9 +107,9 @@ const ParentDocument: React.FC = () => {
             className="w-20 h-20 object-cover rounded-full"
             alt="프로필 이미지"
           />
-          <p className="text-base font-bold text-[#212121] mt-4">김민선</p>
+          <p className="text-lg font-bold text-[#212121] mt-4">{childName}</p>
         </div>
-        <div className="w-full p-8 mt-4">
+        <div className="w-full max-w-md p-8 mt-4 bg-white shadow-md rounded-lg">
           <div className="mb-6">
             <div className="flex justify-center items-center mb-4">
               <label className="mr-4">
@@ -152,7 +152,7 @@ const ParentDocument: React.FC = () => {
             />
             <div className="flex justify-center mt-10">
               <button
-                className="w-[99px] h-[51px] bg-[#ffec8a] rounded-full flex items-center justify-center text-base font-medium text-[#212121]"
+                className="w-24 h-12 bg-[#ffec8a] rounded-full flex items-center justify-center text-base font-medium text-[#212121] hover:bg-[#fdda6e] transition-colors"
                 onClick={handleSubmit}
               >
                 제출

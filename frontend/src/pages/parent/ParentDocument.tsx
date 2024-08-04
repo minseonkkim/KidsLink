@@ -121,7 +121,7 @@ export default function ParentDocument() {
     <div className="min-h-[100dvh] flex flex-col items-center bg-[#FFEC8A]">
       <div className="w-full flex flex-col items-center mt-16 flex-grow">
         <InfoSection
-          main1="아이의 소식"
+          main1="자녀의 소식"
           main2="을"
           description2="전달해 주세요!"
           imageSrc={daramgi}
