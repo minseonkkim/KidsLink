@@ -12,6 +12,10 @@
     font-weight: normal;
     font-style: normal;
 }
+/* 
+html {
+  scroll-behavior: smooth;
+} */
 
 body {
     @apply font-KoPubDotum;
@@ -192,10 +196,13 @@ body {
     border-radius: 5px;
 }
 
-
+/* 그림자 효과 */
+.shadow-top {
+  box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.1), 0 -10px 15px rgba(0, 0, 0, 0.1);
+  }
 
 /* 확인 */
-.border-custom-gradient {
+/* .border-custom-gradient {
   border-image: linear-gradient(to right, #F8DE56 50%, #D9D9D9 50%);
   border-image-slice: 1;
 }
@@ -285,7 +292,7 @@ height: 180px;
 @apply text-lg sm:text-xl font-semibold text-[#E88471] font-KoPubDotum;
 position: absolute;
 left: 2rem; /* 중앙에서 살짝 왼쪽으로 이동 */
-top: 2rem;
+/* top: 2rem;
 line-height: 1.5;
 }
 
@@ -336,4 +343,4 @@ to { transform: translateY(0); opacity: 1; }
 from { transform: scale(0.9); opacity: 0; }
 to { transform: scale(1); opacity: 1; }
 }
-  
+   */ 

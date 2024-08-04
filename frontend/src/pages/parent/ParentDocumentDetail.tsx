@@ -75,7 +75,7 @@ export default function DocumentDetail() {
   return (
     <div className="min-h-[100dvh] flex flex-col justify-between bg-white">
       <div className="flex flex-1 flex-col my-16 items-center px-6">
-        <div className="relative w-full mt-16 mb-12">
+        <div className="relative w-full mb-12">
           <div className="relative w-full bg-[#fff9d7] rounded-[20px] px-6 py-8 shadow-lg border-2 border-[#ffec8a] bg-notebook-pattern">
             {/* 테이프 효과 */}
             <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 w-16 h-8 bg-yellow-300 z-10"></div>

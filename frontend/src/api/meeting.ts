@@ -1,4 +1,4 @@
-import axiosInstance from "./token/axiosInstance";
+import axiosInstance from "./token/axiosInstance"
 
 export interface Reservation {
   meetingId: number;

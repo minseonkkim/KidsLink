@@ -1,6 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
-import busIcon from '../../assets/parent/busIcon.png';
-import { receiveBusLocation } from '../../api/webSocket';
+import { useEffect, useRef, useState } from 'react'
+import InfoSection from '../../components/parent/common/InfoSection'
+import BusMap from '../../components/parent/bus/BusMap'
+import busIcon from '../../assets/parent/busIcon.png'
+import { receiveBusLocation } from '../../api/webSocket'
+import { postKidBoardingStatus } from '../../api/bus'
+import daramgi from '../../assets/parent/bus-daramgi.png'
 
 declare global {
   interface Window {
@@ -9,85 +13,56 @@ declare global {
 }
 
 export default function ParentBus() {
-  const mapContainer = useRef<HTMLDivElement>(null);
-  const wsRef = useRef<WebSocket | null>(null);
-  const [location, setLocation] = useState({ lat: 37.5665, lng: 126.9780 });
-  const [isBusMoving, setIsBusMoving] = useState(false);
-  const [willTakeBus, setWillTakeBus] = useState(false);
+  const wsRef = useRef<WebSocket | null>(null)
+  const [location, setLocation] = useState({ lat: 37.5665, lng: 126.9780 })
+  const [isBoarding, setIsBoarding] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    const apiKey = import.meta.env.VITE_KAKAO_API_KEY;
-
-    const script = document.createElement("script");
-    script.async = true;
-    script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${apiKey}&autoload=false`;
-    document.head.appendChild(script);
-
-    script.onload = () => {
-      window.kakao.maps.load(() => {
-        const container = mapContainer.current;
-        if (container) {
-          const options = {
-            center: new window.kakao.maps.LatLng(location.lat, location.lng),
-            level: 3,
-          };
-          const map = new window.kakao.maps.Map(container, options);
-
-          const imageSrc = busIcon; 
-          const imageSize = new window.kakao.maps.Size(64, 69);
-          const imageOption = { offset: new window.kakao.maps.Point(27, 69) };
-
-          const markerImage = new window.kakao.maps.MarkerImage(imageSrc, imageSize, imageOption);
-          const markerPosition = new window.kakao.maps.LatLng(location.lat, location.lng);
-
-          const marker = new window.kakao.maps.Marker({
-            position: markerPosition,
-            image: markerImage, // 이미지 변경
-          });
-          marker.setMap(map);
-
-          // WebSocket 연결 설정
-          const cleanup = receiveBusLocation(wsRef, setLocation, map, marker);
-
-          // 컴포넌트 언마운트 시 WebSocket 연결 해제
-          return cleanup;
-        }
-      });
-    };
+    const cleanup = receiveBusLocation(wsRef, setLocation)
 
     return () => {
-      document.head.removeChild(script);
       if (wsRef.current) {
-        wsRef.current.close();
+        wsRef.current.close()
       }
-    };
-  }, [location.lat, location.lng]);
+    }
+  }, [])
 
-  // Function to handle the button click
-  const handleButtonClick = () => {
-    setWillTakeBus((prev) => !prev);
-  };
+  const handleBoardingStatus = async () => {
+    setLoading(true)
+    try {
+      const response = await postKidBoardingStatus(1); // childId를 1로 예시
+      setIsBoarding(response.isBoarding) // 서버 응답에 맞게 수정 필요
+    } catch (error) {
+      console.error(error)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
-    <div className="relative min-h-screen bg-[#FFEC8A] flex flex-col">
-      <div ref={mapContainer} className="flex-grow w-full h-full z-0"></div>
+    <div className="flex flex-col h-screen bg-[#FFEC8A]">
+      <div className="fixed bottom-20 right-4 z-50 flex flex-col items-center">
+        <button
+          onClick={handleBoardingStatus}
+          className={`px-4 py-2 rounded-lg ${isBoarding ? 'bg-blue-600 hover:bg-blue-700' : 'bg-orange-400 hover:bg-orange-700'} text-white font-bold transition duration-200`}
+          disabled={loading}
+        >
+          {loading ? 'Loading...' : isBoarding ? '탑승 중' : '탑승하지 않음'}
+        </button>
+      </div>
 
-      {/* 문구는 API받는 것 보고 생각하기 */}
-      <div className="absolute bottom-16 left-0 w-full bg-white rounded-tl-[20px] rounded-tr-[20px] p-6 z-10 shadow-top">
-        <div className="flex justify-between items-center mb-4">
-          <button
-            onClick={handleButtonClick}
-            className={`flex-grow h-12 mr-2 rounded-2xl bg-[#FFEC8A] text-black font-bold`}
-          >
-            {willTakeBus ? '버스가 이동 중입니다!' : '버스가 정차 중입니다.'}
-          </button>
-        </div>
-        <div className="flex flex-col items-center justify-between">
-          <div className="text-lg font-base mb-2">
-            {isBusMoving ? "오늘 자녀가 버스에 탑승하지 않습니다." : "오늘 자녀가 버스에 탑승합니다."}
-          </div>
-        </div>
+      <InfoSection
+        description1="버스가"
+        main1="이동 중"
+        main2=" 입니다!"
+        imageSrc={daramgi}
+        altText="다람쥐"
+      />
+      
+      <div className="flex-grow w-full bg-white rounded-tl-[20px] rounded-tr-[20px] shadow-top overflow-hidden animate-slideUp -mt-10">
+        <BusMap location={location} busIcon={busIcon} />
       </div>
     </div>
-  );
+  )
 }

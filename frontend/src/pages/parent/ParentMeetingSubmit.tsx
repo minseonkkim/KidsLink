@@ -73,8 +73,8 @@ const ParentMeetingSubmit = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center bg-white">
-      <div className="w-full max-w-3xl px-10 p-6 my-16 bg-white">
+    <div className="flex flex-col items-center">
+      <div className="w-full max-w-3xl px-10 p-6">
         <p className="text-sm font-light mt-4 mb-10 text-center">
           상담 시간은 최대 3개까지 선택하실 수 있습니다.
         </p>
