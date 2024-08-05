@@ -234,3 +234,5 @@ CREATE TABLE `bus_stop_child` (
     FOREIGN KEY (`child_id`) REFERENCES `child`(`child_id`),
     FOREIGN KEY (`bus_stop_id`) REFERENCES `bus_stop`(`bus_stop_id`)
 );
+
+USE `kidslink`;
