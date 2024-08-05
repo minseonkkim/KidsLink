@@ -6,6 +6,7 @@ export default function SocialLoginRedirect() {
   const location = useLocation() // 현재 url경로 가져오기
 
   useEffect(() => {
+    console.log(location)
     const queryParams = new URLSearchParams(location.search)
     const accessToken = queryParams.get('accessToken')
     const expiredAt = queryParams.get('expiredAt')
