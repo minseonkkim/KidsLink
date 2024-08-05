@@ -4,6 +4,8 @@ import daramgi from "../../assets/parent/bus-daramgi.png";
 import busIcon from '../../assets/parent/busIcon.png';
 import { receiveBusLocation } from '../../api/webSocket';
 import { postKidBoardingStatus, getKidBoardingStatus } from '../../api/bus';
+import { getParentInfo } from '../../api/Info';
+import { Toggle } from '../../components/parent/bus/Toggle';
 
 declare global {
   interface Window {
@@ -17,6 +19,8 @@ export default function ParentBus() {
   const [location, setLocation] = useState({ lat: 37.5665, lng: 126.9780 });
   const [isBoarding, setIsBoarding] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [parentInfo, setParentInfo] = useState(null);
+  const [childId, setChildId] = useState<number | null>(null);
 
   useEffect(() => {
     const apiKey = import.meta.env.VITE_KAKAO_API_KEY;
@@ -62,9 +66,14 @@ export default function ParentBus() {
     const fetchBoardingStatus = async () => {
       setLoading(true);
       try {
-        const response = await getKidBoardingStatus(); // childId를 1로 예시
-        if (response && response.data && response.data.status !== undefined) {
-          setIsBoarding(response.data.status === 'T');
+        const fetchedParentInfo = await getParentInfo();
+        setParentInfo(fetchedParentInfo);
+        const currentChildId = fetchedParentInfo.child.childId;
+        setChildId(currentChildId);
+
+        const response = await getKidBoardingStatus();
+        if (response) {
+          setIsBoarding(response.status === 'T');
         }
       } catch (error) {
         console.error(error);
@@ -84,12 +93,14 @@ export default function ParentBus() {
   }, []);
 
   const handleBoardingStatus = async () => {
+    if (childId === null) return;
+
     setLoading(true);
     try {
-      const newStatus = !isBoarding;
-      const response = await postKidBoardingStatus(1); // childId를 1로 예시, newStatus 전송
-      if (response && response.isBoarding !== undefined) {
-        setIsBoarding(response.isBoarding);
+      await postKidBoardingStatus(childId);
+      const response = await getKidBoardingStatus();
+      if (response) {
+        setIsBoarding(response.status === 'T');
       }
     } catch (error) {
       console.error(error);
@@ -98,32 +109,31 @@ export default function ParentBus() {
     }
   };
 
+  const handleToggleChange = async () => {
+    if (loading) return; // prevent toggle during loading
+    const newStatus = !isBoarding;
+    setIsBoarding(newStatus);
+    await handleBoardingStatus();
+  };
+
   return (
     <div className="flex flex-col h-screen bg-[#FFEC8A]">
+     
       <InfoSection
         description1="버스가"
-        main1={isBoarding ? "탑승 중" : "탑승하지 않음"}
-        main2="입니다!"
+        main1="이동 중"
+        main2=" 입니다!"
         imageSrc={daramgi}
         altText="다람쥐"
       />
 
-      <div className="fixed bottom-20 right-4 z-50 flex flex-col items-center">
-        <button
-          onClick={handleBoardingStatus}
-          className={`px-4 py-2 rounded-lg ${isBoarding ? 'bg-blue-600 hover:bg-blue-700' : 'bg-orange-400 hover:bg-orange-700'} text-white font-bold transition duration-200`}
-          disabled={loading}
-        >
-          {loading ? 'Loading...' : isBoarding ? '오늘 버스에 탑승함' : '오늘 버스에 탑승하지 않음'}
-        </button>
-      </div>
-
       <div className="flex flex-col flex-grow overflow-hidden rounded-tl-[20px] rounded-tr-[20px] bg-white shadow-top animate-slideUp -mt-10">
+        <Toggle isOn={isBoarding} toggleHandler={handleToggleChange} />
         <div 
           ref={mapContainer} 
-          className="w-full h-full relative z-0"
+          className="w-full h-full relative z-0 mt-14"
         ></div>
       </div>
     </div>
-  )
+  );
 }

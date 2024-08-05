@@ -195,11 +195,11 @@ const TabletOrMobileComponent = () => {
 
   // 추가
   const handleSocialLogin = (provider: string) => {
-    setIsSocialLogin(true);
-    // 소셜 로그인 로직을 여기에 추가
-    console.log(`소셜 로그인: ${provider}`);
-    navigate("/join");
-  };
+    console.log(`소셜 로그인: ${provider}`)
+    window.location.href = `${
+      import.meta.env.VITE_API
+    }/oauth2/authorization/${provider}`
+  }
 
   const handleJoinLinkClick = () => {
     setIsSocialLogin(false);
