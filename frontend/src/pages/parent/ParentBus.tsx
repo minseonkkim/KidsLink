@@ -17,6 +17,11 @@ export default function ParentBus() {
   const [location, setLocation] = useState({ lat: 37.5665, lng: 126.9780 });
   const [isBoarding, setIsBoarding] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [isMoving,setIsMoving] = useState(false);
+
+  useEffect(() => {
+    console.log(`isMoving changed: ${isMoving}`);
+  }, [isMoving]);
 
   useEffect(() => {
     const apiKey = import.meta.env.VITE_KAKAO_API_KEY;
@@ -50,7 +55,7 @@ export default function ParentBus() {
           marker.setMap(map);
 
           // WebSocket 연결 설정
-          const cleanup = receiveBusLocation(wsRef, setLocation, map, marker);
+          const cleanup = receiveBusLocation(wsRef, setLocation, map, marker,setIsMoving);
 
           // 컴포넌트 언마운트 시 WebSocket 연결 해제
           return cleanup;
@@ -102,8 +107,8 @@ export default function ParentBus() {
     <div className="flex flex-col h-screen bg-[#FFEC8A]">
       <InfoSection
         description1="버스가"
-        main1={isBoarding ? "탑승 중" : "탑승하지 않음"}
-        main2="입니다!"
+        main1={isMoving ? "이동중 입" : "아직 출발하지 않았습"}
+        main2="니다!"
         imageSrc={daramgi}
         altText="다람쥐"
       />
