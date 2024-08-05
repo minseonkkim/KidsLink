@@ -1,11 +1,10 @@
 package com.ssafy.kidslink.application.bus.domain;
 
-import com.ssafy.kidslink.application.busstop.domain.BusStop;
 import com.ssafy.kidslink.application.kindergarten.domain.Kindergarten;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import java.time.LocalDateTime;
+
 import java.util.Set;
 
 @Entity
