@@ -14,7 +14,8 @@ import {
 import { GetMeetingInfo } from "../../api/meeting";
 
 export default function ParentVideo() {
-  const { meetingId } = useParams<{ meetingId: string }>(); // useParams 훅을 사용하여 URL 파라미터에서 meetingId를 가져옴
+  const { meetingId } = useParams<{ meetingId: string }>(); 
+  const [myStreamId, setMyStreamId] = useState<string | undefined>(undefined);
   const { parentInfo, setParentInfo } = useParentInfoStore();
   const [user, setUser] = useState<User>({
     sessionId: meetingId,
@@ -34,7 +35,7 @@ export default function ParentVideo() {
   });
   const [isSessionJoined, setIsSessionJoined] = useState(false); // 세션이 연결되었는지 여부를 나타내는 상태 추가
   const [teacherName, setTeacherName] = useState("");
-  const [teacherVideoActive, setTeacherVideoActive] = useState(true); // 추가된 상태 변수
+  const [otherVideoActive, setOtherVideoActive] = useState(false); // 상대방 비디오 상태 추가
 
   useEffect(() => {
     const fetchTeacherName = async () => {
@@ -66,7 +67,7 @@ export default function ParentVideo() {
 
   // Define the opacity style based on the control.video state
   const parentVideoOpacity = control.video ? 1 : 0.8;
-  const teacherVideoOpacity = teacherVideoActive ? 1 : 0.6; // 상대방의 비디오 상태에 따라 결정
+  const teacherVideoOpacity = otherVideoActive ? 1 : 0.6; // 상대방의 비디오 상태에 따라 결정
 
   return (
     <div
@@ -99,7 +100,7 @@ export default function ParentVideo() {
             className="absolute top-20 bg-white w-[90%] h-[calc(70vh)] rounded-lg z-40 flex items-center justify-center"
             style={{ opacity: teacherVideoOpacity, backgroundColor: "white" }}
           >
-            {!teacherVideoActive && (
+            {!otherVideoActive && (
               <div className="absolute z-50 text-white text-opacity-100">
                 교사
               </div>
@@ -140,7 +141,8 @@ export default function ParentVideo() {
                     user,
                     setOpenvidu,
                     setIsSessionJoined,
-                    setTeacherVideoActive
+                    setMyStreamId,
+                    setOtherVideoActive // 추가
                   )
                 }
                 className="mt-4 w-[80px] h-[35px] bg-[#ffec8a] rounded-full flex items-center justify-center text-base font-medium text-[#212121]"
