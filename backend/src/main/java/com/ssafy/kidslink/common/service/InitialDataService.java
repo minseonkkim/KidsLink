@@ -2,8 +2,8 @@ package com.ssafy.kidslink.common.service;
 
 import com.ssafy.kidslink.application.album.domain.Album;
 import com.ssafy.kidslink.application.album.repository.AlbumRepository;
-import com.ssafy.kidslink.application.busstop.repository.BusStopRepository;
-import com.ssafy.kidslink.application.busstopchild.repository.BusStopChildRepository;
+import com.ssafy.kidslink.application.bus.repository.BusStopRepository;
+import com.ssafy.kidslink.application.bus.repository.BusStopChildRepository;
 import com.ssafy.kidslink.application.child.domain.Child;
 import com.ssafy.kidslink.application.child.repository.ChildRepository;
 import com.ssafy.kidslink.application.diary.domain.Diary;

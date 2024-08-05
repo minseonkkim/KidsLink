@@ -1,9 +1,13 @@
-package com.ssafy.kidslink.application.busstop.domain;
+package com.ssafy.kidslink.application.bus.domain;
 
 import com.ssafy.kidslink.application.bus.domain.Bus;
+import com.ssafy.kidslink.application.child.domain.Child;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -22,7 +26,10 @@ public class BusStop {
     @JoinColumn(name = "bus_id", nullable = false)
     private Bus bus;
 
-
     @Transient
     private int stopOrder; // 엔티티에만 존재하며 DB에는 없는 필드
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "bus_stop_id")
+    private List<Child> children = new ArrayList<>();
 }

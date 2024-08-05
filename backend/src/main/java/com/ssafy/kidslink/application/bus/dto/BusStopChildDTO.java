@@ -1,6 +1,5 @@
-package com.ssafy.kidslink.application.busstopchild.dto;
+package com.ssafy.kidslink.application.bus.dto;
 
-import com.ssafy.kidslink.application.busstopchild.domain.BusStopChild;
 import com.ssafy.kidslink.common.enums.BoardingStatus;
 import lombok.Getter;
 import lombok.Setter;

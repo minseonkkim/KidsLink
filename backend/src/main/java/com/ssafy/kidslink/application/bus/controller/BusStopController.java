@@ -1,9 +1,9 @@
-package com.ssafy.kidslink.application.busstop.controller;
+package com.ssafy.kidslink.application.bus.controller;
 
 import com.ssafy.kidslink.application.bus.dto.BusStopDTO;
-import com.ssafy.kidslink.application.busstop.domain.BusStop;
-import com.ssafy.kidslink.application.busstop.service.BusStopService;
-import com.ssafy.kidslink.application.busstopchild.dto.BusStopChildDTO;
+import com.ssafy.kidslink.application.bus.domain.BusStop;
+import com.ssafy.kidslink.application.bus.service.BusStopService;
+import com.ssafy.kidslink.application.bus.dto.BusStopChildDTO;
 import com.ssafy.kidslink.common.dto.APIError;
 import com.ssafy.kidslink.common.dto.APIResponse;
 import com.ssafy.kidslink.common.security.CustomUserDetails;
@@ -30,8 +30,6 @@ import java.util.List;
 public class BusStopController {
 
     private final BusStopService busStopService;
-
-
 
     @Operation(summary = "버스 정류장 전체 조회", description = "모든 버스 정류장을 조회합니다.")
     @ApiResponses(value = {
@@ -91,9 +89,9 @@ public class BusStopController {
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = APIResponse.class)))
     })
-    @GetMapping("/{id}")
-    public ResponseEntity<APIResponse<List<BusStopChildDTO>>> getBusStopChildren(@PathVariable("id") int id) {
-        List<BusStopChildDTO> busStopChildren = busStopService.getBusStopChildren(id);
+    @GetMapping("/{busStopId}")
+    public ResponseEntity<APIResponse<List<BusStopChildDTO>>> getBusStopChildren(@PathVariable("busStopId") int busStopId) {
+        List<BusStopChildDTO> busStopChildren = busStopService.getBusStopChildren(busStopId);
         APIResponse<List<BusStopChildDTO>> responseData = new APIResponse<>(
                 "success",
                 busStopChildren,
@@ -119,7 +117,7 @@ public class BusStopController {
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = APIResponse.class)))
     })
-    @PostMapping("/parent/{childId}")
+    @PutMapping("/child/{childId}/status")
     public ResponseEntity<APIResponse<Void>> isBoarding(@PathVariable("childId") int childId) {
         busStopService.isBoarding(childId);
         APIResponse<Void> responseData = new APIResponse<>(
@@ -138,7 +136,7 @@ public class BusStopController {
         if (principal instanceof CustomUserDetails) {
             CustomUserDetails userDetails = (CustomUserDetails) principal;
 
-            BusStopChildDTO busStopChildDTO = busStopService.getBusStopChild(userDetails.getUsername());
+            BusStopChildDTO busStopChildDTO = busStopService.getBusStopChildByParentUsername(userDetails.getUsername());
             APIResponse<BusStopChildDTO> responseData = new APIResponse<>(
                     "success",
                     busStopChildDTO,
