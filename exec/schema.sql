@@ -146,7 +146,10 @@ CREATE TABLE `bus` (
 CREATE TABLE `bus_stop` (
     `bus_stop_id` INT NOT NULL AUTO_INCREMENT,
     `bus_stop_name` VARCHAR(100) NULL,
-    PRIMARY KEY (`bus_stop_id`)
+    `bus_id` INT NOT NULL,
+    PRIMARY KEY (`bus_stop_id`),
+    FOREIGN KEY (`bus_id`) REFERENCES `bus`(`bus_id`)
+    ON DELETE CASCADE
 );
 
 CREATE TABLE `meeting_schedule` (
