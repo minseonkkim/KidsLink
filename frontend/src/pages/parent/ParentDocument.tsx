@@ -1,14 +1,14 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import InfoSection from "../../components/parent/common/InfoSection";
-import daramgi from '../../assets/parent/document-daramgi.png';
-import pill from '../../assets/parent/pill.png';
-import absentIcon from '../../assets/parent/absent.png';
-import checkedIcon from '../../assets/parent/check.png';
-import handWithPen from '../../assets/parent/pen.png';
-import { getKidAllDocuments, ParentDocumentData } from '../../api/document';
-import { useParentInfoStore } from '../../stores/useParentInfoStore';
+import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import InfoSection from "../../components/parent/common/InfoSection"
+import SearchTitleBar from "../../components/parent/common/SearchTitleBar"
+import DocumentList from '../../components/parent/document/DocumentList'
+import daramgi from '../../assets/parent/document-daramgi.png'
+import handWithPen from '../../assets/parent/pen.png'
+import { getKidAllDocuments, ParentDocumentData } from '../../api/document'
+import { useParentInfoStore } from '../../stores/useParentInfoStore'
 import { getParentInfo } from '../../api/Info'
+import { formatDate } from '../../utils/parent/dateUtils'
 
 interface MappedDocument {
   id: number;
@@ -24,162 +24,106 @@ interface MappedDocument {
 }
 
 export default function ParentDocument() {
-  const [documents, setDocuments] = useState<MappedDocument[]>([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [scroll, setScroll] = useState(false);
-  const navigate = useNavigate();
-  const divRef = useRef<HTMLDivElement>(null);
+  const [documents, setDocuments] = useState<MappedDocument[]>([])
+  const [searchTerm, setSearchTerm] = useState('')
+  const navigate = useNavigate()
 
-  const parentInfo = useParentInfoStore((state) => state.parentInfo);
-  const setParentInfo = useParentInfoStore((state) => state.setParentInfo);
-  const childId = parentInfo?.child.childId;
+  const parentInfo = useParentInfoStore((state) => state.parentInfo)
+  const setParentInfo = useParentInfoStore((state) => state.setParentInfo)
+  const childId = parentInfo?.child.childId
 
   useEffect(() => {
     async function fetchParentInfoAndDocuments() {
       try {
-          let currentChildId = childId;
-          if (!currentChildId) {
-              const fetchedParentInfo = await getParentInfo();
-              setParentInfo(fetchedParentInfo);
-              currentChildId = fetchedParentInfo.child.childId;
-          }
+        let currentChildId = childId
+        if (!currentChildId) {
+          const fetchedParentInfo = await getParentInfo()
+          setParentInfo(fetchedParentInfo)
+          currentChildId = fetchedParentInfo.child.childId
+        }
 
-          if (currentChildId) {
-              const response: ParentDocumentData[] = await getKidAllDocuments(currentChildId);
-              if (response) {
-                  const parsedDocuments = response.map((item: ParentDocumentData): MappedDocument => {
-                      if (item.dosage) {
-                          return {
-                              id: item.id,
-                              date: item.date,
-                              type: 'dosage',
-                              checked: item.dosage.confirmationStatus === "T",
-                              startDate: item.dosage.startDate,
-                              endDate: item.dosage.endDate,
-                              documentId: item.dosage.dosageId,
-                              title: item.dosage.name,
-                              details: item.dosage.details,
-                              childId: currentChildId
-                          };
-                      } else if (item.absent) {
-                          return {
-                              id: item.id,
-                              date: item.date,
-                              type: 'absent',
-                              checked: item.absent.confirmationStatus === "T",
-                              startDate: item.absent.startDate,
-                              endDate: item.absent.endDate,
-                              documentId: item.absent.absentId,
-                              title: item.absent.reason,
-                              details: item.absent.details,
-                              childId: currentChildId
-                          };
-                      } else {
-                          throw new Error("Document must have either dosage or absent data");
-                      }
-                  });
-                  setDocuments(parsedDocuments);
+        if (currentChildId) {
+          const response: ParentDocumentData[] = await getKidAllDocuments(currentChildId)
+          if (response) {
+            const parsedDocuments = response.map((item: ParentDocumentData): MappedDocument => {
+
+              if (item.dosage) {
+                return {
+                  id: item.id,
+                  date: formatDate(item.date),
+                  type: 'dosage',
+                  checked: item.dosage.confirmationStatus === "T",
+                  startDate: formatDate(item.dosage.startDate),
+                  endDate: formatDate(item.dosage.endDate),
+                  documentId: item.dosage.dosageId,
+                  title: item.dosage.name,
+                  details: item.dosage.details,
+                  childId: currentChildId
+                };
+              } else if (item.absent) {
+                return {
+                  id: item.id,
+                  date: formatDate(item.date),
+                  type: 'absent',
+                  checked: item.absent.confirmationStatus === "T",
+                  startDate: formatDate(item.absent.startDate),
+                  endDate: formatDate(item.absent.endDate),
+                  documentId: item.absent.absentId,
+                  title: item.absent.reason,
+                  details: item.absent.details,
+                  childId: currentChildId
+                };
+              } else {
+                throw new Error("Document must have either dosage or absent data");
               }
+            })
+            setDocuments(parsedDocuments.reverse())
           }
+        }
       } catch (error) {
-        console.error("Failed to fetch documents", error);
+        console.error("Failed to fetch documents", error)
       }
     }
-
-    fetchParentInfoAndDocuments();
-  }, [childId, setParentInfo]);
+    fetchParentInfoAndDocuments()
+  }, [childId, setParentInfo])
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(event.target.value);
-  };
+    setSearchTerm(event.target.value)
+  }
 
   const filteredDocuments = documents.filter((doc) =>
     doc.title.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (divRef.current) {
-        const topPosition = divRef.current.getBoundingClientRect().top;
-        setScroll(topPosition <= 200);
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  )
 
   const navigateToSubmitPage = () => {
-    navigate('/document/submit');
-  };
+    navigate('/document/submit')
+  }
 
   const navigateToDetailPage = (docType: string, docId: number) => {
-    navigate(`/document/${docType}/${docId}`);
-  };
+    navigate(`/document/${docType}/${docId}`)
+  }
 
   return (
-    <div className="min-h-[100dvh] flex flex-col items-center bg-[#FFEC8A]">
-      <div className="w-full flex flex-col items-center mt-16 flex-grow">
-        <InfoSection
-          main1="자녀의 소식"
-          main2="을"
-          description2="전달해 주세요!"
-          imageSrc={daramgi}
-          altText="다람쥐"
-        />
-
-        <div
-          ref={divRef}
-          className="w-full bg-white rounded-tl-[20px] rounded-tr-[20px] px-12 shadow-top flex-grow overflow-hidden animate-slideUp"
-          style={{ marginTop: '-40px' }}
-        >
-          <div className="flex items-center justify-between">
-            <input
-              type="text"
-              placeholder="🔍︎"
-              value={searchTerm}
-              onChange={handleSearch}
-              className="w-full p-2 my-6 border-b-2 border-gray-300 focus:outline-none focus:border-[#FDDA6E]"
-            />
-          </div>
-          <div className={`space-y-6 ${scroll ? 'overflow-y-auto' : 'overflow-hidden'}`} style={{ maxHeight: scroll ? 'calc(100vh - 200px)' : 'auto', paddingBottom: '100px', scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-            {filteredDocuments.map((doc) => (
-              <div
-                key={`${doc.type}-${doc.documentId}`}
-                className={`flex flex-col p-4 rounded-2xl bg-[#FFF9D7] border-1 border-[#FFEC8A] hover:bg-[#ffec8a] transition-colors duration-200 cursor-pointer`}
-                onClick={() => navigateToDetailPage(doc.type, doc.documentId)}
-              >
-                <div className="flex items-center">
-                  <div>
-                    <p className="text-base font-bold text-[#757575]">
-                      {`${doc.startDate} ~ ${doc.endDate}`}
-                    </p>
-                    <div className="flex items-center">
-                      <img
-                        src={doc.type === 'dosage' ? pill : absentIcon}
-                        alt={doc.type === 'dosage' ? 'pill' : 'absent'}
-                        className="w-7 h-7 mr-4"
-                      />
-                      <p className="text-lg font-bold text-[#353c4e] pt-1">
-                        {doc.title}
-                      </p>
-                    </div>
-                  </div>
-                  {doc.checked && (
-                    <img
-                      src={checkedIcon}
-                      alt="checked"
-                      className="w-[30px] h-[30px] ml-auto object-contain"
-                    />
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
+    <div className="flex flex-col h-screen bg-[#FFEC8A]">
+      <InfoSection
+        main1="자녀의 소식"
+        main2="을"
+        description2="전달해 주세요!"
+        imageSrc={daramgi}
+        altText="다람쥐"
+      />
+      
+      <div className="flex flex-col flex-grow overflow-hidden rounded-tl-[20px] rounded-tr-[20px] bg-white shadow-top px-12 py-4 animate-slideUp -mt-10">
+        <SearchTitleBar searchTitle={searchTerm} onSearch={handleSearch} />
+        
+        <div className="flex-grow overflow-y-auto space-y-6 pb-6">
+          <DocumentList documents={filteredDocuments} handleDocumentClick={navigateToDetailPage} />
         </div>
       </div>
+
+      {/* 문서 작성 아이콘 */}
       <div
-        className="fixed right-10 z-40 bottom-20 md:bottom-16"
+        className="fixed right-10 z-40 bottom-20"
         onClick={navigateToSubmitPage}
       >
         <div
@@ -197,5 +141,5 @@ export default function ParentDocument() {
         </div>
       </div>
     </div>
-  );
+  )
 }
