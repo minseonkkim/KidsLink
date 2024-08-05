@@ -6,9 +6,10 @@ import Title from "../../components/teacher/common/Title";
 import { IoMdArrowDropdown } from "react-icons/io";
 import { MdNavigateBefore, MdNavigateNext } from "react-icons/md";
 import { startWebSocket, stopWebSocket } from '../../api/webSocket';
-import { getAllBusStops } from '../../api/bus'; // 함수가 정의된 파일에서 import
-import { useBusStore } from '../../stores/useBusStore'
-
+import { getAllBusStops } from '../../api/bus';
+import { getTeacherInfo } from '../../api/Info';
+import { useBusStore } from '../../stores/useBusStore';
+import { useTeacherInfoStore } from '../../stores/useTeacherInfoStore'; 
 const WEBSOCKET_URL = import.meta.env.VITE_WEBSOCKET_URL;
 
 export default function TeacherBus() {
@@ -20,13 +21,24 @@ export default function TeacherBus() {
   });
   const busStops = useBusStore((state) => state.busStops);
   const setBusStops = useBusStore((state) => state.setBusStops);
+  const { teacherInfo, setTeacherInfo } = useTeacherInfoStore();
 
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const fetchBusStops = async () => {
       try {
-        const stops = await getAllBusStops(1); // kindergartenId를 실제 유치원 ID로 교체
+        let kindergartenId;
+        
+        if (teacherInfo) {
+          kindergartenId = teacherInfo.kindergartenId;
+        } else {
+          const fetchedTeacherInfo = await getTeacherInfo();
+          setTeacherInfo(fetchedTeacherInfo);
+          kindergartenId = fetchedTeacherInfo.kindergartenId;
+        }
+        
+        const stops = await getAllBusStops(kindergartenId);
         // checked 필드를 추가하여 초기화
         const stopsWithChecked = stops.map(stop => ({
           ...stop,
@@ -34,7 +46,7 @@ export default function TeacherBus() {
         }));
         setBusStops(stopsWithChecked);
         if (stopsWithChecked.length > 0) {
-          setCurrentStopId(stopsWithChecked[0].busStopId); // 첫 번째 정류장을 초기값으로 설정
+          setCurrentStopId(stopsWithChecked[0].busStopId); 
         }
       } catch (error) {
         console.error(error);
@@ -55,7 +67,7 @@ export default function TeacherBus() {
       window.removeEventListener('beforeunload', handleUnload);
       window.addEventListener('unload', handleUnload);
     };
-  }, []);
+  }, [teacherInfo, setTeacherInfo]);
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
@@ -141,14 +153,14 @@ export default function TeacherBus() {
                 <div className="flex items-center justify-center font-bold w-[280px]">탑승자</div>
                 <div className="flex items-center justify-center font-bold w-[60px]">탑승여부</div>
               </div>
-              <div className="w-[360px] h-[370px] overflow-auto custom-scrollbar">
+              <div className="relative w-[360px] h-[370px] overflow-auto custom-scrollbar">
                 {currentStop.children.length > 0 ? (
                   currentStop.children.map(({ childName, parentTel, status, checked }, idx) => (
                     <BusChild key={idx} busStopId={currentStop.busStopId} childName={childName} parentTel={parentTel} status={status} checked={checked} />
                   ))
                 ) : (
-                  <div className="relative h-full">
-                    <p className="absolute top-[40%] left-0 right-0 text-center text-[20px] text-gray-500">탑승 인원이 없습니다</p>
+                  <div className="absolute top-[30%] left-0 right-0 text-center">
+                    <p className="text-[20px] text-gray-500">탑승 인원이 없습니다</p>
                   </div>
                 )}
               </div>
