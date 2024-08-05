@@ -93,9 +93,7 @@ export default function App() {
           <Route path="/" element={<Login />} />
           <Route path="/join" element={<Join />} />
           <Route path="/social/join" element={<SocialJoinRedirect />} />
-          {/* <Route path="/register" element={<SocialJoinRedirect />} /> */}
           <Route path="/social/login" element={<SocialLoginRedirect />} />
-          {/* <Route path="/o/login" element={<SocialLoginRedirect />} /> */}
           <Route path="/join/:role" element={<JoinDetails />} />
         </>
       )}

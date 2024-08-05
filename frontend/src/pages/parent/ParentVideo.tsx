@@ -7,6 +7,7 @@ import { useParentInfoStore } from '../../stores/useParentInfoStore';
 import { ControlState } from '../../types/meeting';
 import { OpenViduState, User } from '../../types/openvidu';
 import { fetchParentInfo, joinSession, leaveSession } from '../../utils/openvidu';
+import { GetMeetingInfo } from '../../api/meeting';
 
 export default function ParentVideo() {
   const { meetingId } = useParams<{ meetingId: string }>(); // useParams 훅을 사용하여 URL 파라미터에서 meetingId를 가져옴
@@ -28,6 +29,20 @@ export default function ParentVideo() {
     volume: 0.2,
   });
   const [isSessionJoined, setIsSessionJoined] = useState(false); // 세션이 연결되었는지 여부를 나타내는 상태 추가
+  const [teacherName, setTeacherName] = useState('');
+
+  useEffect(() => {
+    const fetchTeacherName = async () => {
+      try {
+        const res = await GetMeetingInfo(parseInt(meetingId));
+        setTeacherName(res.teacherName);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchTeacherName();
+  }, [meetingId]);
 
   useEffect(() => {
     if (!parentInfo) {
@@ -48,22 +63,25 @@ export default function ParentVideo() {
     <div className="relative min-h-[100dvh] bg-cover bg-center bg-no-repeat" style={{ backgroundImage: `url(${bgImg})` }}>
       <div className="absolute inset-0 bg-black bg-opacity-75"></div>
         {openvidu.session ? (
-          <div className="w-full h-full flex">
-            <div className="top-[150px] left-0 w-[700px] h-auto rounded-lg border border-white">
+          <div className="relative w-full h-full flex">
+            <div className="absolute top-[500px] right-[20px] w-[200px] h-[200px] rounded-lg border border-white z-50 bg-white">
               <h1>내 화면</h1>
-              {openvidu.mainStreamManager && (
-                <OpenViduVideoComponent streamManager={openvidu.mainStreamManager} />
-              )}
+              <div className="h-[200px]">
+                {openvidu.mainStreamManager && (
+                  <OpenViduVideoComponent streamManager={openvidu.mainStreamManager} />
+                )}
+              </div>
             </div>
-            <div className="absolute top-[50px] h-full w-[1200px] h-auto rounded-lg border border-white">
+            <div className="absolute w-full h-[calc(87vh-80px)] rounded-lg border border-white z-40 bg-white">
               <h1>상대 화면</h1>
               {openvidu.subscribers.map((sub, i) => (
-                <OpenViduVideoComponent
-                  key={i}
-                  streamManager={sub}
-                  muted={control.muted}
-                  volume={control.volume}
-                />
+                <div key={i} className="h-full">
+                  <OpenViduVideoComponent
+                    streamManager={sub}
+                    muted={control.muted}
+                    volume={control.volume}
+                  />
+                </div>
               ))}
             </div>
           </div>
@@ -80,7 +98,7 @@ export default function ParentVideo() {
                 상담번호 : {user.sessionId}
               </p>
               <p className="text-l font-light text-[#353c4e] mb-6">
-                {user.username} 보호자님과의 면담입니다.
+                {teacherName} 선생님과의 면담입니다.
               </p>
               <div className="text-base text-[#212121] space-y-4 whitespace-pre-line">
                 안내문안내문안내문안내문안내문안내문안내문
