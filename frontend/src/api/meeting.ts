@@ -31,6 +31,7 @@ export async function fetchSessionId(): Promise<SessionData> {
 
 // 학부모 상담 예약 제출
 export async function postAllPossibleReservations(selectedReservations: ParentReservation[]): Promise<ParentReservation[]> {
+  console.log(selectedReservations)
   try {
     const response = await axiosInstance.post('meeting', selectedReservations)
 

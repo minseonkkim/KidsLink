@@ -4,7 +4,7 @@ import ParentMeetingSchedule from "../../teacher/consulting/ParentMeetingSchedul
 export default function MeetingList({ meetings, teacherNames, isMeetingActive, scroll }) {
   return (
     <div
-      className={`space-y-6 ${scroll ? "overflow-y-auto" : "overflow-hidden"}`}
+      className={`space-y-6 pt-8 ${scroll ? "overflow-y-auto" : "overflow-hidden"}`}
       style={{
         maxHeight: scroll ? "calc(100vh - 200px)" : "auto",
         paddingBottom: "100px",

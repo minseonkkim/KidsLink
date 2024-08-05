@@ -1,3 +1,5 @@
+import { ControlState } from "./openvidu";
+
 export interface Reservation {
     meetingId: number;
     date: string;
@@ -44,12 +46,6 @@ export interface TeacherMeetingScheduleProps {
     isActivate: boolean;
   }
 
-export interface ControlState {
-    video: boolean;
-    mic: boolean;
-    muted: boolean;
-    volume: number;
-  }
   
 export interface TeacherMeetingFooterProps {
     control: ControlState;

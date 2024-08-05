@@ -134,10 +134,22 @@ CREATE TABLE `dosage` (
     FOREIGN KEY (`child_id`) REFERENCES `child`(`child_id`)
 );
 
+CREATE TABLE `bus` (
+    `bus_id` INT NOT NULL AUTO_INCREMENT,
+    `bus_name` VARCHAR(50) NOT NULL,
+    `kindergarten_id` INT NOT NULL,
+    PRIMARY KEY (`bus_id`),
+    FOREIGN KEY (`kindergarten_id`) REFERENCES `kindergarten`(`kindergarten_id`)
+    ON DELETE CASCADE
+);
+
 CREATE TABLE `bus_stop` (
     `bus_stop_id` INT NOT NULL AUTO_INCREMENT,
     `bus_stop_name` VARCHAR(100) NULL,
-    PRIMARY KEY (`bus_stop_id`)
+    `bus_id` INT NOT NULL,
+    PRIMARY KEY (`bus_stop_id`),
+    FOREIGN KEY (`bus_id`) REFERENCES `bus`(`bus_id`)
+    ON DELETE CASCADE
 );
 
 CREATE TABLE `meeting_schedule` (
@@ -225,3 +237,5 @@ CREATE TABLE `bus_stop_child` (
     FOREIGN KEY (`child_id`) REFERENCES `child`(`child_id`),
     FOREIGN KEY (`bus_stop_id`) REFERENCES `bus_stop`(`bus_stop_id`)
 );
+
+USE `kidslink`;

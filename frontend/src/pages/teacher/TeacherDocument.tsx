@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import TeacherHeader from '../../components/teacher/common/TeacherHeader';
 import Title from '../../components/teacher/common/Title';
 import NavigateBack from '../../components/teacher/common/NavigateBack';
@@ -11,33 +11,40 @@ import AbsentDocument from '../../components/teacher/document/AbsentDocument';
 
 export default function TeacherDocument() {
   const [searchTerm, setSearchTerm] = useState<string>('');
-  const [filteredDocuments, setFilteredDocuments] = useState([]);
   const [documents, setDocuments] = useState([]);
+  const [filteredDocuments, setFilteredDocuments] = useState([]);
+  const [displayedDocuments, setDisplayedDocuments] = useState([]);
   const [selectedDocumentType, setSelectedDocumentType] = useState("");
   const [selectedDocumentId, setSelectedDocumentId] = useState<number | null>(null);
   const [childImages, setChildImages] = useState<{ [key: number]: string }>({});
+  const [loading, setLoading] = useState(false);
+  const observer = useRef<IntersectionObserver>();
+  const itemsPerPage = 10;
 
   useEffect(() => {
     const fetchDocuments = async () => {
       try {
         const fetchedDocuments = await getClassAllDocuments();
         console.log(fetchedDocuments);
-  
-        setDocuments(fetchedDocuments);
-        if (fetchedDocuments.length > 0) {
-          const lastDocument = fetchedDocuments[fetchedDocuments.length - 1];
+
+        const reversedDocuments = fetchedDocuments.reverse();
+        setDocuments(reversedDocuments);
+        setFilteredDocuments(reversedDocuments);
+
+        if (reversedDocuments.length > 0) {
+          const lastDocument = reversedDocuments[0];
           setSelectedDocumentType(lastDocument.type);
-  
+
           if (lastDocument.type === "Absent") {
             setSelectedDocumentId(lastDocument.details.absentId);
           } else {
             setSelectedDocumentId(lastDocument.details.dosageId);
           }
         }
-  
+
         // Fetch and store child images
         const images = {};
-        for (const document of fetchedDocuments) {
+        for (const document of reversedDocuments) {
           const profileImgPath = await findChildImg(document.details.childId);
           images[document.details.childId] = profileImgPath;
         }
@@ -46,17 +53,41 @@ export default function TeacherDocument() {
         console.error('Failed to fetch documents:', error);
       }
     };
-  
+
     fetchDocuments();
   }, []);
-  
+
   useEffect(() => {
     setFilteredDocuments(
       documents.filter(document =>
         document.details.childName.includes(searchTerm)
-      ).reverse()
+      )
     );
   }, [searchTerm, documents]);
+
+  useEffect(() => {
+    const loadMoreDocuments = () => {
+      setLoading(true);
+      const newDocuments = filteredDocuments.slice(displayedDocuments.length, displayedDocuments.length + itemsPerPage);
+      setDisplayedDocuments(prevDocs => [...prevDocs, ...newDocuments]);
+      setLoading(false);
+    };
+
+    const observerCallback = (entries) => {
+      if (entries[0].isIntersecting && !loading) {
+        loadMoreDocuments();
+      }
+    };
+
+    if (observer.current) observer.current.disconnect();
+
+    observer.current = new IntersectionObserver(observerCallback);
+    if (observer.current && document.getElementById('load-more-trigger')) {
+      observer.current.observe(document.getElementById('load-more-trigger'));
+    }
+
+    loadMoreDocuments();
+  }, [filteredDocuments]);
 
   const handleDocumentClick = (type, id) => {
     setSelectedDocumentId(id);
@@ -70,7 +101,10 @@ export default function TeacherDocument() {
 
   const handleDocumentUpdate = async () => {
     const fetchedDocuments = await getClassAllDocuments();
-    setDocuments(fetchedDocuments);
+    const reversedDocuments = fetchedDocuments.reverse();
+    setDocuments(reversedDocuments);
+    setFilteredDocuments(reversedDocuments);
+    setDisplayedDocuments([]);
   };
 
   return (
@@ -92,7 +126,7 @@ export default function TeacherDocument() {
               />
             </div>
             <div className="rounded-[20px] bg-[#f4f4f4] w-[360px] h-[420px] overflow-y-auto custom-scrollbar">
-              {filteredDocuments.map((document, index) => (
+              {displayedDocuments.map((document, index) => (
                 <div
                   key={index}
                   className={`${document.type === "Absent"
@@ -109,6 +143,8 @@ export default function TeacherDocument() {
                   />
                 </div>
               ))}
+              <div id="load-more-trigger" className="h-2"></div>
+              {loading && <p>Loading more documents...</p>}
             </div>
           </div>
           <div className='border-[#B2D170] border-[3px] rounded-[20px]'>
@@ -118,7 +154,6 @@ export default function TeacherDocument() {
           }
 
           </div>
-          
         </div>
       </div>
     </>

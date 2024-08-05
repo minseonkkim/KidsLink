@@ -5,7 +5,7 @@ import ProgressBar from "../ProgressBar"
 import ProfileImageUpload from "../ProfileImageUpload"
 import MainInfo from "../MainInfo"
 import SubInfo from "../SubInfo"
-import defaultProfileImg from "../../../assets/join/default-profile.png"
+// import defaultProfileImg from "../../../assets/join/default-profile.png"
 
 interface TeacherFormStep1Props {
   onNext: () => void;
@@ -57,7 +57,7 @@ export default function TeacherFormStep1({ onNext }: TeacherFormStep1Props) {
       return
     }
     
-    if (!isSocialLogin && (!username || !password || !passwordConfirm || !name)) { // 추가
+    if (!isSocialLogin && (!username || !password || !passwordConfirm || !name || username.trim() === "")) { // 추가
       alert("모든 필수 항목을 입력해주세요.")
       return
     }
@@ -68,14 +68,14 @@ export default function TeacherFormStep1({ onNext }: TeacherFormStep1Props) {
     }
 
     // 프로필 이미지 등록 안했을 경우 기본 이미지 대체
-    if (!profile) {
-      const response = await fetch(defaultProfileImg)
-      const blob = await response.blob()
-      const defaultProfileFile = new File([blob], "default-profile.png", {
-        type: "image/png",
-      })
-      setProfile(defaultProfileFile)
-    }
+    // if (!profile) {
+    //   const response = await fetch(defaultProfileImg)
+    //   const blob = await response.blob()
+    //   const defaultProfileFile = new File([blob], "default-profile.png", {
+    //     type: "image/png",
+    //   })
+    //   setProfile(defaultProfileFile)
+    // }
 
     // 닉네임 입력 안했을 경우 이름으로 닉네임 지정
     if (!nickname) {

@@ -1,4 +1,4 @@
-package com.ssafy.kidslink.application.bus.websocket;
+package com.ssafy.kidslink.common.websocket;
 
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
