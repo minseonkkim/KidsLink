@@ -25,7 +25,6 @@ def process_image(item, known_face_labels, known_face_embeddings):
     image_id = item['imageId']
     image = load_image_from_url(image_url)
     if image is None:
-        print(f"Skipping image due to load failure: {image_url}")
         return [{
             'best_match_reference': None,
             'classify_image_id': image_id,
@@ -38,7 +37,6 @@ def process_image(item, known_face_labels, known_face_embeddings):
         face_encodings = face_recognition.face_encodings(image, face_locations)
 
         if len(face_encodings) == 0:
-            print(f"No faces found in classify image: {image_url}")
             return [{
                 'best_match_reference': None,
                 'classify_image_id': image_id,
@@ -90,8 +88,6 @@ def load_reference_images(reference):
             if len(face_encodings) > 0:
                 face_encoding = face_encodings[0]
                 known_face_encodings[label] = face_encoding
-            else:
-                print(f"No faces found in reference image: {reference_image_url}")
         except Exception as e:
             print(f"Error processing reference image {reference_image_url}: {e}")
     return known_face_encodings
