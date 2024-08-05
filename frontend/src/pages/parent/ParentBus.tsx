@@ -54,7 +54,7 @@ export default function ParentBus() {
           marker.setMap(map);
 
           // WebSocket 연결 설정
-          const cleanup = receiveBusLocation(wsRef, setLocation, map, marker);
+          const cleanup = receiveBusLocation(wsRef, setLocation, map, marker,setIsMoving);
 
           // 컴포넌트 언마운트 시 WebSocket 연결 해제
           return cleanup;
