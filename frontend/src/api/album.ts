@@ -1,5 +1,12 @@
 import axiosInstance from "./token/axiosInstance";
 
+export interface Album {
+  albumId: number;
+  albumName: string;
+  albumDate: string;
+  images: { path: string }[];
+}
+
 interface TaggedPhoto{
   childId: number;
   photos: number[];

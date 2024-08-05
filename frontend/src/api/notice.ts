@@ -1,6 +1,6 @@
 import axiosInstance from './token/axiosInstance'
 
-interface Notice {
+export interface Notice {
   noticeBoardId: number;
   teacherName: string;
   title: string;
@@ -8,7 +8,7 @@ interface Notice {
   noticeBoardDate: string; 
 }
 
-interface NoticeDetail {
+export interface NoticeDetail {
   noticeBoardId: number;
   teacherName: string;
   title: string;
