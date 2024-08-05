@@ -132,7 +132,6 @@ const DesktopComponent = () => {
             </p>
           )}
 
-          {/* 테스트용: 로그인 안될 경우 회원가입 => 우선은 로그인 말고 바로 회원가입 페이지 이어지게 해놓음*/}
           <div className="mt-1 flex flex-row">
             <button
               type="button"
@@ -171,6 +170,20 @@ const DesktopComponent = () => {
 
 // 모바일 화면으로 볼 경우
 const TabletOrMobileComponent = () => {
+  const location = useLocation();
+  useEffect(() => {
+      const state = location.state;
+      if (state) {
+          const { accessToken, expiredAt, role } = state;
+          if (accessToken && expiredAt) {
+              localStorage.setItem('accessToken', accessToken);
+              localStorage.setItem('expiredAt', expiredAt);
+              console.log("role", role)
+              setUserType(role);
+          }
+      }
+  }, [location.state]);
+
   const [isContentVisible, setIsContentVisible] = useState(true);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
