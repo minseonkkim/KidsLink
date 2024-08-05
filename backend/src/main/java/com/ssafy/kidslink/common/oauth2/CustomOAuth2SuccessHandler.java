@@ -87,7 +87,7 @@ public class CustomOAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHa
                 + "?accessToken=" + URLEncoder.encode(access, StandardCharsets.UTF_8.toString())
                 + "&expiredAt=" + (System.currentTimeMillis() + JWTUtil.ACCESS_TOKEN_VALIDITY_SECONDS)
                 + "&role=" + URLEncoder.encode(role, StandardCharsets.UTF_8.toString()));
-    }
+}
 
     private void notJoinOAuth2(HttpServletResponse response, Authentication authentication) throws IOException {
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
