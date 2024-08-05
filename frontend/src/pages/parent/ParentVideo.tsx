@@ -131,7 +131,7 @@ export default function ParentVideo() {
               {teacherName} 선생님과의 면담입니다.
             </p>
             <div className="text-sm text-[#212121] space-y-2 whitespace-pre-line">
-              안내문안내문안내문안내문안내문안내문안내문
+              안내문입니다.
             </div>
             <div className="flex justify-center">
               <button
