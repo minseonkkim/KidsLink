@@ -7,13 +7,14 @@ export const joinSession = async (
   user: User,
   setOpenvidu: React.Dispatch<React.SetStateAction<OpenViduState>>,
   setIsSessionJoined: React.Dispatch<React.SetStateAction<boolean>>,
-  setTeacherVideoActive: React.Dispatch<React.SetStateAction<boolean>>
+  setMyStreamId: React.Dispatch<React.SetStateAction<string | undefined>>, // 이 매개변수 추가
+  setOtherVideoActive: React.Dispatch<React.SetStateAction<boolean>> // 상대방 비디오 상태 추가
 ) => {
   if (!user.sessionId) return;
   const OV = new OpenVidu();
   OV.enableProdMode();
   const session = OV.initSession();
-  
+
   // 이벤트 등록
   session.on("streamCreated", (event: StreamEvent) => {
     try {
@@ -22,7 +23,7 @@ export const joinSession = async (
         ...prevOpenvidu,
         subscribers: [...prevOpenvidu.subscribers, subscriber],
       }));
-      console.log(subscriber)
+      console.log(subscriber);
     } catch (error) {
       console.error("Error during stream subscription:", error);
     }
@@ -46,7 +47,22 @@ export const joinSession = async (
   session.on("streamPropertyChanged", (event: StreamPropertyChangedEvent) => {
     if (event.changedProperty === "videoActive") {
       console.log("Video state changed for stream", event.stream.streamId, ":", event.newValue);
-      setTeacherVideoActive(event.newValue);
+      const streamId = session.remoteStreamsCreated.keys();
+      const streamKey = Array.from(streamId);
+      const otherVideoActive = (streamKey[0] === event.stream.streamId);
+      console.log("상대 카메라 껐다 켰다 할 때");
+      console.log(streamKey[0] === event.stream.streamId);
+      setOtherVideoActive(otherVideoActive); // 상대방 비디오 상태 업데이트
+
+      // 자신의 스트림 ID와 비교
+      setMyStreamId((myStreamId) => {
+        if (event.stream.streamId === myStreamId) {
+          console.log("내 비디오 상태가 변경되었습니다:", event.newValue);
+        } else {
+          console.log("상대방 비디오 상태가 변경되었습니다:", event.newValue);
+        }
+        return myStreamId;
+      });
     }
   });
 
@@ -72,13 +88,18 @@ export const joinSession = async (
         mainStreamManager: publisher,
         publisher: publisher,
       }));
+
+      // 자신의 스트림 ID 저장
+      setMyStreamId(publisher.stream.streamId);
+
       setIsSessionJoined(true);
     })
     .catch((error) => {
       console.log("There was an error connecting to the session:", error.code, error.message);
     });
-    console.log(session)
-    console.log("session")
+
+  console.log(session);
+  console.log("session");
 };
 
 export const leaveSession = (
