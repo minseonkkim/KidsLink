@@ -1,5 +1,8 @@
 package com.ssafy.kidslink.application.busstop.service;
 
+import com.ssafy.kidslink.application.bus.domain.Bus;
+import com.ssafy.kidslink.application.bus.dto.BusStopDTO;
+import com.ssafy.kidslink.application.bus.repository.BusRepository;
 import com.ssafy.kidslink.application.busstop.domain.BusStop;
 import com.ssafy.kidslink.application.busstop.repository.BusStopRepository;
 import com.ssafy.kidslink.application.busstopchild.domain.BusStopChild;
@@ -10,6 +13,7 @@ import com.ssafy.kidslink.application.child.repository.ChildRepository;
 import com.ssafy.kidslink.application.kindergarten.domain.Kindergarten;
 import com.ssafy.kidslink.application.kindergarten.domain.KindergartenClass;
 import com.ssafy.kidslink.application.kindergarten.repository.KindergartenClassRepository;
+import com.ssafy.kidslink.application.kindergarten.repository.KindergartenRepository;
 import com.ssafy.kidslink.application.notification.domain.ParentNotification;
 import com.ssafy.kidslink.application.notification.respository.ParentNotificationRepository;
 import com.ssafy.kidslink.application.notification.respository.TeacherNotificationRepository;
@@ -17,6 +21,7 @@ import com.ssafy.kidslink.application.parent.domain.Parent;
 import com.ssafy.kidslink.application.parent.repository.ParentRepository;
 import com.ssafy.kidslink.application.teacher.domain.Teacher;
 import com.ssafy.kidslink.application.teacher.repository.TeacherRepository;
+import com.ssafy.kidslink.common.enums.BoardingStatus;
 import com.ssafy.kidslink.common.enums.NotificationCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,9 +30,8 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.ssafy.kidslink.application.busstopchild.domain.BusStopChild.BoardingStatus.F;
-import static com.ssafy.kidslink.application.busstopchild.domain.BusStopChild.BoardingStatus.T;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -41,6 +45,8 @@ public class BusStopService {
     private final ParentNotificationRepository parentNotificationRepository;
     private final KindergartenClassRepository kindergartenClassRepository;
     private final ChildRepository childRepository;
+    private final KindergartenRepository kindergartenRepository;
+    private final BusRepository busRepository;
 
     public List<BusStop> getAllBusStops() {
         return busStopRepository.findAll();
@@ -66,10 +72,10 @@ public class BusStopService {
 
     public void isBoarding(int childId){
         Child child = childRepository.findById(childId).get();
-        if(busStopChildRepository.findByChild(child).iterator().next().getBusBoardingStatus()== F){
-            busStopChildRepository.updateBoardingStatus(childId,T);
-        }else {
-            busStopChildRepository.updateBoardingStatus(childId, F);
+        if (busStopChildRepository.findByChild(child).iterator().next().getBusBoardingStatus() == BoardingStatus.F) {
+            busStopChildRepository.updateBoardingStatus(childId, BoardingStatus.T);
+        } else {
+            busStopChildRepository.updateBoardingStatus(childId, BoardingStatus.F);
         }
     }
 
@@ -101,4 +107,28 @@ public class BusStopService {
             }
     }
 
+    public List<BusStopDTO> getAllBusStopFromKindergarten(int kindergartenId) {
+        Kindergarten kindergarten = kindergartenRepository.findById(kindergartenId).orElseThrow();
+
+        Bus bus = busRepository.findByKindergarten(kindergarten);
+        List<BusStopDTO> busStopDTOList = new ArrayList<>();
+        List<BusStop> busStops = new ArrayList<>(bus.getBusStops());
+
+        busStops = busStops.stream()
+                .sorted((a, b) -> Integer.compare(a.getBusStopId(), b.getBusStopId()))
+                .toList();
+
+        for (int i = 0; i < busStops.size(); i++) {
+            BusStopDTO busStopDTO = new BusStopDTO();
+            busStops.get(i).setStopOrder(i + 1);
+            busStopDTO.setBusId(bus.getBusId());
+            int busStopId = busStops.get(i).getBusStopId();
+            busStopDTO.setBusStopId(busStopId);
+            busStopDTO.setBusStopName(busStops.get(i).getBusStopName());
+            List<BusStopChildDTO> busStopChildren = getBusStopChildren(busStopId);
+            busStopDTO.setChildren(busStopChildren);
+            busStopDTOList.add(busStopDTO);
+        }
+        return busStopDTOList;
+    }
 }

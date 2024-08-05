@@ -2,6 +2,7 @@ package com.ssafy.kidslink.application.busstopchild.repository;
 
 import com.ssafy.kidslink.application.busstopchild.domain.BusStopChild;
 import com.ssafy.kidslink.application.child.domain.Child;
+import com.ssafy.kidslink.common.enums.BoardingStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -19,7 +20,7 @@ public interface BusStopChildRepository extends JpaRepository<BusStopChild, Inte
     @Transactional
     @Modifying
     @Query("UPDATE BusStopChild bsc SET bsc.busBoardingStatus = :status WHERE bsc.child.childId = :childId")
-    void updateBoardingStatus(@Param("childId") int childId, @Param("status") BusStopChild.BoardingStatus status);
+    void updateBoardingStatus(@Param("childId") int childId, @Param("status") BoardingStatus status);
 
     List<BusStopChild> findByChild(Child child);
 }

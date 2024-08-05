@@ -1,5 +1,6 @@
 package com.ssafy.kidslink.application.busstop.controller;
 
+import com.ssafy.kidslink.application.bus.dto.BusStopDTO;
 import com.ssafy.kidslink.application.busstop.domain.BusStop;
 import com.ssafy.kidslink.application.busstop.service.BusStopService;
 import com.ssafy.kidslink.application.busstopchild.dto.BusStopChildDTO;
@@ -48,6 +49,28 @@ public class BusStopController {
                 "success",
                 busStops,
                 "버스정류장 조회에 성공하였습니다.",
+                null
+        );
+
+        return new ResponseEntity<>(responseData, HttpStatus.OK);
+    }
+
+    @Operation(summary = "유치원 버스 정류장 전체 조회", description = "유치원 버스 정류장을 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "버스 정류장 조회 성공",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = APIResponse.class))),
+            @ApiResponse(responseCode = "500", description = "서버 오류",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = APIResponse.class)))
+    })
+    @GetMapping("/kindergarten/{kindergartenId}")
+    public ResponseEntity<APIResponse<List<BusStopDTO>>> getKindergartenAllBusStops(@PathVariable("kindergartenId") int kindergartenId) {
+        List<BusStopDTO> busStops = busStopService.getAllBusStopFromKindergarten(kindergartenId);
+        APIResponse<List<BusStopDTO>> responseData = new APIResponse<>(
+                "success",
+                busStops,
+                "유치원 버스정류장 조회에 성공하였습니다.",
                 null
         );
 
