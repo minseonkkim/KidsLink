@@ -32,6 +32,8 @@ export default function ParentMeeting() {
           data.map(async (meeting) => {
             try {
               const meetingInfo: MeetingInfo = await GetMeetingInfo(meeting.meetingId);
+              console.log(meetingInfo)
+              console.log("meetingInfo")
               return { teacherId: meetingInfo.teacherId, name: meetingInfo.teacherName };
             } catch (error) {
               console.error(`Error fetching meeting info for ID ${meeting.meetingId}:`, error);
@@ -41,10 +43,12 @@ export default function ParentMeeting() {
         );
 
         const teacherNamesMap = teacherNamesData.reduce((acc, curr) => {
-          acc[curr.teacherId] = curr.name;
+          acc["teacherName"] = curr.name;
           return acc;
         }, {} as { [key: number]: string });
         setTeacherNames(teacherNamesMap);
+        console.log(teacherNames)
+        console.log("teacherNames")
       } catch (error) {
         console.error("Failed to fetch confirmed meetings:", error);
       }
