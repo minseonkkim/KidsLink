@@ -7,8 +7,7 @@ import MeetingBackground from "../../assets/teacher/meeting_background.png";
 import { useTeacherInfoStore } from "../../stores/useTeacherInfoStore";
 import { getTeacherInfo } from "../../api/Info";
 import TeacherMeetingFooter from "../../components/openvidu/TeacherMeetingFooter";
-import { OpenViduState, Recording, TabState, User } from "../../types/openvidu";
-import { ControlState } from "../../types/meeting";
+import { ControlState, OpenViduState, Recording, TabState, User } from "../../types/openvidu";
 import { fetchRecordingsList, joinSession, leaveSession } from "../../utils/openvidu";
 
 export default function TeacherVideo() {
@@ -40,6 +39,8 @@ export default function TeacherVideo() {
   const [recordings, setRecordings] = useState<Recording[]>([]);
   const [currentRecordingId, setCurrentRecordingId] = useState<string | null>(null);
   const [isSessionJoined, setIsSessionJoined] = useState(false); 
+  const [myStreamId, setMyStreamId] = useState<string | undefined>(undefined);
+  const [otherVideoActive, setOtherVideoActive] = useState(false); // 상대방 비디오 상태 추가
 
   useEffect(() => {
     async function fetchTeacherInfo() {
@@ -90,61 +91,74 @@ export default function TeacherVideo() {
 
   return (
     <div className="relative flex flex-col justify-center items-center w-screen h-screen min-w-[1000px] overflow-hidden">
-    <img src={MeetingBackground} className="absolute top-0 left-0 w-full h-full object-cover" />
-    <div className="relative z-10 w-full h-full flex flex-col items-center">
-      <TeacherHeader />
-      {openvidu.session ? (
-        <div className="relative w-full h-full flex">
-          <div className="absolute top-[200px] left-[100px] w-[800px] h-auto rounded-lg bg-white">
-            <h1 className="p-3 text-l text-green-700">{user.username}님 화면</h1>
-            {openvidu.mainStreamManager && (
-              <OpenViduVideoComponent streamManager={openvidu.mainStreamManager} />
-            )}
+      <img src={MeetingBackground} className="absolute top-0 left-0 w-full h-full object-cover" />
+      <div className="relative z-10 w-full h-full flex flex-col items-center">
+        <TeacherHeader />
+        {openvidu.session ? (
+          <div className="relative w-full h-full flex">
+            <div className="absolute top-[200px] left-[100px] w-[800px] h-auto rounded-lg bg-white">
+              <h1 className="p-3 text-l text-green-700">{user.username}님 화면</h1>
+              {openvidu.mainStreamManager && (
+                <OpenViduVideoComponent streamManager={openvidu.mainStreamManager} />
+              )}
+            </div>
+            <div className="absolute top-[200px] right-[100px] w-[800px] h-auto rounded-lg bg-white">
+              <h1 className="p-3 text-l text-green-700">{parentName} 학부모님 화면</h1>
+              {openvidu.subscribers.map((sub, i) => (
+                <OpenViduVideoComponent
+                  key={i}
+                  streamManager={sub}
+                  muted={control.muted}
+                  volume={control.volume}
+                />
+              ))}
+            </div>
           </div>
-          <div className="absolute top-[200px] right-[100px] w-[800px] h-auto rounded-lg bg-white">
-            <h1 className="p-3 text-l text-green-700">{parentName}학부모님 화면</h1>
-            {openvidu.subscribers.map((sub, i) => (
-              <OpenViduVideoComponent
-                key={i}
-                streamManager={sub}
-                muted={control.muted}
-                volume={control.volume}
-              />
-            ))}
-          </div>
-        </div>
-      ) : (
-        <div className="flex flex-col justify-center items-center w-full h-full">
-          <div className="bg-white p-5 rounded-xl drop-shadow-md bg-[#]">
-            <p>상담번호 : {user.sessionId}</p>
-            <p>참가자 : {user.username}</p>
-            <p>안내문안내문안내문안내문안내문안내문</p>
-            <div className="flex justify-center mt-2">
-                <button onClick={() => joinSession(user, setOpenvidu, setIsSessionJoined)} className="w-[70px] h-[38px] border-[2px] border-[#7C7C7C] bg-[#E3EEFF] px-3 py-1 font-bold rounded-[8px] hover:bg-[#D4DDEA]">연결</button>
+        ) : (
+          <div className="flex flex-col justify-center items-center w-full h-full">
+            <div className="bg-white p-5 rounded-xl drop-shadow-md bg-[#]">
+              <p>상담번호 : {user.sessionId}</p>
+              <p>참가자 : {user.username}</p>
+              <p>안내문안내문안내문안내문안내문안내문</p>
+              <div className="flex justify-center mt-2">
+                <button
+                  onClick={() =>
+                    joinSession(
+                      user,
+                      setOpenvidu,
+                      setIsSessionJoined,
+                      setMyStreamId,
+                      setOtherVideoActive // 추가
+                    )
+                  }
+                  className="w-[70px] h-[38px] border-[2px] border-[#7C7C7C] bg-[#E3EEFF] px-3 py-1 font-bold rounded-[8px] hover:bg-[#D4DDEA]"
+                >
+                  연결
+                </button>
               </div>
+            </div>
           </div>
+        )}
+        {isSessionJoined && (
+          <TeacherMeetingFooter
+            control={control}
+            handleControl={setControl}
+            close={() => leaveSession(openvidu, setOpenvidu, setIsSessionJoined)}
+            stopRecording={handleStopRecording}
+            isRecording={true}
+          />
+        )}
+        <div className="recordings-list mt-4">
+          <h2>녹화 파일 목록</h2>
+          <ul>
+            {recordings.map((recording) => (
+              <li key={recording.id}>
+                {recording.name} - <a href={recording.url} target="_blank" rel="noopener noreferrer">다운로드</a>
+              </li>
+            ))}
+          </ul>
         </div>
-      )}
-      {isSessionJoined && (
-        <TeacherMeetingFooter
-          control={control}
-          handleControl={setControl}
-          close={() => leaveSession(openvidu, setOpenvidu, setIsSessionJoined)}
-          stopRecording={handleStopRecording}
-          isRecording={true}
-        />
-      )}
-      <div className="recordings-list mt-4">
-        <h2>녹화 파일 목록</h2>
-        <ul>
-          {recordings.map((recording) => (
-            <li key={recording.id}>
-              {recording.name} - <a href={recording.url} target="_blank" rel="noopener noreferrer">다운로드</a>
-            </li>
-          ))}
-        </ul>
       </div>
     </div>
-  </div>
   );
 }
