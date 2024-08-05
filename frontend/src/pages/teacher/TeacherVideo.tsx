@@ -95,14 +95,14 @@ export default function TeacherVideo() {
       <TeacherHeader />
       {openvidu.session ? (
         <div className="relative w-full h-full flex">
-          <div className="absolute top-[200px] left-[100px] w-[800px] h-auto rounded-lg border border-black text-center">
-            <h1>{user.username}님 화면</h1>
+          <div className="absolute top-[200px] left-[100px] w-[800px] h-auto rounded-lg bg-white">
+            <h1 className="p-3 text-l text-green-700">{user.username}님 화면</h1>
             {openvidu.mainStreamManager && (
               <OpenViduVideoComponent streamManager={openvidu.mainStreamManager} />
             )}
           </div>
-          <div className="absolute top-[200px] right-[100px] w-[800px] h-auto rounded-lg border border-black text-center">
-            <h1>{parentName}학부모님 화면</h1>
+          <div className="absolute top-[200px] right-[100px] w-[800px] h-auto rounded-lg bg-white">
+            <h1 className="p-3 text-l text-green-700">{parentName}학부모님 화면</h1>
             {openvidu.subscribers.map((sub, i) => (
               <OpenViduVideoComponent
                 key={i}
