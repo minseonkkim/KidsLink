@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 
-const SocialLoginRedirect = () => {
+export default function SocialLoginRedirect() {
   const navigate = useNavigate() // 빈칸이면 현재 페이지 유지
   const location = useLocation() // 현재 url경로 가져오기
 
@@ -21,4 +21,3 @@ const SocialLoginRedirect = () => {
   return <div>Redirecting...</div>
 }
 
-export default SocialLoginRedirect
