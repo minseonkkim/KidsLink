@@ -31,7 +31,8 @@ export   const isMeetingVisible = (meetingDate: string, meetingTime: string): bo
 
   // 날짜가 지난 상담은 보이지 않게 설정
   if (meetingDateTimeString < currentTimeString) {
-    return false;
+    // false로 바꿔줘야함
+    return true;
   }
 
   // 날짜가 같은 경우, 상담 시간이 지난 것만 보이지 않게 설정
