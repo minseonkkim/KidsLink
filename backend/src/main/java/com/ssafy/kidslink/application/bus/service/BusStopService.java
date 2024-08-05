@@ -1,13 +1,13 @@
-package com.ssafy.kidslink.application.busstop.service;
+package com.ssafy.kidslink.application.bus.service;
 
 import com.ssafy.kidslink.application.bus.domain.Bus;
 import com.ssafy.kidslink.application.bus.dto.BusStopDTO;
 import com.ssafy.kidslink.application.bus.repository.BusRepository;
-import com.ssafy.kidslink.application.busstop.domain.BusStop;
-import com.ssafy.kidslink.application.busstop.repository.BusStopRepository;
-import com.ssafy.kidslink.application.busstopchild.domain.BusStopChild;
-import com.ssafy.kidslink.application.busstopchild.dto.BusStopChildDTO;
-import com.ssafy.kidslink.application.busstopchild.repository.BusStopChildRepository;
+import com.ssafy.kidslink.application.bus.domain.BusStop;
+import com.ssafy.kidslink.application.bus.repository.BusStopRepository;
+import com.ssafy.kidslink.application.bus.domain.BusStopChild;
+import com.ssafy.kidslink.application.bus.dto.BusStopChildDTO;
+import com.ssafy.kidslink.application.bus.repository.BusStopChildRepository;
 import com.ssafy.kidslink.application.child.domain.Child;
 import com.ssafy.kidslink.application.child.repository.ChildRepository;
 import com.ssafy.kidslink.application.kindergarten.domain.Kindergarten;
@@ -30,8 +30,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -56,40 +54,58 @@ public class BusStopService {
         List<BusStopChild> busStopChildList = busStopChildRepository.findByBusStopId(busStopId);
         List<BusStopChildDTO> busStopChildren = new ArrayList<>();
 
-        for(BusStopChild busStopChild : busStopChildList.stream().toList()){
+        for(BusStopChild busStopChild : busStopChildList){
             BusStopChildDTO busStopChildDTO = new BusStopChildDTO();
 
-            busStopChildDTO.setChildName(busStopChild.getChild().getChildName());
-            busStopChildDTO.setParentTel(busStopChild.getChild().getParent().getParentTel());
+            Child child = busStopChild.getChild();
+
+            busStopChildDTO.setChildName(child.getChildName());
+            busStopChildDTO.setParentTel(child.getParent().getParentTel());
             busStopChildDTO.setStatus(busStopChild.getBusBoardingStatus());
 
             busStopChildren.add(busStopChildDTO);
         }
 
-         return busStopChildren;
-
+        return busStopChildren;
     }
 
-    public void isBoarding(int childId){
-        Child child = childRepository.findById(childId).get();
-        if (busStopChildRepository.findByChild(child).iterator().next().getBusBoardingStatus() == BoardingStatus.F) {
-            busStopChildRepository.updateBoardingStatus(childId, BoardingStatus.T);
+    public void isBoarding(int childId) {
+        Child child = childRepository.findById(childId).orElseThrow();
+        // 버스 정류장 현재 비즈니스 상 아이당 1개
+        BusStopChild busStop = busStopChildRepository.findByChild(child);
+        if (busStop.getBusBoardingStatus() == BoardingStatus.F) {
+            busStop.setBusBoardingStatus(BoardingStatus.T);
         } else {
-            busStopChildRepository.updateBoardingStatus(childId, BoardingStatus.F);
+            busStop.setBusBoardingStatus(BoardingStatus.F);
         }
+        // save == UPDATE
+        busStopChildRepository.save(busStop);
     }
 
-    public BusStopChildDTO getBusStopChild(String Username){
+    public BusStopChildDTO getBusStopChildByParentUsername(String Username) {
         Parent parent = parentRepository.findByParentUsername(Username);
+        // TODO #1 비즈니스 로직상 변경되면 바꿔야 함. 부모(1) - (N)아이 관계
         Child child = parent.getChildren().iterator().next();
 
-        BusStopChild busStopChild = busStopChildRepository.findByChild(child).iterator().next();
+        BusStopChildDTO busStopChild = getBusStopChildByChild(child);
+        return busStopChild;
+    }
+
+    public BusStopChildDTO getBusStopChildByChildId(int childId){
+        Child child = childRepository.findById(childId).orElseThrow();
+
+        BusStopChildDTO busStopChild = getBusStopChildByChild(child);
+        return busStopChild;
+    }
+
+
+    public BusStopChildDTO getBusStopChildByChild(Child child) {
+        BusStopChild busStopChild = busStopChildRepository.findByChild(child);
 
         BusStopChildDTO busStopChildDTO = new BusStopChildDTO();
-        busStopChildDTO.setChildName(busStopChild.getChild().getChildName());
+        busStopChildDTO.setChildName(child.getChildName());
         busStopChildDTO.setStatus(busStopChild.getBusBoardingStatus());
-        busStopChildDTO.setParentTel(busStopChild.getChild().getParent().getParentTel());
-
+        busStopChildDTO.setParentTel(child.getParent().getParentTel());
         return busStopChildDTO;
     }
 
