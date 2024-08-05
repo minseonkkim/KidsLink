@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import { getAllPossibleReservations, postAllPossibleReservations, Reservation, ParentReservation } from "../../api/meeting";
+import { getAllPossibleReservations, postAllPossibleReservations, } from "../../api/meeting";
 import { useNavigate } from "react-router-dom";
 import Modal from "../../components/parent/common/Modal";
+import { ParentReservation, Reservation } from "../../types/meeting";
 
 const ParentMeetingSubmit = () => {
   const [reservations, setReservations] = useState<Reservation[]>([]);

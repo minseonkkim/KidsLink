@@ -3,8 +3,9 @@ import InfoSection from "../../components/parent/common/InfoSection"
 import MeetingList from "../../components/parent/meeting/MeetingList"
 import daramgi from "../../assets/parent/meeting-daramgi.png"
 import meetingTimeIcon from "../../assets/parent/meeting.png"
-import { GetConfirmedMeeting, ParentTeacherMeeting, GetMeetingInfo } from "../../api/meeting"
+import { GetConfirmedMeeting, GetMeetingInfo } from "../../api/meeting"
 import { useNavigate } from "react-router-dom"
+import { ParentTeacherMeeting } from "../../types/meeting"
 
 export interface MeetingInfo {
   id: number;

@@ -200,15 +200,15 @@ public class MeetingTimeController {
     }
 
     @PostMapping("/confirm")
-    public ResponseEntity<APIResponse<Void>> confirmMeeting(@AuthenticationPrincipal Object principal){
+    public ResponseEntity<APIResponse<List<MeetingRoomDTO>>> confirmMeeting(@AuthenticationPrincipal Object principal){
         if(principal instanceof CustomUserDetails){
             CustomUserDetails userDetails = (CustomUserDetails) principal;
 
-            meetingTimeService.confirmMeeting(userDetails.getUsername());
+            List<MeetingRoomDTO> meetings = meetingTimeService.confirmMeeting(userDetails.getUsername());
             meetingTimeService.deleteMeeting(userDetails.getUsername());
-            APIResponse<Void> responseData = new APIResponse<>(
+            APIResponse<List<MeetingRoomDTO>> responseData = new APIResponse<>(
                     "success",
-                    null,
+                    meetings,
                     "상담 일정 확정에 성공하였습니다.",
                     null
             );
@@ -216,7 +216,7 @@ public class MeetingTimeController {
         }
         APIError apiError = new APIError("UNAUTHORIZED", "유효한 JWT 토큰이 필요합니다.");
 
-        APIResponse<Void> responseData = new APIResponse<>(
+        APIResponse<List<MeetingRoomDTO>> responseData = new APIResponse<>(
                 "fail",
                 null,
                 "상담 일정 확정을 실패했습니다.",
@@ -224,6 +224,34 @@ public class MeetingTimeController {
         );
 
         return new ResponseEntity<>(responseData, HttpStatus.BAD_REQUEST);
+    }
+
+    @GetMapping("/selected")
+    public ResponseEntity<APIResponse<List<SelectedMeetingDTO>>> getSelectedMeetings(@AuthenticationPrincipal Object principal){
+        if(principal instanceof CustomUserDetails){
+            CustomUserDetails userDetails = (CustomUserDetails) principal;
+            List<SelectedMeetingDTO> meetings = meetingTimeService.getSelectedMeetings(userDetails.getUsername());
+
+            APIResponse<List<SelectedMeetingDTO>> responseData = new APIResponse<>(
+                    "success",
+                    meetings,
+                    "부모가 선택한 모든 상담 일정 조회에 성공하였습니다.",
+                    null
+            );
+            return new ResponseEntity<>(responseData, HttpStatus.OK);
+        }
+        APIError apiError = new APIError("UNAUTHORIZED", "유효한 JWT 토큰이 필요합니다.");
+
+        APIResponse<List<SelectedMeetingDTO>> responseData = new APIResponse<>(
+                "fail",
+                null,
+                "부모가 선택한 모든 상담 일정 조회에 실패했습니다.",
+                apiError
+        );
+
+        return new ResponseEntity<>(responseData, HttpStatus.BAD_REQUEST);
+
+
     }
 
     @GetMapping("/{meetingId}")

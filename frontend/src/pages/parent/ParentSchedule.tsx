@@ -6,6 +6,44 @@ import { getAllParentSchedules, getParentSchedules } from "../../api/schedule"; 
 import styled from "styled-components";
 import 'react-calendar/dist/Calendar.css'; // react-calendar 기본 스타일
 
+
+interface DosageSchedule {
+  dosageId: number;
+  startDate: string;
+  endDate: string;
+  name: string;
+  volume: string;
+  times: string;
+  details: string;
+}
+
+interface AbsentSchedule {
+  absentId: number;
+  startDate: string;
+  endDate: string;
+  reason: string;
+  details: string;
+}
+
+interface KindergartenSchedule {
+  id: number;
+  date: string;
+  content: string;
+}
+
+interface MeetingSchedule {
+  meetingId: number;
+  meetingDate: string;
+  meetingTime: string;
+}
+
+interface DetailedSchedule {
+  dosageSchedules: DosageSchedule[];
+  absentSchedules: AbsentSchedule[];
+  kindergartenSchedules: KindergartenSchedule[];
+  meetingSchedules: MeetingSchedule[];
+}
+
 const StyledCalendar = styled(Calendar)`
   * {
     margin: 0;
@@ -138,8 +176,8 @@ const ParentSchedule: React.FC = () => {
     }
   }, [selectedDate]);
 
-  const handleDateClick = (value: Date) => {
-    const formattedDate = moment(value).format("YYYY-MM-DD");
+  const handleDateClick = (date: Date, ) => {
+    const formattedDate = moment(date).format("YYYY-MM-DD");
     setSelectedDate(formattedDate);
     setValue(value);
   };
@@ -164,7 +202,7 @@ const ParentSchedule: React.FC = () => {
             <div className="w-full relative overflow-hidden rounded-2xl">
               <StyledCalendar
                 locale="ko"
-                onChange={handleDateClick}
+                onChange={(date) => handleDateClick(date as Date)}
                 value={value}
                 next2Label={null}
                 prev2Label={null}

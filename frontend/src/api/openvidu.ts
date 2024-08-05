@@ -9,7 +9,12 @@ interface Recording {
   name: string;
   url: string; // Assuming the URL to access the recording is available
 }
-
+declare global {
+  interface Window {
+    SpeechRecognition: any;
+    webkitSpeechRecognition: any;
+  }
+}
 export const getToken = async (mySessionId: string): Promise<string> => {
   const sessionId = await createSession(mySessionId);
   return await createToken(sessionId);

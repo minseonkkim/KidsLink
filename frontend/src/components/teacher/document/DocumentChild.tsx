@@ -1,5 +1,4 @@
 import { ImCheckboxChecked } from "react-icons/im";
-import React from "react";
 import Skeleton from "react-loading-skeleton";
 import 'react-loading-skeleton/dist/skeleton.css';
 
@@ -28,7 +27,7 @@ export default function DocumentChild({type, name, profileImgPath, finish}: Docu
                     <img src={profileImgPath} className="w-full h-full rounded-full object-cover" />
                 )}
             </div>
-            <div className="font-bold mx-3 text-[21px]">
+            <div className="font-bold mx-3 text-[21px] w-[74px]">
                 {name==="" ? <Skeleton width={100} /> : name}
             </div>
             {finish === "T" && <ImCheckboxChecked className="mx-[10px] w-[20px] h-[20px]"/>}
