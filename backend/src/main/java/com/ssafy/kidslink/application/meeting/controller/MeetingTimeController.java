@@ -226,6 +226,34 @@ public class MeetingTimeController {
         return new ResponseEntity<>(responseData, HttpStatus.BAD_REQUEST);
     }
 
+    @GetMapping("/selected")
+    public ResponseEntity<APIResponse<List<SelectedMeetingDTO>>> getSelectedMeetings(@AuthenticationPrincipal Object principal){
+        if(principal instanceof CustomUserDetails){
+            CustomUserDetails userDetails = (CustomUserDetails) principal;
+            List<SelectedMeetingDTO> meetings = meetingTimeService.getSelectedMeetings(userDetails.getUsername());
+
+            APIResponse<List<SelectedMeetingDTO>> responseData = new APIResponse<>(
+                    "success",
+                    meetings,
+                    "부모가 선택한 모든 상담 일정 조회에 성공하였습니다.",
+                    null
+            );
+            return new ResponseEntity<>(responseData, HttpStatus.OK);
+        }
+        APIError apiError = new APIError("UNAUTHORIZED", "유효한 JWT 토큰이 필요합니다.");
+
+        APIResponse<List<SelectedMeetingDTO>> responseData = new APIResponse<>(
+                "fail",
+                null,
+                "부모가 선택한 모든 상담 일정 조회에 실패했습니다.",
+                apiError
+        );
+
+        return new ResponseEntity<>(responseData, HttpStatus.BAD_REQUEST);
+
+
+    }
+
     @GetMapping("/{meetingId}")
     public ResponseEntity<APIResponse<MeetingRoomDTO>> enterMeeting(@AuthenticationPrincipal Object principal,
                                                                     @Parameter(description = "상담 ID") @PathVariable int meetingId){
