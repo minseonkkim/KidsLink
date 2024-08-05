@@ -18,36 +18,37 @@ interface MeetingFooterProps {
 
 const ParentMeetingFooter: React.FC<MeetingFooterProps> = ({ control, handleControl, close }) => {
   return (
-    <div className="fixed w-full bottom-[0px] mb-[80px] bg-transparent flex px-10 py-3 text-white rounded-full z-50 justify-between gap-4">
+    <div className="fixed flex items-center jusstify-center w-full h-[100px] bottom-0 bg-transparent flex px-10 py-3 text-white rounded-full z-50 gap-4">
       <div className="flex gap-6">
-          {control.video ? (
-            <IoVideocam
-              className="cursor-pointer text-5xl text-white"
-              onClick={() => handleControl((prev) => ({ ...prev, video: false }))}
-            />
-          ) : (
-            <IoVideocamOff
-              className="cursor-pointer text-5xl text-[#B8B8B8]"
-              onClick={() => handleControl((prev) => ({ ...prev, video: true }))}
-            />
-          )}
-          {control.mic ? (
-            <IoMic
-              className="cursor-pointer text-5xl text-white"
-              onClick={() => handleControl((prev) => ({ ...prev, mic: false }))}
-            />
-          ) : (
-            <IoMicOff
-              className="cursor-pointer text-5xl text-[#B8B8B8]"
-              onClick={() => handleControl((prev) => ({ ...prev, mic: true }))}
-            />
-          )}
-      </div>
-      <div className="flex flex-col justify-center items-center gap-2 w-22">
-          <ImExit
-            className="text-5xl cursor-pointer text-white"
-            onClick={close}
+        {control.video ? (
+          <IoVideocam
+            className="cursor-pointer text-4xl text-white"
+            onClick={() => handleControl((prev) => ({ ...prev, video: false }))}
           />
+        ) : (
+          <IoVideocamOff
+            className="cursor-pointer text-4xl text-[#B8B8B8]"
+            onClick={() => handleControl((prev) => ({ ...prev, video: true }))}
+          />
+        )}
+        {control.mic ? (
+          <IoMic
+            className="cursor-pointer text-4xl text-white"
+            onClick={() => handleControl((prev) => ({ ...prev, mic: false }))}
+          />
+        ) : (
+          <IoMicOff
+            className="cursor-pointer text-4xl text-[#B8B8B8]"
+            onClick={() => handleControl((prev) => ({ ...prev, mic: true }))}
+          />
+        )}
+      </div>
+      <div className="flex-grow"></div>
+      <div className="flex flex-col justify-center items-center gap-2">
+        <ImExit
+          className="text-4xl cursor-pointer text-white"
+          onClick={close}
+        />
       </div>
     </div>
   );
