@@ -33,3 +33,37 @@ export async function getKidBoardingStatus() {
     throw error
   }
 }
+
+// 모든 정류장 조회
+export async function getAllBusStops(kindergartenId: number) {
+  try {
+    const response = await axiosInstance.get(`busstop/kindergarten/${kindergartenId}`)
+
+    if (response.data.status === 'success') {
+      console.log(response.data.data) // 확인 후 삭제
+      return response.data.data
+    } else {
+      throw new Error('Failed to get all-busstops')
+    }
+  } catch (error) {
+    console.error(error)
+    throw error
+  }
+}
+
+// 특정 정류장 조회
+export async function getBusStop(busStopId: number) {
+  try {
+    const response = await axiosInstance.get(`busstop/${busStopId}`)
+
+    if (response.data.status === 'success') {
+      console.log(response.data.data) // 확인 후 삭제
+      return response.data.data
+    } else {
+      throw new Error('Failed to get busstop')
+    }
+  } catch (error) {
+    console.error(error)
+    throw error
+  }
+}
