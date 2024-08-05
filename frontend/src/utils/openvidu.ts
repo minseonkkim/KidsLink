@@ -1,4 +1,4 @@
-import { OpenVidu, StreamEvent } from "openvidu-browser";
+import { OpenVidu, StreamEvent, StreamPropertyChangedEvent } from "openvidu-browser";
 import { fetchRecordings, getToken } from "../api/openvidu";
 import { OpenViduState, Recording, User } from "../types/openvidu";
 import { getParentInfo } from "../api/Info";
@@ -6,7 +6,8 @@ import { getParentInfo } from "../api/Info";
 export const joinSession = async (
   user: User,
   setOpenvidu: React.Dispatch<React.SetStateAction<OpenViduState>>,
-  setIsSessionJoined: React.Dispatch<React.SetStateAction<boolean>>
+  setIsSessionJoined: React.Dispatch<React.SetStateAction<boolean>>,
+  setTeacherVideoActive: React.Dispatch<React.SetStateAction<boolean>>
 ) => {
   if (!user.sessionId) return;
   const OV = new OpenVidu();
@@ -16,11 +17,12 @@ export const joinSession = async (
   // 이벤트 등록
   session.on("streamCreated", (event: StreamEvent) => {
     try {
-      const subscriber = session.subscribe(event.stream, undefined);
+      const subscriber = session.subscribe(event.stream, undefined, { insertMode: "REPLACE" });
       setOpenvidu((prevOpenvidu) => ({
         ...prevOpenvidu,
         subscribers: [...prevOpenvidu.subscribers, subscriber],
       }));
+      console.log(subscriber)
     } catch (error) {
       console.error("Error during stream subscription:", error);
     }
@@ -38,6 +40,14 @@ export const joinSession = async (
 
   session.on("exception", (exception) => {
     console.warn(exception);
+  });
+
+  // 새로운 이벤트 등록: streamPropertyChanged
+  session.on("streamPropertyChanged", (event: StreamPropertyChangedEvent) => {
+    if (event.changedProperty === "videoActive") {
+      console.log("Video state changed for stream", event.stream.streamId, ":", event.newValue);
+      setTeacherVideoActive(event.newValue);
+    }
   });
 
   const token = await getToken(user.sessionId);
