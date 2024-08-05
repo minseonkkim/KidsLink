@@ -86,6 +86,8 @@ public class AlbumService {
         Map<String, Object> payload = new HashMap<>();
         payload.put("reference", referenceImages);
         payload.put("classify", classifies);
+        log.debug("reference - {}", referenceImages);
+        log.debug("classify - {}", classifies);
 
         // Set headers
         HttpHeaders headers = new HttpHeaders();
