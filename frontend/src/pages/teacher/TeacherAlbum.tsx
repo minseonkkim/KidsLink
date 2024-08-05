@@ -30,14 +30,15 @@ export default function TeacherAlbum() {
       <div className="px-[150px] mt-[120px]">
         <NavigateBack backPage="홈" backLink='/'/>
         <Title title="사진분류"/>
-        <div className={`h-[470px] flex flex-row items-center ${images.length === 0 ? 'justify-center' : 'justify-between'}`}>
+        <div className={`h-[470px] flex flex-row items-center ${images.length === 0 || loading ? 'justify-center' : 'justify-between'}`}>
+          {!loading &&
           <div className={`flex flex-col items-center ${images.length === 0 ? 'mx-auto' : ''}`}>
             <label className="flex flex-col items-center justify-center bg-[#FFF9D7] border-[#FFE96F] border-[2px] w-[300px] h-[300px] rounded-[360px] p-6 cursor-pointer">
               <FiUpload className="text-[70px] mb-5"/>
               <span className="text-[20px] font-bold">사진업로드</span>
               <input type="file" multiple className="hidden" onChange={(event) => handleImageUpload(event, setImages)} />
             </label>
-          </div>
+          </div>}
           {images.length > 0 && (
             <div className="flex flex-col justify-center items-center mt-8 relative">
               <div className={`grid grid-cols-5 gap-4 overflow-y-auto h-[442px] border-[#B2D170] border-[1px] mt-10 rounded-[10px] content-start p-3 ${loading ? 'bg-[#f4f4f4] opacity-50' : ''}`}>
