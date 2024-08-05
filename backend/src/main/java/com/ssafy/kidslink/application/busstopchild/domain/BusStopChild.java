@@ -2,6 +2,7 @@ package com.ssafy.kidslink.application.busstopchild.domain;
 
 import com.ssafy.kidslink.application.busstop.domain.BusStop;
 import com.ssafy.kidslink.application.child.domain.Child;
+import com.ssafy.kidslink.common.enums.BoardingStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -29,10 +30,6 @@ public class BusStopChild {
     @Column(name = "bus_boarding_status")
     @Enumerated(EnumType.STRING)
     private BoardingStatus busBoardingStatus;
-
-    public enum BoardingStatus {
-        T, F
-    }
 }
 
 class BusStopChildId implements Serializable {
