@@ -19,6 +19,7 @@ export default function ParentBus() {
   const [location, setLocation] = useState({ lat: 37.5665, lng: 126.9780 });
   const [isBoarding, setIsBoarding] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [isMoving,setIsMoving] = useState(false);
   const [parentInfo, setParentInfo] = useState(null);
   const [childId, setChildId] = useState<number | null>(null);
 
