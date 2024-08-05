@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import useAppStore from '../../stores/store'
 
-const SocialJoinRedirect = () => {
+export default function SocialJoinRedirect() {
   const navigate = useNavigate() // 빈칸이면 현재 페이지 유지
   const location = useLocation() // 현재 url경로 가져오기
   const { setIsSocialLogin } = useAppStore()
@@ -23,4 +23,3 @@ const SocialJoinRedirect = () => {
   return <div>Redirecting...</div>
 }
 
-export default SocialJoinRedirect
