@@ -6,7 +6,7 @@ import { FaMicrophone, FaMicrophoneSlash } from "react-icons/fa";
 import { TeacherMeetingFooterProps } from "../../types/meeting";
 
 
-const TeacherMeetingFooter: React.FC<TeacherMeetingFooterProps> = ({ control, handleControl, close, startRecording, stopRecording, isRecording }) => {
+const TeacherMeetingFooter: React.FC<TeacherMeetingFooterProps> = ({ control, handleControl, close, stopRecording, isRecording }) => {
 
   const isMuted = control.muted || control.volume === 0;
 
