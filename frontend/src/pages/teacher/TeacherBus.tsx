@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import BusChild from "../../components/teacher/bus/BusChild";
 import NavigateBack from "../../components/teacher/common/NavigateBack";
 import TeacherHeader from "../../components/teacher/common/TeacherHeader";
@@ -8,6 +8,7 @@ import { MdNavigateBefore, MdNavigateNext } from "react-icons/md";
 import { startWebSocket, stopWebSocket } from '../../api/webSocket';
 import { getAllBusStops } from '../../api/bus'; // 함수가 정의된 파일에서 import
 import { useBusStore } from '../../stores/useBusStore'
+
 const WEBSOCKET_URL = import.meta.env.VITE_WEBSOCKET_URL;
 
 export default function TeacherBus() {
@@ -141,9 +142,15 @@ export default function TeacherBus() {
                 <div className="flex items-center justify-center font-bold w-[60px]">탑승여부</div>
               </div>
               <div className="w-[360px] h-[370px] overflow-auto custom-scrollbar">
-                {currentStop.children.map(({ childName, parentTel, status, checked }, idx) => (
-                  <BusChild key={idx} busStopId={currentStop.busStopId} childName={childName} parentTel={parentTel} status={status} checked={checked} />
-                ))}
+                {currentStop.children.length > 0 ? (
+                  currentStop.children.map(({ childName, parentTel, status, checked }, idx) => (
+                    <BusChild key={idx} busStopId={currentStop.busStopId} childName={childName} parentTel={parentTel} status={status} checked={checked} />
+                  ))
+                ) : (
+                  <div className="relative h-full">
+                    <p className="absolute top-[40%] left-0 right-0 text-center text-[20px] text-gray-500">탑승 인원이 없습니다</p>
+                  </div>
+                )}
               </div>
             </div>
           </div>
