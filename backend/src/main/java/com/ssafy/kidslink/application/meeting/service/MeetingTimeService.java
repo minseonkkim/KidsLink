@@ -146,13 +146,16 @@ public class MeetingTimeService {
     }
 
 
-    public void confirmMeeting(String teacherUsername) {
+    public List<MeetingRoomDTO> confirmMeeting(String teacherUsername) {
         Teacher teacher = teacherRepository.findByTeacherUsername(teacherUsername);
         List<SelectedMeeting> meetings = selectedMeetingRepository.findByTeacher(teacher);
         List<MeetingSchedule> meetingSchedules = allocateMeetings(meetings, teacher);
+        List<MeetingRoomDTO> confirmMeetings = new ArrayList<>();
 
         for (MeetingSchedule meetingSchedule : meetingSchedules) {
             meetingScheduleRepository.save(meetingSchedule);
+            confirmMeetings.add(meetingScheduleMapper.toMeetingRoomDTO(meetingSchedule));
+
         }
 
         // TODO #1 부모한테 예약 확정 알림 보내기 -> 부모 한명에게만 보내기
@@ -166,6 +169,8 @@ public class MeetingTimeService {
 
             parentNotificationRepository.save(parentNotification);
         }
+
+        return confirmMeetings;
     }
 
     private List<MeetingSchedule> allocateMeetings(List<SelectedMeeting> meetings, Teacher teacher) {

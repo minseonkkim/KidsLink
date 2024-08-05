@@ -5,7 +5,7 @@ import ProgressBar from "../ProgressBar"
 import ProfileImageUpload from "../ProfileImageUpload"
 import MainInfo from "../MainInfo"
 import SubInfo from "../SubInfo"
-import defaultProfileImg from "../../../assets/join/default-profile.png"
+// import defaultProfileImg from "../../../assets/join/default-profile.png"
 
 interface TeacherFormStep1Props {
   onNext: () => void;
@@ -57,7 +57,7 @@ export default function TeacherFormStep1({ onNext }: TeacherFormStep1Props) {
       return
     }
     
-    if (!isSocialLogin && (!username || !password || !passwordConfirm || !name)) { // 추가
+    if (!isSocialLogin && (!username || !password || !passwordConfirm || !name || username.trim() === "")) { // 추가
       alert("모든 필수 항목을 입력해주세요.")
       return
     }
