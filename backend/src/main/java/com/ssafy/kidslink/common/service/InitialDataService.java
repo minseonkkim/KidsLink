@@ -90,7 +90,9 @@ public class InitialDataService {
     @Value("${file.profile-dir}")
     private String profileDir;
 
-    private List<ImageDTO> initProfiles = new ArrayList<>();
+    private final List<ImageDTO> initProfiles = new ArrayList<>();
+    private final List<ImageDTO> child2Profiles = new ArrayList<>();
+    private final List<ImageDTO> child3Profiles = new ArrayList<>();
 
     @Transactional
     public String initializeData() {
@@ -116,7 +118,7 @@ public class InitialDataService {
         teacherRepository.saveAll(getTeachers(kindergartenClasses));
 
         // TODO #5 유치원생 데이터 삽입
-        List<Child> children = getChildren(parents, kindergartenClasses.get(0));
+        List<Child> children = getChildren(parents, kindergartenClasses);
         childRepository.saveAll(children);
 
         // TODO #6 알림장 데이터 삽입
@@ -160,12 +162,21 @@ public class InitialDataService {
 
     private void saveInitProfiles() {
         String[] imageFiles = {"child1.jpg", "child2.jpg", "child3.jpg", "child4.jpg", "child5.jpg", "child6.jpg", "child7.jpg", "child8.jpg", "child9.jpg", "child10.jpg", "child11.jpg", "child12.jpg", "child13.jpg"};
-        for (String imageFile : imageFiles) {
+        String[] imageFiles2 = {"child21.jpg", "child22.jpg", "child23.jpg", "child24.jpg"};
+        String[] imageFiles3 = {"child31.jpg", "child32.jpg", "child33.jpg", "child34.jpg"};
+
+        uploadProfiles(imageFiles, initProfiles);
+        uploadProfiles(imageFiles2, child2Profiles);
+        uploadProfiles(imageFiles3, child3Profiles);
+    }
+
+    private void uploadProfiles(String[] imageFiles2, List<ImageDTO> child2Profiles) {
+        for (String imageFile : imageFiles2) {
             File imageFileObj = new File(profileDir, imageFile);
             try {
                 MultipartFile multipartFile = convertFileToMultipartFile(imageFileObj);
                 ImageDTO imageDTO = imageService.storeFile(multipartFile);
-                initProfiles.add(imageDTO);
+                child2Profiles.add(imageDTO);
             } catch (IOException e) {
                 throw new RuntimeException("앨범 초기화 중 사진 저장 오류", e);
             }
@@ -281,12 +292,12 @@ public class InitialDataService {
 
     private List<Parent> getParents() {
         List<Parent> parents = new ArrayList<>();
-        String[] usernames = {"parent1", "parent2", "parent3", "parent4", "parent5", "parent6", "parent7", "parent8", "parent9", "parent10"};
-        String[] names = {"김철수", "이영희", "박민수", "최수영", "장준호", "강현우", "오세영", "윤지현", "정우성", "한지민"};
-        String[] passwords = {"parent1", "parent2", "parent3", "parent4", "parent5", "parent6", "parent7", "parent8", "parent9", "parent10"};
-        String[] nicknames = {"철수아빠", "영희엄마", "민수아빠", "수영엄마", "준호아빠", "현우엄마", "세영아빠", "지현엄마", "우성아빠", "지민엄마"};
-        String[] tels = {"010-1111-1111", "010-2222-2222", "010-3333-3333", "010-4444-4444", "010-5555-5555", "010-6666-6666", "010-7777-7777", "010-8888-8888", "010-9999-9999", "010-1010-1010"};
-        String[] emails = {"user1@example.com", "user2@example.com", "user3@example.com", "user4@example.com", "user5@example.com", "user6@example.com", "user7@example.com", "user8@example.com", "user9@example.com", "user10@example.com"};
+        String[] usernames = {"parent1", "parent2", "parent3", "parent4", "parent5", "parent6", "parent7", "parent8", "parent9", "parent10", "parent11", "parent12", "parent13", "parent14", "parent15", "parent16", "parent17", "parent18"};
+        String[] names = {"김철수", "이영희", "박민수", "최수영", "장준호", "강현우", "오세영", "윤지현", "정우성", "한지민", "홍길동", "임꺽정", "유재석", "강호동", "김혜수", "신민아", "송강호", "이정재"};
+        String[] passwords = {"parent1", "parent2", "parent3", "parent4", "parent5", "parent6", "parent7", "parent8", "parent9", "parent10", "parent11", "parent12", "parent13", "parent14", "parent15", "parent16", "parent17", "parent18"};
+        String[] nicknames = {"철수아빠", "영희엄마", "민수아빠", "수영엄마", "준호아빠", "현우엄마", "세영아빠", "지현엄마", "우성아빠", "지민엄마", "길동아빠", "꺽정엄마", "재석아빠", "호동엄마", "혜수아빠", "민아엄마", "강호아빠", "정재엄마"};
+        String[] tels = {"010-1111-1111", "010-2222-2222", "010-3333-3333", "010-4444-4444", "010-5555-5555", "010-6666-6666", "010-7777-7777", "010-8888-8888", "010-9999-9999", "010-1010-1010", "010-1111-2222", "010-2222-3333", "010-3333-4444", "010-4444-5555", "010-5555-6666", "010-6666-7777", "010-7777-8888", "010-8888-9999"};
+        String[] emails = {"user1@example.com", "user2@example.com", "user3@example.com", "user4@example.com", "user5@example.com", "user6@example.com", "user7@example.com", "user8@example.com", "user9@example.com", "user10@example.com", "user11@example.com", "user12@example.com", "user13@example.com", "user14@example.com", "user15@example.com", "user16@example.com", "user17@example.com", "user18@example.com"};
 
         for (int i = 0; i < usernames.length; i++) {
             Parent parent = new Parent();
@@ -296,7 +307,9 @@ public class InitialDataService {
             parent.setParentNickname(nicknames[i]);
             parent.setParentTel(tels[i]);
             parent.setParentEmail(emails[i]);
-            parent.setParentProfile(initProfiles.get(i).getPath());
+            if (initProfiles.size() > i) {
+                parent.setParentProfile(initProfiles.get(i).getPath());
+            }
             parents.add(parent);
         }
 
@@ -328,23 +341,48 @@ public class InitialDataService {
         return teachers;
     }
 
-    private List<Child> getChildren(List<Parent> parents, KindergartenClass kindergartenClass) {
+    private List<Child> getChildren(List<Parent> parents, List<KindergartenClass> kindergartenClasses) {
         List<Child> children = new ArrayList<>();
         String[] childNames = {"김하늘", "이민호", "박서연", "최우진", "장예빈", "강지후", "오수아", "윤도현", "정수지", "한지우"};
         Gender[] genders = {Gender.F, Gender.M, Gender.F, Gender.M, Gender.F, Gender.M, Gender.F, Gender.M, Gender.F, Gender.F};
         String[] births = {"2015-05-01", "2016-08-15", "2014-11-20", "2015-01-30", "2016-02-14", "2015-07-07", "2016-09-09", "2014-12-25", "2015-04-04", "2016-03-03"};
 
-        for (int i = 0; i < parents.size(); i++) {
+        for (int i = 0; i < childNames.length; i++) {
             Child child = new Child();
             child.setChildName(childNames[i]);
             child.setChildGender(genders[i]);
             child.setChildBirth(births[i]);
             child.setChildProfile(initProfiles.get(i).getPath());
             child.setParent(parents.get(i));
-            child.setKindergartenClass(kindergartenClass); // 유치원 반을 순환하며 할당
+            child.setKindergartenClass(kindergartenClasses.get(0)); // 유치원 1반
             children.add(child);
         }
 
+        String[] childNames2 = {"민지", "하니", "해린", "김용명"};
+        Gender[] genders2 = {Gender.F, Gender.F, Gender.F, Gender.M};
+        for (int i = 0; i < childNames2.length; i++) {
+            Child child = new Child();
+            child.setChildName(childNames2[i]);
+            child.setChildGender(genders2[i]);
+            child.setChildBirth(births[i]);
+            child.setChildProfile(child2Profiles.get(i).getPath());
+            child.setParent(parents.get(i + 10));
+            child.setKindergartenClass(kindergartenClasses.get(1)); // 유치원 2반
+            children.add(child);
+        }
+
+        String[] childNames3 = {"도하영", "이로", "하오", "윌리엄"};
+        Gender[] genders3 = {Gender.F, Gender.F, Gender.M, Gender.M};
+        for (int i = 0; i < childNames3.length; i++) {
+            Child child = new Child();
+            child.setChildName(childNames3[i]);
+            child.setChildGender(genders3[i]);
+            child.setChildBirth(births[i]);
+            child.setChildProfile(child3Profiles.get(i).getPath());
+            child.setParent(parents.get(i + 14));
+            child.setKindergartenClass(kindergartenClasses.get(2)); // 유치원 3반
+            children.add(child);
+        }
 
         return children;
     }

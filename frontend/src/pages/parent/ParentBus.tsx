@@ -1,6 +1,9 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import InfoSection from "../../components/parent/common/InfoSection";
+import daramgi from "../../assets/parent/bus-daramgi.png";
 import busIcon from '../../assets/parent/busIcon.png';
 import { receiveBusLocation } from '../../api/webSocket';
+import { postKidBoardingStatus, getKidBoardingStatus } from '../../api/bus';
 
 declare global {
   interface Window {
@@ -12,8 +15,8 @@ export default function ParentBus() {
   const mapContainer = useRef<HTMLDivElement>(null);
   const wsRef = useRef<WebSocket | null>(null);
   const [location, setLocation] = useState({ lat: 37.5665, lng: 126.9780 });
-  const [isBusMoving, setIsBusMoving] = useState(false);
-  const [willTakeBus, setWillTakeBus] = useState(false);
+  const [isBoarding, setIsBoarding] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const apiKey = import.meta.env.VITE_KAKAO_API_KEY;
@@ -33,7 +36,7 @@ export default function ParentBus() {
           };
           const map = new window.kakao.maps.Map(container, options);
 
-          const imageSrc = busIcon; 
+          const imageSrc = busIcon;
           const imageSize = new window.kakao.maps.Size(64, 69);
           const imageOption = { offset: new window.kakao.maps.Point(27, 69) };
 
@@ -42,7 +45,7 @@ export default function ParentBus() {
 
           const marker = new window.kakao.maps.Marker({
             position: markerPosition,
-            image: markerImage, // 이미지 변경
+            image: markerImage,
           });
           marker.setMap(map);
 
@@ -55,39 +58,72 @@ export default function ParentBus() {
       });
     };
 
+    // 초기 탑승 상태 조회
+    const fetchBoardingStatus = async () => {
+      setLoading(true);
+      try {
+        const response = await getKidBoardingStatus(); // childId를 1로 예시
+        if (response && response.data && response.data.status !== undefined) {
+          setIsBoarding(response.data.status === 'T');
+        }
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBoardingStatus();
+
     return () => {
       document.head.removeChild(script);
       if (wsRef.current) {
         wsRef.current.close();
       }
     };
-  }, [location.lat, location.lng]);
+  }, []);
 
-  // Function to handle the button click
-  const handleButtonClick = () => {
-    setWillTakeBus((prev) => !prev);
+  const handleBoardingStatus = async () => {
+    setLoading(true);
+    try {
+      const newStatus = !isBoarding;
+      const response = await postKidBoardingStatus(1); // childId를 1로 예시, newStatus 전송
+      if (response && response.isBoarding !== undefined) {
+        setIsBoarding(response.isBoarding);
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="relative min-h-screen bg-[#FFEC8A] flex flex-col">
-      <div ref={mapContainer} className="flex-grow w-full h-full z-0"></div>
+    <div className="flex flex-col h-screen bg-[#FFEC8A]">
+      <InfoSection
+        description1="버스가"
+        main1={isBoarding ? "탑승 중" : "탑승하지 않음"}
+        main2="입니다!"
+        imageSrc={daramgi}
+        altText="다람쥐"
+      />
 
-      {/* 문구는 API받는 것 보고 생각하기 */}
-      <div className="absolute bottom-16 left-0 w-full bg-white rounded-tl-[20px] rounded-tr-[20px] p-6 z-10 shadow-top">
-        <div className="flex justify-between items-center mb-4">
-          <button
-            onClick={handleButtonClick}
-            className={`flex-grow h-12 mr-2 rounded-2xl bg-[#FFEC8A] text-black font-bold`}
-          >
-            {willTakeBus ? '버스가 이동 중입니다!' : '버스가 정차 중입니다.'}
-          </button>
-        </div>
-        <div className="flex flex-col items-center justify-between">
-          <div className="text-lg font-base mb-2">
-            {isBusMoving ? "오늘 자녀가 버스에 탑승하지 않습니다." : "오늘 자녀가 버스에 탑승합니다."}
-          </div>
-        </div>
+      <div className="fixed bottom-20 right-4 z-50 flex flex-col items-center">
+        <button
+          onClick={handleBoardingStatus}
+          className={`px-4 py-2 rounded-lg ${isBoarding ? 'bg-blue-600 hover:bg-blue-700' : 'bg-orange-400 hover:bg-orange-700'} text-white font-bold transition duration-200`}
+          disabled={loading}
+        >
+          {loading ? 'Loading...' : isBoarding ? '오늘 버스에 탑승함' : '오늘 버스에 탑승하지 않음'}
+        </button>
+      </div>
+
+      <div className="flex flex-col flex-grow overflow-hidden rounded-tl-[20px] rounded-tr-[20px] bg-white shadow-top animate-slideUp -mt-10">
+        <div 
+          ref={mapContainer} 
+          className="w-full h-full relative z-0"
+        ></div>
       </div>
     </div>
-  );
+  )
 }
