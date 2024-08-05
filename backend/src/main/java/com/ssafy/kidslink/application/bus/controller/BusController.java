@@ -20,30 +20,7 @@ import java.util.Optional;
 @RequestMapping("/api/bus")
 public class BusController {
     private final BusRepository busRepository;
-    private final WebSocketHandler webSocketHandler;
-    private final ObjectMapper objectMapper;
 
-    @PostMapping
-    public ResponseEntity<Bus> saveLocation(@RequestBody Bus bus) {
-        bus.setTimestamp(LocalDateTime.now());
-        Bus savedBus = busRepository.save(bus);
-        try {
-            String message = objectMapper.writeValueAsString(savedBus);
-            webSocketHandler.sendMessage(message);
-        } catch (IOException e) {
-            log.error("Error sending WebSocket message", e);
-        }
-        return ResponseEntity.ok(savedBus);
-    }
+    
 
-    @GetMapping
-    public List<Bus> getAllLocations() {
-        return busRepository.findAll();
-    }
-
-    @GetMapping("/latest")
-    public ResponseEntity<Bus> getLatestLocation() {
-        Optional<Bus> latestBus = busRepository.findTopByOrderByTimestampDesc();
-        return latestBus.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.noContent().build());
-    }
 }
