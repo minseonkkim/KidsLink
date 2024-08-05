@@ -127,14 +127,35 @@ public class MeetingTimeService {
         selectedMeetingRepository.deleteByTeacher(teacher);
     }
 
+    public List<SelectedMeetingDTO> getSelectedMeetings(String teacherUsername){
+        Teacher teacher = teacherRepository.findByTeacherUsername(teacherUsername);
+        List<SelectedMeeting> list = selectedMeetingRepository.findByTeacher(teacher);
+        List<SelectedMeetingDTO> meetings = new ArrayList<>();
+        for(SelectedMeeting selectedMeeting : list){
+            SelectedMeetingDTO meeting = new SelectedMeetingDTO();
+            meeting.setTime(selectedMeeting.getSelectedMeetingTime());
+            meeting.setDate(selectedMeeting.getSelectedMeetingDate());
+            meeting.setTeahcerId(teacher.getTeacherId());
+            meeting.setTeacherName(teacher.getTeacherName());
+            meeting.setParentId(selectedMeeting.getParent().getParentId());
+            meeting.setChildName(selectedMeeting.getParent().getChildren().iterator().next().getChildName());
+            meetings.add(meeting);
+        }
 
-    public void confirmMeeting(String teacherUsername) {
+        return meetings;
+    }
+
+
+    public List<MeetingRoomDTO> confirmMeeting(String teacherUsername) {
         Teacher teacher = teacherRepository.findByTeacherUsername(teacherUsername);
         List<SelectedMeeting> meetings = selectedMeetingRepository.findByTeacher(teacher);
         List<MeetingSchedule> meetingSchedules = allocateMeetings(meetings, teacher);
+        List<MeetingRoomDTO> confirmMeetings = new ArrayList<>();
 
         for (MeetingSchedule meetingSchedule : meetingSchedules) {
             meetingScheduleRepository.save(meetingSchedule);
+            confirmMeetings.add(meetingScheduleMapper.toMeetingRoomDTO(meetingSchedule));
+
         }
 
         // TODO #1 부모한테 예약 확정 알림 보내기 -> 부모 한명에게만 보내기
@@ -148,6 +169,8 @@ public class MeetingTimeService {
 
             parentNotificationRepository.save(parentNotification);
         }
+
+        return confirmMeetings;
     }
 
     private List<MeetingSchedule> allocateMeetings(List<SelectedMeeting> meetings, Teacher teacher) {

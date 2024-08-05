@@ -56,13 +56,14 @@ export const startWebSocket = (url: string) => {
 
 export const stopWebSocket = () => {
   if (ws) {
+    ws.send(JSON.stringify(JSON.stringify({ type: 'disconnect' })));
     ws.close();
   }
   if (intervalId) {
     clearInterval(intervalId);
   }
 };
-export function receiveBusLocation(wsRef, setLocation, map, marker) {
+export function receiveBusLocation(wsRef, setLocation, map, marker, setIsMoving) {
   const WEBSOCKET_URL = import.meta.env.VITE_WEBSOCKET_URL;
   if (wsRef.current) {
     wsRef.current.close();
@@ -72,21 +73,31 @@ export function receiveBusLocation(wsRef, setLocation, map, marker) {
   let count = 0;
 
   ws.onmessage = (event) => {
+    let newCenter = new window.kakao.maps.LatLng({ lat: 37.5665, lng: 126.9780 });
     const data = JSON.parse(event.data);
-    console.log('Received location:', ++count, data);
-    setLocation({ lat: data.latitude, lng: data.longitude });
-
-    const newCenter = new window.kakao.maps.LatLng(data.latitude, data.longitude);
+    if (data.type === 'disconnect') {
+      newCenter = new window.kakao.maps.LatLng({ lat: 37.5665, lng: 126.9780 });
+      setIsMoving(false);
+      ws.close();
+    }
+    else{
+      console.log('Received location:', ++count, data);
+      setLocation({ lat: data.latitude, lng: data.longitude });
+      setIsMoving(true);
+      newCenter = new window.kakao.maps.LatLng(data.latitude, data.longitude);
+    }
     map.setCenter(newCenter);
     marker.setPosition(newCenter);
   };
 
   ws.onclose = () => {
     console.log('WebSocket closed');
+    setIsMoving(false);
   };
 
   ws.onerror = (error) => {
     console.error('WebSocket error:', error);
+    setIsMoving(false);
   };
 
   // 브라우저 창이나 탭이 닫힐 때 WebSocket을 닫음
