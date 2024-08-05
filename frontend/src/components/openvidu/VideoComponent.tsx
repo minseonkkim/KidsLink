@@ -37,12 +37,12 @@ export default class OpenViduVideoComponent extends Component<OpenViduVideoCompo
 
   render() {
     return (
-      <video
-        style={{ height: "100%", width: "100%", borderRadius: "8px" }}
-        autoPlay={true}
-        muted={this.props.muted}
-        ref={this.videoRef}
-      />
+        <video
+          style={{ height: "100%", objectFit: "cover", borderRadius: "8px" }}
+          autoPlay={true}
+          muted={this.props.muted}
+          ref={this.videoRef}
+        />
     );
   }
 }
