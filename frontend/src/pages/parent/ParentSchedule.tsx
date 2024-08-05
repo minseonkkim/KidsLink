@@ -6,6 +6,14 @@ import { getAllParentSchedules, getParentSchedules } from "../../api/schedule"; 
 import styled from "styled-components";
 import 'react-calendar/dist/Calendar.css'; // react-calendar 기본 스타일
 
+interface DetailedSchedule {
+  absentSchedules: string[];
+  date: string;
+  dosageSchedules: string;
+  kindergartenSchedules: string[];
+  meetingSchedules: string[];
+}
+
 const StyledCalendar = styled(Calendar)`
   * {
     margin: 0;
