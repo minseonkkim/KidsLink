@@ -5,7 +5,7 @@ import { VitePWA } from 'vite-plugin-pwa'
 // https://vitejs.dev/config/
 export default defineConfig({
   server: {
-    port: 443,
+    port: 5173,
     host : "0.0.0.0",
   },
   css: {
@@ -56,5 +56,5 @@ export default defineConfig({
       strategies: 'injectManifest',
     })
   ],
-  base: process.env.VITE_PUBLIC_URL
+  base: process.env.VITE_PUBLIC_URL 
 })
