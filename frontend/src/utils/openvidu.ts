@@ -1,5 +1,5 @@
 import { OpenVidu, StreamEvent, StreamPropertyChangedEvent } from "openvidu-browser";
-import { fetchRecordings, getToken } from "../api/openvidu";
+import { handleSpeechRecognition, fetchRecordings, getToken,stopSpeechRecognition } from "../api/openvidu";
 import { OpenViduState, Recording, User } from "../types/openvidu";
 import { getParentInfo } from "../api/Info";
 
@@ -8,7 +8,8 @@ export const joinSession = async (
   setOpenvidu: React.Dispatch<React.SetStateAction<OpenViduState>>,
   setIsSessionJoined: React.Dispatch<React.SetStateAction<boolean>>,
   setMyStreamId: React.Dispatch<React.SetStateAction<string | undefined>>, // 이 매개변수 추가
-  setOtherVideoActive: React.Dispatch<React.SetStateAction<boolean>> // 상대방 비디오 상태 추가
+  setOtherVideoActive: React.Dispatch<React.SetStateAction<boolean>>, // 상대방 비디오 상태 추가
+  setRecordingId: React.Dispatch<React.SetStateAction<string | null>> 
 ) => {
   if (!user.sessionId) return;
   const OV = new OpenVidu();
@@ -95,7 +96,6 @@ export const joinSession = async (
 
       // 자신의 스트림 ID 저장
       setMyStreamId(publisher.stream.streamId);
-
       setIsSessionJoined(true);
     })
     .catch((error) => {
@@ -113,6 +113,7 @@ export const leaveSession = (
 ) => {
   if (openvidu.session) {
     openvidu.session.disconnect();
+    stopSpeechRecognition();
     setOpenvidu((prevOpenvidu) => ({
       ...prevOpenvidu,
       session: undefined,
