@@ -52,7 +52,7 @@ export default function TeacherHeader() {
             if (code === "DOCUMENT") {
                 navigate('/document');
             } else if (code === "MEETING") {
-                navigate('/meeting');
+                navigate('/meeting/scheduled');
             } else {
                 navigate('/');
             }
