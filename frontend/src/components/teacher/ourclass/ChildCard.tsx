@@ -22,18 +22,29 @@ export default function ChildCard({ name, gender, age, absent, dosage, profileIm
     const openAbsentModal = (index: number) => {
         setCurrentAbsentIndex(index);
         openModal(
-            <div>
+            <div className="relative">
                 <AbsentDocument absentId={absentId[index]} onUpdate={() => {}} isOurClass={true}/>
-                {absentId.length > 1 && (
-                    <div className="flex justify-between mt-4">
-                        <span onClick={previousAbsent} className="cursor-pointer text-2xl">
+                <div className="w-full h-[40px]">
+                    {absentId.length > 1 && (
+                    <div className="flex justify-between">
+                        <span
+                            onClick={previousAbsent}
+                            className={`cursor-pointer text-2xl ml-8 ${index === 0 ? 'invisible' : ''}`}
+                            style={{ position: 'absolute', left: 0 }}
+                        >
                             &#9664; {/* Left arrow icon */}
                         </span>
-                        <span onClick={nextAbsent} className="cursor-pointer text-2xl">
+                        <span
+                            onClick={nextAbsent}
+                            className={`cursor-pointer text-2xl mr-8 ${index === absentId.length - 1 ? 'invisible' : ''}`}
+                            style={{ position: 'absolute', right: 0 }}
+                        >
                             &#9654; {/* Right arrow icon */}
                         </span>
                     </div>
                 )}
+                </div>
+                
             </div>
         );
     };
@@ -41,18 +52,28 @@ export default function ChildCard({ name, gender, age, absent, dosage, profileIm
     const openDosageModal = (index: number) => {
         setCurrentDosageIndex(index);
         openModal(
-            <div>
+            <div className="relative">
                 <DosageDocument dosageId={dosageId[index]} onUpdate={() => {}} isOurClass={true}/>
-                {dosageId.length > 1 && (
-                    <div className="flex justify-between mt-4">
-                        <span onClick={previousDosage} className="cursor-pointer text-2xl">
-                            &#9664; {/* Left arrow icon */}
-                        </span>
-                        <span onClick={nextDosage} className="cursor-pointer text-2xl">
-                            &#9654; {/* Right arrow icon */}
-                        </span>
-                    </div>
-                )}
+                <div className="w-full h-[40px]">
+                    {dosageId.length > 1 && (
+                        <div className="flex justify-between mt-4">
+                            <span
+                                onClick={previousDosage}
+                                className={`cursor-pointer text-2xl ml-8 ${index === 0 ? 'invisible' : ''}`}
+                                style={{ position: 'absolute', left: 0 }}
+                            >
+                                &#9664; {/* Left arrow icon */}
+                            </span>
+                            <span
+                                onClick={nextDosage}
+                                className={`cursor-pointer text-2xl mr-8 ${index === dosageId.length - 1 ? 'invisible' : ''}`}
+                                style={{ position: 'absolute', right: 0 }}
+                            >
+                                &#9654; {/* Right arrow icon */}
+                            </span>
+                        </div>
+                    )}
+                </div>
             </div>
         );
     };
@@ -112,4 +133,3 @@ export default function ChildCard({ name, gender, age, absent, dosage, profileIm
         </div>
     );
 }
-
