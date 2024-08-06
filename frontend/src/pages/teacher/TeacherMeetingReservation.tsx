@@ -49,6 +49,7 @@ const StyledCalendar = styled(Calendar)`
         display: none;
     }
 
+
     /* 년-월 */
     .react-calendar__navigation{
         margin-bottom: 25px;
@@ -293,25 +294,25 @@ export default function TeacherReservation() {
     }
   };
 
-  const handleConfirmMeetingClick = async () => {
-    try {
-      await ConfirmMeeting();
-      showToastSuccess(<div>상담일자가 확정되었습니다!<br/>상담목록으로 이동합니다.</div>);
+  // const handleConfirmMeetingClick = async () => {
+  //   try {
+  //     await ConfirmMeeting();
+  //     showToastSuccess(<div>상담일자가 확정되었습니다!<br/>상담목록으로 이동합니다.</div>);
 
-      setTimeout(() => {
-        navigate('/meeting/schedueld');
-      }, 3000);
-    } catch (error) {
-      showToastError(<div>상담일자 확정 중 오류가 발생했습니다.</div>);
-      console.error('상담일자 확정 중 오류 발생:', error);
-    }
-  };
+  //     setTimeout(() => {
+  //       navigate('/meeting/schedueld');
+  //     }, 3000);
+  //   } catch (error) {
+  //     showToastError(<div>상담일자 확정 중 오류가 발생했습니다.</div>);
+  //     console.error('상담일자 확정 중 오류 발생:', error);
+  //   }
+  // };
 
   return (
     <>
       <TeacherHeader />
       <ToastNotification />
-      <div className="mt-[120px] px-[150px]">
+      <div className="mt-[130px] pl-[150px] pr-[130px]">
         <NavigateBack backPage="화상상담" backLink='/meeting' />
         <Title title="상담가능시간 open" />
 
@@ -325,20 +326,20 @@ export default function TeacherReservation() {
             tileDisabled={({ date, view }) => view === 'month' && isPastDate(date)}
           />
 
-          <div className="w-[637px]">
-            <div className="flex flex-row justify-between">
+          <div className="w-[665px]">
+            <div className="flex flex-row justify-between mr-[20px]">
               <div className="text-[22px] flex flex-row items-center h-[22px] font-bold text-[#8CAD1E] my-5">
                 <FaRegCalendar className="mr-3"/>
                 {formatDate(date)}
               </div>
               <button 
-                className="absolute top-[125px] right-[150px] mt-2 h-[40px] border-2 border-[#7C7C7C] bg-[#E3EEFF] px-3 py-1 font-bold rounded-[10px] hover:bg-[#D4DDEA]"
-                onClick={handleConfirmMeetingClick}
-              >
-                상담일자 확정하기
-              </button>
+                  className="mt-2 h-[40px] border-2 border-[#7C7C7C] bg-[#E3EEFF] px-3 py-1 font-bold rounded-[10px] hover:bg-[#D4DDEA] flex items-center"
+                  onClick={handleSubmitClick}
+                >
+                  <span>수정하기</span>
+                </button>
             </div>
-            <div className="flex justify-between">
+            <div className="flex justify-between mr-[20px]">
               <div></div>
               <label htmlFor="chk">
                 <input type="checkbox" id="chk" onClick={handleSelectAllClick}/>
@@ -381,15 +382,6 @@ export default function TeacherReservation() {
                     />
                   );
                 })}
-              </div>
-              <div className="flex justify-end">
-                <button 
-                  className="mt-2 h-[40px] border-2 border-[#7C7C7C] bg-[#E3EEFF] px-3 py-1 font-bold rounded-[10px] hover:bg-[#D4DDEA] flex items-center"
-                  onClick={handleSubmitClick}
-                >
-                  <span className="mr-2"><IoSendSharp /></span>
-                  <span>제출하기</span>
-                </button>
               </div>
           </div>
         </div>
