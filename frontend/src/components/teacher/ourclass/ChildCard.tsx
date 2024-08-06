@@ -103,7 +103,7 @@ export default function ChildCard({ name, gender, age, absent, dosage, profileIm
     };
 
     return (
-        <div className="w-[200px] h-[250px] m-2 relative drop-shadow-md">
+        <div className="w-[200px] h-[250px] mx-[20px] my-4 relative drop-shadow-md">
             <div className="w-[180px] h-[250px] absolute inset-0 rounded-[10px] bg-[#fff9d7]" />
             <p className="w-[90px] absolute left-[45px] top-[170px] text-xl font-bold text-center text-[#363636]">
                 {name}
