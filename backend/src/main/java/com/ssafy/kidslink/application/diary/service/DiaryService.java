@@ -18,8 +18,10 @@ import com.ssafy.kidslink.application.parent.domain.Parent;
 import com.ssafy.kidslink.application.parent.repository.ParentRepository;
 import com.ssafy.kidslink.application.teacher.repository.TeacherRepository;
 import com.ssafy.kidslink.common.enums.NotificationCode;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -101,4 +103,15 @@ public class DiaryService {
         return diaryRepository.findById(diaryId).map(diaryMapper::toDTO).orElseThrow();
     }
 
+    @Transactional
+    public void deleteAllImageDiaries() {
+        try {
+            List<ImageDiary> imageDiaries = imageDiaryRepository.findAll();
+            imageDiaryRepository.deleteAll(imageDiaries);
+            imageDiaryRepository.flush();
+        } catch (ObjectOptimisticLockingFailureException e) {
+            // 동시성 문제 해결을 위한 예외 처리
+            System.err.println("Optimistic locking failure: " + e.getMessage());
+        }
+    }
 }
