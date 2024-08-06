@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import InfoSection from "../../components/parent/common/InfoSection";
 import daramgi from "../../assets/parent/bus-daramgi.png";
 import busIcon from '../../assets/parent/busIcon.png';
+import currentLocationIcon from '../../assets/parent/marker.png'; // 새로운 마커 이미지 추가
 import { receiveBusLocation } from '../../api/webSocket';
 import { postKidBoardingStatus, getKidBoardingStatus } from '../../api/bus';
 import { getParentInfo } from '../../api/Info';
@@ -22,6 +23,10 @@ export default function ParentBus() {
   const [isMoving, setIsMoving] = useState(false);
   const [parentInfo, setParentInfo] = useState(null);
   const [childId, setChildId] = useState<number | null>(null);
+  const [parentLocation, setParentLocation] = useState<{ latitude?: number, longitude?: number }>({});
+
+  const [map, setMap] = useState<any>(null);
+  const [currentMarker, setCurrentMarker] = useState<any>(null);
 
   useEffect(() => {
     const apiKey = import.meta.env.VITE_KAKAO_API_KEY;
@@ -39,7 +44,8 @@ export default function ParentBus() {
             center: new window.kakao.maps.LatLng(location.lat, location.lng),
             level: 3,
           };
-          const map = new window.kakao.maps.Map(container, options);
+          const newMap = new window.kakao.maps.Map(container, options);
+          setMap(newMap);
 
           const imageSrc = busIcon;
           const imageSize = new window.kakao.maps.Size(64, 69);
@@ -52,10 +58,10 @@ export default function ParentBus() {
             position: markerPosition,
             image: markerImage,
           });
-          marker.setMap(map);
+          marker.setMap(newMap);
 
           // WebSocket 연결 설정
-          const cleanup = receiveBusLocation(wsRef, setLocation, map, marker, setIsMoving);
+          const cleanup = receiveBusLocation(wsRef, setLocation, newMap, marker, setIsMoving);
 
           // 컴포넌트 언마운트 시 WebSocket 연결 해제
           return cleanup;
@@ -114,9 +120,48 @@ export default function ParentBus() {
     await handleBoardingStatus();
   };
 
-  const getNowLocation = () => {
-    
-  }
+
+  const updateLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          const updatedPosition = new window.kakao.maps.LatLng(latitude, longitude);
+          const markerImage = new window.kakao.maps.MarkerImage(
+            currentLocationIcon,
+            new window.kakao.maps.Size(64, 69), // 이미지 크기
+            { offset: new window.kakao.maps.Point(27, 69) } // 이미지 중심
+          );
+
+          if (currentMarker) {
+            currentMarker.setPosition(updatedPosition);
+            currentMarker.setImage(markerImage);
+          } else {
+            const newMarker = new window.kakao.maps.Marker({
+              position: updatedPosition,
+              map: map,
+              image: markerImage,
+            });
+            setCurrentMarker(newMarker);
+          }
+          // map.setCenter(updatedPosition); // 지도의 중심을 이동시키지 않으려면 이 줄을 주석 처리합니다.
+        },
+        (error) => {
+          console.error("Error getting location", error);
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 5000,
+          maximumAge: 0,
+        }
+      );
+    }
+  };
+
+  useEffect(() => {
+    const intervalId = setInterval(updateLocation, 5000); // 5초마다 위치 업데이트
+    return () => clearInterval(intervalId); // 컴포넌트 언마운트 시 인터벌 해제
+  }, []); // 빈 배열로 설정하여 한 번만 실행되도록 설정
 
   return (
     <div className="flex flex-col h-screen bg-[#FFEC8A]">
@@ -128,8 +173,10 @@ export default function ParentBus() {
         altText="다람쥐"
       />
       <div className="flex flex-col flex-grow overflow-hidden rounded-tl-[20px] rounded-tr-[20px] bg-white shadow-top animate-slideUp -mt-10">
-        <Toggle isOn={isBoarding} toggleHandler={handleToggleChange} />
-        <button>위치 갱신하기</button>
+
+        <div className="flex flex-row items-center space-x-4 p-4">
+          <Toggle isOn={isBoarding} toggleHandler={handleToggleChange} />
+        </div>
         <div
           ref={mapContainer}
           className="w-full h-full relative z-0 mt-4"
