@@ -1,13 +1,22 @@
 import axiosInstance from './token/axiosInstance';
 
-// 인터페이스 정의
+interface Kindergarten {
+  kindergartenId: number;
+  kindergatendName: string;
+}
+
+interface KindergartenClass {
+  kindergarten: Kindergarten;
+  kindergartenClassId: number;
+  kindergartenClassName: string;
+}
+
 export interface ChildInfo {
   birth: string;
   childId: number;
   childProfile: string | null;
   gender: string;
-  kindergartenClassName: string;
-  kindergartenName: string;
+  kindergartenClass: KindergartenClass;
   name: string;
   profile: string | null;
 }
@@ -84,3 +93,22 @@ export async function getTeacherInfo(): Promise<TeacherInfo> {
     throw error
   }
 }
+
+// 반 담당 선생님 조회
+export async function getClassTeacherInfo(kindergartenClassId: number): Promise<TeacherInfo> {
+  try {
+    const response = await axiosInstance.get(`/kindergarten/class/${kindergartenClassId}/teacher`);
+
+    if (response.data.status === 'success') {
+      console.log(response.data.data) // 확인 후 삭제
+      return response.data.data
+    } else {
+      throw new Error('Failed to fetch parent-info')
+    }
+  } catch (error) {
+    console.error(error)
+    throw error
+  }
+}
+
+
