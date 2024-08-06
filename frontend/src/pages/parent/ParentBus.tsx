@@ -114,6 +114,10 @@ export default function ParentBus() {
     await handleBoardingStatus();
   };
 
+  const getNowLocation = () => {
+    
+  }
+
   return (
     <div className="flex flex-col h-screen bg-[#FFEC8A]">
       <InfoSection
@@ -125,6 +129,7 @@ export default function ParentBus() {
       />
       <div className="flex flex-col flex-grow overflow-hidden rounded-tl-[20px] rounded-tr-[20px] bg-white shadow-top animate-slideUp -mt-10">
         <Toggle isOn={isBoarding} toggleHandler={handleToggleChange} />
+        <button>위치 갱신하기</button>
         <div
           ref={mapContainer}
           className="w-full h-full relative z-0 mt-4"
