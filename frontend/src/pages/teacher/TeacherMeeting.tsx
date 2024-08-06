@@ -56,34 +56,30 @@ export default function TeacherMeeting() {
       <div className="mt-[130px] px-[130px]">
         <NavigateBack backPage="화상상담" backLink='/meeting' />
         <Title title="예약된 화상상담" />
-        {/* <Link to="/meeting/reservation">
-          <button className="flex flex-row items-center absolute top-[125px] right-[150px] border-[2px] border-[#7C7C7C] bg-[#E3EEFF] px-3 py-1 font-bold rounded-[10px] hover:bg-[#D4DDEA]">
-            <IoMdCalendar className="mr-1 text-[22px]" />
-            상담가능시간 open
-          </button>
-        </Link> */}
-        <div className="flex flex-row flex-wrap justify-between items-start">
-          {meetings.length === 0 ? (
-            <div className="flex items-center justify-center w-full h-[400px] text-[18px]">
-              예정된 상담 일정이 없어요.
-            </div>
-          ) : (
-            meetings.map((meeting) => (
-              <Link
-                to={`/meeting/${meeting.meetingId}`}
-                state={{ parentName: parentNames[meeting.parentId] || "알 수 없음" }}
-                key={meeting.meetingId}
-              >
-                <TeacherMeetingSchedule
-                  date={meeting.meetingDate}
-                  time={meeting.meetingTime}
-                  name={parentNames[meeting.parentId] || "알 수 없음"}
-                  profileImgPath={ProfileImg}
-                  isActivate={isMeetingActive(meeting.meetingDate, meeting.meetingTime)}
-                />
-              </Link>
-            ))
-          )}
+        <div className="flex justify-center items-center">
+          <div className="flex flex-row flex-wrap items-start content-start">
+            {meetings.length === 0 ? (
+              <div className="flex items-center justify-center w-full h-[400px] text-[18px]">
+                예정된 상담 일정이 없어요.
+              </div>
+            ) : (
+              meetings.map((meeting) => (
+                <Link
+                  to={`/meeting/${meeting.meetingId}`}
+                  state={{ parentName: parentNames[meeting.parentId] || "알 수 없음" }}
+                  key={meeting.meetingId}
+                >
+                  <TeacherMeetingSchedule
+                    date={meeting.meetingDate}
+                    time={meeting.meetingTime}
+                    name={parentNames[meeting.parentId] || "알 수 없음"}
+                    profileImgPath={ProfileImg}
+                    isActivate={isMeetingActive(meeting.meetingDate, meeting.meetingTime)}
+                  />
+                </Link>
+              ))
+            )}
+          </div>
         </div>
       </div>
     </>

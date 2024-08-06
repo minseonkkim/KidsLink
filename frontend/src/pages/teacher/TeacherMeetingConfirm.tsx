@@ -91,16 +91,16 @@ export default function TeacherMeetingConfirm() {
                     className="absolute top-[125px] right-[150px] mt-2 h-[40px] border-2 border-[#7C7C7C] bg-[#E3EEFF] px-3 py-1 font-bold rounded-[10px] hover:bg-[#D4DDEA]"
                     onClick={handleConfirmMeetingClick}
                 >
-                    상담일자 확정하기
+                    확정하기
                 </button> }
                 {Object.keys(groupedMeetings).length !== 0 && 
-                 <div className="text-center text-[18px]">학부모님들께서 선택하신 희망 날짜 및 시간입니다.<br />예약을 확정하시려면 확정하기 버튼을 눌러주세요.</div>
+                 <div className="text-center text-[17px]">학부모님들께서 선택하신 희망 날짜 및 시간입니다.<br />예약을 확정하시려면 확정하기 버튼을 눌러주세요.</div>
                 }
                 {Object.keys(groupedMeetings).length !== 0 ?
-                <div className="mt-8">
+                <div className="mt-8 mx-8 flex justify-center">
                     {Object.entries(groupedMeetings).map(([parentId, { childName, times }]) => (
-                        <div key={parentId} className="bg-gray-100 p-6 mb-6 rounded-lg shadow-md">
-                            <h3 className="text-xl font-bold mb-4">{`${childName} 부모님`}</h3>
+                        <div key={parentId} className="bg-gray-100 p-6 mb-6 rounded-lg shadow-md w-[1200px]">
+                            <h3 className="text-xl font-bold mb-4 text-[23px]">{`${childName} 부모님`}</h3>
                             <ul className="list-none p-0">
                                 {times.map((timeSlot, index) => (
                                     <li key={index} className="bg-white p-4 mb-2 border border-gray-300 rounded-md">
