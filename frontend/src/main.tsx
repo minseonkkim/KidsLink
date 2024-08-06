@@ -21,7 +21,7 @@ const isLocalhost = Boolean(
   window.location.hostname.match(/^127(?:\.(?:25[0-5][0-9]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/)
 );
 
-const swUrl = isLocalhost ? '/service-worker.js' : '/sw.js';
+const swUrl = '/service-worker.js';
 
 // Service Worker 등록
 if ('serviceWorker' in navigator) {
