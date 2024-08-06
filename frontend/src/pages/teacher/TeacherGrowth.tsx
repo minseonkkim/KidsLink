@@ -12,7 +12,7 @@ import ToastNotification, {
   showToast,
   showToastError,
 } from "../../components/teacher/common/ToastNotification.tsx";
-import { useTeacherInfoStore } from "../../stores/useTeacherInfoStore.ts";
+import useTeacherInfoStore from "../../stores/useTeacherInfoStore.ts";
 import { getClassChilds } from "../../api/kindergarten.ts";
 import {
   createDiary,
@@ -28,13 +28,27 @@ export default function TeacherGrowth() {
   const [currentChildId, setCurrentChildId] = useState<number | null>(null);
   const [childs, setChilds] = useState([]);
 
+  const checkChildCompletion = async (childs) => {
+    const updatedChilds = await Promise.all(
+      childs.map(async (child) => {
+        const fetchedDiarys = await getKidAllGrowthDiarys(child.childId);
+        const today = new Date().toISOString().split("T")[0];
+        const hasTodayDiary = fetchedDiarys.some(
+          (diary) => diary.createDate === today
+        );
+        return { ...child, completed: hasTodayDiary };
+      })
+    );
+    setChilds(updatedChilds);
+  };
+
   useEffect(() => {
     const classId =
       useTeacherInfoStore.getState().teacherInfo.kindergartenClassId;
     const fetchChilds = async () => {
       try {
         const fetchedChilds = await getClassChilds(classId);
-        setChilds(fetchedChilds);
+        await checkChildCompletion(fetchedChilds);
       } catch (error) {
         console.error("Failed to fetch childs:", error);
       }
@@ -55,36 +69,26 @@ export default function TeacherGrowth() {
           new Date(b.createDate).getTime() - new Date(a.createDate).getTime()
       );
       setGrowthDiaryData(sortedDiarys);
+
+      const today = new Date().toISOString().split("T")[0];
+      setChilds((prevItems) =>
+        prevItems.map((child) => {
+          const hasTodayDiary = fetchedDiarys.some(
+            (diary) => diary.createDate === today
+          );
+          return { ...child, completed: hasTodayDiary };
+        })
+      );
     } catch (error) {
       console.log("Failed to fetch diarys:", error);
     }
   };
 
   useEffect(() => {
-    fetchDiarys();
+    if (currentChildId !== null) {
+      fetchDiarys();
+    }
   }, [currentChildId]);
-
-  useEffect(() => {
-    // 매일 자정 completed 상태 초기화
-    const resetCompletedStatus = () => {
-      setChilds((prevItems) =>
-        prevItems.map((child) => ({ ...child, completed: false }))
-      );
-    };
-
-    const now = new Date();
-    const midnight = new Date(now.setHours(24, 0, 0, 0)).getTime();
-    const timeToMidnight = midnight - Date.now();
-
-    // 자정에 한 번 실행한 후, 매일 자정에 실행
-    const initialTimeout = setTimeout(() => {
-      resetCompletedStatus();
-      setInterval(resetCompletedStatus, 24 * 60 * 60 * 1000); // 24시간마다 실행
-    }, timeToMidnight);
-
-    // 컴포넌트 언마운트 시 타이머 정리
-    return () => clearTimeout(initialTimeout);
-  }, []);
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchChild(event.target.value);
@@ -146,7 +150,7 @@ export default function TeacherGrowth() {
         <Title title="성장일지" />
         <div className="flex flex-row justify-between">
           <div className="rounded-[10px] bg-[#f4f4f4] w-[380px] h-[520px] p-[10px]">
-            <div className="bg-[#fff] h-[53px] rounded-[10px] flex items-center p-3 mx-2 my-3">
+            <div className="bg-[#fff] h-[53px] rounded-[10px] flex items-center p-3 mx-2 mt-2 mb-4">
               <IoSearch className="text-[25px] mr-3" />
               <input
                 type="text"
@@ -160,7 +164,7 @@ export default function TeacherGrowth() {
               {filteredChildren.map((child) => (
                 <div
                   key={child.childId}
-                  className={`border-[2px] rounded-[10px] ${
+                  className={`border-[3px] rounded-[10px] h-[185px] m-1 ${
                     child.childId === currentChildId
                       ? "border-[#B2D170]"
                       : "border-transparent"
@@ -270,6 +274,9 @@ function GrowthDiaryForm({
     }
   };
 
+  // Get today's date in YYYY-MM-DD format
+  const today = new Date().toISOString().split("T")[0];
+
   return (
     <div className="w-[500px]">
       <form onSubmit={handleSubmit}>
@@ -283,6 +290,7 @@ function GrowthDiaryForm({
             className="w-full p-2 border-b-2 border-gray-300 focus:outline-none focus:border-[#FDDA6E]"
             value={dateValue}
             onChange={(e) => setDateValue(e.target.value)}
+            max={today} // Set the max attribute to today
           />
         </div>
         <div className="mb-4 flex flex-row">

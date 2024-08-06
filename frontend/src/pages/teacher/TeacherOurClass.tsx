@@ -4,7 +4,7 @@ import Title from "../../components/teacher/common/Title";
 import ChildCard from "../../components/teacher/ourclass/ChildCard";
 import ProfileImg from "../../assets/teacher/profile_img.jpg";
 import { useEffect, useState } from "react";
-import { useTeacherInfoStore } from "../../stores/useTeacherInfoStore";
+import useTeacherInfoStore from "../../stores/useTeacherInfoStore";
 import { getClassChilds } from "../../api/kindergarten";
 import { getDocumentsByDate } from "../../api/document";
 
@@ -103,7 +103,7 @@ export default function TeacherOurClass() {
                     투약
                 </div>
                 <span className="absolute top-[125px] right-[200px] px-3 py-2 flex flex-row items-center text-xl font-bold">{dosageCount}명</span>
-                <div className="grid gap-4 w-full" style={{gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))'}}>
+                <div className="flex flex-row flex-wrap w-[1200px]" style={{gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))'}}>
                     {childs.map((child, index) => (
                         <ChildCard 
                             key={index}

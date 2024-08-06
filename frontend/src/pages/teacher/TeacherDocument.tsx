@@ -95,8 +95,21 @@ export default function TeacherDocument() {
   };
 
   const findChildImg = async (childId: number): Promise<string> => {
+    // Check if the image URL is already in the cache
+    if (childImages[childId]) {
+      return childImages[childId];
+    }
+
     const childInfo = await getChildInfo(childId);
-    return childInfo.profile;
+    const profileImgPath = childInfo.profile;
+
+    // Store the image URL in the state to optimize future requests
+    setChildImages(prevImages => ({
+      ...prevImages,
+      [childId]: profileImgPath
+    }));
+
+    return profileImgPath;
   };
 
   const handleDocumentUpdate = async () => {

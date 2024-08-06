@@ -29,16 +29,16 @@ export   const isMeetingVisible = (meetingDate: string, meetingTime: string): bo
   const currentTimeString = getCurrentTimeString();
   const meetingDateTimeString = `${meetingDate} ${meetingTime}`;
 
-  // 날짜가 지난 상담은 보이지 않게 설정
-  if (meetingDateTimeString < currentTimeString) {
-    // false로 바꿔줘야함
-    return true;
-  }
+  // // 날짜가 지난 상담은 보이지 않게 설정
+  // if (meetingDateTimeString < currentTimeString) {
+  //   // false로 바꿔줘야함
+  //   return true;
+  // }
 
-  // 날짜가 같은 경우, 상담 시간이 지난 것만 보이지 않게 설정
-  if (meetingDate === currentTimeString.split(' ')[0]) {
-    return meetingDateTimeString >= currentTimeString;
-  }
+  // // 날짜가 같은 경우, 상담 시간이 지난 것만 보이지 않게 설정
+  // if (meetingDate === currentTimeString.split(' ')[0]) {
+  //   return meetingDateTimeString >= currentTimeString;
+  // }
 
   // 날짜가 지나지 않은 경우 모두 보이게 설정
   return true;

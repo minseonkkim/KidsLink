@@ -24,7 +24,7 @@ export default function DocumentChild({type, name, profileImgPath, finish}: Docu
                 {profileImgPath==="" ? (
                     <Skeleton circle width={47} height={47} />
                 ) : (
-                    <img src={profileImgPath} className="w-full h-full rounded-full object-cover" />
+                    <img src={profileImgPath} className="w-full h-full rounded-full object-cover"  />
                 )}
             </div>
             <div className="font-bold mx-3 text-[21px] w-[74px]">
