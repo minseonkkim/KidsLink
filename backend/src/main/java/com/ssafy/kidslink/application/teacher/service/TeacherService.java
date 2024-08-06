@@ -77,4 +77,8 @@ public class TeacherService {
         Teacher teacher = teacherRepository.findByTeacherUsername(teacherUsername);
         return kindergartenService.getClassInfo(teacher.getKindergartenClass().getKindergartenClassId());
     }
+
+    public TeacherDTO getDetailByTeacherId(int teacherId) {
+        return teacherMapper.toDTO(teacherRepository.findById(teacherId).orElseThrow());
+    }
 }
