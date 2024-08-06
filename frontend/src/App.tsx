@@ -41,6 +41,7 @@ import TeacherAlbumSendFinish from "./pages/teacher/TeacherAlbumSendFinish";
 import TeacherVideo from "./pages/teacher/TeacherVideo";
 import ParentVideo from "./pages/parent/ParentVideo";
 import TeacherMeetingMain from "./pages/teacher/TeacherMeetingMain"
+import TeacherMeetingConfirm from "./pages/teacher/TeacherMeetingConfirm"
 
 export default function App() {
   const userType = useAppStore((state: AppState) => state.userType)
@@ -88,6 +89,7 @@ export default function App() {
           <Route path="/album/send_finish" element={<TeacherAlbumSendFinish/>} />
           <Route path="/meeting/:meetingId" element={<TeacherVideo />} />
           <Route path="/meeting" element={<TeacherMeetingMain/>}/>
+          <Route path="/meeting/confirm" element={<TeacherMeetingConfirm/>}/>
         </>
       ) : (
         <>
