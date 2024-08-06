@@ -2,11 +2,13 @@ import { useEffect, useRef, useState } from 'react';
 import InfoSection from "../../components/parent/common/InfoSection";
 import daramgi from "../../assets/parent/bus-daramgi.png";
 import busIcon from '../../assets/parent/busIcon.png';
-import currentLocationIcon from '../../assets/parent/marker.png'; // 새로운 마커 이미지 추가
+import currentLocationIcon from '../../assets/parent/marker.png';
 import { receiveBusLocation } from '../../api/webSocket';
 import { postKidBoardingStatus, getKidBoardingStatus } from '../../api/bus';
 import { getParentInfo } from '../../api/Info';
 import { Toggle } from '../../components/parent/bus/Toggle';
+import { FaBus } from 'react-icons/fa';
+import { MdGpsFixed } from 'react-icons/md';
 
 declare global {
   interface Window {
@@ -17,7 +19,8 @@ declare global {
 export default function ParentBus() {
   const mapContainer = useRef<HTMLDivElement>(null);
   const wsRef = useRef<WebSocket | null>(null);
-  const [location, setLocation] = useState({ lat: 37.5665, lng: 126.9780 });
+  // const [location, setLocation] = useState<{ lat?: number, lng?: number }>({ lat: undefined, lng: undefined });
+  const [location, setLocation] = useState<{ lat?: number, lng?: number }>({ lat: 37.5665, lng: 126.9780 });
   const [isBoarding, setIsBoarding] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isMoving, setIsMoving] = useState(false);
@@ -27,6 +30,8 @@ export default function ParentBus() {
 
   const [map, setMap] = useState<any>(null);
   const [currentMarker, setCurrentMarker] = useState<any>(null);
+  const [busMarker, setBusMarker] = useState<any>(null);
+  const [wsConnected, setWsConnected] = useState<boolean>(false);
 
   useEffect(() => {
     const apiKey = import.meta.env.VITE_KAKAO_API_KEY;
@@ -54,17 +59,67 @@ export default function ParentBus() {
           const markerImage = new window.kakao.maps.MarkerImage(imageSrc, imageSize, imageOption);
           const markerPosition = new window.kakao.maps.LatLng(location.lat, location.lng);
 
-          const marker = new window.kakao.maps.Marker({
+          const busMarkerInstance = new window.kakao.maps.Marker({
             position: markerPosition,
             image: markerImage,
           });
-          marker.setMap(newMap);
+
+          busMarkerInstance.setMap(newMap);
+          setBusMarker(busMarkerInstance);
+
+          // 현재 위치 마커 생성
+          navigator.geolocation.getCurrentPosition(
+            (position) => {
+              const { latitude, longitude } = position.coords;
+              const parentPosition = new window.kakao.maps.LatLng(latitude, longitude);
+              const parentMarkerImage = new window.kakao.maps.MarkerImage(
+                currentLocationIcon,
+                new window.kakao.maps.Size(30, 30),
+                { offset: new window.kakao.maps.Point(15, 15) }
+              );
+
+              const parentMarker = new window.kakao.maps.Marker({
+                position: parentPosition,
+                image: parentMarkerImage,
+                map: newMap,
+              });
+
+              setParentLocation({ latitude, longitude });
+              setCurrentMarker(parentMarker);
+              newMap.setCenter(parentPosition);
+            },
+            (error) => {
+              console.error("Error getting location", error);
+            },
+            {
+              enableHighAccuracy: true,
+              timeout: 5000,
+              maximumAge: 0,
+            }
+          );
 
           // WebSocket 연결 설정
-          const cleanup = receiveBusLocation(wsRef, setLocation, newMap, marker, setIsMoving);
+          const cleanup = receiveBusLocation(wsRef, setLocation, newMap, busMarkerInstance, setIsMoving);
+
+          wsRef.current = new WebSocket('ws://your-websocket-url'); // 여기에 실제 웹소켓 URL을 사용하세요
+
+          wsRef.current.onopen = () => {
+            console.log('WebSocket connected');
+            setWsConnected(true);
+          };
+
+          wsRef.current.onclose = () => {
+            console.log('WebSocket disconnected');
+            setWsConnected(false);
+          };
 
           // 컴포넌트 언마운트 시 WebSocket 연결 해제
-          return cleanup;
+          return () => {
+            if (wsRef.current) {
+              wsRef.current.close();
+            }
+            cleanup();
+          };
         }
       });
     };
@@ -120,62 +175,45 @@ export default function ParentBus() {
     await handleBoardingStatus();
   };
 
-
-  const updateLocation = () => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
-          const updatedPosition = new window.kakao.maps.LatLng(latitude, longitude);
-          const markerImage = new window.kakao.maps.MarkerImage(
-            currentLocationIcon,
-            new window.kakao.maps.Size(64, 69), // 이미지 크기
-            { offset: new window.kakao.maps.Point(27, 69) } // 이미지 중심
-          );
-
-          if (currentMarker) {
-            currentMarker.setPosition(updatedPosition);
-            currentMarker.setImage(markerImage);
-          } else {
-            const newMarker = new window.kakao.maps.Marker({
-              position: updatedPosition,
-              map: map,
-              image: markerImage,
-            });
-            setCurrentMarker(newMarker);
-          }
-          // map.setCenter(updatedPosition); // 지도의 중심을 이동시키지 않으려면 이 줄을 주석 처리합니다.
-        },
-        (error) => {
-          console.error("Error getting location", error);
-        },
-        {
-          enableHighAccuracy: true,
-          timeout: 5000,
-          maximumAge: 0,
-        }
-      );
+  // 좌표로 지도의 중심을 애니메이션 효과로 이동시키는 함수
+  const animateMapToMarker = (map: any, marker: any) => {
+    if (marker) {
+      const markerPosition = marker.getPosition();
+      map.panTo(markerPosition);
     }
   };
 
-  useEffect(() => {
-    const intervalId = setInterval(updateLocation, 5000); // 5초마다 위치 업데이트
-    return () => clearInterval(intervalId); // 컴포넌트 언마운트 시 인터벌 해제
-  }, []); // 빈 배열로 설정하여 한 번만 실행되도록 설정
+  const isLocationDefined = location.lat !== undefined && location.lng !== undefined;
+  const description1 = "버스가";
+  const main1 = isLocationDefined ? "이동 중" : "운행중인 시간이";
+  const main2 = isLocationDefined ? " 입니다!" : " 아닙니다";
 
   return (
     <div className="flex flex-col h-screen bg-[#FFEC8A]">
       <InfoSection
-        description1="버스가"
-        main1="이동 중"
-        main2=" 입니다!"
+        description1={description1}
+        main1={main1}
+        main2={main2}
         imageSrc={daramgi}
         altText="다람쥐"
       />
       <div className="flex flex-col flex-grow overflow-hidden rounded-tl-[20px] rounded-tr-[20px] bg-white shadow-top animate-slideUp -mt-10">
-
         <div className="flex flex-row items-center space-x-4 p-4">
           <Toggle isOn={isBoarding} toggleHandler={handleToggleChange} />
+          <button
+            onClick={() => animateMapToMarker(map, currentMarker)}
+            className="absolute top-[350px] right-[10px] bg-white text-black p-2 rounded z-40 rounded-full drop-shadow-lg"
+          >
+            <MdGpsFixed />
+          </button>
+          <button
+            onClick={() => animateMapToMarker(map, busMarker)}
+            className="absolute top-[350px] right-[60px] bg-white text-black p-2 rounded z-40 rounded-full drop-shadow-lg"
+          >
+            <div>
+              <FaBus />
+            </div>
+          </button>
         </div>
         <div
           ref={mapContainer}
