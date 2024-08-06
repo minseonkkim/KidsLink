@@ -206,6 +206,7 @@ public class MeetingTimeController {
 
             List<MeetingRoomDTO> meetings = meetingTimeService.confirmMeeting(userDetails.getUsername());
             meetingTimeService.deleteMeeting(userDetails.getUsername());
+            meetingTimeService.deleteMeetingTime(userDetails.getUsername());
             APIResponse<List<MeetingRoomDTO>> responseData = new APIResponse<>(
                     "success",
                     meetings,
