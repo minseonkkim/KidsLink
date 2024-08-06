@@ -131,31 +131,16 @@ public class BusStopController {
 
     }
 
-    @GetMapping("/child")
-    public ResponseEntity<APIResponse<BusStopChildDTO>> getBusStopChild(@AuthenticationPrincipal Object principal){
-        if (principal instanceof CustomUserDetails) {
-            CustomUserDetails userDetails = (CustomUserDetails) principal;
-
-            BusStopChildDTO busStopChildDTO = busStopService.getBusStopChildByParentUsername(userDetails.getUsername());
-            APIResponse<BusStopChildDTO> responseData = new APIResponse<>(
-                    "success",
-                    busStopChildDTO,
-                    "아이 버스 정보 조회에 성공하였습니다.",
-                    null
-            );
-            return new ResponseEntity<>(responseData, HttpStatus.OK);
-        }
-        APIError apiError = new APIError("UNAUTHORIZED", "유효한 JWT 토큰이 필요합니다.");
-
+    @GetMapping("/child/{childId}")
+    public ResponseEntity<APIResponse<BusStopChildDTO>> getBusStopChild(@PathVariable("childId") int childId) {
+        BusStopChildDTO busStopChildDTO = busStopService.getBusStopChildByChildId(childId);
         APIResponse<BusStopChildDTO> responseData = new APIResponse<>(
-                "fail",
-                null,
-                "아이 버스 정보 조회에 실패했습니다.",
-                apiError
+                "success",
+                busStopChildDTO,
+                "아이 버스 정보 조회에 성공하였습니다.",
+                null
         );
-
-        return new ResponseEntity<>(responseData, HttpStatus.BAD_REQUEST);
-
+        return new ResponseEntity<>(responseData, HttpStatus.OK);
     }
 
 
