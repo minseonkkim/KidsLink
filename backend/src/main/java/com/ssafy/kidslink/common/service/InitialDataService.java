@@ -2,6 +2,10 @@ package com.ssafy.kidslink.common.service;
 
 import com.ssafy.kidslink.application.album.domain.Album;
 import com.ssafy.kidslink.application.album.repository.AlbumRepository;
+import com.ssafy.kidslink.application.bus.domain.Bus;
+import com.ssafy.kidslink.application.bus.domain.BusStop;
+import com.ssafy.kidslink.application.bus.domain.BusStopChild;
+import com.ssafy.kidslink.application.bus.repository.BusRepository;
 import com.ssafy.kidslink.application.bus.repository.BusStopRepository;
 import com.ssafy.kidslink.application.bus.repository.BusStopChildRepository;
 import com.ssafy.kidslink.application.child.domain.Child;
@@ -9,6 +13,7 @@ import com.ssafy.kidslink.application.child.repository.ChildRepository;
 import com.ssafy.kidslink.application.diary.domain.Diary;
 import com.ssafy.kidslink.application.diary.repository.DiaryRepository;
 import com.ssafy.kidslink.application.diary.repository.ImageDiaryRepository;
+import com.ssafy.kidslink.application.diary.service.DiaryService;
 import com.ssafy.kidslink.application.document.domain.Absent;
 import com.ssafy.kidslink.application.document.domain.Dosage;
 import com.ssafy.kidslink.application.document.repository.AbsentRepository;
@@ -37,6 +42,7 @@ import com.ssafy.kidslink.application.schedule.repository.ScheduleRepository;
 import com.ssafy.kidslink.application.teacher.domain.Teacher;
 import com.ssafy.kidslink.application.teacher.repository.TeacherRepository;
 import com.ssafy.kidslink.common.dto.CustomMultipartFile;
+import com.ssafy.kidslink.common.enums.BoardingStatus;
 import com.ssafy.kidslink.common.enums.ConfirmationStatus;
 import com.ssafy.kidslink.common.enums.Gender;
 import jakarta.transaction.Transactional;
@@ -84,42 +90,52 @@ public class InitialDataService {
     private final BusStopChildRepository busStopChildRepository;
     private final ImageDiaryRepository imageDiaryRepository;
     private final ImageAlbumRepository imageAlbumRepository;
+    private final BusRepository busRepository;
+    private final DiaryService diaryService;
 
     @Value("${server.url}")
     private String serverUrl;
     @Value("${file.profile-dir}")
     private String profileDir;
 
-    private final List<ImageDTO> initProfiles = new ArrayList<>();
-    private final List<ImageDTO> child2Profiles = new ArrayList<>();
-    private final List<ImageDTO> child3Profiles = new ArrayList<>();
+    protected List<ImageDTO> initProfiles;
+    protected List<ImageDTO> child2Profiles;
+    protected List<ImageDTO> child3Profiles;
 
     @Transactional
     public String initializeData() {
+        initProfiles = new ArrayList<>();
+        child2Profiles = new ArrayList<>();
+        child3Profiles = new ArrayList<>();
+
         deleteAll();
 
         // TODO #0 초기 이미지 삽입
         saveInitProfiles();
 
+        // 이미지 데이터 삽입
+        init();
+
+        return "데이터 세팅 성공";
+    }
+
+    @Transactional
+    protected void init() {
         // TODO #1 유치원 초기 데이터 삽입
         List<Kindergarten> kindergartens = getKindergartens();
         kindergartenRepository.saveAll(kindergartens);
 
         // TODO #2 유치원 반 초기 데이터 삽입
-        // 각 유치원에 3개의 반을 추가
-        List<KindergartenClass> kindergartenClasses = getKindergartenClasses(kindergartens);
-        kindergartenClassRepository.saveAll(kindergartenClasses);
+        List<KindergartenClass> kindergartenClasses = kindergartenClassRepository.saveAll(getKindergartenClasses(kindergartens));
 
         // TODO #3 부모님 데이터 삽입
-        List<Parent> parents = getParents();
-        parentRepository.saveAll(parents);
+        List<Parent> parents = parentRepository.saveAll(getParents());
 
         // TODO #4 선생님 데이터 삽입
-        teacherRepository.saveAll(getTeachers(kindergartenClasses));
+        List<Teacher> teachers = teacherRepository.saveAll(getTeachers(kindergartenClasses));
 
         // TODO #5 유치원생 데이터 삽입
-        List<Child> children = getChildren(parents, kindergartenClasses);
-        childRepository.saveAll(children);
+        List<Child> children = childRepository.saveAll(getChildren(parents, kindergartenClasses));
 
         // TODO #6 알림장 데이터 삽입
         noticeBoardRepository.saveAll(getNoticeBoards(kindergartenClasses.get(0)));
@@ -153,14 +169,57 @@ public class InitialDataService {
         List<Album> albums = getAlbums(children.get(0));
         albumRepository.saveAll(albums);
 
-        // TODO #13 버스 정류장 데이터 삽입
+        // TODO #14 버스 데이터 추가
+        List<Bus> busList = getBusList(kindergartens);
+        List<Bus> saveBusList = busRepository.saveAll(busList);
 
-        // TODO #14 버스 정류장에 아이 데이터 삽입
+        // TODO #15 버스 정류장 데이터 삽입
+        for (int i = 2; i < busList.size(); i++) {
+            List<BusStop> busStops = getBusStopList(saveBusList.get(i), i);
+            busStopRepository.saveAll(busStops);
+        }
 
-        return "데이터 세팅 성공";
+        // TODO #16 버스 정류장에 아이 데이터 삽입 (1,2,3번 유치원만 해당)
+        List<KindergartenClass> kindergartenClasses1 = kindergartenClassRepository.findByKindergarten(kindergartens.get(0));
+        List<BusStop> busStops1 = busStopRepository.saveAll(getBusStopList(saveBusList.get(0), 0));
+        saveBusStopChildInit(kindergartenClasses1, busStops1);
+        List<KindergartenClass> kindergartenClasses2 = kindergartenClassRepository.findByKindergarten(kindergartens.get(1));
+        List<BusStop> busStops2 = busStopRepository.saveAll(getBusStopList(saveBusList.get(1), 1));
+        saveBusStopChildInit(kindergartenClasses2, busStops2);
+        List<KindergartenClass> kindergartenClasses3 = kindergartenClassRepository.findByKindergarten(kindergartens.get(2));
+        List<BusStop> busStops3 = busStopRepository.saveAll(getBusStopList(saveBusList.get(2), 2));
+        saveBusStopChildInit(kindergartenClasses3, busStops3);
     }
 
-    private void saveInitProfiles() {
+    private void saveBusStopChildInit(List<KindergartenClass> kindergartenClasses, List<BusStop> busStops) {
+        for (KindergartenClass kindergartenClass : kindergartenClasses) {
+            List<Child> childList1 = childRepository.findByKindergartenClass(kindergartenClass);
+            for (int i = 0; i < childList1.size(); i++) {
+                BusStopChild busStopChild = new BusStopChild();
+                busStopChild.setChild(childList1.get(i));
+                busStopChild.setBusStop(busStops.get(i % busStops.size()));
+                busStopChild.setBusBoardingStatus(BoardingStatus.T);
+                busStopChildRepository.save(busStopChild);
+            }
+        }
+    }
+
+    private List<BusStop> getBusStopList(Bus bus, int i) {
+        List<String> busStopNames = getBusStopNames();
+        List<BusStop> busStops = new ArrayList<>();
+        for (int j = 0; j < 3; j++) {
+            BusStop busStop = new BusStop();
+            busStop.setBusStopName(busStopNames.get(i * 3 + j));
+            busStop.setBus(bus);
+            busStops.add(busStop);
+        }
+
+        return busStops;
+    }
+
+
+    @Transactional
+    protected void saveInitProfiles() {
         String[] imageFiles = {"child1.jpg", "child2.jpg", "child3.jpg", "child4.jpg", "child5.jpg", "child6.jpg", "child7.jpg", "child8.jpg", "child9.jpg", "child10.jpg", "child11.jpg", "child12.jpg", "child13.jpg"};
         String[] imageFiles2 = {"child21.jpg", "child22.jpg", "child23.jpg", "child24.jpg"};
         String[] imageFiles3 = {"child31.jpg", "child32.jpg", "child33.jpg", "child34.jpg"};
@@ -170,13 +229,26 @@ public class InitialDataService {
         uploadProfiles(imageFiles3, child3Profiles);
     }
 
-    private void uploadProfiles(String[] imageFiles2, List<ImageDTO> child2Profiles) {
-        for (String imageFile : imageFiles2) {
+    private List<Bus> getBusList(List<Kindergarten> kindergartens) {
+        List<Bus> busList = new ArrayList<>();
+        List<String> busNames = getBusNames();
+        int i = 0;
+        for (Kindergarten kindergarten : kindergartens) {
+            Bus bus = new Bus();
+            bus.setKindergarten(kindergarten);
+            bus.setBusName(busNames.get(i++));
+            busList.add(bus);
+        }
+        return busList;
+    }
+
+    private void uploadProfiles(String[] imageFiles, List<ImageDTO> profiles) {
+        for (String imageFile : imageFiles) {
             File imageFileObj = new File(profileDir, imageFile);
             try {
                 MultipartFile multipartFile = convertFileToMultipartFile(imageFileObj);
                 ImageDTO imageDTO = imageService.storeFile(multipartFile);
-                child2Profiles.add(imageDTO);
+                profiles.add(imageDTO);
             } catch (IOException e) {
                 throw new RuntimeException("앨범 초기화 중 사진 저장 오류", e);
             }
@@ -247,13 +319,15 @@ public class InitialDataService {
                 .collect(Collectors.toList());
     }
 
-    private void deleteAll() {
+    @Transactional
+    protected void deleteAll() {
         // TODO #1 관계 테이블 클래스 정의 제대로 확인하기 (IdClass 또는 PK 생성)
-//        imageDiaryRepository.findAll().forEach(imageDiary -> imageDiaryRepository.delete(imageDiary));
+        diaryService.deleteAllImageDiaries();
 //        imageAlbumRepository.findAll().forEach(imageAlbum -> imageAlbumRepository.delete(imageAlbum));
         // TODO #2 위와 같은 이유로 Bus Table 초기화 시 삭제도 정의 제대로 하기
-//        busStopChildRepository.deleteAll();
-//        busStopRepository.deleteAll();
+        busStopChildRepository.deleteAll();
+        busStopRepository.deleteAll();
+        busRepository.deleteAll();
         teacherNotificationRepository.deleteAll();
         parentNotificationRepository.deleteAll();
         meetingScheduleRepository.deleteAll();
@@ -282,6 +356,38 @@ public class InitialDataService {
         );
     }
 
+    private List<String> getBusStopNames(){
+        return Arrays.asList(
+                "햇살정류장1", "햇살정류장2", "햇살정류장3", "햇살정류장4", "햇살정류장5",
+                "별빛정류장1", "별빛정류장2", "별빛정류장3", "별빛정류장4", "별빛정류장5",
+                "꿈나무정류장1", "꿈나무정류장2", "꿈나무정류장3", "꿈나무정류장4", "꿈나무정류장5",
+                "푸른숲정류장1", "푸른숲정류장2", "푸른숲정류장3", "푸른숲정류장4", "푸른숲정류장5",
+                "행복한정류장1", "행복한정류장2", "행복한정류장3", "행복한정류장4", "행복한정류장5",
+                "사랑정류장1", "사랑정류장2", "사랑정류장3", "사랑정류장4", "사랑정류장5",
+                "하늘정류장1", "하늘정류장2", "하늘정류장3", "하늘정류장4", "하늘정류장5",
+                "바다정류장1", "바다정류장2", "바다정류장3", "바다정류장4", "바다정류장5",
+                "무지개정류장1", "무지개정류장2", "무지개정류장3", "무지개정류장4", "무지개정류장5",
+                "한울정류장1", "한울정류장2", "한울정류장3", "한울정류장4", "한울정류장5",
+                "동그라미정류장1", "동그라미정류장2", "동그라미정류장3", "동그라미정류장4", "동그라미정류장5",
+                "달님정류장1", "달님정류장2", "달님정류장3", "달님정류장4", "달님정류장5",
+                "솔잎정류장1", "솔잎정류장2", "솔잎정류장3", "솔잎정류장4", "솔잎정류장5",
+                "별나라정류장1", "별나라정류장2", "별나라정류장3", "별나라정류장4", "별나라정류장5",
+                "참나무정류장1", "참나무정류장2", "참나무정류장3", "참나무정류장4", "참나무정류장5",
+                "아름정류장1", "아름정류장2", "아름정류장3", "아름정류장4", "아름정류장5",
+                "솔바람정류장1", "솔바람정류장2", "솔바람정류장3", "솔바람정류장4", "솔바람정류장5",
+                "열매정류장1", "열매정류장2", "열매정류장3", "열매정류장4", "열매정류장5",
+                "다정정류장1", "다정정류장2", "다정정류장3", "다정정류장4", "다정정류장5",
+                "예쁜정류장1", "예쁜정류장2", "예쁜정류장3", "예쁜정류장4", "예쁜정류장5"
+        );
+    }
+
+    private List<String> getBusNames(){
+        return Arrays.asList(
+                "햇살호", "별빛호", "꿈나무호", "푸른숲호", "행복한호", "사랑호", "하늘호",
+                "바다호", "무지개호", "한울호", "동그라미호", "달님호", "솔잎호", "별나라호", "참나무호",
+                "아름호", "솔바람호", "열매호", "다정호", "예쁜호"
+        );
+    }
 
     private List<String> getKindergartenNames() {
         return Arrays.asList("햇살 유치원", "별빛 유치원", "꿈나무 유치원", "푸른숲 유치원", "행복한 유치원", "사랑 유치원", "하늘 유치원"
@@ -451,10 +557,9 @@ public class InitialDataService {
             diary.setDiaryContents(contents[i % contents.length]); // 다양한 내용을 순환하며 설정합니다.
             diary.setChild(child); // 주어진 child 객체를 설정합니다.
             List<ImageDTO> randomProfiles = new Random().ints(0, initProfiles.size())
-                    .distinct()
                     .limit(3)
                     .mapToObj(initProfiles::get)
-                    .collect(Collectors.toList());
+                    .toList();
 
             diary.setDiaryThumbnail(randomProfiles.get(0).getPath());
 
