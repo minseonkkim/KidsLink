@@ -3,10 +3,11 @@ export interface ImageItem {
     imageId: number;
   }
   
-  export interface Child {
+  export interface Child{
     childId: number;
     name: string;
-    kindergartenClass: string;
+    kindergartenClassName: string;
+    kindergartenName: string;
     gender: string;
     birth: string;
     profile: string;
