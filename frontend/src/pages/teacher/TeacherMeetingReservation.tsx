@@ -299,7 +299,7 @@ export default function TeacherReservation() {
       showToastSuccess(<div>상담일자가 확정되었습니다!<br/>상담목록으로 이동합니다.</div>);
 
       setTimeout(() => {
-        navigate('/meeting');
+        navigate('/meeting/schedueld');
       }, 3000);
     } catch (error) {
       showToastError(<div>상담일자 확정 중 오류가 발생했습니다.</div>);
@@ -332,7 +332,7 @@ export default function TeacherReservation() {
                 {formatDate(date)}
               </div>
               <button 
-                className="mt-2 h-[40px] border-2 border-[#7C7C7C] bg-[#E3EEFF] px-3 py-1 font-bold rounded-[10px] hover:bg-[#D4DDEA]"
+                className="absolute top-[125px] right-[150px] mt-2 h-[40px] border-2 border-[#7C7C7C] bg-[#E3EEFF] px-3 py-1 font-bold rounded-[10px] hover:bg-[#D4DDEA]"
                 onClick={handleConfirmMeetingClick}
               >
                 상담일자 확정하기
