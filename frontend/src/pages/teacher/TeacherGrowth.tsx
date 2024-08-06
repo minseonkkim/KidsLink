@@ -12,7 +12,7 @@ import ToastNotification, {
   showToast,
   showToastError,
 } from "../../components/teacher/common/ToastNotification.tsx";
-import { useTeacherInfoStore } from "../../stores/useTeacherInfoStore.ts";
+import useTeacherInfoStore from "../../stores/useTeacherInfoStore.ts";
 import { getClassChilds } from "../../api/kindergarten.ts";
 import {
   createDiary,
@@ -150,7 +150,7 @@ export default function TeacherGrowth() {
         <Title title="성장일지" />
         <div className="flex flex-row justify-between">
           <div className="rounded-[10px] bg-[#f4f4f4] w-[380px] h-[520px] p-[10px]">
-            <div className="bg-[#fff] h-[53px] rounded-[10px] flex items-center p-3 mx-2 mt-2 mb-6">
+            <div className="bg-[#fff] h-[53px] rounded-[10px] flex items-center p-3 mx-2 mt-2 mb-4">
               <IoSearch className="text-[25px] mr-3" />
               <input
                 type="text"
@@ -164,7 +164,7 @@ export default function TeacherGrowth() {
               {filteredChildren.map((child) => (
                 <div
                   key={child.childId}
-                  className={`border-[3px] rounded-[10px] h-[182px] ${
+                  className={`border-[3px] rounded-[10px] h-[185px] m-1 ${
                     child.childId === currentChildId
                       ? "border-[#B2D170]"
                       : "border-transparent"
