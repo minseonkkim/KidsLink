@@ -19,6 +19,7 @@ export default function TeacherMeeting() {
     const fetchMeetings = async () => {
       try {
         const data = await GetConfirmedMeeting();
+        console.log(data);
         setMeetings(data);
 
         const parentNamesData = await Promise.all(
@@ -45,23 +46,24 @@ export default function TeacherMeeting() {
 
     fetchMeetings();
   }, []);
+  console.log("meetings: ", meetings)
 
   // 비활성화 된 경우, 클릭되지 않는 로직 추가해야함.
   return (
     <>
       <TeacherHeader />
-      <div className="mt-[120px] px-[130px]">
-        <NavigateBack backPage="홈" backLink='/' />
-        <Title title="화상상담" />
-        <Link to="/meeting/reservation">
+      <div className="mt-[130px] px-[130px]">
+        <NavigateBack backPage="화상상담" backLink='/meeting' />
+        <Title title="예약된 화상상담" />
+        {/* <Link to="/meeting/reservation">
           <button className="flex flex-row items-center absolute top-[125px] right-[150px] border-[2px] border-[#7C7C7C] bg-[#E3EEFF] px-3 py-1 font-bold rounded-[10px] hover:bg-[#D4DDEA]">
             <IoMdCalendar className="mr-1 text-[22px]" />
             상담가능시간 open
           </button>
-        </Link>
+        </Link> */}
         <div className="flex flex-row flex-wrap justify-between items-start">
           {meetings
-            .filter(meeting => isMeetingVisible(meeting.meetingDate, meeting.meetingTime))
+            // .filter(meeting => isMeetingVisible(meeting.meetingDate, meeting.meetingTime))
             .map((meeting) => (
               <Link
                 to={`/meeting/${meeting.meetingId}`}
