@@ -312,7 +312,7 @@ export default function TeacherReservation() {
     <>
       <TeacherHeader />
       <ToastNotification />
-      <div className="mt-[130px] px-[150px]">
+      <div className="mt-[130px] pl-[150px] pr-[130px]">
         <NavigateBack backPage="화상상담" backLink='/meeting' />
         <Title title="상담가능시간 open" />
 
@@ -326,8 +326,8 @@ export default function TeacherReservation() {
             tileDisabled={({ date, view }) => view === 'month' && isPastDate(date)}
           />
 
-          <div className="w-[637px]">
-            <div className="flex flex-row justify-between">
+          <div className="w-[665px]">
+            <div className="flex flex-row justify-between mr-[20px]">
               <div className="text-[22px] flex flex-row items-center h-[22px] font-bold text-[#8CAD1E] my-5">
                 <FaRegCalendar className="mr-3"/>
                 {formatDate(date)}
@@ -338,14 +338,8 @@ export default function TeacherReservation() {
                 >
                   <span>수정하기</span>
                 </button>
-              {/* <button 
-                className="absolute top-[125px] right-[150px] mt-2 h-[40px] border-2 border-[#7C7C7C] bg-[#E3EEFF] px-3 py-1 font-bold rounded-[10px] hover:bg-[#D4DDEA]"
-                onClick={handleConfirmMeetingClick}
-              >
-                상담일자 확정하기
-              </button> */}
             </div>
-            <div className="flex justify-between">
+            <div className="flex justify-between mr-[20px]">
               <div></div>
               <label htmlFor="chk">
                 <input type="checkbox" id="chk" onClick={handleSelectAllClick}/>
