@@ -146,7 +146,21 @@ export default function TeacherAlbumFinish() {
 
   const deleteImage = (itemIndex: number, imgIndex: number) => {
     const updatedResult = [...result];
+    const draggedImage = updatedResult[itemIndex].images[imgIndex];
+
+    // 기존 위치에서 이미지 제거
     updatedResult[itemIndex].images.splice(imgIndex, 1);
+
+    // '분류실패' 카테고리가 있는지 확인, 없으면 추가
+    let failedCategoryIndex = updatedResult.findIndex(item => item.child === null);
+    if (failedCategoryIndex === -1) {
+      updatedResult.push({ child: null, images: [] });
+      failedCategoryIndex = updatedResult.length - 1;
+    }
+
+    // '분류실패' 카테고리에 이미지 추가
+    updatedResult[failedCategoryIndex].images.push(draggedImage);
+    
     setResult(updatedResult);
   };
 
