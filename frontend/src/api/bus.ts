@@ -3,7 +3,7 @@ import axiosInstance from "./token/axiosInstance"
 // 학부모 버스 탑승 여부 작성
 export async function postKidBoardingStatus(childId: number) {
   try {
-    const response = await axiosInstance.post(`busstop/parent/${childId}`)
+    const response = await axiosInstance.put(`busstop/parent/${childId}/status`)
 
     if (response.data.status === 'success') {
       console.log(response.data.message) // 확인 후 삭제
@@ -18,9 +18,9 @@ export async function postKidBoardingStatus(childId: number) {
 }
 
 // 학부모 버스 탑승 여부 조회
-export async function getKidBoardingStatus() {
+export async function getKidBoardingStatus(childId: number) {
   try {
-    const response = await axiosInstance.get(`busstop/child`)
+    const response = await axiosInstance.get(`busstop/child/${childId}`)
 
     if (response.data.status === 'success') {
       console.log(response.data.data) // 확인 후 삭제

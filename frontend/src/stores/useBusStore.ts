@@ -18,6 +18,7 @@ interface BusStore {
   busStops: BusStop[];
   setBusStops: (stops: BusStop[]) => void;
   toggleChildChecked: (busStopId: number, childName: string) => void;
+  setAllChecked: (checked: boolean) => void; // Add this line
 }
 
 export const useBusStore = create<BusStore>((set, get) => ({
@@ -51,5 +52,12 @@ export const useBusStore = create<BusStore>((set, get) => ({
             }
           : stop
       ),
+    })),
+  setAllChecked: (checked) =>
+    set((state) => ({
+      busStops: state.busStops.map((stop) => ({
+        ...stop,
+        children: stop.children.map((child) => ({ ...child, checked })),
+      })),
     })),
 }));
