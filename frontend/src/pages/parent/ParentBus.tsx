@@ -19,7 +19,7 @@ export default function ParentBus() {
   const [location, setLocation] = useState({ lat: 37.5665, lng: 126.9780 });
   const [isBoarding, setIsBoarding] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [isMoving,setIsMoving] = useState(false);
+  const [isMoving, setIsMoving] = useState(false);
   const [parentInfo, setParentInfo] = useState(null);
   const [childId, setChildId] = useState<number | null>(null);
 
@@ -55,7 +55,7 @@ export default function ParentBus() {
           marker.setMap(map);
 
           // WebSocket 연결 설정
-          const cleanup = receiveBusLocation(wsRef, setLocation, map, marker,setIsMoving);
+          const cleanup = receiveBusLocation(wsRef, setLocation, map, marker, setIsMoving);
 
           // 컴포넌트 언마운트 시 WebSocket 연결 해제
           return cleanup;
@@ -72,7 +72,7 @@ export default function ParentBus() {
         const currentChildId = fetchedParentInfo.child.childId;
         setChildId(currentChildId);
 
-        const response = await getKidBoardingStatus();
+        const response = await getKidBoardingStatus(currentChildId);
         if (response) {
           setIsBoarding(response.status === 'T');
         }
@@ -94,12 +94,9 @@ export default function ParentBus() {
   }, []);
 
   const handleBoardingStatus = async () => {
-    if (childId === null) return;
-
-    setLoading(true);
     try {
       await postKidBoardingStatus(childId);
-      const response = await getKidBoardingStatus();
+      const response = await getKidBoardingStatus(childId);
       if (response) {
         setIsBoarding(response.status === 'T');
       }
@@ -111,7 +108,7 @@ export default function ParentBus() {
   };
 
   const handleToggleChange = async () => {
-    if (loading) return; // prevent toggle during loading
+    if (loading) return;
     const newStatus = !isBoarding;
     setIsBoarding(newStatus);
     await handleBoardingStatus();
@@ -119,7 +116,6 @@ export default function ParentBus() {
 
   return (
     <div className="flex flex-col h-screen bg-[#FFEC8A]">
-     
       <InfoSection
         description1="버스가"
         main1="이동 중"
@@ -127,12 +123,11 @@ export default function ParentBus() {
         imageSrc={daramgi}
         altText="다람쥐"
       />
-
       <div className="flex flex-col flex-grow overflow-hidden rounded-tl-[20px] rounded-tr-[20px] bg-white shadow-top animate-slideUp -mt-10">
         <Toggle isOn={isBoarding} toggleHandler={handleToggleChange} />
-        <div 
-          ref={mapContainer} 
-          className="w-full h-full relative z-0 mt-14"
+        <div
+          ref={mapContainer}
+          className="w-full h-full relative z-0 mt-4"
         ></div>
       </div>
     </div>
