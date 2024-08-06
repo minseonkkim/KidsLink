@@ -9,7 +9,7 @@ import { startWebSocket, stopWebSocket } from '../../api/webSocket';
 import { getAllBusStops, postBusStart } from '../../api/bus';
 import { getTeacherInfo } from '../../api/Info';
 import { useBusStore } from '../../stores/useBusStore';
-import { useTeacherInfoStore } from '../../stores/useTeacherInfoStore'; 
+import useTeacherInfoStore from '../../stores/useTeacherInfoStore'; 
 import useModal from "../../hooks/teacher/useModal.tsx";
 
 const WEBSOCKET_URL = import.meta.env.VITE_WEBSOCKET_URL;

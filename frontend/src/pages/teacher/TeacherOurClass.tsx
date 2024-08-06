@@ -4,7 +4,7 @@ import Title from "../../components/teacher/common/Title";
 import ChildCard from "../../components/teacher/ourclass/ChildCard";
 import ProfileImg from "../../assets/teacher/profile_img.jpg";
 import { useEffect, useState } from "react";
-import { useTeacherInfoStore } from "../../stores/useTeacherInfoStore";
+import useTeacherInfoStore from "../../stores/useTeacherInfoStore";
 import { getClassChilds } from "../../api/kindergarten";
 import { getDocumentsByDate } from "../../api/document";
 

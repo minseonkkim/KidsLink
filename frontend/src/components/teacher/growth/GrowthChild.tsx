@@ -10,7 +10,7 @@ export default function GrowthChild({ name, profileImgPath, completed, onClick }
   return (
     <div 
       onClick={onClick} 
-      className="flex flex-col justify-around items-center w-[156px] h-[168px] rounded-[10px] p-2 m-1 font-bold text-[20px] cursor-pointer"
+      className="flex flex-col justify-around items-center w-[137px] h-[168px] rounded-[10px] p-1 m-2 font-bold text-[20px] cursor-pointer"
     >
       {!completed ? (
         <div className="w-[120px] h-[120px]">
