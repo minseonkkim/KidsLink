@@ -126,7 +126,7 @@ export async function getMeetingInfo(meetingId: number): Promise<MeetingInfo> {
 }
 
 // 학부모가 예약한 날짜, 시간 조회하기
-export async function GetParentSelectedTime(){
+export async function getParentSelectedTime(){
   try{
     const response = await axiosInstance.get('meeting/selected');
     if(response.data.status === 'success'){

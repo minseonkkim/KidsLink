@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import NavigateBack from "../../components/teacher/common/NavigateBack";
 import TeacherHeader from "../../components/teacher/common/TeacherHeader";
 import Title from "../../components/teacher/common/Title";
-import { ConfirmMeeting, GetParentSelectedTime } from "../../api/meeting";
+import { confirmMeeting, getParentSelectedTime } from "../../api/meeting";
 import { showToastError, showToastSuccess } from "../../components/teacher/common/ToastNotification";
 import ToastNotification from "../../components/teacher/common/ToastNotification";
 
@@ -29,7 +29,7 @@ export default function TeacherMeetingConfirm() {
 
     const fetchSelectedMeeting = async () => {
         try {
-            const response = await GetParentSelectedTime();
+            const response = await getParentSelectedTime();
             let meetings: Meeting[] = [];
             if (Array.isArray(response)) {
                 meetings = response;
@@ -64,7 +64,7 @@ export default function TeacherMeetingConfirm() {
 
     const handleConfirmMeetingClick = async () => {
         try {
-            await ConfirmMeeting();
+            await confirmMeeting();
             showToastSuccess(
                 <div>
                     상담일자가 확정되었습니다!<br />상담목록으로 이동합니다.
