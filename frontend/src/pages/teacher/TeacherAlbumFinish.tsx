@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { BsSend } from 'react-icons/bs';
 import { FaTrash } from 'react-icons/fa6';
@@ -11,6 +11,9 @@ import { sendAlbumToParent } from '../../api/album';
 import { showToast, showToastError } from '../../components/teacher/common/ToastNotification';
 import { ImageItem, AlbumItem, DragItem } from '../../types/album';
 import { transformData } from '../../utils/album';
+import { getTeacherInfo } from '../../api/Info';
+import { getClassChilds } from '../../api/kindergarten';
+import ChildName from '../../components/teacher/common/ChildName';
 
 const ItemTypes = {
   IMAGE: 'image',
@@ -36,13 +39,7 @@ const AlbumChild: React.FC<{
   return (
     <div ref={drop} className="w-full mb-4">
       <div className="flex flex-row w-full">
-        <span
-          className={`${
-            item.child ? 'bg-[#8CAD1E] text-[#fff]' : 'bg-[#EAEAEA] text-[#363636]'
-          } cursor-pointer flex items-center justify-center rounded-[30px] w-[95px] h-[45px] font-bold mx-3 my-2 text-[17px]`}
-        >
-          {item.child ? item.child.name : '분류실패'}
-        </span>
+        <ChildName child={item.child} />
         <div
           className={`${
             item.child ? 'border-[#8CAD1E]' : 'bg-[#EAEAEA]'
@@ -125,7 +122,21 @@ export default function TeacherAlbumFinish() {
 
   const [albumName, setAlbumName] = useState(`${year}년 ${month}월 ${date}일의 사진들`);
   const [result, setResult] = useState<AlbumItem[]>(location.state?.sortedResult || []);
+  const [classChildren, setClassChildren] = useState<{ name: string }[]>([]);
   console.log(result);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const teacherInfo = await getTeacherInfo();
+        const children = await getClassChilds(teacherInfo.kindergartenClassId);
+        setClassChildren(children);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchData();
+  }, []);
 
   const moveImage = (
     dragIndex: number,
@@ -205,6 +216,11 @@ export default function TeacherAlbumFinish() {
             />
           </div>
           <div className="mb-4 text-[17px]">잘못된 분류가 있나요? 드래그로 수정해보세요</div>
+          <div className="flex flex-wrap">
+              {classChildren.map((child, index) => (
+                <ChildName key={index} child={child} />
+              ))}
+            </div>
           {result.map((item, index) => (
             <AlbumChild key={index} item={item} index={index} moveImage={moveImage} deleteImage={deleteImage} />
           ))}
