@@ -9,7 +9,7 @@ import { getOneParentInfo } from "../../api/Info";
 import TeacherMeetingSchedule from "../../components/teacher/consulting/TeacherMeetingSchedule";
 import { isMeetingActive, isMeetingVisible } from "../../utils/meeting";
 import { ParentTeacherMeeting } from "../../types/meeting";
-import { GetConfirmedMeeting } from "../../api/meeting";
+import { getConfirmedMeeting } from "../../api/meeting";
 
 export default function TeacherMeeting() {
   const [meetings, setMeetings] = useState<ParentTeacherMeeting[]>([]);
@@ -18,7 +18,7 @@ export default function TeacherMeeting() {
   useEffect(() => {
     const fetchMeetings = async () => {
       try {
-        const data = await GetConfirmedMeeting();
+        const data = await getConfirmedMeeting();
         setMeetings(data);
 
         const parentNamesData = await Promise.all(
