@@ -56,5 +56,5 @@ export default defineConfig({
       strategies: 'injectManifest',
     })
   ],
-  base: process.env.VITE_PUBLIC_URL 
+  base: process.env.VITE_PUBLIC_URL || '/'
 })
