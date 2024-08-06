@@ -3,9 +3,11 @@ package com.ssafy.kidslink.application.meeting.repository;
 import com.ssafy.kidslink.application.meeting.domain.MeetingTime;
 import com.ssafy.kidslink.application.teacher.domain.Teacher;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -15,4 +17,7 @@ public interface MeetingTimeRepository extends JpaRepository<MeetingTime, Intege
     List<MeetingTime> findByClassId(@Param("classId") int classId);
     List<MeetingTime> findByTeacher(Teacher teacher);
 
+    @Transactional
+    @Modifying
+    void deleteByTeacher(Teacher teacher);
 }

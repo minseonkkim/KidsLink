@@ -7,10 +7,9 @@ import TeacherHeader from "../../components/teacher/common/TeacherHeader";
 import Title from "../../components/teacher/common/Title";
 import ReservationTime from "../../components/teacher/consulting/ReservationTime";
 import styled from 'styled-components';
-import { IoSendSharp } from "react-icons/io5";
 import { useNavigate } from 'react-router-dom';
-import ToastNotification, { showToastSuccess, showToastError } from "../../components/teacher/common/ToastNotification.tsx";
-import { confirmMeeting, getAllPossibleReservations, postTeacherReservations } from "../../api/meeting.ts";
+import ToastNotification from "../../components/teacher/common/ToastNotification.tsx";
+import { getAllPossibleReservations, PostTeacherReservations } from "../../api/meeting.ts";
 import { TeacherMeetingReservation } from "../../types/meeting.ts";
 import { formatDate, isPastDate, ValuePiece } from "../../utils/meeting.ts";
 
@@ -29,163 +28,163 @@ const StyledCalendar = styled(Calendar)`
   border-radius: 10px;
   line-height: 1.125em;
 
-    .react-calendar { 
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        font-family: 'font-KoPubDotum';
-        width: 450px;
-        padding: 30px;
-        max-width: 100%;
-        background-color: #fff;
-        color: #222;
-        border-width: 2px;
-        border-radius: 10px;
-        line-height: 1.125em;
-    }
+  .react-calendar { 
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-family: 'font-KoPubDotum';
+    width: 450px;
+    padding: 30px;
+    max-width: 100%;
+    background-color: #fff;
+    color: #222;
+    border-width: 2px;
+    border-radius: 10px;
+    line-height: 1.125em;
+  }
 
-    .react-calendar__navigation__next-button--years {
-        display: none;
-    }
+  .react-calendar__navigation__next-button--years,
+  .react-calendar__navigation__prev-button--years {
+    display: none;
+  }
 
-    /* 년-월 */
-    .react-calendar__navigation{
-        margin-bottom: 25px;
-        
-    }
+  /* 년-월 */
+  .react-calendar__navigation {
+    margin-bottom: 25px;
+  }
 
-    .react-calendar__navigation__label > span {
-        color: #000;
-        font-family: SUIT Variable;
-        font-size: 20px;
-        font-weight: bold;
-        line-height: 140%;
-        margin-left: 30px;
-        margin-right: 30px;
-    }
+  .react-calendar__navigation__label > span {
+    color: #000;
+    font-family: SUIT Variable;
+    font-size: 20px;
+    font-weight: bold;
+    line-height: 140%;
+    margin-left: 30px;
+    margin-right: 30px;
+  }
 
-    .react-calendar__navigation__prev-button{
-        font-size: 25px;
-    }
+  .react-calendar__navigation__prev-button,
+  .react-calendar__navigation__next-button {
+    font-size: 25px;
+  }
 
-    .react-calendar__navigation__next-button{
-        font-size: 25px;
-    }
+  .react-calendar__navigation__label:hover,
+  .react-calendar__navigation__prev-button:hover,
+  .react-calendar__navigation__next-button:hover {
+    background-color: transparent;
+    cursor: default;
+  }
 
+  /* 요일 */
+  .react-calendar__month-view__weekdays__weekday {
+    border-bottom: none;
+    font-family: 'font-KoPubDotum';
+    padding: 8px !important;
+    color: #000;
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 
-    /* 요일 */
-    .react-calendar__month-view__weekdays__weekday{
-        border-bottom: none;
-        font-family: 'font-KoPubDotum';
-        padding: 8px !important;
-        color: #000;
-        font-size: 16px;
-        font-weight: bold;
-        margin-bottom: 13px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
+  .react-calendar__month-view__days__day {
+    color: #fff;
+    font-size: 18px;
+    font-weight: bold;
+    width: 44px;
+    height: 44px;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+  }
 
-    .react-calendar__month-view__days__day {
-        color: #fff;
-        font-size: 18px;
-        font-weight: bold;
-        width: 44px;
-        height: 44px;
-        text-align: center;
-        margin: 0;
-        padding: 0;
-    }
+  .react-calendar__month-view__weekdays {
+    display: flex;
+    justify-content: center;
+  }
 
-    .react-calendar__month-view__weekdays {
-        display: flex;
-        justify-content: center;
-    }
+  /* 요일 밑줄 제거 */
+  .react-calendar__month-view__weekdays abbr {
+    text-decoration: none;
+    font-weight: 800;
+  }
 
-    /* 요일 밑줄 제거 */
-    .react-calendar__month-view__weekdays abbr {
-        text-decoration: none;
-        font-weight: 800;
-    }
+  /* 이번 달 일자 */
+  .react-calendar__tile {
+    color: #000;
+    font-size: 18px;
+    font-weight: bold;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+  }
 
-    
-    /* 이번 달 일자 */
-    .react-calendar__tile{
-        color: #000;
-        font-size: 18px;
-        font-weight: bold;
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-start;
-        align-items: center;
-    }
+  .react-calendar__tile--weekend {
+    color: #000;
+    font-size: 18px;
+    font-weight: bold;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+  }
 
-    .react-calendar__tile--weekend{
-        color: #000;
-        font-size: 18px;
-        font-weight: bold;
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-start;
-        align-items: center;
-    }
+  /* 저번 달 & 다음 달 일자 */
+  .react-calendar__month-view__days__day--neighboringMonth {
+    font-family: 'font-KoPubDotum';
+    color: #5F5F5F;
+    font-size: 18px;
+    font-weight: bold;
+    width: 44px;
+    height: 44px;
+  }
 
-    /* 저번 달 & 다음 달 일자 */
-    .react-calendar__month-view__days__day--neighboringMonth{
-        font-family: 'font-KoPubDotum';
-        color: #5F5F5F;
-        font-size: 18px;
-        font-weight: bold;
-        width: 44px;
-        height: 44px;
-    }
+  /* 날짜 사이 간격 */
+  .react-calendar__tile {
+    font-family: 'font-KoPubDotum';
+    padding: 10px;
+    margin-bottom: 12px;
+    font-size: 17px;
+    display: flex;
+    justify-content: center;
+  }
 
-    /* 날짜 사이 간격 */
-    .react-calendar__tile {
-        font-family: 'font-KoPubDotum';
-        padding: 10px;
-        margin-bottom: 12px;
-        font-size: 17px;
-        display: flex;
-        justify-content: center;
-    }
+  .react-calendar__tile:hover {
+    border-radius: 20%;
+  }
 
-
-    .react-calendar__tile:hover {
-        border-radius: 20%;
-    }
-
-    /* 오늘 날짜 */
-    .react-calendar__tile--now {
+  /* 오늘 날짜 */
+  .react-calendar__tile--now {
     background-color: #f6f6f6;
     color: #363636;
     border-radius: 20%;
-    }
+  }
 
-    .react-calendar__tile--now:enabled:hover,
-    .react-calendar__tile--now:enabled:focus {
+  .react-calendar__tile--now:enabled:hover,
+  .react-calendar__tile--now:enabled:focus {
     background-color: #f6f6f6;
     border-radius: 20%;
-    }
+  }
 
-    /* 선택된 날짜의 배경색 변경 */
-    .react-calendar__tile--active {
+  /* 선택된 날짜의 배경색 변경 */
+  .react-calendar__tile--active {
     border: 2px solid #8CAD1E;
     background-color: #D2E591;
     color: #000000;
     border-radius: 20%;
-    }
+  }
 
-    .react-calendar__tile--active:enabled:hover,
-    .react-calendar__tile--active:enabled:focus {
+  .react-calendar__tile--active:enabled:hover,
+  .react-calendar__tile--active:enabled:focus {
     border: 2px solid #8CAD1E;
     background-color: #D2E591;
     color: #000000;
     border-radius: 20%;
-
-    } 
+  }
 `;
 
 export default function TeacherReservation() {
@@ -194,11 +193,23 @@ export default function TeacherReservation() {
   const [tempSelectedTimes, setTempSelectedTimes] = useState<{ [key: string]: string[] }>({});
   const [reservations, setReservations] = useState<{ [key: string]: string[] }>({});
   const [fetchedReservations, setFetchedReservations] = useState<{ [key: string]: string[] }>({});
+  const [selectAll, setSelectAll] = useState<boolean>(false);
+  const [allFetched, setAllFetched] = useState<boolean>(false);
   const navigate = useNavigate();
 
   useEffect(() => {
     fetchData();
   }, []);
+
+  useEffect(() => {
+    if (date instanceof Date) {
+      const formattedDate = moment(date).format("YYYY-MM-DD");
+      const times = tempSelectedTimes[formattedDate] || reservations[formattedDate] || [];
+      setSelectedTimes(times);
+      setSelectAll(times.length === allTimes.length); // Set select all checkbox state
+      setAllFetched(fetchedReservations[formattedDate]?.length === allTimes.length); // Set all fetched state
+    }
+  }, [fetchedReservations]);
 
   async function fetchData() {
     try {
@@ -228,7 +239,10 @@ export default function TeacherReservation() {
     setDate(date);
     if (date instanceof Date) {
       const formattedDate = moment(date).format("YYYY-MM-DD");
-      setSelectedTimes(tempSelectedTimes[formattedDate] || reservations[formattedDate] || []);
+      const times = tempSelectedTimes[formattedDate] || reservations[formattedDate] || [];
+      setSelectedTimes(times);
+      setSelectAll(times.length === allTimes.length); // Set select all checkbox state
+      setAllFetched(fetchedReservations[formattedDate]?.length === allTimes.length); // Set all fetched state
     }
   };
 
@@ -251,14 +265,17 @@ export default function TeacherReservation() {
         ...prev,
         [formattedDate]: timesToSet
       }));
+      setSelectAll(timesToSet.length === allTimes.length); // Update select all checkbox state
     }
   }, [selectedTimes, date]);
 
   const handleSelectAllClick = () => {
     if (selectedTimes.length === allTimes.length) {
       setSelectedTimes([]);
+      setSelectAll(false);
     } else {
       setSelectedTimes(allTimes);
+      setSelectAll(true);
     }
   };
 
@@ -293,25 +310,11 @@ export default function TeacherReservation() {
     }
   };
 
-  const handleConfirmMeetingClick = async () => {
-    try {
-      await confirmMeeting();
-      showToastSuccess(<div>상담일자가 확정되었습니다!<br/>상담목록으로 이동합니다.</div>);
-
-      setTimeout(() => {
-        navigate('/meeting');
-      }, 3000);
-    } catch (error) {
-      showToastError(<div>상담일자 확정 중 오류가 발생했습니다.</div>);
-      console.error('상담일자 확정 중 오류 발생:', error);
-    }
-  };
-
   return (
     <>
       <TeacherHeader />
       <ToastNotification />
-      <div className="mt-[120px] px-[150px]">
+      <div className="mt-[130px] pl-[150px] pr-[130px]">
         <NavigateBack backPage="화상상담" backLink='/meeting' />
         <Title title="상담가능시간 open" />
 
@@ -325,27 +328,29 @@ export default function TeacherReservation() {
             tileDisabled={({ date, view }) => view === 'month' && isPastDate(date)}
           />
 
-          <div className="w-[637px]">
-            <div className="flex flex-row justify-between">
+          <div className="w-[665px]">
+            <div className="flex flex-row justify-between mr-[20px]">
               <div className="text-[22px] flex flex-row items-center h-[22px] font-bold text-[#8CAD1E] my-5">
                 <FaRegCalendar className="mr-3"/>
                 {formatDate(date)}
               </div>
               <button 
-                className="mt-2 h-[40px] border-2 border-[#7C7C7C] bg-[#E3EEFF] px-3 py-1 font-bold rounded-[10px] hover:bg-[#D4DDEA]"
-                onClick={handleConfirmMeetingClick}
-              >
-                상담일자 확정하기
-              </button>
+                  className="mt-2 h-[40px] border-2 border-[#7C7C7C] bg-[#E3EEFF] px-3 py-1 font-bold rounded-[10px] hover:bg-[#D4DDEA] flex items-center"
+                  onClick={handleSubmitClick}
+                >
+                  <span>수정하기</span>
+                </button>
             </div>
-            <div className="flex justify-between">
-              <div></div>
-              <label htmlFor="chk">
-                <input type="checkbox" id="chk" onClick={handleSelectAllClick}/>
-                <i className="circle mr-2"></i>
-                <span className="text">{selectedTimes.length === allTimes.length ? "전체 해제" : "전체 선택"}</span>
-              </label>
-            </div>
+            {!allFetched && (
+              <div className="flex justify-between mr-[20px]">
+                <div></div>
+                <label htmlFor="chk">
+                  <input type="checkbox" id="chk" checked={selectAll} onChange={handleSelectAllClick}/>
+                  <i className="circle mr-2"></i>
+                  <span className="text">{selectAll ? "전체 해제" : "전체 선택"}</span>
+                </label>
+              </div>
+            )}
               <p className="mb-3 font-bold text-[18px]">오전</p>
               <div className="flex flex-row flex-wrap">
                 {allTimes.slice(0, 6).map((time) => {
@@ -381,15 +386,6 @@ export default function TeacherReservation() {
                     />
                   );
                 })}
-              </div>
-              <div className="flex justify-end">
-                <button 
-                  className="mt-2 h-[40px] border-2 border-[#7C7C7C] bg-[#E3EEFF] px-3 py-1 font-bold rounded-[10px] hover:bg-[#D4DDEA] flex items-center"
-                  onClick={handleSubmitClick}
-                >
-                  <span className="mr-2"><IoSendSharp /></span>
-                  <span>제출하기</span>
-                </button>
               </div>
           </div>
         </div>

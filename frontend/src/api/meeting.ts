@@ -124,3 +124,19 @@ export async function getMeetingInfo(meetingId: number): Promise<MeetingInfo> {
     throw error;
   }
 }
+
+// 학부모가 예약한 날짜, 시간 조회하기
+export async function GetParentSelectedTime(){
+  try{
+    const response = await axiosInstance.get('meeting/selected');
+    if(response.data.status === 'success'){
+      console.log(response.data.data);
+      return response.data.data;
+    } else {
+      throw new Error('Failed to get parent selected info');
+    }
+  } catch (error) {
+    console.error('Error fetching parent selected info:', error);
+    throw error;
+  }
+}

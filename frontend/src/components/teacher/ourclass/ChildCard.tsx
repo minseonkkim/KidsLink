@@ -9,7 +9,7 @@ interface ChildCardProps {
     age: number;
     absent: boolean;
     dosage: boolean;
-    absentId: number;
+    absentId: number[];
     dosageId: number[];
     profileImgPath: string;
 }
@@ -17,30 +17,77 @@ interface ChildCardProps {
 export default function ChildCard({ name, gender, age, absent, dosage, profileImgPath, absentId, dosageId }: ChildCardProps) {
     const { openModal, Modal, isModalOpen, closeModal } = useModal();
     const [currentDosageIndex, setCurrentDosageIndex] = useState(0);
+    const [currentAbsentIndex, setCurrentAbsentIndex] = useState(0);
 
-    const openAbsentModal = () => {
+    const openAbsentModal = (index: number) => {
+        setCurrentAbsentIndex(index);
         openModal(
-            <AbsentDocument absentId={absentId} onUpdate={() => {}} isOurClass={true}/>
-        );
-    }
-
-    const openDosageModal = (index: number) => {
-        setCurrentDosageIndex(index);
-        openModal(
-            <div>
-                <DosageDocument dosageId={dosageId[index]} onUpdate={() => {}} isOurClass={true}/>
-                {dosageId.length > 1 && (
-                    <div className="flex justify-between mt-4">
-                        <span onClick={previousDosage} className="cursor-pointer text-2xl">
+            <div className="relative">
+                <AbsentDocument absentId={absentId[index]} onUpdate={() => {}} isOurClass={true}/>
+                <div className="w-full h-[40px]">
+                    {absentId.length > 1 && (
+                    <div className="flex justify-between">
+                        <span
+                            onClick={previousAbsent}
+                            className={`cursor-pointer text-2xl ml-8 ${index === 0 ? 'invisible' : ''}`}
+                            style={{ position: 'absolute', left: 0 }}
+                        >
                             &#9664; {/* Left arrow icon */}
                         </span>
-                        <span onClick={nextDosage} className="cursor-pointer text-2xl">
+                        <span
+                            onClick={nextAbsent}
+                            className={`cursor-pointer text-2xl mr-8 ${index === absentId.length - 1 ? 'invisible' : ''}`}
+                            style={{ position: 'absolute', right: 0 }}
+                        >
                             &#9654; {/* Right arrow icon */}
                         </span>
                     </div>
                 )}
+                </div>
+                
             </div>
         );
+    };
+
+    const openDosageModal = (index: number) => {
+        setCurrentDosageIndex(index);
+        openModal(
+            <div className="relative">
+                <DosageDocument dosageId={dosageId[index]} onUpdate={() => {}} isOurClass={true}/>
+                <div className="w-full h-[40px]">
+                    {dosageId.length > 1 && (
+                        <div className="flex justify-between mt-4">
+                            <span
+                                onClick={previousDosage}
+                                className={`cursor-pointer text-2xl ml-8 ${index === 0 ? 'invisible' : ''}`}
+                                style={{ position: 'absolute', left: 0 }}
+                            >
+                                &#9664; {/* Left arrow icon */}
+                            </span>
+                            <span
+                                onClick={nextDosage}
+                                className={`cursor-pointer text-2xl mr-8 ${index === dosageId.length - 1 ? 'invisible' : ''}`}
+                                style={{ position: 'absolute', right: 0 }}
+                            >
+                                &#9654; {/* Right arrow icon */}
+                            </span>
+                        </div>
+                    )}
+                </div>
+            </div>
+        );
+    };
+
+    const nextAbsent = () => {
+        const newIndex = currentAbsentIndex + 1 < absentId.length ? currentAbsentIndex + 1 : currentAbsentIndex;
+        setCurrentAbsentIndex(newIndex);
+        openAbsentModal(newIndex);
+    };
+
+    const previousAbsent = () => {
+        const newIndex = currentAbsentIndex - 1 >= 0 ? currentAbsentIndex - 1 : currentAbsentIndex;
+        setCurrentAbsentIndex(newIndex);
+        openAbsentModal(newIndex);
     };
 
     const nextDosage = () => {
@@ -56,7 +103,7 @@ export default function ChildCard({ name, gender, age, absent, dosage, profileIm
     };
 
     return (
-        <div className="w-[200px] h-[250px] m-2 relative drop-shadow-md">
+        <div className="w-[200px] h-[250px] mx-[20px] my-4 relative drop-shadow-md">
             <div className="w-[180px] h-[250px] absolute inset-0 rounded-[10px] bg-[#fff9d7]" />
             <p className="w-[90px] absolute left-[45px] top-[170px] text-xl font-bold text-center text-[#363636]">
                 {name}
@@ -65,7 +112,7 @@ export default function ChildCard({ name, gender, age, absent, dosage, profileIm
                 {gender === "M" ? "남자" : "여자"} / 만 {age}세
             </p>
             {absent && (
-                <div onClick={openAbsentModal}
+                <div onClick={() => openAbsentModal(0)}
                 className="w-[60px] h-[30px] absolute left-[10px] top-[10px] rounded-[5px] bg-[#ffdfdf] cursor-pointer flex justify-center items-center font-bold">
                     결석
                 </div>

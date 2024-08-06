@@ -44,22 +44,26 @@ export const joinSession = async (
   });
 
   // 새로운 이벤트 등록: streamPropertyChanged
+  // 수정 필요한 부분
   session.on("streamPropertyChanged", (event: StreamPropertyChangedEvent) => {
+    console.log(session)
+    console.log("session")
     if (event.changedProperty === "videoActive") {
       console.log("Video state changed for stream", event.stream.streamId, ":", event.newValue);
+
       const streamId = session.remoteStreamsCreated.keys();
       const streamKey = Array.from(streamId);
       const otherVideoActive = (streamKey[0] === event.stream.streamId);
-      console.log("상대 카메라 껐다 켰다 할 때");
-      console.log(streamKey[0] === event.stream.streamId);
-      setOtherVideoActive(otherVideoActive); // 상대방 비디오 상태 업데이트
 
-      // 자신의 스트림 ID와 비교
+      // 자신의 스트림 ID와 비교하여 상태 로그 출력
       setMyStreamId((myStreamId) => {
         if (event.stream.streamId === myStreamId) {
           console.log("내 비디오 상태가 변경되었습니다:", event.newValue);
         } else {
           console.log("상대방 비디오 상태가 변경되었습니다:", event.newValue);
+          setOtherVideoActive(Boolean(event.newValue)); // boolean으로 캐스팅
+          console.log(otherVideoActive)
+          console.log("openvidu에서 otherVideoActive")
         }
         return myStreamId;
       });

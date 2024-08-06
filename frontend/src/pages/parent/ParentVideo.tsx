@@ -108,6 +108,7 @@ export default function ParentVideo() {
       {openvidu.session ? (
         <div className="relative w-full h-full flex flex-col items-center justify-center">
           <Draggable>
+          {/* 수정 필요한 부분 */}
             <div
               className="absolute top-4 right-4 w-[120px] h-[150px] rounded-lg border border-white z-50 bg-black cursor-move flex items-center justify-center"
               style={{ opacity: parentVideoOpacity, backgroundColor: "white" }}
@@ -127,6 +128,7 @@ export default function ParentVideo() {
               </div>
             </div>
           </Draggable>
+          {/* 수정 필요한 부분 */}
           <div
             className="absolute top-20 bg-white w-[90%] h-[calc(70vh)] rounded-lg z-40 flex items-center justify-center"
             style={{ opacity: teacherVideoOpacity, backgroundColor: "white" }}
@@ -182,7 +184,7 @@ export default function ParentVideo() {
                     setOpenvidu,
                     setIsSessionJoined,
                     setMyStreamId,
-                    setOtherVideoActive // 추가
+                    setTeacherVideoActive // 추가
                   )
                 }
                 className="w-20 h-8 bg-[#ffec8a] rounded-full flex items-center justify-center text-sm font-medium text-[#212121] hover:bg-[#fdda6e] transition-colors"

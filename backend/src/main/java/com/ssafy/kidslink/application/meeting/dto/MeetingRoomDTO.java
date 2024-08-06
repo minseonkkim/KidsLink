@@ -13,7 +13,7 @@ public class MeetingRoomDTO {
     private int id;
     private LocalDate date;
     private String time;
-    private int teahcerId;
+    private int teacherId;
     private String teacherName;
     private int parentId;
     private String childName;

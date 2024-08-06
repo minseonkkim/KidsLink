@@ -127,6 +127,11 @@ public class MeetingTimeService {
         selectedMeetingRepository.deleteByTeacher(teacher);
     }
 
+    public void deleteMeetingTime(String teacherUsername){
+        Teacher teacher = teacherRepository.findByTeacherUsername(teacherUsername);
+        meetingTimeRepository.deleteByTeacher(teacher);
+    }
+
     public List<SelectedMeetingDTO> getSelectedMeetings(String teacherUsername){
         Teacher teacher = teacherRepository.findByTeacherUsername(teacherUsername);
         List<SelectedMeeting> list = selectedMeetingRepository.findByTeacher(teacher);
@@ -255,7 +260,6 @@ public class MeetingTimeService {
 
 
 
-
     public MeetingRoomDTO enterMeeting(int id){
         Optional<MeetingSchedule> meetingSchedule = meetingScheduleRepository.findById(id);
 
@@ -265,7 +269,7 @@ public class MeetingTimeService {
         meetingRoomDTO.setTime(meetingSchedule.get().getMeetingScheduleTime());
         meetingRoomDTO.setParentId(meetingSchedule.get().getParent().getParentId());
         meetingRoomDTO.setChildName(meetingSchedule.get().getParent().getChildren().iterator().next().getChildName());
-        meetingRoomDTO.setTeahcerId(meetingSchedule.get().getTeacher().getTeacherId());
+        meetingRoomDTO.setTeacherId(meetingSchedule.get().getTeacher().getTeacherId());
         meetingRoomDTO.setTeacherName(meetingSchedule.get().getTeacher().getTeacherName());
 
         return meetingRoomDTO;
