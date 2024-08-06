@@ -19,13 +19,14 @@ export default function TeacherMeeting() {
     const fetchMeetings = async () => {
       try {
         const data = await GetConfirmedMeeting();
-        console.log(data);
+        // console.log(data);
         setMeetings(data);
 
         const parentNamesData = await Promise.all(
           data.map(async (meeting) => {
             try {
               const parentInfo = await getOneParentInfo(meeting.parentId);
+              console.log(parentInfo)
               return { parentId: meeting.parentId, name: parentInfo.child.name };
             } catch (error) {
               console.error(`Error fetching parent info for ID ${meeting.parentId}:`, error);
@@ -46,7 +47,7 @@ export default function TeacherMeeting() {
 
     fetchMeetings();
   }, []);
-  console.log("meetings: ", meetings)
+  // console.log("meetings: ", meetings)
 
   // 비활성화 된 경우, 클릭되지 않는 로직 추가해야함.
   return (
@@ -62,9 +63,12 @@ export default function TeacherMeeting() {
           </button>
         </Link> */}
         <div className="flex flex-row flex-wrap justify-between items-start">
-          {meetings
-            // .filter(meeting => isMeetingVisible(meeting.meetingDate, meeting.meetingTime))
-            .map((meeting) => (
+          {meetings.length === 0 ? (
+            <div className="flex items-center justify-center w-full h-[400px] text-[18px]">
+              예정된 상담 일정이 없어요.
+            </div>
+          ) : (
+            meetings.map((meeting) => (
               <Link
                 to={`/meeting/${meeting.meetingId}`}
                 state={{ parentName: parentNames[meeting.parentId] || "알 수 없음" }}
@@ -78,12 +82,8 @@ export default function TeacherMeeting() {
                   isActivate={isMeetingActive(meeting.meetingDate, meeting.meetingTime)}
                 />
               </Link>
-          )).length === 0 && (
-            <div className="flex items-center justify-center w-full h-[400px] text-[18px]">
-              예정된 상담 일정이 없어요.
-            </div>
-          )
-          }
+            ))
+          )}
         </div>
       </div>
     </>
