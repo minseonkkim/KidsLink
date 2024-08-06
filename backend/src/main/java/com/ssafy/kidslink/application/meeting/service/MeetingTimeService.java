@@ -127,6 +127,11 @@ public class MeetingTimeService {
         selectedMeetingRepository.deleteByTeacher(teacher);
     }
 
+    public void deleteMeetingTime(String teacherUsername){
+        Teacher teacher = teacherRepository.findByTeacherUsername(teacherUsername);
+        meetingTimeRepository.deleteByTeacher(teacher);
+    }
+
     public List<SelectedMeetingDTO> getSelectedMeetings(String teacherUsername){
         Teacher teacher = teacherRepository.findByTeacherUsername(teacherUsername);
         List<SelectedMeeting> list = selectedMeetingRepository.findByTeacher(teacher);
@@ -252,7 +257,6 @@ public class MeetingTimeService {
 
         return meetingSchedules;
     }
-
 
 
 
