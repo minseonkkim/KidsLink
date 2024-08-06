@@ -6,7 +6,6 @@ import { getAllParentSchedules, getParentSchedules } from "../../api/schedule"; 
 import styled from "styled-components";
 import 'react-calendar/dist/Calendar.css'; // react-calendar 기본 스타일
 
-
 interface DosageSchedule {
   dosageId: number;
   startDate: string;
@@ -52,26 +51,25 @@ const StyledCalendar = styled(Calendar)`
   }
 
   .react-calendar {
-    width: 80%; /* 너비 조정 */
-    background-color: transparent;
-    border: none;
-    font-family: Arial, Helvetica, sans-serif;
-    line-height: 1.125em;
-    border-radius: 20px;
-    box-shadow: none;
-    margin: auto; /* 중앙 정렬 */
+    width: 100% !important; /* 너비 조정 */
+    background-color: transparent !important;
+    border-width: 0;
+
+    font-family: Arial, Helvetica, sans-serif !important;
+    box-shadow: none !important;
   }
 
   .react-calendar__navigation {
     display: flex;
     justify-content: space-between;
     border-radius: 20px 20px 0 0;
-    height: 50px; /* 높이 조정 */
+    height: 50px;
     background: none;
+    margin-bottom: 20px;
   }
 
   .react-calendar__navigation__label {
-    font-size: 1.2rem; /* 글꼴 크기 조정 */
+    font-size: 1.2rem;
     font-weight: 600;
     color: #353c4e;
   }
@@ -82,25 +80,27 @@ const StyledCalendar = styled(Calendar)`
   }
 
   .react-calendar__month-view__weekdays {
-    font-size: 0.9rem; /* 글꼴 크기 조정 */
-    font-weight: 700;
-    color: #353c4e;
+    display: flex;
+    flex-wrap: wrap; /* 주중 이름이 7일로 래핑되도록 설정 */
+  }
+
+  .react-calendar__month-view__weekdays__weekday {
+    flex: 0 0 14.2857%; /* 7일을 위한 비율 설정 */
     text-align: center;
   }
 
-  .react-calendar__tile {
-    display: flex !important;
-    flex-direction: column;
-    align-items: center !important;
-    justify-content: flex-start !important;
-    width: 60px; /* 칸 너비 조정 */
-    height: 60px; /* 칸 높이 조정 */
-    margin: 2px; /* 간격 조정 */
-    border-radius: 10px;
-    background: transparent;
-    position: relative;
-    border: none;
-    padding-top: 5px;
+  .react-calendar__month-view__days {
+    display: flex;
+    flex-wrap: wrap; /* 날짜가 7일 기준으로 래핑되도록 설정 */
+  }
+
+  .react-calendar__month-view__days__day {
+    flex: 0 0 14.2857%; /* 7일을 위한 비율 설정 */
+    align-items: center;
+    justify-content: center;
+    padding: 5px;
+    padding-bottom: 30px;
+    position: relative; /* 아이콘 위치 설정에 필요 */
   }
 
   .react-calendar__tile:enabled:hover,
@@ -113,6 +113,7 @@ const StyledCalendar = styled(Calendar)`
   .react-calendar__tile--now {
     background: #ffffa6;
     border-radius: 10px;
+    color: black;
   }
 
   .react-calendar__tile--now:enabled:hover,
@@ -121,15 +122,23 @@ const StyledCalendar = styled(Calendar)`
     border-radius: 10px;
   }
 
-  .custom-icon {
-    margin-top: 5px;
-    font-size: 1.5rem;
-  }
-
   .react-calendar__tile > abbr {
     margin-bottom: auto;
   }
+
+  .react-calendar__month-view__days__day--neighboringMonth {
+    color: #b0b0b0;
+  }
+
+  .custom-icon {
+    position: absolute;
+    top: 70%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1rem; /* 아이콘 크기 조절 */
+  }
 `;
+
 
 const ParentSchedule: React.FC = () => {
   const [value, setValue] = useState<Date>(new Date());
@@ -176,7 +185,7 @@ const ParentSchedule: React.FC = () => {
     }
   }, [selectedDate]);
 
-  const handleDateClick = (date: Date, ) => {
+  const handleDateClick = (date: Date) => {
     const formattedDate = moment(date).format("YYYY-MM-DD");
     setSelectedDate(formattedDate);
     setValue(value);
@@ -198,8 +207,9 @@ const ParentSchedule: React.FC = () => {
     <div className="min-h-screen flex flex-col items-center bg-[#FFEC8A]">
       <div className="w-full h-screen mt-24 flex flex-col items-center">
         <div className="w-full h-full bg-white shadow-top px-5 rounded-t-2xl">
-          <div className="flex flex-col justify-start items-center pt-4 bg-white">
-            <div className="w-full relative overflow-hidden rounded-2xl">
+          <div className="flex flex-col justify-center items-center pt-4 bg-white pt-10">
+            <div className="w-full relative overflow-hidden rounded-2xl"
+            style={{ display: "flex", justifyContent: "center"  }}>
               <StyledCalendar
                 locale="ko"
                 onChange={(date) => handleDateClick(date as Date)}
@@ -208,7 +218,7 @@ const ParentSchedule: React.FC = () => {
                 prev2Label={null}
                 formatDay={(locale: string, date: Date) => moment(date).format("D")}
                 tileContent={addContent}
-                showNeighboringMonth={false}
+                showNeighboringMonth={true}
                 onActiveStartDateChange={({ activeStartDate }) => getActiveMonth(activeStartDate!)}
               />
             </div>
@@ -228,7 +238,10 @@ const ParentSchedule: React.FC = () => {
                           {`[투약] ${schedule.startDate} - ${schedule.endDate}`}
                         </p>
                         <p className="text-lg font-medium text-[#353c4e]">
-                          {`${schedule.name} - ${schedule.volume}, ${schedule.times}, ${schedule.details}`}
+                          {`${schedule.name} - ${schedule.volume} - ${schedule.times}회`}
+                        </p>
+                        <p className="text-sm text-[#757575]">
+                          {schedule.details}
                         </p>
                       </div>
                     ))}
