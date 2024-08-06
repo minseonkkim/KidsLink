@@ -1,20 +1,25 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useDrop } from 'react-dnd';
+import { DragItem } from '../../../types/album';
 
 interface ChildNameProps {
   child: { name: string } | null;
+  index: number;
+  moveImage: (dragIndex: number, hoverIndex: number, itemIndex: number, targetItemIndex: number) => void;
 }
 
-const ChildName: React.FC<ChildNameProps> = ({ child }) => {
-  const [name, setName] = useState(child ? child.name : '');
+const ChildName: React.FC<ChildNameProps> = ({ child, index, moveImage }) => {
+  const [, drop] = useDrop({
+    accept: 'image',
+    drop: (draggedItem: DragItem) => {
+      moveImage(draggedItem.index, 0, draggedItem.itemIndex, index);
+    },
+  });
 
   return (
-    <span
-      className={`${
-        child ? 'bg-[#8CAD1E] text-[#fff]' : 'bg-[#EAEAEA] text-[#363636]'
-      } cursor-pointer flex items-center justify-center rounded-[30px] w-[95px] h-[45px] font-bold mx-3 my-2 text-[17px]`}
-    >
-      {child ? name : '분류실패'}
-    </span>
+    <div ref={drop} className={`p-2 m-2 ${child ? 'bg-green-500 text-white' : 'bg-gray-300 text-gray-800'} rounded`}>
+      {child ? child.name : '분류실패'}
+    </div>
   );
 };
 
