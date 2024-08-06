@@ -35,7 +35,7 @@ export default function ParentVideo() {
   });
   const [isSessionJoined, setIsSessionJoined] = useState(false); // 세션이 연결되었는지 여부를 나타내는 상태 추가
   const [teacherName, setTeacherName] = useState("");
-  const [otherVideoActive, setOtherVideoActive] = useState(false); // 상대방 비디오 상태 추가
+  const [teacherVideoActive, setTeacherVideoActive] = useState(false); // 교사 비디오 상태 추가
 
   useEffect(() => {
     const fetchTeacherName = async () => {
@@ -65,9 +65,14 @@ export default function ParentVideo() {
     }
   }, [control, openvidu.publisher]);
 
+  useEffect(() => {
+    console.log("학부모쪽 화면 재랜더링");
+  }, [teacherVideoActive]);
+
   // Define the opacity style based on the control.video state
+  // 수정 필요한 부분
   const parentVideoOpacity = control.video ? 1 : 0.8;
-  const teacherVideoOpacity = otherVideoActive ? 1 : 0.6; // 상대방의 비디오 상태에 따라 결정
+  const teacherVideoOpacity = teacherVideoActive ? 1 : 0.6; // 교사 비디오 상태에 따라 결정
 
   return (
     <div
@@ -78,6 +83,7 @@ export default function ParentVideo() {
       {openvidu.session ? (
         <div className="relative w-full h-full flex flex-col items-center justify-center">
           <Draggable>
+          {/* 수정 필요한 부분 */}
             <div
               className="absolute top-4 right-4 w-[120px] h-[150px] rounded-lg border border-white z-50 bg-black cursor-move flex items-center justify-center"
               style={{ opacity: parentVideoOpacity, backgroundColor: "white" }}
@@ -96,11 +102,12 @@ export default function ParentVideo() {
               </div>
             </div>
           </Draggable>
+          {/* 수정 필요한 부분 */}
           <div
             className="absolute top-20 bg-white w-[90%] h-[calc(70vh)] rounded-lg z-40 flex items-center justify-center"
             style={{ opacity: teacherVideoOpacity, backgroundColor: "white" }}
           >
-            {!otherVideoActive && (
+            {!teacherVideoActive && (
               <div className="absolute z-50 text-white text-opacity-100">
                 교사
               </div>
@@ -142,7 +149,7 @@ export default function ParentVideo() {
                     setOpenvidu,
                     setIsSessionJoined,
                     setMyStreamId,
-                    setOtherVideoActive // 추가
+                    setTeacherVideoActive // 추가
                   )
                 }
                 className="mt-4 w-[80px] h-[35px] bg-[#ffec8a] rounded-full flex items-center justify-center text-base font-medium text-[#212121]"
