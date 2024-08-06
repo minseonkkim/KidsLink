@@ -10,7 +10,7 @@ import styled from 'styled-components';
 import { IoSendSharp } from "react-icons/io5";
 import { useNavigate } from 'react-router-dom';
 import ToastNotification, { showToastSuccess, showToastError } from "../../components/teacher/common/ToastNotification.tsx";
-import { ConfirmMeeting, getAllPossibleReservations, PostTeacherReservations } from "../../api/meeting.ts";
+import { confirmMeeting, getAllPossibleReservations, postTeacherReservations } from "../../api/meeting.ts";
 import { TeacherMeetingReservation } from "../../types/meeting.ts";
 import { formatDate, isPastDate, ValuePiece } from "../../utils/meeting.ts";
 
@@ -280,7 +280,7 @@ export default function TeacherReservation() {
         ([date, times]) => ({ date, times })
       );
 
-      await PostTeacherReservations(requestData);
+      await postTeacherReservations(requestData);
 
       console.log('예약이 저장되었습니다:', requestData);
 
@@ -295,7 +295,7 @@ export default function TeacherReservation() {
 
   const handleConfirmMeetingClick = async () => {
     try {
-      await ConfirmMeeting();
+      await confirmMeeting();
       showToastSuccess(<div>상담일자가 확정되었습니다!<br/>상담목록으로 이동합니다.</div>);
 
       setTimeout(() => {
