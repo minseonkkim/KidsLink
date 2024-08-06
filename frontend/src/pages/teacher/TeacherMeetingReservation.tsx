@@ -297,7 +297,7 @@ export default function TeacherReservation() {
         ([date, times]) => ({ date, times })
       );
 
-      await PostTeacherReservations(requestData);
+      await postTeacherReservations(requestData);
 
       console.log('예약이 저장되었습니다:', requestData);
 

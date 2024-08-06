@@ -1,29 +1,81 @@
-import { Link } from "react-router-dom"
-import ParentMeetingSchedule from "../../teacher/consulting/ParentMeetingSchedule"
+import { useEffect, useState } from 'react'
+import { useParentInfoStore } from '../../../stores/useParentInfoStore'
+import { getClassTeacherInfo, getParentInfo } from '../../../api/Info'
+import { ParentTeacherMeeting } from '../../../types/meeting'
+import { formatDate } from '../../../utils/parent/dateUtils'
+import { useNavigate } from "react-router-dom"
 
-export default function MeetingList({ meetings, teacherNames, isMeetingActive, scroll }) {
+interface MeetingListProps {
+  meetings: ParentTeacherMeeting[];
+  isMeetingActive: (date: string, time: string) => boolean
+}
+
+export default function MeetingList({ meetings, isMeetingActive }: MeetingListProps) {
+  const navigate = useNavigate()
+  const { parentInfo, setParentInfo } = useParentInfoStore()
+  const [teacherInfo, setTeacherInfo] = useState(null)
+
+  useEffect(() => {
+    async function fetchParentAndTeacherInfo() {
+      if (!parentInfo) {
+        const fetchedParentInfo = await getParentInfo()
+        setParentInfo(fetchedParentInfo)
+      }
+
+      if (parentInfo) {
+        const teacherData = await getClassTeacherInfo(parentInfo.child.kindergartenClass.kindergartenClassId);
+        setTeacherInfo(teacherData)
+      }
+    }
+
+    fetchParentAndTeacherInfo()
+  }, [parentInfo, setParentInfo])
+
+  // 상담 끝나는 시간 알기 위해 시작 시간에 30분 더하는 함수
+  function addMinutesToTime(time: string, minutes: number = 30): string {
+    const [hours, minutesPart] = time.split(':').map(Number)
+    const date = new Date()
+    date.setHours(hours)
+    date.setMinutes(minutesPart)
+    date.setMinutes(date.getMinutes() + minutes)
+    const resultHours = date.getHours().toString().padStart(2, '0')
+    const resultMinutes = date.getMinutes().toString().padStart(2, '0')
+    return `${resultHours}:${resultMinutes}`
+  }
+
+  const handleMeetingClick = (meeting: ParentTeacherMeeting) => {
+    navigate(`./${meeting.meetingId}`)
+  }
+
   return (
-    <div
-      className={`space-y-6 pt-8 ${scroll ? "overflow-y-auto" : "overflow-hidden"}`}
-      style={{
-        maxHeight: scroll ? "calc(100vh - 200px)" : "auto",
-        paddingBottom: "100px",
-        scrollbarWidth: "none",
-        msOverflowStyle: "none",
-      }}
-    >
-      {meetings.map((meeting) => (
-        <Link to={`/meeting/${meeting.meetingId}`} key={meeting.meetingId}>
-          <ParentMeetingSchedule
+    <div className="w-full space-y-6">
+      {meetings.map((meeting) => {
+        const isActive = meeting.meetingDate && meeting.meetingTime ? isMeetingActive(meeting.meetingDate, meeting.meetingTime) : false;
+        return (
+          <div
             key={meeting.meetingId}
-            meetingId={meeting.meetingId}
-            date={meeting.meetingDate}
-            time={meeting.meetingTime}
-            teacherName={teacherNames[meeting.teacherId] || "알 수 없음"}
-            isActive={isMeetingActive(meeting.meetingDate, meeting.meetingTime)}
-          />
-        </Link>
-      ))}
+            className={`flex flex-col p-4 rounded-2xl ${isActive ? 'bg-[#FFF9D7] hover:bg-[#FFEC8A] transition-colors duration-200 cursor-pointer' : 'bg-[#D3D3D3]'} transition-colors duration-200`}
+            onClick={() => handleMeetingClick(meeting)}
+          >
+            <div className={`flex justify-between ${isActive ? '' : 'opacity-50 cursor-not-allowed'}`}>
+              <p className="text-base font-bold text-[#353c4e]">
+                {teacherInfo?.name} 선생님과의 상담
+              </p>
+              <div className="flex gap-2">
+                {parentInfo?.profile && <img src={parentInfo.profile} alt="Parent Profile" className="w-10 h-10 rounded-full" />}
+                {teacherInfo?.profile && <img src={teacherInfo.profile} alt="Teacher Profile" className="w-10 h-10 rounded-full" />}
+              </div>
+            </div>
+
+            <p className="text-sm font-medium text-[#757575]">
+              {formatDate(meeting.meetingDate)}
+            </p>
+            <p className="text-sm font-medium text-[#757575]">
+              {meeting.meetingTime} - {addMinutesToTime(meeting.meetingTime)}
+            </p>
+          </div>
+        )
+      })}
     </div>
   )
 }
