@@ -142,7 +142,8 @@ export default function TeacherVideo() {
                       setOpenvidu,
                       setIsSessionJoined,
                       setMyStreamId,
-                      setOtherVideoActive // 추가
+                      setOtherVideoActive,
+                      setCurrentRecordingId 
                     )
                   }
                   className="w-[70px] h-[38px] border-[2px] border-[#7C7C7C] bg-[#E3EEFF] px-3 py-1 font-bold rounded-[8px] hover:bg-[#D4DDEA]"

@@ -17,6 +17,7 @@ export default function ParentVideo() {
   const { meetingId } = useParams<{ meetingId: string }>(); 
   const [myStreamId, setMyStreamId] = useState<string | undefined>(undefined);
   const { parentInfo, setParentInfo } = useParentInfoStore();
+  const [currentRecordingId, setCurrentRecordingId] = useState<string | null>(null);
   const [user, setUser] = useState<User>({
     sessionId: meetingId,
     username: parentInfo?.child?.name || "",
@@ -149,7 +150,8 @@ export default function ParentVideo() {
                     setOpenvidu,
                     setIsSessionJoined,
                     setMyStreamId,
-                    setTeacherVideoActive // 추가
+                    setTeacherVideoActive,
+                    setCurrentRecordingId
                   )
                 }
                 className="mt-4 w-[80px] h-[35px] bg-[#ffec8a] rounded-full flex items-center justify-center text-base font-medium text-[#212121]"
