@@ -72,6 +72,7 @@ export default function ParentFormStep2({ onBack, onNext }: ParentFormStep2Props
       await parentSignup(parentData)
       onNext() // 회원가입 성공 후 다음 단계로 이동
     } catch (error) {
+      alert("회원가입에 실패했습니다. 다시 시도해 주세요.")
       console.error("Signup failed", error)
     }
   }

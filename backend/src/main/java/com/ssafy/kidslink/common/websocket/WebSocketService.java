@@ -1,6 +1,6 @@
-package com.ssafy.kidslink.application.bus.service;
+package com.ssafy.kidslink.common.websocket;
 
-import com.ssafy.kidslink.application.bus.websocket.WebSocketHandler;
+import com.ssafy.kidslink.common.websocket.WebSocketHandler;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
