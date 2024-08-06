@@ -36,13 +36,16 @@ const AlbumChild: React.FC<{
   return (
     <div ref={drop} className="w-full mb-4">
       <div className="flex flex-row w-full">
-        <span
-          className={`${
-            item.child ? 'bg-[#8CAD1E] text-[#fff]' : 'bg-[#EAEAEA] text-[#363636]'
-          } cursor-pointer flex items-center justify-center rounded-[30px] w-[95px] h-[45px] font-bold mx-3 my-2 text-[17px]`}
-        >
-          {item.child ? item.child.name : '분류실패'}
-        </span>
+        <div className='flex flex-col items-center'>
+          <span
+            className={`${
+              item.child ? 'bg-[#8CAD1E] text-[#fff]' : 'bg-[#EAEAEA] text-[#363636]'
+            } cursor-pointer flex items-center justify-center rounded-[30px] w-[95px] h-[45px] font-bold mx-3 my-1 text-[17px]`}
+          >
+            {item.child ? item.child.name : '분류실패'}
+          </span>
+          <div className={`font-bold ${item.child ? 'text-[#363636]' : 'text-red-600'}`}>{item.images.length}개</div>
+        </div>
         <div
           className={`${
             item.child ? 'border-[#8CAD1E]' : 'bg-[#EAEAEA]'

@@ -76,7 +76,12 @@ export default function TeacherMeeting() {
                   isActivate={isMeetingActive(meeting.meetingDate, meeting.meetingTime)}
                 />
               </Link>
-          ))}
+          )).length === 0 && (
+            <div className="flex items-center justify-center w-full h-[400px] text-[18px]">
+              예정된 상담 일정이 없어요.
+            </div>
+          )
+          }
         </div>
       </div>
     </>

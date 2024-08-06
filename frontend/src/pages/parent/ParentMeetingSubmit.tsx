@@ -57,7 +57,7 @@ const ParentMeetingSubmit = () => {
 
   const handleModalClose = () => {
     setIsSubmitted(false);
-    navigate('/meeting');
+    navigate('/meetin/braodcast');
   };
 
   const groupedReservations = reservations.reduce((acc, reservation) => {
