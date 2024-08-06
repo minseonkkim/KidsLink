@@ -25,6 +25,7 @@ export default function TeacherBus() {
   });
   const busStops = useBusStore((state) => state.busStops);
   const setBusStops = useBusStore((state) => state.setBusStops);
+  const setAllChecked = useBusStore((state) => state.setAllChecked);
   const { teacherInfo, setTeacherInfo } = useTeacherInfoStore();
 
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -80,6 +81,7 @@ export default function TeacherBus() {
 
   const handleOptionClick = (option: string) => {
     setSelectedOption(option);
+    setAllChecked(false); // Reset all checked states
     setIsOpen(false);
   };
 
@@ -134,7 +136,7 @@ export default function TeacherBus() {
       <div className="flex justify-end space-x-3">
         <button
           onClick={() => {
-            postBusStart(busId)
+            postBusStart(busId);
             startWebSocketConnection();
             closeModal();
           }}
@@ -159,6 +161,7 @@ export default function TeacherBus() {
   const handleButtonClick = () => {
     if (isWebSocketActive) {
       stopWebSocketConnection();
+      setAllChecked(false); // Set all checked states to false when stopping WebSocket
     } else {
       openCreateModal();
     }
