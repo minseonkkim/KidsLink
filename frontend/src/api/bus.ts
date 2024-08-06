@@ -67,3 +67,20 @@ export async function getBusStop(busStopId: number) {
     throw error
   }
 }
+
+// 버스 출발 알림 전송
+export async function postBusStart(busStopId: number) {
+  try {
+    const response = await axiosInstance.post(`bus/${busStopId}/notification`)
+
+    if (response.data.status === 'success') {
+      console.log(response.data.message) // 확인 후 삭제
+      return response.data.data
+    } else {
+      throw new Error('Failed to post bus-start')
+    }
+  } catch (error) {
+    console.error(error)
+    throw error
+  }
+}
