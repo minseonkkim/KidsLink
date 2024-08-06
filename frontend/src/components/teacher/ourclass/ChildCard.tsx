@@ -9,7 +9,7 @@ interface ChildCardProps {
     age: number;
     absent: boolean;
     dosage: boolean;
-    absentId: number;
+    absentId: number[];
     dosageId: number[];
     profileImgPath: string;
 }
@@ -17,12 +17,26 @@ interface ChildCardProps {
 export default function ChildCard({ name, gender, age, absent, dosage, profileImgPath, absentId, dosageId }: ChildCardProps) {
     const { openModal, Modal, isModalOpen, closeModal } = useModal();
     const [currentDosageIndex, setCurrentDosageIndex] = useState(0);
+    const [currentAbsentIndex, setCurrentAbsentIndex] = useState(0);
 
-    const openAbsentModal = () => {
+    const openAbsentModal = (index: number) => {
+        setCurrentAbsentIndex(index);
         openModal(
-            <AbsentDocument absentId={absentId} onUpdate={() => {}} isOurClass={true}/>
+            <div>
+                <AbsentDocument absentId={absentId[index]} onUpdate={() => {}} isOurClass={true}/>
+                {absentId.length > 1 && (
+                    <div className="flex justify-between mt-4">
+                        <span onClick={previousAbsent} className="cursor-pointer text-2xl">
+                            &#9664; {/* Left arrow icon */}
+                        </span>
+                        <span onClick={nextAbsent} className="cursor-pointer text-2xl">
+                            &#9654; {/* Right arrow icon */}
+                        </span>
+                    </div>
+                )}
+            </div>
         );
-    }
+    };
 
     const openDosageModal = (index: number) => {
         setCurrentDosageIndex(index);
@@ -41,6 +55,18 @@ export default function ChildCard({ name, gender, age, absent, dosage, profileIm
                 )}
             </div>
         );
+    };
+
+    const nextAbsent = () => {
+        const newIndex = currentAbsentIndex + 1 < absentId.length ? currentAbsentIndex + 1 : currentAbsentIndex;
+        setCurrentAbsentIndex(newIndex);
+        openAbsentModal(newIndex);
+    };
+
+    const previousAbsent = () => {
+        const newIndex = currentAbsentIndex - 1 >= 0 ? currentAbsentIndex - 1 : currentAbsentIndex;
+        setCurrentAbsentIndex(newIndex);
+        openAbsentModal(newIndex);
     };
 
     const nextDosage = () => {
@@ -65,7 +91,7 @@ export default function ChildCard({ name, gender, age, absent, dosage, profileIm
                 {gender === "M" ? "남자" : "여자"} / 만 {age}세
             </p>
             {absent && (
-                <div onClick={openAbsentModal}
+                <div onClick={() => openAbsentModal(0)}
                 className="w-[60px] h-[30px] absolute left-[10px] top-[10px] rounded-[5px] bg-[#ffdfdf] cursor-pointer flex justify-center items-center font-bold">
                     결석
                 </div>
@@ -86,3 +112,4 @@ export default function ChildCard({ name, gender, age, absent, dosage, profileIm
         </div>
     );
 }
+
