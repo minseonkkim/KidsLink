@@ -89,6 +89,11 @@ export default function TeacherVideo() {
     }
   };
 
+  // 상대방 비디오 상태에 따라 불투명도 설정
+  // 수정 필요한 부분
+  const teacherVideoOpacity = control.video ? 1 : 0.8;
+  const parentVideoOpacity = otherVideoActive ? 1 : 0.8;
+
   return (
     <div className="relative flex flex-col justify-center items-center w-screen h-screen min-w-[1000px] overflow-hidden">
       <img src={MeetingBackground} className="absolute top-0 left-0 w-full h-full object-cover" />
@@ -96,22 +101,31 @@ export default function TeacherVideo() {
         <TeacherHeader />
         {openvidu.session ? (
           <div className="relative w-full h-full flex">
-            <div className="absolute top-[200px] left-[100px] w-[800px] h-auto rounded-lg bg-white">
-              <h1 className="p-3 text-l text-green-700">{user.username}님 화면</h1>
+            {/* 수정 필요한 부분 */}
+            <div className="absolute top-[200px] left-[100px] w-[800px] h-auto rounded-lg bg-white"
+            style={{ opacity: teacherVideoOpacity, backgroundColor: "white" }}>
+            {!control.video && (
+                <div className="absolute z-50 text-white text-opacity-100">
+                  교사
+                </div>
+              )}
               {openvidu.mainStreamManager && (
                 <OpenViduVideoComponent streamManager={openvidu.mainStreamManager} />
               )}
             </div>
-            <div className="absolute top-[200px] right-[100px] w-[800px] h-auto rounded-lg bg-white">
-              <h1 className="p-3 text-l text-green-700">{parentName} 학부모님 화면</h1>
-              {openvidu.subscribers.map((sub, i) => (
+            {/* 수정 필요한 부분 */}
+            <div className="absolute top-[200px] right-[100px] w-[800px] h-auto rounded-lg bg-white" 
+            style={{ opacity: parentVideoOpacity, backgroundColor: "white" }}>
+            {!otherVideoActive && (
+              <div className="absolute z-50 text-white text-opacity-100">
+                학부모
+              </div>
+            )}
                 <OpenViduVideoComponent
-                  key={i}
-                  streamManager={sub}
+                  streamManager={openvidu.subscribers[0]}
                   muted={control.muted}
                   volume={control.volume}
                 />
-              ))}
             </div>
           </div>
         ) : (
