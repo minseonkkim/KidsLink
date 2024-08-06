@@ -5,7 +5,7 @@ import { VitePWA } from 'vite-plugin-pwa'
 // https://vitejs.dev/config/
 export default defineConfig({
   server: {
-    port: 5173,
+    port: 443,
     host : "0.0.0.0",
   },
   css: {
@@ -48,13 +48,13 @@ export default defineConfig({
         ],
       },
       workbox: {
-        runtimeCaching: [], // 런타임 캐싱 비활성화
-        navigateFallback: null, // 네비게이션 요청에 대해 index.html을 반환하지 않도록 설정
+        runtimeCaching: [],
+        navigateFallback: null,
       },
-      // 직접 작성한 service-worker.ts 파일을 사용하도록 설정
       srcDir: 'src',
       filename: 'service-worker.ts',
       strategies: 'injectManifest',
     })
   ],
+  base: process.env.VITE_PUBLIC_URL
 })
