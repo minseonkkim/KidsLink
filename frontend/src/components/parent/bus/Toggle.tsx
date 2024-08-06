@@ -1,6 +1,6 @@
 export const Toggle = ({ isOn, toggleHandler }) => {
   return (
-    <div className="fixed flex items-center ml-8 space-x-2 mt-4">
+    <div className="flex items-center ml-8 space-x-2 mt-4">
       <div
         className={`relative cursor-pointer w-10 h-6 rounded-full ${
           isOn ? 'bg-[#75A47F]' : 'bg-gray-300'
