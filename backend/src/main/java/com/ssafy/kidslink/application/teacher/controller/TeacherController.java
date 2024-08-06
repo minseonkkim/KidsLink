@@ -91,6 +91,18 @@ public class TeacherController {
         throw new InvalidPrincipalException("Invalid user principal");
     }
 
+    @GetMapping("/{teacherId}")
+    public ResponseEntity<APIResponse<TeacherDTO>> getTeacherInfoByPK(@PathVariable("teacherId") int teacherId) {
+        TeacherDTO teacherDTO = teacherService.getDetailByTeacherId(teacherId);
+        APIResponse<TeacherDTO> responseData = new APIResponse<>(
+                "success",
+                teacherDTO,
+                "선생님의 정보를 성공적으로 조회했습니다.",
+                null
+        );
+        return new ResponseEntity<>(responseData, HttpStatus.OK);
+    }
+
 
 
 
