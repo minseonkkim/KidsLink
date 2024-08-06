@@ -24,7 +24,7 @@ public class MeetingScheduleMapper {
         meetingRoomDTO.setDate(meetingSchedule.getMeetingScheduleDate());
         meetingRoomDTO.setParentId(meetingSchedule.getParent().getParentId());
         meetingRoomDTO.setChildName(meetingSchedule.getParent().getChildren().iterator().next().getChildName());
-        meetingRoomDTO.setTeahcerId(meetingSchedule.getTeacher().getTeacherId());
+        meetingRoomDTO.setTeacherId(meetingSchedule.getTeacher().getTeacherId());
         meetingRoomDTO.setTeacherName(meetingSchedule.getTeacher().getTeacherName());
         return meetingRoomDTO;
     }

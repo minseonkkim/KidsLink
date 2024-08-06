@@ -9,14 +9,10 @@ import NavigateBack from '../../components/teacher/common/NavigateBack';
 import Title from '../../components/teacher/common/Title';
 import { sendAlbumToParent } from '../../api/album';
 import { showToast, showToastError } from '../../components/teacher/common/ToastNotification';
-import { ImageItem, AlbumItem, DragItem } from '../../types/album';
+import { ImageItem, AlbumItem, DragItem, Child } from '../../types/album';
 import { transformData } from '../../utils/album';
 import { getTeacherInfo } from '../../api/Info';
 import { getClassChilds } from '../../api/kindergarten';
-
-const ItemTypes = {
-  IMAGE: 'image',
-};
 
 // 개별 이미지 컴포넌트
 const ImageItemComponent: React.FC<{
@@ -69,47 +65,45 @@ const ImageItemComponent: React.FC<{
       </button>
     </div>
   );
-  };
+};
 
-  // 각 아이의 이름을 표시하는 컴포넌트
-  const ChildName: React.FC<{
-    child: Child | null;
-    index: number;
-    moveImage: (dragIndex: number, hoverIndex: number, itemIndex: number, targetItemIndex: number) => void;
-  }> = ({ child, index, moveImage }) => {
-    const [isOver, setIsOver] = useState(false);
-  
-    const [{ canDrop, isOverCurrent }, drop] = useDrop({
-      accept: 'image',
-      drop: (draggedItem: DragItem) => {
-        moveImage(draggedItem.index, 0, draggedItem.itemIndex, index);
-      },
-      collect: (monitor) => ({
-        isOverCurrent: monitor.isOver(),
-        canDrop: monitor.canDrop(),
-      }),
-    });
-  
-    const isActive = canDrop && isOverCurrent;
-  
-    return (
-      <div
-        ref={drop}
-        className={`cursor-pointer flex items-center justify-center rounded-[30px] w-[95px] h-[45px] font-bold mx-3 my-2 text-[17px] transition-colors duration-300 ${
-          isActive
-            ? 'bg-[#8CAD1E] text-[#fff]'
-            : canDrop
-            ? 'bg-[#EAEAEA] text-[#363636]'
-            : 'bg-[#EAEAEA] text-[#363636]'
-        }`}
-        style={{ minWidth: '120px' }}
-      >
-        {child ? child.name : '분류실패'}
-      </div>
-    );
-  };
+// 각 아이의 이름을 표시하는 컴포넌트
+const ChildName: React.FC<{
+  child: Child | null;
+  index: number;
+  moveImage: (dragIndex: number, hoverIndex: number, itemIndex: number, targetItemIndex: number) => void;
+}> = ({ child, index, moveImage }) => {
+  const [{ canDrop, isOverCurrent }, drop] = useDrop({
+    accept: 'image',
+    drop: (draggedItem: DragItem) => {
+      moveImage(draggedItem.index, 0, draggedItem.itemIndex, index);
+    },
+    collect: (monitor) => ({
+      isOverCurrent: monitor.isOver(),
+      canDrop: monitor.canDrop(),
+    }),
+  });
 
-  // 앨범 내 아이와 이미지를 관리하는 컴포넌트
+  const isActive = canDrop && isOverCurrent;
+
+  return (
+    <div
+      ref={drop}
+      className={`cursor-pointer flex items-center justify-center rounded-[30px] w-[95px] h-[45px] font-bold mx-3 my-2 text-[17px] transition-colors duration-300 ${
+        isActive
+          ? 'bg-[#8CAD1E] text-[#fff]'
+          : canDrop
+          ? 'bg-[#EAEAEA] text-[#363636]'
+          : 'bg-[#EAEAEA] text-[#363636]'
+      }`}
+      style={{ minWidth: '120px' }}
+    >
+      {child ? child.name : '분류실패'}
+    </div>
+  );
+};
+
+// 앨범 내 아이와 이미지를 관리하는 컴포넌트
 const AlbumChild: React.FC<{
   item: AlbumItem;
   index: number;
@@ -158,7 +152,6 @@ const AlbumChild: React.FC<{
   );
 };
 
-
 // 메인 컴포넌트
 export default function TeacherAlbumFinish() {
   const location = useLocation();
@@ -170,15 +163,18 @@ export default function TeacherAlbumFinish() {
   // 앨범 이름 상태 관리
   const [albumName, setAlbumName] = useState(`${year}년 ${month}월 ${date}일의 사진들`);
   // 분류된 결과 상태 관리
-  const [result, setResult] = useState<AlbumItem[]>(location.state?.sortedResult || []);
+  const [result, setResult] = useState<AlbumItem[]>([]);
   // 반 아이들 상태 관리
   const [classChildren, setClassChildren] = useState<Child[]>([]);
+
   // 초기화 작업
   useEffect(() => {
     const fetchData = async () => {
       try {
         const teacherInfo = await getTeacherInfo();
         const children = await getClassChilds(teacherInfo.kindergartenClassId);
+        children.sort((a, b) => a.name.localeCompare(b.name));
+        console.log(children)
         setClassChildren(children);
 
         // 아이들 배열 초기화
@@ -190,13 +186,17 @@ export default function TeacherAlbumFinish() {
         // sortedResult에서 아이들 결과 업데이트
         const sortedResult = location.state?.sortedResult || [];
         sortedResult.forEach((sortedItem) => {
-          const childIndex = initialResult.findIndex(
-            (item) => item.child && item.child.childId === sortedItem.child.childId
-          );
-          if (childIndex !== -1) {
+          console.log(sortedItem)
+          if (!sortedItem.child) {
+            initialResult[0].images = initialResult[0].images.concat(sortedItem.images);
+          } else {
+            const childIndex = initialResult.findIndex(
+              (item) => item.child && item.child.childId === sortedItem.child.childId
+            );
             initialResult[childIndex].images = sortedItem.images;
           }
         });
+        console.log(initialResult)
 
         setResult(initialResult);
       } catch (error) {
