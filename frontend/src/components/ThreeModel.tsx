@@ -57,7 +57,7 @@ function Model(props: JSX.IntrinsicElements['group'] & { mousePosition: Vector2 
 
 useGLTF.preload('/3d-daramgi.glb');
 
-const ThreeModel: React.FC = () => {
+export default function ThreeModel() {
   const controlsRef = useRef<OrbitControlsImpl>(null);
   const [mousePosition, setMousePosition] = useState(new Vector2(0, 0));
 
@@ -91,5 +91,3 @@ const ThreeModel: React.FC = () => {
     </Canvas>
   );
 };
-
-export default ThreeModel;

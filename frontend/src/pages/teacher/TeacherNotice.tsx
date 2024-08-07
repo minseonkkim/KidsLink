@@ -10,8 +10,6 @@ import { getAllNotices, createNotice } from '../../api/notice.ts'; // Combined i
 import { showToastError } from '../../components/teacher/common/ToastNotification.tsx';
 import ToastNotification from '../../components/teacher/common/ToastNotification.tsx'; // Import ToastNotification component
 
-const ITEMS_PER_PAGE = 4;
-
 export default function TeacherNotice() {
     const { openModal, closeModal, Modal } = useModal();
     const [currentPage, setCurrentPage] = useState(1);
@@ -19,6 +17,8 @@ export default function TeacherNotice() {
     const [searchTitle, setSearchTitle] = useState("");
     const [searchDate, setSearchDate] = useState("");
     const [notices, setNotices] = useState([]);
+
+    const ITEMS_PER_PAGE = 4;
 
     useEffect(() => {
         const fetchNotices = async () => {
