@@ -95,7 +95,7 @@ export default function TeacherVideo() {
   };
 
   const handleLeaveSession = () => {
-    leaveSession(openvidu, setOpenvidu, setIsSessionJoined, navigate);
+    leaveSession(openvidu, setOpenvidu, setIsSessionJoined);
   };
 
   // 상대방 비디오 상태에 따라 불투명도 설정
@@ -141,7 +141,9 @@ export default function TeacherVideo() {
             <div className="bg-white p-5 rounded-xl drop-shadow-md bg-[#]">
               <p>상담번호 : {user.sessionId}</p>
               <p>참가자 : {user.username}</p>
-              <p>안내문안내문안내문안내문안내문안내문</p>
+              <p>학부모가 욕설을 할 경우 자동으로 녹화가 진행됩니다.
+                녹화중지를 원하실 경우, "녹화중지" 버튼을 눌러주세요.
+              </p>
               <div className="flex justify-center mt-2">
                 <button
                   onClick={() =>
@@ -171,6 +173,19 @@ export default function TeacherVideo() {
           />
         )}
         <div className="recordings-list mt-4">
+  <h2>녹화 파일 목록</h2>
+  <ul>
+    {recordings.map((recording) => (
+      <li key={recording.id}>
+        {recording.name} -{" "}
+        <a href={`/api/video/recordings/download/${recording.id}`} target="_blank" rel="noopener noreferrer">
+          다운로드
+        </a>
+      </li>
+    ))}
+  </ul>
+</div>
+        {/* <div className="recordings-list mt-4">
           <h2>녹화 파일 목록</h2>
           <ul>
             {recordings.map((recording) => (
@@ -182,7 +197,7 @@ export default function TeacherVideo() {
               </li>
             ))}
           </ul>
-        </div>
+        </div> */}
       </div>
     </div>
   );

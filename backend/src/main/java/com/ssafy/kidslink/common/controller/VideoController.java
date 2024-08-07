@@ -5,10 +5,16 @@ import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.MalformedURLException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -135,6 +141,27 @@ public class VideoController {
             throws OpenViduJavaClientException, OpenViduHttpException {
         Recording recording = openvidu.getRecording(recordingId);
         return new ResponseEntity<>(recording, HttpStatus.OK);
+    }
+
+
+    /**
+     * Download a recording by ID
+     * @param recordingId The Recording ID
+     * @return The Recording file
+     */
+    @GetMapping("/recordings/download/{recordingId}")
+    public ResponseEntity<Resource> downloadRecording(@PathVariable("recordingId") String recordingId) {
+        try {
+            // 녹화 파일 경로 설정 (여기서는 임시로 로컬 디렉토리를 사용)
+            Path filePath = Paths.get("/path/to/recordings/" + recordingId + ".mp4");
+            Resource resource = new UrlResource(filePath.toUri());
+
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
+                    .body(resource);
+        } catch (MalformedURLException e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
 
