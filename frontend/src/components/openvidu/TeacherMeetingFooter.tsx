@@ -5,9 +5,7 @@ import { Slider } from "@mui/material";
 import { FaMicrophone, FaMicrophoneSlash } from "react-icons/fa";
 import { TeacherMeetingFooterProps } from "../../types/meeting";
 
-
 const TeacherMeetingFooter: React.FC<TeacherMeetingFooterProps> = ({ control, handleControl, close, stopRecording, isRecording }) => {
-
   const isMuted = control.muted || control.volume === 0;
 
   return (
@@ -84,7 +82,7 @@ const TeacherMeetingFooter: React.FC<TeacherMeetingFooterProps> = ({ control, ha
           className={`text-2xl ${isRecording ? 'text-red-600' : 'text-black'}`}
           onClick={stopRecording}
         >
-           '녹음 중지'
+          녹음 중지
         </button>
         <RxCrossCircled
           className="ml-3 text-3xl cursor-pointer text-red-600"
