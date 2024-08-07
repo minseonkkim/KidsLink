@@ -195,6 +195,7 @@ export default function TeacherGrowth() {
                   diaryId={diary.diaryId}
                   createDate={diary.createDate}
                   content={diary.content}
+                  thumbnail={diary.thumbnail}
                   images={diary.images}
                   onClick={() => handleDiaryItemClick(diary.diaryId)}
                 />

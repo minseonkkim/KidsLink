@@ -11,12 +11,10 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class ImageMapper {
     private final ImageRepository imageRepository;
+    private final ImageService imageService;
 
     public ImageDTO toDTO(Image image) {
-        ImageDTO imageDTO = new ImageDTO();
-        imageDTO.setImageId(image.getImageId());
-        imageDTO.setPath(ImageService.getUriString(image.getSaveFile()));
-        return imageDTO;
+        return imageService.createImageDTO(image);
     }
 
     public Image toEntity(ImageDTO imageDTO) {
