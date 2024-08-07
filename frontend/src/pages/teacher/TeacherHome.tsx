@@ -8,7 +8,7 @@ import busBtnImg from "../../assets/teacher/bus_btn_img.png";
 import consultingBtnImg from "../../assets/teacher/consulting_btn_img.png";
 import TeacherHeader from '../../components/teacher/common/TeacherHeader';
 import { Link } from "react-router-dom";
-import useTeacherInfoStore from '../../stores/useTeacherInfoStore';
+import { useTeacherInfoStore } from '../../stores/useTeacherInfoStore';
 import DefaultProfile from '../../assets/teacher/default_profile.png';
 import { getTeacherInfo } from '../../api/Info';
 

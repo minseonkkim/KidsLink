@@ -1,10 +1,10 @@
 import { useLocation, useParams } from "react-router-dom";
-import React, { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import OpenViduVideoComponent from "../../components/openvidu/VideoComponent";
-import { handleSpeechRecognition, stopRecording, stopSpeechRecognition } from "../../api/openvidu";
+import { handleSpeechRecognition, stopRecording } from "../../api/openvidu";
 import TeacherHeader from "../../components/teacher/common/TeacherHeader";
 import MeetingBackground from "../../assets/teacher/meeting_background.png";
-import useTeacherInfoStore from "../../stores/useTeacherInfoStore";
+import { useTeacherInfoStore } from "../../stores/useTeacherInfoStore";
 import { getTeacherInfo } from "../../api/Info";
 import TeacherMeetingFooter from "../../components/openvidu/TeacherMeetingFooter";
 import { ControlState, OpenViduState, Recording, TabState, User } from "../../types/openvidu";
@@ -13,11 +13,11 @@ import { fetchRecordingsList, joinSession, leaveSession } from "../../utils/open
 export default function TeacherVideo() {
   const location = useLocation();
   const { parentName } = location.state || {};
-  const { meetingId } = useParams<{ meetingId: string }>(); 
+  const { meetingId } = useParams<{ meetingId: string }>();
   const { teacherInfo, setTeacherInfo } = useTeacherInfoStore();
   const [user, setUser] = useState<User>({
-    sessionId: meetingId, 
-    username: teacherInfo?.name || '',
+    sessionId: meetingId,
+    username: teacherInfo?.name || "",
   });
   const [openvidu, setOpenvidu] = useState<OpenViduState>({
     session: undefined,
@@ -38,31 +38,30 @@ export default function TeacherVideo() {
   });
   const [recordings, setRecordings] = useState<Recording[]>([]);
   const [currentRecordingId, setCurrentRecordingId] = useState<string | null>(null);
-  const [isSessionJoined, setIsSessionJoined] = useState(false); 
+  const [isSessionJoined, setIsSessionJoined] = useState(false);
   const [myStreamId, setMyStreamId] = useState<string | undefined>(undefined);
-  const [otherVideoActive, setOtherVideoActive] = useState(false); // 상대방 비디오 상태 추가
+  const [otherVideoActive, setOtherVideoActive] = useState(false);
 
   useEffect(() => {
     async function fetchTeacherInfo() {
       try {
         const fetchedTeacherInfo = await getTeacherInfo();
         setTeacherInfo(fetchedTeacherInfo);
-        setUser(prevUser => ({ ...prevUser, username: fetchedTeacherInfo.name }));
+        setUser((prevUser) => ({ ...prevUser, username: fetchedTeacherInfo.name }));
       } catch (error) {
-        console.error('Failed to fetch teacher info:', error);
+        console.error("Failed to fetch teacher info:", error);
       }
     }
 
     if (!teacherInfo) {
       fetchTeacherInfo();
     } else {
-      setUser(prevUser => ({ ...prevUser, username: teacherInfo.name }));
+      setUser((prevUser) => ({ ...prevUser, username: teacherInfo.name }));
     }
   }, [teacherInfo, setTeacherInfo]);
 
   useEffect(() => {
     fetchRecordingsList(setRecordings);
-    console.log(teacherInfo)
   }, []);
 
   useEffect(() => {
@@ -71,6 +70,12 @@ export default function TeacherVideo() {
       openvidu.publisher.publishVideo(control.video);
     }
   }, [control, openvidu.publisher]);
+
+  useEffect(() => {
+    if (isSessionJoined) {
+      handleSpeechRecognition(user.sessionId, setCurrentRecordingId);
+    }
+  }, [isSessionJoined, user.sessionId]);
 
   const handleUserChange = (event: ChangeEvent<HTMLInputElement>) => {
     setUser((prevUser) => ({ ...prevUser, [event.target.name]: event.target.value }));
@@ -90,7 +95,6 @@ export default function TeacherVideo() {
   };
 
   // 상대방 비디오 상태에 따라 불투명도 설정
-  // 수정 필요한 부분
   const teacherVideoOpacity = control.video ? 1 : 0.8;
   const parentVideoOpacity = otherVideoActive ? 1 : 0.8;
 
@@ -101,31 +105,29 @@ export default function TeacherVideo() {
         <TeacherHeader />
         {openvidu.session ? (
           <div className="relative w-full h-full flex">
-            {/* 수정 필요한 부분 */}
-            <div className="absolute top-[200px] left-[100px] w-[800px] h-auto rounded-lg bg-white"
-            style={{ opacity: teacherVideoOpacity, backgroundColor: "white" }}>
-            {!control.video && (
-                <div className="absolute z-50 text-white text-opacity-100">
-                  교사
-                </div>
+            <div
+              className="absolute top-[200px] left-[100px] w-[800px] h-auto rounded-lg bg-white"
+              style={{ opacity: teacherVideoOpacity, backgroundColor: "white" }}
+            >
+              {!control.video && (
+                <div className="absolute z-50 text-white text-opacity-100">교사</div>
               )}
               {openvidu.mainStreamManager && (
                 <OpenViduVideoComponent streamManager={openvidu.mainStreamManager} />
               )}
             </div>
-            {/* 수정 필요한 부분 */}
-            <div className="absolute top-[200px] right-[100px] w-[800px] h-auto rounded-lg bg-white" 
-            style={{ opacity: parentVideoOpacity, backgroundColor: "white" }}>
-            {!otherVideoActive && (
-              <div className="absolute z-50 text-white text-opacity-100">
-                학부모
-              </div>
-            )}
-                <OpenViduVideoComponent
-                  streamManager={openvidu.subscribers[0]}
-                  muted={control.muted}
-                  volume={control.volume}
-                />
+            <div
+              className="absolute top-[200px] right-[100px] w-[800px] h-auto rounded-lg bg-white"
+              style={{ opacity: parentVideoOpacity, backgroundColor: "white" }}
+            >
+              {!otherVideoActive && (
+                <div className="absolute z-50 text-white text-opacity-100">학부모</div>
+              )}
+              <OpenViduVideoComponent
+                streamManager={openvidu.subscribers[0]}
+                muted={control.muted}
+                volume={control.volume}
+              />
             </div>
           </div>
         ) : (
@@ -142,8 +144,7 @@ export default function TeacherVideo() {
                       setOpenvidu,
                       setIsSessionJoined,
                       setMyStreamId,
-                      setOtherVideoActive,
-                      setCurrentRecordingId 
+                      setOtherVideoActive
                     )
                   }
                   className="w-[70px] h-[38px] border-[2px] border-[#7C7C7C] bg-[#E3EEFF] px-3 py-1 font-bold rounded-[8px] hover:bg-[#D4DDEA]"
@@ -160,7 +161,7 @@ export default function TeacherVideo() {
             handleControl={setControl}
             close={() => leaveSession(openvidu, setOpenvidu, setIsSessionJoined)}
             stopRecording={handleStopRecording}
-            isRecording={true}
+            isRecording={!!currentRecordingId}
           />
         )}
         <div className="recordings-list mt-4">
@@ -168,7 +169,10 @@ export default function TeacherVideo() {
           <ul>
             {recordings.map((recording) => (
               <li key={recording.id}>
-                {recording.name} - <a href={recording.url} target="_blank" rel="noopener noreferrer">다운로드</a>
+                {recording.name} -{" "}
+                <a href={recording.url} target="_blank" rel="noopener noreferrer">
+                  다운로드
+                </a>
               </li>
             ))}
           </ul>
