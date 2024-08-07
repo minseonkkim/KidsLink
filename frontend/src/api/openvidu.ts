@@ -99,7 +99,7 @@ const detectProfanity = (text: string): boolean => {
 };
 
 // stt()
-export const handleSpeechRecognition = async (
+export const handleSpeechRecognition = async ( 
   sessionId: string,
   setRecordingId: React.Dispatch<React.SetStateAction<string | null>>
 ) => {
@@ -120,7 +120,7 @@ export const handleSpeechRecognition = async (
         console.log(transcript);
         if (detectProfanity(transcript)) {
           console.log("Profanity detected. Starting recording...");
-          alert("욕설이 감지되었습니다. 녹화가 시작됩니다."); // 알림창 추가
+          alert("욕설이 감지되었습니다. 녹화가 시작됩니다."); // 알림창 추가 ----> ***************TODO : 수정필요*************
           const recordingId = await startRecording(sessionId);
           console.log("Recording started with ID:", recordingId);
           setRecordingId(recordingId);
