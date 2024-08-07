@@ -24,7 +24,8 @@ export default function TeacherMeeting() {
     const fetchMeetings = async () => {
       try {
         const data = await getConfirmedMeeting();
-        console.log('예정된 상담', data);
+        // console.log(data);
+        setMeetings(data);
 
         const meetingsWithParentNames = await Promise.all(
           data.map(async (meeting) => {
