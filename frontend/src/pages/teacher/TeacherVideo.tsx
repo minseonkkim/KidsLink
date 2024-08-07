@@ -95,10 +95,10 @@ export default function TeacherVideo() {
   };
 
   const handleLeaveSession = () => {
-    leaveSession(openvidu, setOpenvidu, setIsSessionJoined);
+    leaveSession(openvidu, setOpenvidu, setIsSessionJoined, navigate);
   };
 
-  // 상대방 비디오 상태에 따라 불투명도 설정
+  // 상대방 비디오 상태에 따라 불투명도 설정a
   const teacherVideoOpacity = control.video ? 1 : 0.8;
   const parentVideoOpacity = otherVideoActive ? 1 : 0.8;
 
