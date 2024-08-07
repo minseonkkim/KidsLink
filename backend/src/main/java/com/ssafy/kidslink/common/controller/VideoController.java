@@ -5,16 +5,13 @@ import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.MalformedURLException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.File;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -31,6 +28,9 @@ public class VideoController {
 
     @Value("${openvidu.secret}")
     private String OPENVIDU_SECRET;
+
+    @Value("${openvidu.recording.path}")
+    private String recordingPath;
 
     private OpenVidu openvidu;
 
@@ -150,19 +150,18 @@ public class VideoController {
      * @return The Recording file
      */
     @GetMapping("/recordings/download/{recordingId}")
-    public ResponseEntity<Resource> downloadRecording(@PathVariable("recordingId") String recordingId) {
-        try {
-            // 녹화 파일 경로 설정 (여기서는 임시로 로컬 디렉토리를 사용)
-            Path filePath = Paths.get("/path/to/recordings/" + recordingId + ".mp4");
-            Resource resource = new UrlResource(filePath.toUri());
-
-            return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
-                    .body(resource);
-        } catch (MalformedURLException e) {
-            return ResponseEntity.badRequest().build();
+    public ResponseEntity<FileSystemResource> downloadRecording(@PathVariable("recordingId") String recordingId) {
+        File file = new File(recordingPath + "/" + recordingId + "/" + recordingId + ".mp4");
+        if (!file.exists()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+        FileSystemResource resource = new FileSystemResource(file);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + file.getName());
+        headers.add(HttpHeaders.CONTENT_TYPE, "video/mp4");
+        return new ResponseEntity<>(resource, headers, HttpStatus.OK);
     }
+
 
 
 }
