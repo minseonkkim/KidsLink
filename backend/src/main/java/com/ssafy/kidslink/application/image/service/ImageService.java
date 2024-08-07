@@ -39,7 +39,7 @@ public class ImageService {
         return storageService instanceof S3StorageService ? "s3" : "local";
     }
 
-    private ImageDTO createImageDTO(Image image) {
+    public ImageDTO createImageDTO(Image image) {
         ImageDTO imageDTO = new ImageDTO();
         imageDTO.setImageId(image.getImageId());
         String url = storageService instanceof S3StorageService ? image.getSaveFile() : getUriString(image.getSaveFile());
@@ -55,7 +55,7 @@ public class ImageService {
         return imageRepository.findById(imageId).orElseThrow();
     }
 
-    public static String getUriString(String fileName) {
+    public String getUriString(String fileName) {
         return ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/api/image/")
                 .path(fileName)
