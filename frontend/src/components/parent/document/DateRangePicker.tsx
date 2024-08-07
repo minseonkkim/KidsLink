@@ -1,3 +1,4 @@
+import React from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -9,13 +10,13 @@ interface DateRangePickerProps {
   handleDateChange: (update: [Date | null, Date | null]) => void;
 }
 
-const DateRangePicker: React.FC<DateRangePickerProps> = ({
+export default function DateRangePicker({
   startDate,
   endDate,
   isOpen,
   handleDateClick,
   handleDateChange,
-}) => {
+}: DateRangePickerProps) {
   return (
     <div className="relative">
       <div onClick={handleDateClick} className="p-2 border rounded w-full cursor-pointer">
@@ -37,6 +38,4 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
       )}
     </div>
   );
-};
-
-export default DateRangePicker;
+}
