@@ -70,11 +70,12 @@ export default function ParentBus() {
           navigator.geolocation.getCurrentPosition(
             (position) => {
               const { latitude, longitude } = position.coords;
+              console.log("현재 좌표 : ",latitude,longitude)
               const parentPosition = new window.kakao.maps.LatLng(latitude, longitude);
               const parentMarkerImage = new window.kakao.maps.MarkerImage(
                 currentLocationIcon,
                 new window.kakao.maps.Size(30, 30),
-                { offset: new window.kakao.maps.Point(15, 15) }
+                { offset: new window.kakao.maps.Point(-10, -10) }
               );
 
               const parentMarker = new window.kakao.maps.Marker({
@@ -84,6 +85,7 @@ export default function ParentBus() {
               });
 
               // 애니메이션 요소 추가
+              // 현재위치인지 테스트 필요함
               const overlayContent = document.createElement('div');
               overlayContent.style.position = 'relative';
               overlayContent.style.width = '50px';
@@ -106,15 +108,17 @@ export default function ParentBus() {
               const customOverlay = new window.kakao.maps.CustomOverlay({
                 position: parentPosition,
                 content: overlayContent,
-                yAnchor: 0.5,
-                xAnchor: 0.5,
+                yAnchor: 0,
+                xAnchor: 0,
                 zIndex: 1,
               });
 
               customOverlay.setMap(newMap);
+              parentMarker.setMap(newMap)
+              console.log(parentPosition)
 
-              setParentLocation({ latitude, longitude });
               setCurrentMarker(parentMarker);
+              setParentLocation({ latitude, longitude });
               newMap.setCenter(parentPosition);
             },
             (error) => {
