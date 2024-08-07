@@ -9,7 +9,7 @@ import ReservationTime from "../../components/teacher/consulting/ReservationTime
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import ToastNotification from "../../components/teacher/common/ToastNotification.tsx";
-import { getAllPossibleReservations, PostTeacherReservations } from "../../api/meeting.ts";
+import { getAllPossibleReservations, postTeacherReservations } from "../../api/meeting.ts";
 import { TeacherMeetingReservation } from "../../types/meeting.ts";
 import { formatDate, isPastDate, ValuePiece } from "../../utils/meeting.ts";
 
@@ -338,7 +338,7 @@ export default function TeacherReservation() {
                   className="mt-2 h-[40px] border-2 border-[#7C7C7C] bg-[#E3EEFF] px-3 py-1 font-bold rounded-[10px] hover:bg-[#D4DDEA] flex items-center"
                   onClick={handleSubmitClick}
                 >
-                  <span>수정하기</span>
+                  <span>OPEN</span>
                 </button>
             </div>
             {!allFetched && (
