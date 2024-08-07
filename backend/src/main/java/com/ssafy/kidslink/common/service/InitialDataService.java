@@ -605,7 +605,7 @@ public class InitialDataService {
             absent.setAbsentEnddate(startDate.plusDays(i * 3 + 1)); // 시작 날짜로부터 1일 뒤 종료
             absent.setAbsentReason(reasons[index]);
             absent.setAbsentDetails(details[index]);
-            absent.setConfirmationStatus(ConfirmationStatus.T);
+            absent.setConfirmationStatus(ConfirmationStatus.F);
             absent.setChild(child);
 
             absentList.add(absent);
@@ -674,7 +674,7 @@ public class InitialDataService {
             dosage.setDosageTime(dosageTimes[index]);
             dosage.setDosageStore(dosageStores[index]);
             dosage.setDosageDetails(dosageDetails[index]);
-            dosage.setConfirmationStatus(ConfirmationStatus.T);
+            dosage.setConfirmationStatus(ConfirmationStatus.F);
             dosage.setChild(child);
 
             dosageList.add(dosage);

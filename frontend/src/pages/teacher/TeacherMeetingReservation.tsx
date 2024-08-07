@@ -8,8 +8,9 @@ import Title from "../../components/teacher/common/Title";
 import ReservationTime from "../../components/teacher/consulting/ReservationTime";
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
-import ToastNotification from "../../components/teacher/common/ToastNotification.tsx";
-import { getAllPossibleReservations, PostTeacherReservations } from "../../api/meeting.ts";
+import ToastNotification, { showToastSuccess } from "../../components/teacher/common/ToastNotification.tsx";
+import { getAllPossibleReservations } from "../../api/meeting.ts";
+import { postTeacherReservations } from "../../api/meeting.ts";
 import { TeacherMeetingReservation } from "../../types/meeting.ts";
 import { formatDate, isPastDate, ValuePiece } from "../../utils/meeting.ts";
 
@@ -296,10 +297,15 @@ export default function TeacherReservation() {
       const requestData: TeacherMeetingReservation[] = Object.entries(sortedTempSelectedTimes).map(
         ([date, times]) => ({ date, times })
       );
-
+      console.log(requestData)
       await postTeacherReservations(requestData);
 
       console.log('예약이 저장되었습니다:', requestData);
+      showToastSuccess(
+        <div>
+            예약이 저장되었습니다!<br />
+        </div>
+      );
 
       await fetchData();
 
@@ -313,7 +319,6 @@ export default function TeacherReservation() {
   return (
     <>
       <TeacherHeader />
-      <ToastNotification />
       <div className="mt-[130px] pl-[150px] pr-[130px]">
         <NavigateBack backPage="화상상담" backLink='/meeting' />
         <Title title="상담가능시간 open" />
@@ -338,7 +343,7 @@ export default function TeacherReservation() {
                   className="mt-2 h-[40px] border-2 border-[#7C7C7C] bg-[#E3EEFF] px-3 py-1 font-bold rounded-[10px] hover:bg-[#D4DDEA] flex items-center"
                   onClick={handleSubmitClick}
                 >
-                  <span>수정하기</span>
+                  <span>OPEN</span>
                 </button>
             </div>
             {!allFetched && (
@@ -390,6 +395,7 @@ export default function TeacherReservation() {
           </div>
         </div>
       </div>
+      <ToastNotification />
     </>
   );
 }
