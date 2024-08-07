@@ -19,6 +19,7 @@ export default function ParentVideo() {
   const { meetingId } = useParams<{ meetingId: string }>();
   const [myStreamId, setMyStreamId] = useState<string | undefined>(undefined);
   const { parentInfo, setParentInfo } = useParentInfoStore();
+  const [currentRecordingId, setCurrentRecordingId] = useState<string | null>(null);
   const [user, setUser] = useState<User>({
     sessionId: meetingId,
     username: parentInfo?.child?.name || "",
