@@ -54,31 +54,39 @@ export default function TeacherHome() {
     return (
         <>
             <TeacherHeader />
-            <div className="mt-[85px] flex flex-row min-h-[calc(100vh-105px)] h-full items-center justify-between pl-[150px] pr-[35px]">
-                <div className="w-[350px] h-[500px] rounded-[20px] bg-[#f4f4f4] flex flex-col items-center py-7 drop-shadow-md">
-                    <div className="w-[170px] h-[170px]">
-                        <img src={
-                            teacherInfo.profile == null ? 
-                            DefaultProfile 
-                            : teacherInfo.profile
-                        } className="w-full h-full rounded-full object-cover" />
+            <div className="mt-[85px] flex flex-col lg:flex-row min-h-[calc(100vh-105px)] h-full items-center justify-start lg:justify-between lg:pl-[150px] lg:pr-[35px] px-4">
+                <div className="w-[290px] lg:w-[340px] h-auto lg:h-[500px] h-[200px] rounded-[20px] bg-[#f4f4f4] flex flex-col lg:flex-col items-center py-7 drop-shadow-md mb-5 lg:mb-0 mt-7 lg:mt-0">
+                    <div className="flex flex-row lg:flex-col items-center lg:items-center">
+                        <div className="w-[90px] h-[90px] lg:w-[170px] lg:h-[170px]">
+                            <img src={
+                                teacherInfo.profile == null ? 
+                                DefaultProfile 
+                                : teacherInfo.profile
+                            } className="w-full h-full rounded-full object-cover" />
+                        </div>
+                        <div className="flex flex-col lg:items-center items-start mt-0 lg:mt-3 text-left lg:text-center ml-4 lg:ml-0">
+                            <p className="text-[19px] lg:text-[30px] font-bold text-[#8cad1e]">{teacherInfo.kindergartenClassName + " 선생님"}</p>
+                            <p className="text-[17px] lg:text-[22px] font-bold text-[#363636]">{teacherInfo.name}</p>
+                        </div>
                     </div>
-                    <p className="text-[30px] font-bold text-center text-[#8cad1e] mt-3">{teacherInfo.kindergartenClassName + " 선생님"}</p>
-                    <p className="text-[22px] font-bold text-center text-[#363636] mb-3">{teacherInfo.name}</p>
-                    <div className="w-[290px] h-full rounded-[10px] bg-white flex flex-col items-center justify-between">
-                        <div className="w-[290px] h-[35px] rounded-tl-[10px] rounded-tr-[10px] bg-[#CBCBCB] flex items-center justify-center font-bold text-[#ffffff] text-[18px]">{year} / {month} / {day}</div>
-                        <div className="w-[250px] mx-3 mt-2 text-center text-[16px] whitespace-nowrap truncate">
+                    <div className="w-[290px] h-auto lg:h-full rounded-[10px] bg-[#f4f4f4] lg:bg-white flex flex-col items-center justify-between mt-4 lg:mt-0">
+                        <div className="w-[290px] h-[35px] rounded-tl-[10px] rounded-tr-[10px] bg-[#CBCBCB] flex items-center justify-center font-bold text-[#ffffff] text-[18px] hidden lg:flex">{year} / {month} / {day}</div>
+                        <div className="w-[250px] mx-3 mt-2 text-center text-[16px] whitespace-nowrap truncate hidden lg:block">
                             <div>예정된 상담 3건</div>
                             <div>등원 및 인사</div>
                             <div>...</div>
                         </div>
-                        <div className="flex flex-row justify-around">
-                            <Link to="/schedule"><button className="bg-[#f1f1f1] w-[128px] h-[38px] rounded-[10px] text-center text-[#7C7C7C] font-bold text-[17px] mx-1 my-3 hover:bg-[#CBCBCB] hover:text-[#fff]">모든 일정 보기</button></Link>
-                            <Link to="/ourclass"><button className="bg-[#f1f1f1] w-[128px] h-[38px] rounded-[10px] text-center text-[#7C7C7C] font-bold text-[17px] mx-1 my-3 hover:bg-[#CBCBCB] hover:text-[#fff]">우리반 보기</button></Link>
+                        <div className="w-full flex flex-col lg:flex-row justify-center items-center lg:justify-around lg:items-stretch">
+                            <Link to="/schedule">
+                                <button className="hover:bg-[#CBCBCB] hover:text-[#fff] bg-[#c3c3c3] lg:bg-[#f1f1f1] lg:text-[#7C7C7C] w-[210px] lg:w-[128px] h-[38px] rounded-[10px] text-center text-[#fff] font-bold text-[17px] mx-1 lg:my-3 my-2">모든 일정 보기</button>
+                            </Link>
+                            <Link to="/ourclass">
+                                <button className="hover:bg-[#CBCBCB] hover:text-[#fff] bg-[#c3c3c3] lg:bg-[#f1f1f1] lg:text-[#7C7C7C] w-[210px] lg:w-[128px] h-[38px] rounded-[10px] text-center text-[#fff] font-bold text-[17px] mx-1 lg:my-3 my-2">우리반 보기</button>
+                            </Link>
                         </div>
                     </div>
                 </div>
-                <div className="flex flex-row flex-wrap w-[840px]">
+                <div className="flex flex-row flex-wrap w-full lg:w-[840px] justify-center lg:justify-start">
                     <Link to="/growth"><MenuButton name="성장일지" imgpath={growthdiaryBtnImg} /></Link>
                     <Link to="/notice"><MenuButton name="알림장" imgpath={noticeBtnImg} /></Link>
                     <Link to="/album"><MenuButton name="사진분류" imgpath={albumBtnImg} /></Link>

@@ -60,47 +60,48 @@ export default function TeacherHeader() {
     };
 
     const renderModalContent = useCallback(() => (
-        <div className="w-[550px] max-h-[450px] p-2 custom-scrollbar">
-            <div className="flex flex-row justify-between">
-                <div className="text-[23px] font-bold mb-4">알림 목록</div>
-                {alertList.length > 0 &&
-                    <button
-                        className="mb-4 px-3.5 py-2 rounded-lg flex flex-row items-center bg-[#DF6767] text-white"
-                        onClick={async () => {
-                            await deleteAllItems();
+        <div className="w-[550px] max-h-[450px] p-2">
+    <div className="flex flex-row justify-between">
+        <div className="text-[23px] font-bold mb-4">알림 목록</div>
+        {alertList.length > 0 &&
+            <button
+                className="mb-4 px-3.5 py-2 rounded-lg flex flex-row items-center bg-[#DF6767] text-white"
+                onClick={async () => {
+                    await deleteAllItems();
+                }}
+            >
+                <FaRegTrashAlt className="mr-2 text-[16px] font-bold" />
+                전체 삭제
+            </button>
+        }
+    </div>
+    {alertList.length > 0 ? (
+        <div className="custom-scrollbar max-h-[380px] overflow-y-auto">
+            {alertList.map((alert, index) => (
+                <div
+                    key={index}
+                    className="flex flex-row justify-between items-center my-5 cursor-pointer mr-3"
+                    onClick={() => handleClick(alert.code)}
+                >
+                    <div>
+                        <p className="text-[17px] mb-[1px]">{alert.contents}</p>
+                        <span className="text-[#B8B8B8] text-[13px]">{alert.date}</span>
+                    </div>
+                    <FaRegTrashAlt
+                        className="text-[18px] cursor-pointer"
+                        onClick={async (e) => {
+                            e.stopPropagation(); // Prevent triggering handleClick
+                            await deleteItem(alert.id);
                         }}
-                    >
-                        <FaRegTrashAlt className="mr-2 text-[16px] font-bold" />
-                        전체 삭제
-                    </button>
-                }
-            </div>
-            {alertList.length > 0 ? (
-                <div>
-                    {alertList.map((alert, index) => (
-                        <div
-                            key={index}
-                            className="flex flex-row justify-between items-center my-5 cursor-pointer"
-                            onClick={handleClick(alert.code)}
-                        >
-                            <div>
-                                <p className="text-[17px] mb-[1px]">{alert.contents}</p>
-                                <span className="text-[#B8B8B8] text-[13px]">{alert.date}</span>
-                            </div>
-                            <FaRegTrashAlt
-                                className="text-[18px] cursor-pointer"
-                                onClick={async (e) => {
-                                    e.stopPropagation(); // Prevent triggering handleClick
-                                    await deleteItem(alert.id);
-                                }}
-                            />
-                        </div>
-                    ))}
+                    />
                 </div>
-            ) : (
-                <p>알림이 없습니다.</p>
-            )}
+            ))}
         </div>
+    ) : (
+        <p>알림이 없습니다.</p>
+    )}
+</div>
+
     ), [alertList]);
 
     const openAlarmModal = async () => {
