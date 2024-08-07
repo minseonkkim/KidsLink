@@ -1,18 +1,18 @@
-import { useState, useEffect } from "react"
-import Draggable from "react-draggable"
-import bgImg from "../../assets/parent/meeting_bg.png"
-import OpenViduVideoComponent from "../../components/openvidu/VideoComponent"
-import ParentMeetingFooter from "../../components/openvidu/ParentMeetingFooter"
-import { useParams, useNavigate } from "react-router-dom"
-import { useParentInfoStore } from "../../stores/useParentInfoStore"
-import { ControlState, OpenViduState, User } from "../../types/openvidu"
+import { useState, useEffect } from "react";
+import Draggable from "react-draggable";
+import bgImg from "../../assets/parent/meeting_bg.png";
+import OpenViduVideoComponent from "../../components/openvidu/VideoComponent";
+import ParentMeetingFooter from "../../components/openvidu/ParentMeetingFooter";
+import { useParams, useNavigate } from "react-router-dom";
+import { useParentInfoStore } from "../../stores/useParentInfoStore";
+import { ControlState, OpenViduState, User } from "../../types/openvidu";
 import {
   fetchParentInfo,
   joinSession,
   leaveSession,
-} from "../../utils/openvidu"
-import { getMeetingInfo } from "../../api/meeting"
-import { FaHandsHelping, FaUserSecret, FaBan } from 'react-icons/fa'
+} from "../../utils/openvidu";
+import { getMeetingInfo } from "../../api/meeting";
+import { FaHandsHelping, FaUserSecret, FaBan } from 'react-icons/fa';
 
 export default function ParentVideo() {
   const navigate = useNavigate();
@@ -109,7 +109,7 @@ export default function ParentVideo() {
       {openvidu.session ? (
         <div className="relative w-full h-full flex flex-col items-center justify-center">
           <Draggable>
-          {/* 수정 필요한 부분 */}
+            {/* 수정 필요한 부분 */}
             <div
               className="absolute top-4 right-4 w-[120px] h-[150px] rounded-lg border border-white z-50 bg-black cursor-move flex items-center justify-center"
               style={{ opacity: parentVideoOpacity, backgroundColor: "white" }}
@@ -185,7 +185,8 @@ export default function ParentVideo() {
                     setOpenvidu,
                     setIsSessionJoined,
                     setMyStreamId,
-                    setOtherVideoActive // 추가
+                    setOtherVideoActive,
+                    setCurrentRecordingId // 추가
                   )
                 }
                 className="w-20 h-8 bg-[#ffec8a] rounded-full flex items-center justify-center text-sm font-medium text-[#212121] hover:bg-[#fdda6e] transition-colors"
@@ -210,5 +211,5 @@ export default function ParentVideo() {
         />
       )}
     </div>
-  )
+  );
 }

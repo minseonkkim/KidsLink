@@ -8,7 +8,7 @@ import Title from "../../components/teacher/common/Title";
 import ReservationTime from "../../components/teacher/consulting/ReservationTime";
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
-import ToastNotification from "../../components/teacher/common/ToastNotification.tsx";
+import ToastNotification, { showToastSuccess } from "../../components/teacher/common/ToastNotification.tsx";
 import { getAllPossibleReservations, postTeacherReservations } from "../../api/meeting.ts";
 import { TeacherMeetingReservation } from "../../types/meeting.ts";
 import { formatDate, isPastDate, ValuePiece } from "../../utils/meeting.ts";
