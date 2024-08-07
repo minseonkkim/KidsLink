@@ -1,10 +1,10 @@
 import { useLocation, useParams } from "react-router-dom";
-import React, { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import OpenViduVideoComponent from "../../components/openvidu/VideoComponent";
 import { handleSpeechRecognition, stopRecording } from "../../api/openvidu";
 import TeacherHeader from "../../components/teacher/common/TeacherHeader";
 import MeetingBackground from "../../assets/teacher/meeting_background.png";
-import useTeacherInfoStore from "../../stores/useTeacherInfoStore";
+import { useTeacherInfoStore } from "../../stores/useTeacherInfoStore";
 import { getTeacherInfo } from "../../api/Info";
 import TeacherMeetingFooter from "../../components/openvidu/TeacherMeetingFooter";
 import { ControlState, OpenViduState, Recording, TabState, User } from "../../types/openvidu";
