@@ -22,7 +22,7 @@ export default function ParentDiary() {
   useEffect(() => {
     async function fetchParentInfoAndDiarys() {
       try {
-        let currentChildId = childId;
+        let currentChildId = childId
         if (!currentChildId) {
           const fetchedParentInfo = await getParentInfo()
           setParentInfo(fetchedParentInfo)
@@ -32,7 +32,8 @@ export default function ParentDiary() {
         if (currentChildId) {
           const response = await getKidAllGrowthDiarys(currentChildId)
           if (response) {
-            setDiarys(response)
+            const sortedDiarys = response.sort((a, b) => new Date(b.createDate).getTime() - new Date(a.createDate).getTime())
+            setDiarys(sortedDiarys)
           }
         }
       } catch (error) {
@@ -65,7 +66,7 @@ export default function ParentDiary() {
   return (
     <div className="flex flex-col h-screen bg-[#FFEC8A]">
       <InfoSection
-        description1="교사가 전하는"
+        description1="선생님이 전하는"
         main1="아이의 성장"
         main2=" 이야기"
         imageSrc={daramgi}
