@@ -5,6 +5,7 @@ interface GrowthDiaryItemProps {
     diaryId: number;
     createDate: string;
     content: string;
+    thumbnail: string;
     images: { imageId: number, path: string }[];
     onClick: () => void;
 }
@@ -29,11 +30,11 @@ const GrowthDiaryModalContent = ({ createDate, content, images }: GrowthDiaryIte
     </div>
 );
 
-export default function GrowthDiaryItem({ diaryId, createDate, content, images, onClick }: GrowthDiaryItemProps) {
+export default function GrowthDiaryItem({ diaryId, createDate, content, thumbnail, images, onClick }: GrowthDiaryItemProps) {
     const { openModal, Modal } = useModal();
     
     const backgroundImageWrapperStyle: React.CSSProperties = {
-        backgroundImage: images.length > 0 ? `url(${images[0].path})` : 'none',
+        backgroundImage: images.length > 0 ? `url(${thumbnail})` : 'none',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         opacity: 0.4,
@@ -64,6 +65,7 @@ export default function GrowthDiaryItem({ diaryId, createDate, content, images, 
                 diaryId={diaryId}
                 createDate={createDate}
                 content={content}
+                thumbnail={thumbnail}
                 images={images}
                 onClick={onClick}
             />
@@ -73,7 +75,7 @@ export default function GrowthDiaryItem({ diaryId, createDate, content, images, 
     return (
         <>
             <div onClick={openReadModal} style={outerContainerStyle}>
-                {images.length > 0 && <div style={backgroundImageWrapperStyle} />}
+                {thumbnail && <div style={backgroundImageWrapperStyle} />}
                 <p style={{ position: 'relative', zIndex: 10, fontWeight: 'bold', fontSize: '18px'}}>{createDate}</p>
             </div>
             <Modal/>
