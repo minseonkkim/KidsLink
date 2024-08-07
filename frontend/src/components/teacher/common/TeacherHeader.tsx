@@ -60,7 +60,7 @@ export default function TeacherHeader() {
     };
 
     const renderModalContent = useCallback(() => (
-        <div className="w-[550px] max-h-[450px] p-2">
+        <div className="lg:w-[550px] w-[320px] max-h-[450px] p-2">
     <div className="flex flex-row justify-between">
         <div className="text-[23px] font-bold mb-4">알림 목록</div>
         {alertList.length > 0 &&
@@ -90,7 +90,7 @@ export default function TeacherHeader() {
                     <FaRegTrashAlt
                         className="text-[18px] cursor-pointer"
                         onClick={async (e) => {
-                            e.stopPropagation(); // Prevent triggering handleClick
+                            e.stopPropagation();
                             await deleteItem(alert.id);
                         }}
                     />

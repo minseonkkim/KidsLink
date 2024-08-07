@@ -93,7 +93,7 @@ export default function TeacherHome() {
         <>
             <TeacherHeader />
             <div className="mt-[85px] flex flex-col lg:flex-row min-h-[calc(100vh-105px)] h-full items-center justify-start lg:justify-between lg:pl-[150px] lg:pr-[35px] px-4">
-                <div className="w-[300px] lg:w-[340px] h-auto lg:h-[500px] h-[200px] rounded-[20px] bg-[#f4f4f4] flex flex-col lg:flex-col items-center py-7 drop-shadow-md mb-5 lg:mb-0 mt-7 lg:mt-0">
+                <div className="w-[320px] lg:w-[340px] h-auto lg:h-[500px] h-[200px] rounded-[20px] bg-[#f4f4f4] flex flex-col lg:flex-col items-center py-7 drop-shadow-md mb-5 lg:mb-0 mt-7 lg:mt-0">
                     <div className="flex flex-row lg:flex-col items-center lg:items-center lg:mb-0 mb-2">
                         <div className="w-[80px] h-[80px] lg:w-[170px] lg:h-[170px]">
                             <img src={
