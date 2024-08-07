@@ -1,4 +1,4 @@
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useParams, useNavigate } from "react-router-dom";
 import { ChangeEvent, useEffect, useState } from "react";
 import OpenViduVideoComponent from "../../components/openvidu/VideoComponent";
 import { handleSpeechRecognition, stopRecording } from "../../api/openvidu";
@@ -11,6 +11,7 @@ import { ControlState, OpenViduState, Recording, TabState, User } from "../../ty
 import { fetchRecordingsList, joinSession, leaveSession } from "../../utils/openvidu";
 
 export default function TeacherVideo() {
+  const navigate = useNavigate();
   const location = useLocation();
   const { parentName } = location.state || {};
   const { meetingId } = useParams<{ meetingId: string }>();
@@ -94,6 +95,10 @@ export default function TeacherVideo() {
     }
   };
 
+  const handleLeaveSession = () => {
+    leaveSession(openvidu, setOpenvidu, setIsSessionJoined, navigate);
+  };
+
   // 상대방 비디오 상태에 따라 불투명도 설정
   const teacherVideoOpacity = control.video ? 1 : 0.8;
   const parentVideoOpacity = otherVideoActive ? 1 : 0.8;
@@ -123,11 +128,13 @@ export default function TeacherVideo() {
               {!otherVideoActive && (
                 <div className="absolute z-50 text-white text-opacity-100">학부모</div>
               )}
-              <OpenViduVideoComponent
-                streamManager={openvidu.subscribers[0]}
-                muted={control.muted}
-                volume={control.volume}
-              />
+              {openvidu.subscribers.length > 0 && (
+                <OpenViduVideoComponent
+                  streamManager={openvidu.subscribers[0]}
+                  muted={control.muted}
+                  volume={control.volume}
+                />
+              )}
             </div>
           </div>
         ) : (
@@ -159,7 +166,7 @@ export default function TeacherVideo() {
           <TeacherMeetingFooter
             control={control}
             handleControl={setControl}
-            close={() => leaveSession(openvidu, setOpenvidu, setIsSessionJoined)}
+            close={handleLeaveSession}
             stopRecording={handleStopRecording}
             isRecording={!!currentRecordingId}
           />
