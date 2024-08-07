@@ -18,7 +18,7 @@ export default function TeacherMeeting() {
   useEffect(() => {
     const fetchMeetings = async () => {
       try {
-        const data = await GetConfirmedMeeting();
+        const data = await getConfirmedMeeting();
         // console.log(data);
         setMeetings(data);
 
