@@ -39,10 +39,8 @@ export async function fetchSessionId(): Promise<SessionData> {
 export async function postAllPossibleReservations(
   selectedReservations: ParentReservation[]
 ): Promise<ParentReservation[]> {
-  console.log("selectedReservations: ",selectedReservations);
   try {
     const response = await axiosInstance.post("meeting", selectedReservations);
-    console.log("meeeting.postAllPossibleReservations : ", response)
 
     if (response.data.status === "success") {
       return response.data.data;
@@ -59,14 +57,10 @@ export async function postAllPossibleReservations(
 export async function postTeacherReservations(
   data: TeacherMeetingReservation[]
 ) {
-  console.log("교사 시간 보내는 데이터: ", data);
   try {
     const response = await axiosInstance.post("meeting/open", data);
 
     if (response.data.status === "success") {
-      console.log(response);
-      console.log("response.data.data");
-      console.log(response.data.data); // 확인 후 삭제
       return response.data.data;
     } else {
       throw new Error("Failed to post reservations");
@@ -79,11 +73,9 @@ export async function postTeacherReservations(
 
 //상담일자 확정하기
 export async function confirmMeeting() {
-  console.log("상담일자 확정하기");
   try {
     const response = await axiosInstance.post("meeting/confirm");
     if (response.data.status === "success") {
-      console.log(response.data);
       return response.data.data;
     } else {
       throw new Error("Failed to confirmMeeting");
@@ -99,7 +91,6 @@ export async function getConfirmedMeeting(): Promise<ParentTeacherMeeting[]> {
   try {
     const response = await axiosInstance.get("/meeting/reservation");
     if (response.data.status === "success") {
-      console.log("getConfirmedMeeting :", response)
       return response.data.data as ParentTeacherMeeting[];
     } else {
       throw new Error("Failed to get confirmed meetings");
@@ -115,7 +106,6 @@ export async function getMeetingInfo(meetingId: number): Promise<MeetingInfo> {
   try {
     const response = await axiosInstance.get(`/meeting/${meetingId}`);
     if (response.data.status === "success") {
-      console.log(response.data);
       return response.data.data;
     } else {
       throw new Error("Failed to get meetingInfo");
@@ -131,7 +121,6 @@ export async function getParentSelectedTime(){
   try{
     const response = await axiosInstance.get('meeting/selected');
     if(response.data.status === 'success'){
-      console.log(response.data.data);
       return response.data.data;
     } else {
       throw new Error('Failed to get parent selected info');

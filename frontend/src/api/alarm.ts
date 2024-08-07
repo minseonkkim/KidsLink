@@ -13,7 +13,6 @@ export async function getAlarmCount() {
     const response = await axiosInstance.get('notification/count')
 
     if (response.data.status === 'success') {
-      console.log(response.data.data) // 확인 후 삭제
       return response.data.data
     } else {
       throw new Error('Failed to get alarm-count')
@@ -30,7 +29,6 @@ export async function getAllAlarms():Promise<Alarm[]> {
     const response = await axiosInstance.get('notification')
 
     if (response.data.status === 'success') {
-      console.log(response.data.data) // 확인 후 삭제
       return response.data.data
     } else {
       throw new Error('Failed to get all alarms')
@@ -47,7 +45,6 @@ export async function deleteAlarm(alarmId: number) {
     const response = await axiosInstance.delete(`notification/${alarmId}`)
 
     if (response.data.status === 'success') {
-      console.log(response.data.data) // 확인 후 삭제
       return response.data.data
     } else {
       throw new Error('Failed to delete alarm')
@@ -64,7 +61,6 @@ export async function deleteAllAlarms() {
     const response = await axiosInstance.delete('notification')
 
     if (response.data.status === 'success') {
-      console.log(response.data.data) // 확인 후 삭제
       return response.data.data
     } else {
       throw new Error('Failed to delete all alarms')

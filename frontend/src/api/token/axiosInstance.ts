@@ -19,7 +19,6 @@ const setAuthorizationToken = async () => {
     const response = await noAuthAxios.post(`${BASE_URL}/reissue`);
     const newToken = response.data.data.token;
     const expiredAt = response.data.data.expiredAt;
-    console.log("성공");
 
     localStorage.setItem("accessToken", newToken);
     localStorage.setItem("expiredAt", expiredAt.toString());

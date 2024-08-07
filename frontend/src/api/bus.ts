@@ -6,7 +6,6 @@ export async function postKidBoardingStatus(childId: number) {
     const response = await axiosInstance.put(`busstop/child/${childId}/status`)
 
     if (response.data.status === 'success') {
-      console.log(response.data.message) // 확인 후 삭제
       return response.data.message
     } else {
       throw new Error('Failed to post child-status')
@@ -23,7 +22,6 @@ export async function getKidBoardingStatus(childId: number) {
     const response = await axiosInstance.get(`busstop/child/${childId}`)
 
     if (response.data.status === 'success') {
-      console.log(response.data.data) // 확인 후 삭제
       return response.data.data
     } else {
       throw new Error('Failed to get child-status')
@@ -40,7 +38,6 @@ export async function getAllBusStops(kindergartenId: number) {
     const response = await axiosInstance.get(`busstop/kindergarten/${kindergartenId}`)
 
     if (response.data.status === 'success') {
-      console.log(response.data.data) // 확인 후 삭제
       return response.data.data
     } else {
       throw new Error('Failed to get all-busstops')
@@ -57,7 +54,6 @@ export async function getBusStop(busStopId: number) {
     const response = await axiosInstance.get(`busstop/${busStopId}`)
 
     if (response.data.status === 'success') {
-      console.log(response.data.data) // 확인 후 삭제
       return response.data.data
     } else {
       throw new Error('Failed to get busstop')
@@ -74,7 +70,6 @@ export async function postBusStart(busStopId: number) {
     const response = await axiosInstance.post(`bus/${busStopId}/notification`)
 
     if (response.data.status === 'success') {
-      console.log(response.data.message) // 확인 후 삭제
       return response.data.data
     } else {
       throw new Error('Failed to post bus-start')

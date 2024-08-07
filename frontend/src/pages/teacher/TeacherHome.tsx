@@ -43,7 +43,6 @@ export default function TeacherHome() {
                 return 0;
             });
             setScheduleItems(fetchedSchedules);
-            console.log('dd', scheduleItems)
         } catch (error) {
             console.error("Failed to fetch schedules:", error);
         }
@@ -113,15 +112,19 @@ export default function TeacherHome() {
                         <div className="w-[250px] mx-3 mt-2 text-center text-[16px] whitespace-nowrap truncate hidden lg:block">
                             <Link to='/schedule'>
                                 <div>
-                                    {scheduleItems.length === 0 ? <div>오늘의 일정이 없어요.</div> : 
-                                    scheduleItems
-                                    .filter(item => item.confirmationStatus === "F")
-                                    .slice(0, 2)
-                                    .map((item, index) => (
-                                        <div key={index}>{item.content}</div>
-                                    ))
-                                    }
-                                    <div>...</div>
+                                    {scheduleItems.length === 0 ? (
+                                    <div>오늘의 일정이 없어요.</div>
+                                ) : (
+                                    <>
+                                        {scheduleItems
+                                            .filter(item => item.confirmationStatus === "F")
+                                            .slice(0, 2)
+                                            .map((item, index) => (
+                                                <div key={index}>{item.content}</div>
+                                            ))}
+                                        <div>...</div>
+                                    </>
+                                )}
                                 </div>
                             </Link>
                         </div>

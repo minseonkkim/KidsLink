@@ -23,7 +23,6 @@ export const joinSession = async (
         ...prevOpenvidu,
         subscribers: [...prevOpenvidu.subscribers, subscriber],
       }));
-      console.log(subscriber);
     } catch (error) {
       console.error("Error during stream subscription:", error);
     }
@@ -100,9 +99,6 @@ export const joinSession = async (
     .catch((error) => {
       console.log("There was an error connecting to the session:", error.code, error.message);
     });
-
-  console.log(session);
-  console.log("session");
 };
 
 export const leaveSession = (
