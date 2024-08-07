@@ -54,16 +54,16 @@ export default function MeetingList({ meetings, isMeetingActive }: MeetingListPr
         return (
           <div
             key={meeting.meetingId}
-            className={`flex flex-col p-4 rounded-2xl ${isActive ? 'bg-[#FFF9D7] hover:bg-[#FFEC8A] transition-colors duration-200 cursor-pointer' : 'bg-[#D3D3D3]'} transition-colors duration-200`}
+            className={`flex flex-col px-6 py-5 rounded-2xl ${isActive ? 'bg-[#FFF9D7] hover:bg-[#FFEC8A] transition-colors duration-200 cursor-pointer' : 'bg-[#D3D3D3]'} transition-colors duration-200`}
             onClick={() => handleMeetingClick(meeting)}
           >
             <div className={`flex justify-between ${isActive ? '' : 'opacity-50 cursor-not-allowed'}`}>
               <p className="text-base font-bold text-[#353c4e]">
                 {teacherInfo?.name} 선생님과의 상담
               </p>
-              <div className="flex gap-2">
-                {parentInfo?.profile && <img src={parentInfo.profile} alt="Parent Profile" className="w-10 h-10 rounded-full" />}
-                {teacherInfo?.profile && <img src={teacherInfo.profile} alt="Teacher Profile" className="w-10 h-10 rounded-full" />}
+              <div className="flex gap-3">
+                {parentInfo?.profile && <img src={parentInfo.profile} alt="Parent Profile" className="w-8 h-8 rounded-full" />}
+                {teacherInfo?.profile && <img src={teacherInfo.profile} alt="Teacher Profile" className="w-8 h-8 rounded-full" />}
               </div>
             </div>
 
@@ -71,7 +71,7 @@ export default function MeetingList({ meetings, isMeetingActive }: MeetingListPr
               {formatDate(meeting.meetingDate)}
             </p>
             <p className="text-sm font-medium text-[#757575]">
-              {meeting.meetingTime} - {addMinutesToTime(meeting.meetingTime)}
+              {meeting.meetingTime} ~ {addMinutesToTime(meeting.meetingTime)}
             </p>
           </div>
         )
