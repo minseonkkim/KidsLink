@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import InfoSection from "../../components/parent/common/InfoSection";
 import daramgi from "../../assets/parent/bus-daramgi.png";
-import busIcon from '../../assets/parent/busIcon.png';
+import busIcon from '../../assets/parent/driving-daramgi.png';
 import currentLocationIcon from '../../assets/parent/marker.png';
 import { receiveBusLocation } from '../../api/webSocket';
 import { postKidBoardingStatus, getKidBoardingStatus } from '../../api/bus';
@@ -19,7 +19,6 @@ declare global {
 export default function ParentBus() {
   const mapContainer = useRef<HTMLDivElement>(null);
   const wsRef = useRef<WebSocket | null>(null);
-  // const [location, setLocation] = useState<{ lat?: number, lng?: number }>({ lat: undefined, lng: undefined });
   const [location, setLocation] = useState<{ lat?: number, lng?: number }>({ lat: 37.5665, lng: 126.9780 });
   const [isBoarding, setIsBoarding] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -53,7 +52,7 @@ export default function ParentBus() {
           setMap(newMap);
 
           const imageSrc = busIcon;
-          const imageSize = new window.kakao.maps.Size(64, 69);
+          const imageSize = new window.kakao.maps.Size(60, 95);
           const imageOption = { offset: new window.kakao.maps.Point(27, 69) };
 
           const markerImage = new window.kakao.maps.MarkerImage(imageSrc, imageSize, imageOption);
@@ -83,6 +82,36 @@ export default function ParentBus() {
                 image: parentMarkerImage,
                 map: newMap,
               });
+
+              // 애니메이션 요소 추가
+              const overlayContent = document.createElement('div');
+              overlayContent.style.position = 'relative';
+              overlayContent.style.width = '50px';
+              overlayContent.style.height = '50px';
+
+              const pulseRing = document.createElement('div');
+              pulseRing.className = 'pulse-ring';
+              overlayContent.appendChild(pulseRing);
+
+              const markerIcon = document.createElement('img');
+              markerIcon.src = currentLocationIcon;
+              markerIcon.style.position = 'absolute';
+              markerIcon.style.top = '50%';
+              markerIcon.style.left = '50%';
+              markerIcon.style.width = '30px';
+              markerIcon.style.height = '30px';
+              markerIcon.style.transform = 'translate(-50%, -50%)';
+              overlayContent.appendChild(markerIcon);
+
+              const customOverlay = new window.kakao.maps.CustomOverlay({
+                position: parentPosition,
+                content: overlayContent,
+                yAnchor: 0.5,
+                xAnchor: 0.5,
+                zIndex: 1,
+              });
+
+              customOverlay.setMap(newMap);
 
               setParentLocation({ latitude, longitude });
               setCurrentMarker(parentMarker);
@@ -198,27 +227,29 @@ export default function ParentBus() {
         altText="다람쥐"
       />
       <div className="flex flex-col flex-grow overflow-hidden rounded-tl-[20px] rounded-tr-[20px] bg-white shadow-top animate-slideUp -mt-10">
-        <div className="flex flex-row items-center space-x-4 p-4">
+        <div className="flex flex-row items-center space-x-4">
           <Toggle isOn={isBoarding} toggleHandler={handleToggleChange} />
-          <button
-            onClick={() => animateMapToMarker(map, currentMarker)}
-            className="absolute top-[350px] right-[10px] bg-white text-black p-2 rounded z-40 rounded-full drop-shadow-lg"
-          >
-            <MdGpsFixed />
-          </button>
-          <button
-            onClick={() => animateMapToMarker(map, busMarker)}
-            className="absolute top-[350px] right-[60px] bg-white text-black p-2 rounded z-40 rounded-full drop-shadow-lg"
-          >
-            <div>
-              <FaBus />
-            </div>
-          </button>
         </div>
         <div
           ref={mapContainer}
           className="w-full h-full relative z-0 mt-4"
         ></div>
+      </div>
+
+      <div className='fixed flex justify-end items-center bottom-20 right-0 gap-4 mr-4'>
+        <button
+          onClick={() => animateMapToMarker(map, busMarker)}
+          className="relative bg-white text-red-500 p-2 rounded z-40 rounded-full drop-shadow-lg"
+        >
+          <FaBus />
+        </button>
+
+        <button
+          onClick={() => animateMapToMarker(map, currentMarker)}
+          className="relative bg-white text-red-500 p-2 rounded z-40 rounded-full drop-shadow-lg"
+        >
+          <MdGpsFixed />
+        </button>
       </div>
     </div>
   );
