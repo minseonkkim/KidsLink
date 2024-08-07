@@ -64,9 +64,7 @@ const DesktopComponent = () => {
     }
   };
 
-  // 추가
   const handleSocialLogin = (provider: string) => {
-    console.log(`소셜 로그인: ${provider}`)
     window.location.href = `${
       import.meta.env.VITE_API
     }/oauth2/authorization/${provider}`

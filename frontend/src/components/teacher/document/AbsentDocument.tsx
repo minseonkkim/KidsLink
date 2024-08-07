@@ -34,7 +34,10 @@ export default function AbsentDocument({ absentId, onUpdate, isOurClass }: Absen
             console.error('Failed to check absent document:', error);
         }
     }
-};
+  };
+
+  const handleCheckboxChange = () => {
+  };
 
   if (!absentDocument) {
     return <div>Loading...</div>;
@@ -52,6 +55,7 @@ export default function AbsentDocument({ absentId, onUpdate, isOurClass }: Absen
             checked={absentDocument.confirmationStatus === "T"}
             disabled={absentDocument.confirmationStatus === "T"}
             onClick={handleCheckboxClick}
+            onChange={handleCheckboxChange}
           />
           <span className="font-bold text-[18px] mx-3">확인완료</span>
         </div>

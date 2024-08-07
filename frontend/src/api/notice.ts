@@ -27,7 +27,6 @@ export async function getAllNotices(): Promise<Notice[]> {
     const response = await axiosInstance.get('noticeboard')
 
     if (response.data.status === 'success') {
-      console.log(response.data.data) // 확인 후 삭제
       return response.data.data
     } else {
       throw new Error('Failed to fetch notices')
@@ -44,7 +43,6 @@ export async function getNoticeDetail(noticeBoardId: number): Promise<NoticeDeta
     const response = await axiosInstance.get(`/noticeboard/${noticeBoardId}`)
 
     if (response.data.status === 'success') {
-      console.log(response.data.data) // 확인 후 삭제
       return response.data.data
     } else {
       throw new Error('Failed to fetch notice-detail')
@@ -61,7 +59,6 @@ export async function createNotice(notice: NoticeData) {
     const response = await axiosInstance.post('noticeboard', notice)
 
     if (response.data.status === "success") {
-      console.log("create-notice success")
       return response.data.data;
     } else {
       throw new Error('create-notice failed: ' + response.data.message)

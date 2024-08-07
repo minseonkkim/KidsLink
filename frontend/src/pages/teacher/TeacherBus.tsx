@@ -44,7 +44,6 @@ export default function TeacherBus() {
         }
 
         const stops = await getAllBusStops(kindergartenId);
-        console.log("정류장: ", stops);
         const stopsWithChecked = stops.map(stop => ({
           ...stop,
           children: stop.children ? stop.children.map(child => ({ ...child, checked: false })) : [],

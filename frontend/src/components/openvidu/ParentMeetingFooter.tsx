@@ -2,7 +2,6 @@ import React from "react";
 import { IoMic, IoMicOff, IoVideocam, IoVideocamOff } from "react-icons/io5";
 import { ImExit } from "react-icons/im";
 
-// Define the types for the props
 interface ControlState {
   video: boolean;
   mic: boolean;

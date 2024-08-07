@@ -6,9 +6,9 @@ import { LuPencilLine } from "react-icons/lu";
 import NoticeItem from "../../components/teacher/notice/NoticeItem";
 import { MdOutlineNavigateBefore, MdOutlineNavigateNext } from "react-icons/md";
 import useModal from "../../hooks/teacher/useModal.tsx";
-import { getAllNotices, createNotice } from '../../api/notice.ts'; // Combined import
+import { getAllNotices, createNotice } from '../../api/notice.ts';
 import { showToastError } from '../../components/teacher/common/ToastNotification.tsx';
-import ToastNotification from '../../components/teacher/common/ToastNotification.tsx'; // Import ToastNotification component
+import ToastNotification from '../../components/teacher/common/ToastNotification.tsx';
 
 export default function TeacherNotice() {
     const { openModal, closeModal, Modal } = useModal();
@@ -170,7 +170,7 @@ export default function TeacherNotice() {
                 </div>
             </div>
             <Modal />
-            <ToastNotification /> {/* Add ToastContainer here */}
+            <ToastNotification />
         </>
     );
 }
@@ -200,7 +200,6 @@ function CreateNoticeForm({ closeModal, setNotices }) {
 
         try {
             await createNotice(noticeData);
-            // Reload notices after creating a new one
             const fetchedNotices = await getAllNotices();
             const sortedNotices = fetchedNotices.sort((a, b) => b.noticeBoardId - a.noticeBoardId);
             setNotices(sortedNotices);
