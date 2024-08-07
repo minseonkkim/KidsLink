@@ -90,7 +90,6 @@ export async function getKidAllDocuments(childId: number) {
     const response = await axiosInstance.get(`document/child/${childId}`)
 
     if (response.data.status === 'success') {
-      console.log(response.data.data) // 확인 후 삭제
       return response.data.data
     } else {
       throw new Error('Failed to get documents')
@@ -107,7 +106,6 @@ export async function getAbsentDocument(absentId: number) {
     const response = await axiosInstance.get(`document/absent/${absentId}`)
 
     if (response.data.status === 'success') {
-      console.log(response.data.data) // 확인 후 삭제
       return response.data.data
     } else {
       throw new Error('Failed to get absent-document')
@@ -124,7 +122,6 @@ export async function getDosageDocument(dosageId: number) {
     const response = await axiosInstance.get(`document/dosage/${dosageId}`)
 
     if (response.data.status === 'success') {
-      console.log(response.data.data) // 확인 후 삭제
       return response.data.data
     } else {
       throw new Error('Failed to get dosage-document')
@@ -141,7 +138,6 @@ export async function checkAbsentDocument(absentId: number) {
     const response = await axiosInstance.put(`document/absent/${absentId}`)
 
     if (response.data.status === 'success') {
-      console.log(response.data.data) // 확인 후 삭제
       return response.data.data
     } else {
       throw new Error('Failed to patch absent-document')
@@ -158,7 +154,6 @@ export async function checkDosageDocument(dosageId: number) {
     const response = await axiosInstance.put(`document/dosage/${dosageId}`)
 
     if (response.data.status === 'success') {
-      console.log(response.data.data) // 확인 후 삭제
       return response.data.data
     } else {
       throw new Error('Failed to patch dosage-document')
@@ -176,7 +171,6 @@ export async function createDosageDocument(data: DosageData, childId: number) {
     console.log(data, "data")
 
     if (response.data.status === 'success') {
-      console.log(response.data.data); // 확인 후 삭제
       return response.data.data;
     } else {
       throw new Error('Failed to post dosage-document');
@@ -193,7 +187,6 @@ export async function createAbsentDocument(data: AbsentData, childId: number) {
     const response = await axiosInstance.post(`document/absent/${childId}`, data);
 
     if (response.data.status === 'success') {
-      console.log(response.data.data); // 확인 후 삭제
       return response.data.data;
     } else {
       throw new Error('Failed to post absent-document');

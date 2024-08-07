@@ -86,7 +86,6 @@ export default function TeacherVideo() {
     if (currentRecordingId) {
       try {
         const stoppedRecording = await stopRecording(currentRecordingId);
-        console.log(`Recording stopped: ${stoppedRecording.id}`);
         setCurrentRecordingId(null);
         fetchRecordingsList(setRecordings);
       } catch (error) {

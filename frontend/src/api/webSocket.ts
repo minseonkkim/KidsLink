@@ -1,4 +1,3 @@
-// src/websocket.ts
 let ws: WebSocket | null = null;
 let intervalId: number | null = null;
 
@@ -100,7 +99,6 @@ export function receiveBusLocation(wsRef, setLocation, map, marker, setIsMoving)
     setIsMoving(false);
   };
 
-  // 브라우저 창이나 탭이 닫힐 때 WebSocket을 닫음
   window.addEventListener('beforeunload', () => {
     if (wsRef.current) {
       wsRef.current.close();

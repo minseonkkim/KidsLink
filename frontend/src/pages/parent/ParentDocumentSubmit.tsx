@@ -70,7 +70,6 @@ export default function ParentDocument() {
           details: formData.details as string,
           ...commonData,
         };
-        console.log(dosageData);
         await createDosageDocument(dosageData, childId!);
       } else if (selectedOption === "absent") {
         const absentData: AbsentData = {
@@ -80,7 +79,6 @@ export default function ParentDocument() {
           details: formData.details as string,
           ...commonData,
         };
-        console.log(absentData);
         await createAbsentDocument(absentData, childId!);
       }
       setIsSubmitted(true);

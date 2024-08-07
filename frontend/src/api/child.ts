@@ -1,14 +1,5 @@
 import axiosInstance from "./token/axiosInstance";
 
-// interface ChildInfo{
-//     name: string;
-//     kindergartenClassName: string;
-//     kindergartenName: string;
-//     gender: string;
-//     birth: string;
-//     profile: string;
-// }
-
 // 아이 id로 아이 정보 조회
 export async function getChildInfo(childId: number){
     try{

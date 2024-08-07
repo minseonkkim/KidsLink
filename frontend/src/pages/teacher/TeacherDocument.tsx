@@ -25,7 +25,6 @@ export default function TeacherDocument() {
     const fetchDocuments = async () => {
       try {
         const fetchedDocuments = await getClassAllDocuments();
-        console.log(fetchedDocuments);
 
         const reversedDocuments = fetchedDocuments.reverse();
         setDocuments(reversedDocuments);
@@ -42,7 +41,6 @@ export default function TeacherDocument() {
           }
         }
 
-        // Fetch and store child images
         const images = {};
         for (const document of reversedDocuments) {
           const profileImgPath = await findChildImg(document.details.childId);
@@ -95,7 +93,6 @@ export default function TeacherDocument() {
   };
 
   const findChildImg = async (childId: number): Promise<string> => {
-    // Check if the image URL is already in the cache
     if (childImages[childId]) {
       return childImages[childId];
     }
@@ -103,7 +100,6 @@ export default function TeacherDocument() {
     const childInfo = await getChildInfo(childId);
     const profileImgPath = childInfo.profile;
 
-    // Store the image URL in the state to optimize future requests
     setChildImages(prevImages => ({
       ...prevImages,
       [childId]: profileImgPath

@@ -36,6 +36,9 @@ export default function DosageDocument({ dosageId, onUpdate, isOurClass }: Dosag
         }
     };
 
+    const handleCheckboxChange = () => {
+    };
+
     if (!dosageDocument) {
         return <div>Loading...</div>;
     }
@@ -52,10 +55,11 @@ export default function DosageDocument({ dosageId, onUpdate, isOurClass }: Dosag
                         checked={dosageDocument.confirmationStatus === "T"}
                         disabled={dosageDocument.confirmationStatus === "T"}
                         onClick={handleCheckboxClick}
+                        onChange={handleCheckboxChange}
                     />
                     <span className="font-bold text-[18px] mx-3">확인완료</span>
                 </div>
-}
+                }
             </div>
             <div className="text-[20px] my-8">
                 <DocumentItem title="기간" content={`${dosageDocument.startDate} ~ ${dosageDocument.endDate}`} />

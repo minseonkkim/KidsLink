@@ -68,8 +68,6 @@ export async function login(user: LoginData) {
         useParentInfoStore.getState().setParentInfo(parentInfo)
       }
 
-      console.log("Login successful:", response.data.data)
-
       return response.data.data
     } else {
       throw new Error('Login failed: ' + response.data.message)
@@ -106,7 +104,6 @@ export async function parentSignup(user: ParentSignupData) {
   if (user.childProfile) {
     formData.append("childProfile", user.childProfile)
   }
-  console.log("학부모 회원가입 보내고 있는 data:", user)
 
   try {
     const response = await noAuthAxios.post(`${API_BASE_URL}/parent`, formData, {
@@ -145,7 +142,6 @@ export async function teacherSignup(user: TeacherSignupData) {
         "Content-Type": "multipart/form-data",
       },
     })
-    console.log("Teacher signup successful:", response.data)
     return response.data
   } catch (error) {
     console.error("Error signing up teacher:", error)
@@ -174,7 +170,6 @@ export async function logout() {
   try {
     const response = await noAuthAxios.post("user/logout")
     if (response.data.status === "success") {
-      console.log(response.data.data)
       if (
         localStorage.getItem("accessToken") ||
         localStorage.getItem("expiredAt")
