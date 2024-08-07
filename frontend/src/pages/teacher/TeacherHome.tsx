@@ -11,10 +11,49 @@ import { Link } from "react-router-dom";
 import { useTeacherInfoStore } from '../../stores/useTeacherInfoStore';
 import DefaultProfile from '../../assets/teacher/default_profile.png';
 import { getTeacherInfo } from '../../api/Info';
+import moment from 'moment';
+import { getTeacherSchedules } from '../../api/schedule';
+import { ScheduleItemType } from '../../components/teacher/schedule/ScheduleItem';
 
 export default function TeacherHome() {
     const { teacherInfo, setTeacherInfo } = useTeacherInfoStore();
     const [loading, setLoading] = useState(true);
+    const [date, setDate] = useState(new Date());
+    const [scheduleItems, setScheduleItems] = useState<ScheduleItemType[]>([]);
+
+    const formatDate = (date) => {
+        if (date instanceof Date) {
+            return moment(date).format("YYYY-MM-DD");
+        }
+        return '';
+    };
+
+    const fetchSchedules = async () => {
+        try {
+            const fetchedSchedules = (await getTeacherSchedules(formatDate(date))).teacherSchedules;
+            fetchedSchedules.sort((a, b) => {
+                if (a.confirmationStatus === "T" && b.confirmationStatus !== "T") return -1;
+                if (a.confirmationStatus !== "T" && b.confirmationStatus === "T") return 1;
+                const isANumeric = /^\d/.test(a.content);
+                const isBNumeric = /^\d/.test(b.content);
+                if (isANumeric && !isBNumeric) return -1;
+                if (!isANumeric && isBNumeric) return 1;
+                if (a.content < b.content) return -1;
+                if (a.content > b.content) return 1;
+                return 0;
+            });
+            setScheduleItems(fetchedSchedules);
+            console.log('dd', scheduleItems)
+        } catch (error) {
+            console.error("Failed to fetch schedules:", error);
+        }
+    };
+
+    useEffect(() => {
+        fetchSchedules();
+    }, []);
+
+    
 
     useEffect(() => {
         const fetchTeacherInfo = async () => {
@@ -64,7 +103,7 @@ export default function TeacherHome() {
                                 : teacherInfo.profile
                             } className="w-full h-full rounded-full object-cover" />
                         </div>
-                        <div className="flex flex-col lg:items-center items-start mt-0 lg:mt-3 text-left lg:text-center ml-4 lg:ml-0">
+                        <div className="flex flex-col lg:items-center items-start mt-0 lg:mt-3 text-left lg:text-center ml-4 lg:ml-0 lg:mb-2">
                             <p className="text-[19px] lg:text-[30px] font-bold text-[#8cad1e]">{teacherInfo.kindergartenClassName + " 선생님"}</p>
                             <p className="text-[17px] lg:text-[22px] font-bold text-[#363636]">{teacherInfo.name}</p>
                         </div>
@@ -72,9 +111,19 @@ export default function TeacherHome() {
                     <div className="w-[290px] h-auto lg:h-full rounded-[10px] bg-[#f4f4f4] lg:bg-white flex flex-col items-center justify-between mt-4 lg:mt-0">
                         <div className="w-[290px] h-[35px] rounded-tl-[10px] rounded-tr-[10px] bg-[#CBCBCB] flex items-center justify-center font-bold text-[#ffffff] text-[18px] hidden lg:flex">{year} / {month} / {day}</div>
                         <div className="w-[250px] mx-3 mt-2 text-center text-[16px] whitespace-nowrap truncate hidden lg:block">
-                            <div>예정된 상담 3건</div>
-                            <div>등원 및 인사</div>
-                            <div>...</div>
+                            <Link to='/schedule'>
+                                <div>
+                                    {scheduleItems.length === 0 ? <div>오늘의 일정이 없어요.</div> : 
+                                    scheduleItems
+                                    .filter(item => item.confirmationStatus === "F")
+                                    .slice(0, 2)
+                                    .map((item, index) => (
+                                        <div key={index}>{item.content}</div>
+                                    ))
+                                    }
+                                    <div>...</div>
+                                </div>
+                            </Link>
                         </div>
                         <div className="w-full flex flex-col lg:flex-row justify-center items-center lg:justify-around lg:items-stretch">
                             <Link to="/schedule">
