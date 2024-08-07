@@ -35,7 +35,6 @@ const createSession = async (sessionId: string): Promise<string> => {
 };
 
 const createToken = async (sessionId: string): Promise<string> => {
-  console.log(APPLICATION_SERVER_URL);
   const response = await axios.post(
     `${APPLICATION_SERVER_URL}/sessions/${sessionId}/connections`,
     {},
@@ -43,7 +42,6 @@ const createToken = async (sessionId: string): Promise<string> => {
       headers: { "Content-Type": "application/json" },
     }
   );
-  console.log(response);
   return response.data; // 토큰 반환
 };
 
@@ -122,6 +120,7 @@ export const handleSpeechRecognition = async (
         console.log(transcript);
         if (detectProfanity(transcript)) {
           console.log("Profanity detected. Starting recording...");
+          alert("욕설이 감지되었습니다. 녹화가 시작됩니다."); // 알림창 추가
           const recordingId = await startRecording(sessionId);
           console.log("Recording started with ID:", recordingId);
           setRecordingId(recordingId);
