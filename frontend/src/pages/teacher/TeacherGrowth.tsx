@@ -8,7 +8,7 @@ import GrowthDiaryItem from "../../components/teacher/growth/GrowthDiaryItem";
 import { FiPlusCircle } from "react-icons/fi";
 import useModal from "../../hooks/teacher/useModal.tsx";
 import ToastNotification, { showToast, showToastError } from "../../components/teacher/common/ToastNotification.tsx";
-import useTeacherInfoStore from "../../stores/useTeacherInfoStore.ts";
+import { useTeacherInfoStore } from "../../stores/useTeacherInfoStore.ts";
 import { getClassChilds } from "../../api/kindergarten.ts";
 import { getKidAllGrowthDiarys } from "../../api/growthdiary.ts";
 import GrowthDiaryForm from "../../components/teacher/growth/GrowthDiaryForm.tsx";

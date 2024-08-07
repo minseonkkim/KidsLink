@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
@@ -81,11 +83,19 @@ public class VideoController {
     @PostMapping("/sessions/{sessionId}/recordings/start")
     public ResponseEntity<String> startRecording(@PathVariable("sessionId") String sessionId) throws OpenViduJavaClientException, OpenViduHttpException {
         System.out.println("녹화시작");
+        // 현재 날짜를 "yyyyMMdd" 형식으로 포맷팅
+        String currentDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+
+        // 세션 ID와 날짜를 사용하여 녹화 파일명 생성
+        String recordingName = sessionId + "_" + currentDate;
+
         RecordingProperties properties = new RecordingProperties.Builder()
+                .name(recordingName)
                 .outputMode(Recording.OutputMode.COMPOSED)
                 .hasAudio(true)
                 .hasVideo(true)
                 .build();
+
         Recording recording = this.openvidu.startRecording(sessionId, properties);
         return new ResponseEntity<>(recording.getId(), HttpStatus.OK);
     }
