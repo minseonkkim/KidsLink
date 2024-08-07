@@ -37,3 +37,6 @@ out/
 .vscode/
 
 uploads/*
+
+**/application-ssl.properties
+**/*.p12
