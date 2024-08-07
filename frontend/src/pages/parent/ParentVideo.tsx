@@ -96,7 +96,11 @@ export default function ParentVideo() {
 
   // 나가기 버튼 클릭
   const handleOutClick = () => {
-    navigate("/meeting");
+    leaveSession(openvidu, setOpenvidu, setIsSessionJoined, navigate);
+  };
+
+  const handleLeaveSession = () => {
+    leaveSession(openvidu, setOpenvidu, setIsSessionJoined, navigate); // navigate 함수 전달
   };
 
   return (
@@ -152,7 +156,8 @@ export default function ParentVideo() {
             ))}
           </div>
         </div>
-      ) : (
+      ) :
+ (
         <div className="absolute flex flex-col justify-center items-center w-full h-full px-4 mb-8">
           <div className="relative bg-[#fff9d7] rounded-[20px] p-6 shadow-lg border-2 border-[#ffec8a] bg-notebook-pattern">            
             {/* 상담 안내문 */}
@@ -193,7 +198,7 @@ export default function ParentVideo() {
                 입장하기
               </button>
               <button
-                onClick={() => handleOutClick()}
+                onClick={handleOutClick}
                 className="w-20 h-8 bg-[#ffec8a] rounded-full flex items-center justify-center text-sm font-medium text-[#212121] hover:bg-[#fdda6e] transition-colors"
               >
                 나가기
@@ -206,7 +211,7 @@ export default function ParentVideo() {
         <ParentMeetingFooter
           control={control}
           handleControl={setControl}
-          close={() => leaveSession(openvidu, setOpenvidu, setIsSessionJoined)}
+          close={handleLeaveSession} // 함수가 직접 호출되도록 수정
         />
       )}
     </div>
