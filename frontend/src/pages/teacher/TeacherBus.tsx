@@ -1,132 +1,132 @@
-import { useState, useRef, useEffect } from 'react';
-import BusChild from "../../components/teacher/bus/BusChild";
-import NavigateBack from "../../components/teacher/common/NavigateBack";
-import TeacherHeader from "../../components/teacher/common/TeacherHeader";
-import Title from "../../components/teacher/common/Title";
-import { IoMdArrowDropdown } from "react-icons/io";
-import { MdNavigateBefore, MdNavigateNext } from "react-icons/md";
-import { startWebSocket, stopWebSocket } from '../../api/webSocket';
-import { getAllBusStops, postBusStart } from '../../api/bus';
-import { getTeacherInfo } from '../../api/Info';
-import { useBusStore } from '../../stores/useBusStore';
-import useTeacherInfoStore from '../../stores/useTeacherInfoStore'; 
-import useModal from "../../hooks/teacher/useModal.tsx";
+import { useState, useRef, useEffect } from 'react'
+import BusChild from "../../components/teacher/bus/BusChild"
+import NavigateBack from "../../components/teacher/common/NavigateBack"
+import TeacherHeader from "../../components/teacher/common/TeacherHeader"
+import Title from "../../components/teacher/common/Title"
+import { IoMdArrowDropdown } from "react-icons/io"
+import { MdNavigateBefore, MdNavigateNext } from "react-icons/md"
+import { startWebSocket, stopWebSocket } from '../../api/webSocket'
+import { getAllBusStops, postBusStart } from '../../api/bus'
+import { getTeacherInfo } from '../../api/Info'
+import { useBusStore } from '../../stores/useBusStore'
+import { useTeacherInfoStore } from '../../stores/useTeacherInfoStore'
+import useModal from "../../hooks/teacher/useModal.tsx"
 
-const WEBSOCKET_URL = import.meta.env.VITE_WEBSOCKET_URL;
+const WEBSOCKET_URL = import.meta.env.VITE_WEBSOCKET_URL
 
 export default function TeacherBus() {
-  const { openModal, closeModal, Modal } = useModal();
-  const [isOpen, setIsOpen] = useState(false);
-  const [selectedOption, setSelectedOption] = useState('등원');
-  const [currentStopId, setCurrentStopId] = useState<number | null>(null);
-  const [busId, setBusId] = useState<number | null>(null);
+  const { openModal, closeModal, Modal } = useModal()
+  const [isOpen, setIsOpen] = useState(false)
+  const [selectedOption, setSelectedOption] = useState('등원')
+  const [currentStopId, setCurrentStopId] = useState<number | null>(null)
+  const [busId, setBusId] = useState<number | null>(null)
   const [isWebSocketActive, setIsWebSocketActive] = useState(() => {
-    return JSON.parse(localStorage.getItem('isWebSocketActive') || 'false');
-  });
-  const busStops = useBusStore((state) => state.busStops);
-  const setBusStops = useBusStore((state) => state.setBusStops);
-  const setAllChecked = useBusStore((state) => state.setAllChecked);
-  const { teacherInfo, setTeacherInfo } = useTeacherInfoStore();
+    return JSON.parse(localStorage.getItem('isWebSocketActive') || 'false')
+  })
+  const busStops = useBusStore((state) => state.busStops)
+  const setBusStops = useBusStore((state) => state.setBusStops)
+  const setAllChecked = useBusStore((state) => state.setAllChecked)
+  const { teacherInfo, setTeacherInfo } = useTeacherInfoStore()
 
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const fetchBusStops = async () => {
       try {
-        let kindergartenId;
+        let kindergartenId
         
         if (teacherInfo) {
-          kindergartenId = teacherInfo.kindergartenId;
+          kindergartenId = teacherInfo.kindergartenId
         } else {
-          const fetchedTeacherInfo = await getTeacherInfo();
-          setTeacherInfo(fetchedTeacherInfo);
-          kindergartenId = fetchedTeacherInfo.kindergartenId;
+          const fetchedTeacherInfo = await getTeacherInfo()
+          setTeacherInfo(fetchedTeacherInfo)
+          kindergartenId = fetchedTeacherInfo.kindergartenId
         }
         
-        const stops = await getAllBusStops(kindergartenId);
+        const stops = await getAllBusStops(kindergartenId)
         const stopsWithChecked = stops.map(stop => ({
           ...stop,
           children: stop.children.map(child => ({ ...child, checked: false })),
-        }));
-        setBusStops(stopsWithChecked);
-        setBusId(stops[0].busId);
+        }))
+        setBusStops(stopsWithChecked)
+        setBusId(stops[0].busId)
 
         if (stopsWithChecked.length > 0) {
-          setCurrentStopId(stopsWithChecked[0].busStopId); 
+          setCurrentStopId(stopsWithChecked[0].busStopId)
         }
       } catch (error) {
-        console.error(error);
+        console.error(error)
       }
-    };
+    }
 
-    fetchBusStops();
+    fetchBusStops()
 
     const handleUnload = () => {
-      localStorage.removeItem('isWebSocketActive');
-    };
+      localStorage.removeItem('isWebSocketActive')
+    }
 
-    window.addEventListener('beforeunload', handleUnload);
-    window.addEventListener('unload', handleUnload);
-    document.addEventListener('mousedown', handleClickOutside);
+    window.addEventListener('beforeunload', handleUnload)
+    window.addEventListener('unload', handleUnload)
+    document.addEventListener('mousedown', handleClickOutside)
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-      window.removeEventListener('beforeunload', handleUnload);
-      window.addEventListener('unload', handleUnload);
-    };
-  }, [teacherInfo, setTeacherInfo]);
+      document.removeEventListener('mousedown', handleClickOutside)
+      window.removeEventListener('beforeunload', handleUnload)
+      window.addEventListener('unload', handleUnload)
+    }
+  }, [teacherInfo, setTeacherInfo])
 
   const toggleDropdown = () => {
-    setIsOpen(!isOpen);
-  };
+    setIsOpen(!isOpen)
+  }
 
   const handleOptionClick = (option: string) => {
-    setSelectedOption(option);
-    setAllChecked(false); // Reset all checked states
-    setIsOpen(false);
-  };
+    setSelectedOption(option)
+    setAllChecked(false)
+    setIsOpen(false)
+  }
 
   const handleClickOutside = (event: MouseEvent) => {
     if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-      setIsOpen(false);
+      setIsOpen(false)
     }
-  };
+  }
 
   const handlePrevStop = () => {
     if (currentStopId === null) return;
-    const currentIndex = busStops.findIndex(stop => stop.busStopId === currentStopId);
+    const currentIndex = busStops.findIndex(stop => stop.busStopId === currentStopId)
     if (currentIndex > 0) {
-      setCurrentStopId(busStops[currentIndex - 1].busStopId);
+      setCurrentStopId(busStops[currentIndex - 1].busStopId)
     }
-  };
+  }
 
   const handleNextStop = () => {
-    if (currentStopId === null) return;
-    const currentIndex = busStops.findIndex(stop => stop.busStopId === currentStopId);
+    if (currentStopId === null) return
+    const currentIndex = busStops.findIndex(stop => stop.busStopId === currentStopId)
     if (currentIndex < busStops.length - 1) {
-      setCurrentStopId(busStops[currentIndex + 1].busStopId);
+      setCurrentStopId(busStops[currentIndex + 1].busStopId)
     }
-  };
+  }
 
   const startWebSocketConnection = () => {
     startWebSocket(WEBSOCKET_URL);
     setIsWebSocketActive(true);
-    localStorage.setItem('isWebSocketActive', 'true');
-  };
+    localStorage.setItem('isWebSocketActive', 'true')
+  }
 
   const stopWebSocketConnection = () => {
     stopWebSocket();
-    setIsWebSocketActive(false);
-    localStorage.setItem('isWebSocketActive', 'false');
-  };
-
-  if (busStops.length === 0 || currentStopId === null) {
-    return <div>Loading...</div>;
+    setIsWebSocketActive(false)
+    localStorage.setItem('isWebSocketActive', 'false')
   }
 
-  const currentStop = busStops.find(stop => stop.busStopId === currentStopId);
+  if (busStops.length === 0 || currentStopId === null) {
+    return <div>Loading...</div>
+  }
+
+  const currentStop = busStops.find(stop => stop.busStopId === currentStopId)
 
   if (!currentStop) {
-    return <div>Invalid bus stop selected.</div>;
+    return <div>Invalid bus stop selected.</div>
   }
 
   const renderModalContent = () => (
@@ -136,9 +136,9 @@ export default function TeacherBus() {
       <div className="flex justify-end space-x-3">
         <button
           onClick={() => {
-            postBusStart(busId);
-            startWebSocketConnection();
-            closeModal();
+            postBusStart(busId)
+            startWebSocketConnection()
+            closeModal()
           }}
           className="px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition duration-300 ease-in-out"
         >
@@ -152,20 +152,20 @@ export default function TeacherBus() {
         </button>
       </div>
     </div>
-  );
+  )
 
   const openCreateModal = () => {
     openModal(renderModalContent());
-  };
+  }
 
   const handleButtonClick = () => {
     if (isWebSocketActive) {
       stopWebSocketConnection();
       setAllChecked(false); // Set all checked states to false when stopping WebSocket
     } else {
-      openCreateModal();
+      openCreateModal()
     }
-  };
+  }
 
   return (
     <>
@@ -205,8 +205,8 @@ export default function TeacherBus() {
               </div>
               <div className="relative w-[360px] h-[370px] overflow-auto custom-scrollbar">
                 {currentStop.children.length > 0 ? (
-                  currentStop.children.map(({ childName, parentTel, status, checked }, idx) => (
-                    <BusChild key={idx} busStopId={currentStop.busStopId} childName={childName} parentTel={parentTel} status={status} checked={checked} />
+                  currentStop.children.map(({ childName, parentTel, status, checked, profile }, idx) => (
+                    <BusChild key={idx} busStopId={currentStop.busStopId} childName={childName} parentTel={parentTel} status={status} checked={checked} profile={profile} />
                   ))
                 ) : (
                   <div className="absolute top-[30%] left-0 right-0 text-center">
@@ -224,5 +224,5 @@ export default function TeacherBus() {
       </div>
       <Modal />
     </>
-  );
+  )
 }

@@ -17,7 +17,6 @@ export default function TeacherGrowth() {
   const { openModal, Modal, isModalOpen, closeModal } = useModal();
   const [searchChild, setSearchChild] = useState<string>("");
   const [growthDiaryData, setGrowthDiaryData] = useState([]);
-
   const [currentChildId, setCurrentChildId] = useState<number | null>(null);
   const [childs, setChilds] = useState([]);
 
@@ -36,9 +35,7 @@ export default function TeacherGrowth() {
   };
 
   useEffect(() => {
-    const classId =
-      useTeacherInfoStore.getState().teacherInfo.kindergartenClassId;
-    const fetchChilds = async () => {
+    const fetchChilds = async (classId: number) => {
       try {
         const fetchedChilds = await getClassChilds(classId);
         await checkChildCompletion(fetchedChilds);
@@ -47,7 +44,20 @@ export default function TeacherGrowth() {
       }
     };
 
-    fetchChilds();
+    const teacherInfo = useTeacherInfoStore.getState().teacherInfo;
+
+    if (!teacherInfo) {
+      getTeacherInfo()
+        .then((data) => {
+          useTeacherInfoStore.setState({ teacherInfo: data });
+          fetchChilds(data.kindergartenClassId);
+        })
+        .catch((error) => {
+          console.error("Failed to fetch teacher info:", error);
+        });
+    } else {
+      fetchChilds(teacherInfo.kindergartenClassId);
+    }
   }, []);
 
   const handleChildClick = (id: number) => {
@@ -191,6 +201,7 @@ export default function TeacherGrowth() {
                   diaryId={diary.diaryId}
                   createDate={diary.createDate}
                   content={diary.content}
+                  thumbnail={diary.thumbnail}
                   images={diary.images}
                   onClick={() => handleDiaryItemClick(diary.diaryId)}
                 />

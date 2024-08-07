@@ -9,6 +9,7 @@ import com.ssafy.kidslink.application.bus.domain.BusStopChild;
 import com.ssafy.kidslink.application.bus.dto.BusStopChildDTO;
 import com.ssafy.kidslink.application.bus.repository.BusStopChildRepository;
 import com.ssafy.kidslink.application.child.domain.Child;
+import com.ssafy.kidslink.application.child.mapper.ChildMapper;
 import com.ssafy.kidslink.application.child.repository.ChildRepository;
 import com.ssafy.kidslink.application.kindergarten.domain.Kindergarten;
 import com.ssafy.kidslink.application.kindergarten.domain.KindergartenClass;
@@ -45,6 +46,7 @@ public class BusStopService {
     private final ChildRepository childRepository;
     private final KindergartenRepository kindergartenRepository;
     private final BusRepository busRepository;
+    private final ChildMapper childMapper;
 
     public List<BusStop> getAllBusStops() {
         return busStopRepository.findAll();
@@ -59,7 +61,7 @@ public class BusStopService {
 
             Child child = busStopChild.getChild();
 
-            busStopChildDTO.setChildName(child.getChildName());
+            busStopChildDTO.setChild(childMapper.toDTO(child));
             busStopChildDTO.setParentTel(child.getParent().getParentTel());
             busStopChildDTO.setStatus(busStopChild.getBusBoardingStatus());
 
@@ -103,7 +105,7 @@ public class BusStopService {
         BusStopChild busStopChild = busStopChildRepository.findByChild(child);
 
         BusStopChildDTO busStopChildDTO = new BusStopChildDTO();
-        busStopChildDTO.setChildName(child.getChildName());
+        busStopChildDTO.setChild(childMapper.toDTO(child));
         busStopChildDTO.setStatus(busStopChild.getBusBoardingStatus());
         busStopChildDTO.setParentTel(child.getParent().getParentTel());
         return busStopChildDTO;

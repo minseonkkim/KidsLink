@@ -10,25 +10,30 @@ import { isMeetingActive } from "../../utils/meeting";
 import { ParentTeacherMeeting } from "../../types/meeting";
 import { getConfirmedMeeting } from "../../api/meeting";
 
-interface ExtendedParentTeacherMeeting extends ParentTeacherMeeting {
-  parentName: string;
-  parentProfile: string;
-}
+// Extend the ParentTeacherMeeting type
+// interface ExtendedParentTeacherMeeting extends ParentTeacherMeeting {
+//   parentName: string;
+//   parentProfile: string;
+// }
 
 export default function TeacherMeeting() {
-  const [meetings, setMeetings] = useState<ExtendedParentTeacherMeeting[]>([]);
-  
+  const [meetings, setMeetings] = useState<ParentTeacherMeeting[]>([]);
+  const [parentName, setParentName] = useState("");
+  const [parentProfile, setparentProfile] = useState("");
   useEffect(() => {
     const fetchMeetings = async () => {
       try {
         const data = await getConfirmedMeeting();
-        console.log('예정된 상담', data);
+        console.log("data", data);
+        setMeetings(data);
 
         const meetingsWithParentNames = await Promise.all(
           data.map(async (meeting) => {
             try {
               const parentInfo = await getOneParentInfo(meeting.parentId);
               console.log(parentInfo);
+              setParentName(parentInfo.child.name)
+              setparentProfile(parentInfo.profile || ProfileImg)
               return { 
                 ...meeting, 
                 parentName: parentInfo.child.name,
@@ -70,14 +75,14 @@ export default function TeacherMeeting() {
               meetings.map((meeting) => (
                 <Link
                   to={`/meeting/${meeting.meetingId}`}
-                  state={{ parentName: meeting.parentName }}
+                  state={{ parentName: parentName }}
                   key={meeting.meetingId}
                 >
                   <TeacherMeetingSchedule
                     date={meeting.meetingDate}
                     time={meeting.meetingTime}
-                    name={meeting.parentName}
-                    profileImgPath={meeting.parentProfile}
+                    name={parentName}
+                    profileImgPath={parentProfile}
                     isActivate={isMeetingActive(meeting.meetingDate, meeting.meetingTime)}
                   />
                 </Link>

@@ -33,7 +33,7 @@ export default function ParentHome() {
   return (
     <div className="flex flex-col bg-[#FFEC8A]">
       <InfoSection
-        main1={parentInfo ? `${parentInfo.name} 학부모님` : "학부모님"}
+        main1={parentInfo ? `${parentInfo.name} 학부모님` : ""}
         description2="만나서 반가워요!"
         imageSrc={daramgi}
         altText="다람쥐"
