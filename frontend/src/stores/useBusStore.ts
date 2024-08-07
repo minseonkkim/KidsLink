@@ -1,24 +1,18 @@
 import { create } from 'zustand';
-
-interface Child {
-  childName: string;
-  parentTel: string;
-  status: string;
-  checked: boolean;
-}
+import { ChildInfo } from '../api/Info';
 
 interface BusStop {
   busId: number;
   busStopId: number;
   busStopName: string;
-  children: Child[];
+  children: (ChildInfo & { checked?: boolean })[]; // Include checked property
 }
 
 interface BusStore {
   busStops: BusStop[];
   setBusStops: (stops: BusStop[]) => void;
   toggleChildChecked: (busStopId: number, childName: string) => void;
-  setAllChecked: (checked: boolean) => void; // Add this line
+  setAllChecked: (checked: boolean) => void;
 }
 
 export const useBusStore = create<BusStore>((set, get) => ({
@@ -29,7 +23,7 @@ export const useBusStore = create<BusStore>((set, get) => ({
       const currentStop = currentStops.find((stop) => stop.busStopId === newStop.busStopId);
       if (currentStop) {
         const newChildren = newStop.children.map((newChild) => {
-          const currentChild = currentStop.children.find((child) => child.childName === newChild.childName);
+          const currentChild = currentStop.children.find((child) => child.childId === newChild.childId);
           return currentChild ? { ...newChild, checked: currentChild.checked } : newChild;
         });
         return { ...newStop, children: newChildren };
@@ -45,7 +39,7 @@ export const useBusStore = create<BusStore>((set, get) => ({
           ? {
               ...stop,
               children: stop.children.map((child) =>
-                child.childName === childName
+                child.name === childName
                   ? { ...child, checked: !child.checked }
                   : child
               ),
