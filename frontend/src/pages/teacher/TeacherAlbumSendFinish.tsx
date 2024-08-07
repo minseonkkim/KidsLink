@@ -15,7 +15,6 @@ export default function TeacherAlbumSendFinish() {
   useEffect(() => {
     const unlisten = history.listen(({ action }) => {
       if (action === 'POP') {
-        // Do your stuff on back button click
         navigate('/');
       }
     });

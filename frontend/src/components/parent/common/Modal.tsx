@@ -3,7 +3,7 @@ interface ModalProps {
   onClose: () => void;
 }
 
-const Modal: React.FC<ModalProps> = ({ message, onClose }) => {
+export default function Modal({ message, onClose }: ModalProps) {
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50">
       <div className="bg-white p-6 rounded shadow-lg">
@@ -17,6 +17,4 @@ const Modal: React.FC<ModalProps> = ({ message, onClose }) => {
       </div>
     </div>
   );
-};
-
-export default Modal;
+}

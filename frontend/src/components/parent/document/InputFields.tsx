@@ -1,3 +1,5 @@
+import React from 'react';
+
 interface InputFieldsProps {
   formData: { [key: string]: string | number };
   handleInputChange: (
@@ -6,11 +8,11 @@ interface InputFieldsProps {
   selectedOption: string;
 }
 
-const InputFields: React.FC<InputFieldsProps> = ({
+export default function InputFields({
   formData,
   handleInputChange,
   selectedOption,
-}) => {
+}: InputFieldsProps) {
   const fields =
     selectedOption === "dosage"
       ? ["name", "volume", "num", "times", "storageInfo", "details"]
@@ -63,6 +65,4 @@ const InputFields: React.FC<InputFieldsProps> = ({
       ))}
     </>
   );
-};
-
-export default InputFields;
+}
