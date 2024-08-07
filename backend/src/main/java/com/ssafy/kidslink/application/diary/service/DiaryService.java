@@ -82,7 +82,7 @@ public class DiaryService {
         Parent parent = child.getParent();
 
         ParentNotification parentNotification = new ParentNotification();
-        parentNotification.setCode(NotificationCode.NOTICE);
+        parentNotification.setCode(NotificationCode.DIARY);
         parentNotification.setParentNotificationDate(LocalDate.now());
         parentNotification.setParentNotificationText("우리 아이의 성장일지가 등록되었습니다.");
         parentNotification.setParent(parent);

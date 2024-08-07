@@ -162,6 +162,4 @@ public class VideoController {
         return new ResponseEntity<>(resource, headers, HttpStatus.OK);
     }
 
-
-
 }
