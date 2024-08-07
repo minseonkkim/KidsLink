@@ -9,7 +9,7 @@ import ReservationTime from "../../components/teacher/consulting/ReservationTime
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import ToastNotification from "../../components/teacher/common/ToastNotification.tsx";
-import { getAllPossibleReservations, PostTeacherReservations } from "../../api/meeting.ts";
+import { getAllPossibleReservations, postTeacherReservations } from "../../api/meeting.ts";
 import { TeacherMeetingReservation } from "../../types/meeting.ts";
 import { formatDate, isPastDate, ValuePiece } from "../../utils/meeting.ts";
 
