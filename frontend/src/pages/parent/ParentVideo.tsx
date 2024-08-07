@@ -136,14 +136,9 @@ export default function ParentVideo() {
           {/* 수정 필요한 부분 */}
           <div
             className="absolute top-20 bg-white w-[90%] h-[calc(70vh)] rounded-lg z-40 flex items-center justify-center"
-            style={{ opacity: teacherVideoOpacity, backgroundColor: "white" }}
+            style={{ opacity: 1, backgroundColor: "white" }}
           >
             {/* 상대방 비디오가 꺼져있을 때 표시 */}
-            {!otherVideoActive && (
-              <div className="absolute z-50 text-white text-opacity-100">
-                교사
-              </div>
-            )}
             {/* 구독자 비디오 컴포넌트 표시 */}
             {openvidu.subscribers.map((sub, i) => (
               <div key={i} className="h-full w-full z-80">
