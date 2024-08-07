@@ -20,7 +20,7 @@ export default function BusChild({ busStopId, childId, childName, parentTel, sta
 
   return (
     <div className={`flex flex-row items-center p-[14px] ${status === 'F' ? 'opacity-50 cursor-not-allowed' : ''}`}>
-      <div className="w-[80px] h-[80px] mr-5">
+      <div className="lg:w-[80px] lg:h-[80px] w-[53px] h-[53px] mr-5">
         {profile ? (
           <img src={profile} className="w-full h-full rounded-full object-cover" />
         ) : (
