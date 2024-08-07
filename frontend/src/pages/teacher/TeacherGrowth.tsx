@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
-import NavigateBack from "../../components/teacher/common/NavigateBack";
-import TeacherHeader from "../../components/teacher/common/TeacherHeader";
-import Title from "../../components/teacher/common/Title";
+import NavigateBack from "../../components/teacher/common/NavigateBack.tsx";
+import TeacherHeader from "../../components/teacher/common/TeacherHeader.tsx";
+import Title from "../../components/teacher/common/Title.tsx";
 import { IoSearch, IoCameraOutline } from "react-icons/io5";
-import GrowthChild from "../../components/teacher/growth/GrowthChild";
-import GrowthDiaryItem from "../../components/teacher/growth/GrowthDiaryItem";
+import GrowthChild from "../../components/teacher/growth/GrowthChild.tsx";
+import GrowthDiaryItem from "../../components/teacher/growth/GrowthDiaryItem.tsx";
 import { FiPlusCircle } from "react-icons/fi";
 import useModal from "../../hooks/teacher/useModal.tsx";
 import ToastNotification, { showToast, showToastError } from "../../components/teacher/common/ToastNotification.tsx";

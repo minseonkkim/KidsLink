@@ -1,26 +1,33 @@
-import { IoCallOutline } from "react-icons/io5"
-import { useBusStore } from '../../../stores/useBusStore'
+import { IoCallOutline } from "react-icons/io5";
+import { useBusStore } from '../../../stores/useBusStore';
 
 interface BusChildProps {
   busStopId: number;
+  childId: number;
   childName: string;
   parentTel: string;
   status: string;
   checked: boolean;
-  profile: string | null; 
+  profile: string | null;
 }
 
-export default function BusChild({ busStopId, childName, parentTel, status, checked, profile }: BusChildProps) {
-  const toggleChildChecked = useBusStore((state) => state.toggleChildChecked)
+export default function BusChild({ busStopId, childId, childName, parentTel, status, checked, profile }: BusChildProps) {
+  const toggleChildChecked = useBusStore((state) => state.toggleChildChecked);
 
   const handleCheckboxChange = () => {
-    toggleChildChecked(busStopId, childName)
-  }
+    toggleChildChecked(busStopId, childId);
+  };
 
   return (
     <div className={`flex flex-row items-center p-[14px] ${status === 'F' ? 'opacity-50 cursor-not-allowed' : ''}`}>
       <div className="w-[80px] h-[80px] mr-5">
-        <img src={profile || 'path/to/default/image.jpg'} className="w-full h-full rounded-full object-cover" />
+        {profile ? (
+          <img src={profile} className="w-full h-full rounded-full object-cover" />
+        ) : (
+          <div className="w-full h-full rounded-full bg-gray-200 flex items-center justify-center">
+            <span className="text-gray-500">No Image</span>
+          </div>
+        )}
       </div>
       <div className="flex flex-col items-start w-[178px]">
         <p className="font-bold text-[20px]">{childName}</p>
@@ -38,5 +45,5 @@ export default function BusChild({ busStopId, childName, parentTel, status, chec
         />
       )}
     </div>
-  )
+  );
 }
