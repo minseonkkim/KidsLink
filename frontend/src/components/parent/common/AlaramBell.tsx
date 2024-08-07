@@ -1,15 +1,13 @@
 import React, { useState } from 'react';
 import { FaRegBell } from 'react-icons/fa6';
 import { IoCloseSharp } from 'react-icons/io5';
-// import { FaBook, FaComment, FaPhotoVideo } from 'react-icons/fa';
 import ThreeModel from '../../ThreeModel';
 
-// 나중에 data 타입 다 한곳에 모아서 export 시키기
 interface Notification {
   time: string;
   title: string;
   contents: string;
-  code: 'NOTICE' | 'DIARY' | 'ALBUM' | 'BUS' |'MEETING' | 'DOCUMENT';
+  code: 'NOTICE' | 'DIARY' | 'ALBUM' | 'BUS' | 'MEETING' | 'DOCUMENT';
 }
 
 interface AlaramBellProps {
@@ -17,7 +15,7 @@ interface AlaramBellProps {
   notifications: Notification[];
 }
 
-const AlaramBell: React.FC<AlaramBellProps> = ({ notificationCount, notifications: initialNotifications }) => {
+export default function AlaramBell({ notificationCount, notifications: initialNotifications }: AlaramBellProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [notifications, setNotifications] = useState(initialNotifications);
 
@@ -32,20 +30,6 @@ const AlaramBell: React.FC<AlaramBellProps> = ({ notificationCount, notification
   const handleRemoveAllNotifications = () => {
     setNotifications([]);
   };
-
-  // 나중에 아이콘 넣을 생각
-  // const getIcon = (type: string) => {
-  //   switch (type) {
-  //     case '알림장':
-  //       return <FaBook className="w-6 h-6 text-black" />;
-  //     case '상담':
-  //       return <FaComment className="w-6 h-6 text-black" />;
-  //     case '앨범':
-  //       return <FaPhotoVideo className="w-6 h-6 text-black" />;
-  //     default:
-  //       return null;
-  //   }
-  // };
 
   return (
     <div className="font-KoPubDotum relative">
@@ -73,7 +57,6 @@ const AlaramBell: React.FC<AlaramBellProps> = ({ notificationCount, notification
                   }}
                 >
                   <div className="flex items-center mb-1">
-                    {/* {getIcon(notification.type)} */}
                     <span className="font-bold text-gray-800 ml-2">{notification.title}</span>
                   </div>
                   <span className="text-xs text-gray-600">{notification.time}</span>
@@ -104,6 +87,5 @@ const AlaramBell: React.FC<AlaramBellProps> = ({ notificationCount, notification
       )}
     </div>
   );
-};
+}
 
-export default AlaramBell;

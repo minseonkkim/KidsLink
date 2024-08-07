@@ -4,7 +4,7 @@ import { IoChatbubbleEllipsesOutline, IoChatbubbleEllipsesSharp, IoCalendarClear
 import { FaRegUser, FaUser } from 'react-icons/fa6';
 import { useNavigate, useLocation } from 'react-router-dom';
 
-const BottomNavbar: React.FC = () => {
+export default function BottomNavbar() {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -56,5 +56,3 @@ const BottomNavbar: React.FC = () => {
     </div>
   );
 };
-
-export default BottomNavbar;
