@@ -184,7 +184,7 @@ export default function ParentVideo() {
                     setOpenvidu,
                     setIsSessionJoined,
                     setMyStreamId,
-                    setTeacherVideoActive // 추가
+                    setOtherVideoActive // 추가
                   )
                 }
                 className="w-20 h-8 bg-[#ffec8a] rounded-full flex items-center justify-center text-sm font-medium text-[#212121] hover:bg-[#fdda6e] transition-colors"
