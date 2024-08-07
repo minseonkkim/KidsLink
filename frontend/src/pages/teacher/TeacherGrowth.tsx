@@ -73,10 +73,13 @@ export default function TeacherGrowth() {
       const today = new Date().toISOString().split("T")[0];
       setChilds((prevItems) =>
         prevItems.map((child) => {
-          const hasTodayDiary = fetchedDiarys.some(
-            (diary) => diary.createDate === today
-          );
-          return { ...child, completed: hasTodayDiary };
+          if (child.childId === currentChildId) {
+            const hasTodayDiary = fetchedDiarys.some(
+              (diary) => diary.createDate === today
+            );
+            return { ...child, completed: hasTodayDiary };
+          }
+          return child;
         })
       );
     } catch (error) {
@@ -254,6 +257,11 @@ function GrowthDiaryForm({
       return;
     }
 
+    if (!recordValue.trim()) {
+      showToastError(<div>"내용을 입력해주세요"</div>);
+      return;
+    }
+
     const diaryData: FormDiaryData = {
       diaryDate: dateValue,
       files: selectedImages,
@@ -262,7 +270,6 @@ function GrowthDiaryForm({
 
     try {
       await createDiary(selectedChild.childId, diaryData);
-      selectedChild.completed = true;
       setSelectedImages([]);
       setDateValue("");
       setRecordValue("");
