@@ -100,7 +100,7 @@ export default function TeacherMeetingConfirm() {
                 <div className="mt-8 mx-8 flex justify-center">
                     {Object.entries(groupedMeetings).map(([parentId, { childName, times }]) => (
                         <div key={parentId} className="bg-gray-100 p-6 mb-6 rounded-lg shadow-md w-[1200px]">
-                            <h3 className="text-xl font-bold mb-4 text-[23px]">{`${childName} 부모님`}</h3>
+                            <h3 className="text-xl font-bold mb-4 text-[23px]">{`${childName} 학부모님`}</h3>
                             <ul className="list-none p-0">
                                 {times.map((timeSlot, index) => (
                                     <li key={index} className="bg-white p-4 mb-2 border border-gray-300 rounded-md">
