@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { IoMdCalendar } from "react-icons/io";
 import NavigateBack from "../../components/teacher/common/NavigateBack";
 import TeacherHeader from "../../components/teacher/common/TeacherHeader";
 import Title from "../../components/teacher/common/Title";
@@ -11,7 +10,6 @@ import { isMeetingActive } from "../../utils/meeting";
 import { ParentTeacherMeeting } from "../../types/meeting";
 import { getConfirmedMeeting } from "../../api/meeting";
 
-// Extend the ParentTeacherMeeting type
 interface ExtendedParentTeacherMeeting extends ParentTeacherMeeting {
   parentName: string;
   parentProfile: string;
