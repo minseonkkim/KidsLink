@@ -1,6 +1,6 @@
-import { useNavigate } from 'react-router-dom';
-import { FaArrowLeft } from 'react-icons/fa';
-import AlaramBell from './AlaramBell';
+import { useNavigate } from 'react-router-dom'
+import { FaArrowLeft } from 'react-icons/fa'
+import AlaramBell from './AlaramBell'
 
 interface CommonHeaderProps {
   title: string;
@@ -11,15 +11,21 @@ interface Notification {
   time: string;
   title: string;
   contents: string;
-  code: 'NOTICE' | 'DIARY' | 'ALBUM' | 'BUS' |'MEETING' | 'DOCUMENT';
+  code: 'NOTICE' | 'DIARY' | 'ALBUM' | 'BUS' |'MEETING' | 'DOCUMENT'
 }
 
-const SubHeader: React.FC<CommonHeaderProps> = ({ title }) => {
-  const navigate = useNavigate();
+export default function SubHeader({ title }: CommonHeaderProps) {
+  const navigate = useNavigate()
 
+  // 뒤로 가기 버튼 클릭
   const handleBack = () => {
-    navigate(-1); // 뒤로가기
-  };
+    const path = location.pathname
+    if (path === '/meeting') {
+      navigate('/') 
+    } else {
+      navigate(-1)
+    }
+  }
 
   const notificationCount = 5;
   const notifications: Notification[] = [
@@ -53,7 +59,7 @@ const SubHeader: React.FC<CommonHeaderProps> = ({ title }) => {
       contents: '시스템 업데이트가 완료되었습니다. 재로그인 해주세요.',
       code: 'BUS'
     }
-  ];
+  ]
 
   return (
     <div className="z-50 fixed w-full h-[67px] border-b bg-white border-gray-300 p-4 shadow-md flex items-center justify-between">
@@ -65,7 +71,5 @@ const SubHeader: React.FC<CommonHeaderProps> = ({ title }) => {
       </p>
       <AlaramBell notificationCount={notificationCount} notifications={notifications} />
     </div>
-  );
-};
-
-export default SubHeader;
+  )
+}

@@ -99,7 +99,7 @@ export const fetchRecordings = async (): Promise<any[]> => {
 
 // 욕설감지
 const detectProfanity = (text: string): boolean => {
-  const profanityList = ['김범수', '바보']; // Add more words as needed
+  const profanityList = ['김지원', '바보']; // Add more words as needed
   return profanityList.some(word => text.includes(word));
 };
 // stt()
