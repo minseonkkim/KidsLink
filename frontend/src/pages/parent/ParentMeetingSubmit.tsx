@@ -46,7 +46,7 @@ const ParentMeetingSubmit = () => {
         meetingTime: reservation?.time ?? '',
       };
     });
-
+    console.log("selectedReservations: ",selectedReservations)
     try {
       await postAllPossibleReservations(selectedReservations);
       setIsSubmitted(true);

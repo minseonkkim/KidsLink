@@ -107,11 +107,11 @@ export default function ParentVideo() {
       {/* 반투명 검정 배경 */}
       <div className="absolute inset-0 bg-black bg-opacity-50"></div>
       {openvidu.session ? (
-        <div className="relative w-full h-full flex flex-col items-center justify-center">
+        <div className="absolute w-full h-full flex flex-col items-center justify-center">
           <Draggable>
           {/* 수정 필요한 부분 */}
             <div
-              className="absolute top-4 right-4 w-[120px] h-[150px] rounded-lg border border-white z-50 bg-black cursor-move flex items-center justify-center"
+              className="absolute top-[100px] right-[30px] w-[120px] h-[150px] rounded-lg border border-white z-50 bg-black cursor-move flex items-center justify-center"
               style={{ opacity: parentVideoOpacity, backgroundColor: "white" }}
             >
               {/* 부모 비디오가 꺼져있을 때 표시 */}
