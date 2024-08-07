@@ -99,6 +99,7 @@ export async function getConfirmedMeeting(): Promise<ParentTeacherMeeting[]> {
   try {
     const response = await axiosInstance.get("/meeting/reservation");
     if (response.data.status === "success") {
+      console.log("getConfirmedMeeting :", response)
       return response.data.data as ParentTeacherMeeting[];
     } else {
       throw new Error("Failed to get confirmed meetings");

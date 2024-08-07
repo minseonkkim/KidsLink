@@ -9,7 +9,6 @@ export const joinSession = async (
   setIsSessionJoined: React.Dispatch<React.SetStateAction<boolean>>,
   setMyStreamId: React.Dispatch<React.SetStateAction<string | undefined>>, // 이 매개변수 추가
   setOtherVideoActive: React.Dispatch<React.SetStateAction<boolean>>, // 상대방 비디오 상태 추가
-  setRecordingId: React.Dispatch<React.SetStateAction<string | null>> 
 ) => {
   if (!user.sessionId) return;
   const OV = new OpenVidu();
