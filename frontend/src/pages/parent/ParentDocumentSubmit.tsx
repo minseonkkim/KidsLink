@@ -12,7 +12,7 @@ import DateRangePicker from "../../components/parent/document/DateRangePicker";
 import InputFields from "../../components/parent/document/InputFields";
 import Modal from "../../components/parent/common/Modal";
 
-const ParentDocument: React.FC = () => {
+export default function ParentDocument() {
   const [selectedOption, setSelectedOption] = useState<string>("dosage");
   const [startDate, setStartDate] = useState<Date | undefined>(undefined);
   const [endDate, setEndDate] = useState<Date | undefined>(undefined);
@@ -167,5 +167,3 @@ const ParentDocument: React.FC = () => {
     </div>
   );
 };
-
-export default ParentDocument;

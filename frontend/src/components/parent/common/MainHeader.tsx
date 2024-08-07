@@ -1,9 +1,6 @@
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import AlaramBell from './AlaramBell';
 
-
-// 나중에 data 타입 다 한곳에 모아서 export 시키기
 interface Notification {
   time: string;
   title: string;
@@ -11,7 +8,7 @@ interface Notification {
   code: 'NOTICE' | 'DIARY' | 'ALBUM' | 'BUS' |'MEETING' | 'DOCUMENT';
 }
 
-const MainHeader: React.FC = () => {
+export default function MainHeader() {
   const navigate = useNavigate();
 
   const handleHomeClick = () => {
@@ -64,5 +61,3 @@ const MainHeader: React.FC = () => {
     </header>
   );
 };
-
-export default MainHeader;
