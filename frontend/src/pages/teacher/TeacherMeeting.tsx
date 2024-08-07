@@ -10,12 +10,6 @@ import { isMeetingActive } from "../../utils/meeting";
 import { ParentTeacherMeeting } from "../../types/meeting";
 import { getConfirmedMeeting } from "../../api/meeting";
 
-// Extend the ParentTeacherMeeting type
-// interface ExtendedParentTeacherMeeting extends ParentTeacherMeeting {
-//   parentName: string;
-//   parentProfile: string;
-// }
-
 export default function TeacherMeeting() {
   const [meetings, setMeetings] = useState<ParentTeacherMeeting[]>([]);
   const [parentName, setParentName] = useState("");
@@ -24,14 +18,12 @@ export default function TeacherMeeting() {
     const fetchMeetings = async () => {
       try {
         const data = await getConfirmedMeeting();
-        console.log("data", data);
         setMeetings(data);
 
         const meetingsWithParentNames = await Promise.all(
           data.map(async (meeting) => {
             try {
               const parentInfo = await getOneParentInfo(meeting.parentId);
-              console.log(parentInfo);
               setParentName(parentInfo.child.name)
               setparentProfile(parentInfo.profile || ProfileImg)
               return { 

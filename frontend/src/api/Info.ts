@@ -51,7 +51,6 @@ export async function getParentInfo(): Promise<ParentInfo> {
     const response = await axiosInstance.get('/parent');
 
     if (response.data.status === 'success') {
-      console.log(response.data.data) // 확인 후 삭제
       return response.data.data
     } else {
       throw new Error('Failed to fetch parent-info')
@@ -83,7 +82,6 @@ export async function getTeacherInfo(): Promise<TeacherInfo> {
     const response = await axiosInstance.get('/teacher');
 
     if (response.data.status === 'success') {
-      console.log(response.data.data) // 확인 후 삭제
       return response.data.data
     } else {
       throw new Error('Failed to fetch parent-info')
@@ -100,7 +98,6 @@ export async function getClassTeacherInfo(kindergartenClassId: number): Promise<
     const response = await axiosInstance.get(`/kindergarten/class/${kindergartenClassId}/teacher`);
 
     if (response.data.status === 'success') {
-      console.log(response.data.data) // 확인 후 삭제
       return response.data.data
     } else {
       throw new Error('Failed to fetch parent-info')

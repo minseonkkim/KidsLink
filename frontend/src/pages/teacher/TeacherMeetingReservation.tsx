@@ -121,10 +121,8 @@ export default function TeacherReservation() {
       const requestData: TeacherMeetingReservation[] = Object.entries(sortedTempSelectedTimes).map(
         ([date, times]) => ({ date, times })
       );
-      console.log(requestData)
       await postTeacherReservations(requestData);
 
-      console.log('예약이 저장되었습니다:', requestData);
       showToastSuccess(
         <div>
             예약이 저장되었습니다!<br />

@@ -114,8 +114,7 @@ export default function ParentBus() {
               });
 
               customOverlay.setMap(newMap);
-              parentMarker.setMap(newMap)
-              console.log(parentPosition)
+              parentMarker.setMap(newMap);
 
               setCurrentMarker(parentMarker);
               setParentLocation({ latitude, longitude });
