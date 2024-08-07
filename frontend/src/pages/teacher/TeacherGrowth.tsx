@@ -257,6 +257,11 @@ function GrowthDiaryForm({
       return;
     }
 
+    if (!recordValue.trim()) {
+      showToastError(<div>"내용을 입력해주세요"</div>);
+      return;
+    }
+
     const diaryData: FormDiaryData = {
       diaryDate: dateValue,
       files: selectedImages,
