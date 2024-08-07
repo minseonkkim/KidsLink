@@ -39,12 +39,12 @@ export async function fetchSessionId(): Promise<SessionData> {
 export async function postAllPossibleReservations(
   selectedReservations: ParentReservation[]
 ): Promise<ParentReservation[]> {
-  console.log(selectedReservations);
+  console.log("selectedReservations: ",selectedReservations);
   try {
     const response = await axiosInstance.post("meeting", selectedReservations);
+    console.log("meeeting.postAllPossibleReservations : ", response)
 
     if (response.data.status === "success") {
-      console.log(response.data.data); // 확인 후 삭제
       return response.data.data;
     } else {
       throw new Error("Failed to post reservations");

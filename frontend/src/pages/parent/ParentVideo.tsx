@@ -1,24 +1,25 @@
-import { useState, useEffect } from "react"
-import Draggable from "react-draggable"
-import bgImg from "../../assets/parent/meeting_bg.png"
-import OpenViduVideoComponent from "../../components/openvidu/VideoComponent"
-import ParentMeetingFooter from "../../components/openvidu/ParentMeetingFooter"
-import { useParams, useNavigate } from "react-router-dom"
-import { useParentInfoStore } from "../../stores/useParentInfoStore"
-import { ControlState, OpenViduState, User } from "../../types/openvidu"
+import { useState, useEffect } from "react";
+import Draggable from "react-draggable";
+import bgImg from "../../assets/parent/meeting_bg.png";
+import OpenViduVideoComponent from "../../components/openvidu/VideoComponent";
+import ParentMeetingFooter from "../../components/openvidu/ParentMeetingFooter";
+import { useParams, useNavigate } from "react-router-dom";
+import { useParentInfoStore } from "../../stores/useParentInfoStore";
+import { ControlState, OpenViduState, User } from "../../types/openvidu";
 import {
   fetchParentInfo,
   joinSession,
   leaveSession,
-} from "../../utils/openvidu"
-import { getMeetingInfo } from "../../api/meeting"
-import { FaHandsHelping, FaUserSecret, FaBan } from 'react-icons/fa'
+} from "../../utils/openvidu";
+import { getMeetingInfo } from "../../api/meeting";
+import { FaHandsHelping, FaUserSecret, FaBan } from 'react-icons/fa';
 
 export default function ParentVideo() {
   const navigate = useNavigate();
   const { meetingId } = useParams<{ meetingId: string }>();
   const [myStreamId, setMyStreamId] = useState<string | undefined>(undefined);
   const { parentInfo, setParentInfo } = useParentInfoStore();
+  const [currentRecordingId, setCurrentRecordingId] = useState<string | null>(null);
   const [user, setUser] = useState<User>({
     sessionId: meetingId,
     username: parentInfo?.child?.name || "",
@@ -106,11 +107,11 @@ export default function ParentVideo() {
       {/* 반투명 검정 배경 */}
       <div className="absolute inset-0 bg-black bg-opacity-50"></div>
       {openvidu.session ? (
-        <div className="relative w-full h-full flex flex-col items-center justify-center">
+        <div className="absolute w-full h-full flex flex-col items-center justify-center">
           <Draggable>
-          {/* 수정 필요한 부분 */}
+            {/* 수정 필요한 부분 */}
             <div
-              className="absolute top-4 right-4 w-[120px] h-[150px] rounded-lg border border-white z-50 bg-black cursor-move flex items-center justify-center"
+              className="absolute top-[100px] right-[30px] w-[120px] h-[150px] rounded-lg border border-white z-50 bg-black cursor-move flex items-center justify-center"
               style={{ opacity: parentVideoOpacity, backgroundColor: "white" }}
             >
               {/* 부모 비디오가 꺼져있을 때 표시 */}
@@ -184,7 +185,7 @@ export default function ParentVideo() {
                     setOpenvidu,
                     setIsSessionJoined,
                     setMyStreamId,
-                    setTeacherVideoActive // 추가
+                    setOtherVideoActive // 추가
                   )
                 }
                 className="w-20 h-8 bg-[#ffec8a] rounded-full flex items-center justify-center text-sm font-medium text-[#212121] hover:bg-[#fdda6e] transition-colors"
@@ -209,5 +210,5 @@ export default function ParentVideo() {
         />
       )}
     </div>
-  )
+  );
 }

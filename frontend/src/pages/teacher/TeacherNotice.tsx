@@ -7,6 +7,8 @@ import NoticeItem from "../../components/teacher/notice/NoticeItem";
 import { MdOutlineNavigateBefore, MdOutlineNavigateNext } from "react-icons/md";
 import useModal from "../../hooks/teacher/useModal.tsx";
 import { getAllNotices, createNotice } from '../../api/notice.ts'; // Combined import
+import { showToastError } from '../../components/teacher/common/ToastNotification.tsx';
+import ToastNotification from '../../components/teacher/common/ToastNotification.tsx'; // Import ToastNotification component
 
 const ITEMS_PER_PAGE = 4;
 
@@ -168,6 +170,7 @@ export default function TeacherNotice() {
                 </div>
             </div>
             <Modal />
+            <ToastNotification /> {/* Add ToastContainer here */}
         </>
     );
 }
@@ -178,6 +181,16 @@ function CreateNoticeForm({ closeModal, setNotices }) {
 
     const handleCreateNotice = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        if (!newNoticeTitle.trim()) {
+            showToastError(<div>제목을 작성해주세요</div>);
+            return;
+        }
+
+        if (!newNoticeContent.trim()) {
+            showToastError(<div>내용을 작성해주세요</div>);
+            return;
+        }
 
         const noticeData = {
             title: newNoticeTitle,
