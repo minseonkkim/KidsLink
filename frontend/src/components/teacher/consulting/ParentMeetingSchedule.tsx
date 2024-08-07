@@ -1,6 +1,3 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-
 interface ParentMeetingScheduleProps {
   meetingId: number;
   date: string;
@@ -9,8 +6,7 @@ interface ParentMeetingScheduleProps {
   isActive: boolean;
 }
 
-const ParentMeetingSchedule: React.FC<ParentMeetingScheduleProps> = ({ meetingId, date, time, teacherName, isActive }) => {
-
+export default function ParentMeetingSchedule({ meetingId, date, time, teacherName, isActive }: ParentMeetingScheduleProps) {
   return (
     <div
       key={meetingId}
@@ -27,6 +23,4 @@ const ParentMeetingSchedule: React.FC<ParentMeetingScheduleProps> = ({ meetingId
       </div>
     </div>
   );
-};
-
-export default ParentMeetingSchedule;
+}

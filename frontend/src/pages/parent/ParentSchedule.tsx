@@ -140,7 +140,7 @@ const StyledCalendar = styled(Calendar)`
 `;
 
 
-const ParentSchedule: React.FC = () => {
+export default function ParentSchedule() {
   const [value, setValue] = useState<Date>(new Date());
   const [selectedDate, setSelectedDate] = useState<string | null>(
     moment(value).format("YYYY-MM-DD")
@@ -312,5 +312,3 @@ const ParentSchedule: React.FC = () => {
     </div>
   );
 };
-
-export default ParentSchedule;
