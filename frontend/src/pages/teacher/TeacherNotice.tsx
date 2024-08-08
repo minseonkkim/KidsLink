@@ -98,7 +98,7 @@ export default function TeacherNotice() {
                         <select
                             value={searchType}
                             onChange={handleSearchTypeChange}
-                            className="w-1/4 border-2 border-[#f4f4f4] focus:outline-none text-lg rounded-[8px] px-2 py-1"
+                            className="lg:w-1/4 w:1/3 border-2 border-[#f4f4f4] focus:outline-none text-lg rounded-[8px] px-2 py-1"
                         >
                             <option value="title">제목 검색</option>
                             <option value="date">날짜 검색</option>
@@ -109,14 +109,14 @@ export default function TeacherNotice() {
                                 placeholder="제목 검색"
                                 value={searchTitle}
                                 onChange={handleSearchTitleChange}
-                                className="w-3/4 border-2 border-[#f4f4f4] focus:outline-none text-lg ml-2 custom-placeholder::placeholder px-2 py-1 rounded-[8px]"
+                                className="w-3/4 w:2/3 border-2 border-[#f4f4f4] focus:outline-none text-lg ml-2 custom-placeholder::placeholder px-2 py-1 rounded-[8px]"
                             />
                         ) : (
                             <input
                                 type="date"
                                 value={searchDate}
                                 onChange={handleSearchDateChange}
-                                className="w-3/4 border-2 border-[#f4f4f4] focus:outline-none text-lg ml-2 custom-placeholder::placeholder px-2 py-1 rounded-[8px]"
+                                className="w-3/4 w:2/3 border-2 border-[#f4f4f4] focus:outline-none text-lg ml-2 custom-placeholder::placeholder px-2 py-1 rounded-[8px]"
                                 max="9999-12-31"
                             />
                         )}
@@ -204,7 +204,7 @@ function CreateNoticeForm({ closeModal, setNotices }) {
             setNotices(sortedNotices);
             setNewNoticeTitle("");
             setNewNoticeContent("");
-            closeModal(); // Close the modal after successful creation
+            closeModal();
         } catch (error) {
             console.error('Failed to create notice:', error);
         }
