@@ -158,7 +158,7 @@ export default function TeacherVideo() {
         }
         </div>
         {!openvidu.session && (
-          <div className="flex flex-col justify-center items-center w-full h-full">
+          <div className="flex flex-col items-center w-full h-full">
             <div className="bg-white p-5 rounded-xl drop-shadow-md bg-[#]">
               <p>상담번호 : {user.sessionId}</p>
               <p>참가자 : {user.username}</p>
