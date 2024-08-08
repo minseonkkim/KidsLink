@@ -80,7 +80,7 @@ export default function TeacherVideo() {
   }, [teacherInfo, setTeacherInfo]);
 
   useEffect(() => {
-    fetchRecordingsList(setRecordings);
+    fetchRecordingsList(user.sessionId, setRecordings);
   }, []);
 
   useEffect(() => {
@@ -105,7 +105,7 @@ export default function TeacherVideo() {
       try {
         const stoppedRecording = await stopRecording(currentRecordingId);
         setCurrentRecordingId(null);
-        fetchRecordingsList(setRecordings);
+        fetchRecordingsList(user.sessionId, setRecordings);
       } catch (error) {
         console.error("Error stopping recording:", error);
       }
@@ -168,7 +168,7 @@ export default function TeacherVideo() {
               <p>상담번호 : {user.sessionId}</p>
               <p>참가자 : {user.username}</p>
               <p>
-                학부모가 욕설을 할 경우 자동으로 녹화가 진행됩니다. <br/> 녹화중지를 원하실 경우,
+                학부모가 욕설을 할 경우 자동으로 녹화가 진행됩니다. <br /> 녹화중지를 원하실 경우,
                 "녹화중지" 버튼을 눌러주세요.
               </p>
               <div className="flex justify-center mt-2">
