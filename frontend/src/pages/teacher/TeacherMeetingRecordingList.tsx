@@ -32,8 +32,15 @@ const TeacherMeetingRecordingList: React.FC = () => {
         console.log(recordings);
     }, [recordings]);
 
-    const handleDownload = (url: string) => {
-        window.location.href = url;
+  const handleDownload = (url: string) => {
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "kidslink"; // 파일 이름을 'kidslink'로 지정
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    
+        // window.location.href = url;
     };
 
     const handleDelete = (id: string) => {
