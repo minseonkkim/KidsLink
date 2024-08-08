@@ -113,7 +113,7 @@ export default function TeacherVideo() {
     };
 
     // 상대방 비디오 상태에 따라 불투명도 설정a
-    const teacherVideoOpacity = control.video ? 1 : 0.8;
+    // const teacherVideoOpacity = control.video ? 1 : 0.8;
     // const parentVideoOpacity = otherVideoActive ? 1 : 0.8;
 
     return (
@@ -135,7 +135,7 @@ export default function TeacherVideo() {
                     </div>
                     <div
                         className="absolute top-[200px] left-[100px] w-[600px] h-auto rounded-lg bg-white"
-                        style={{ opacity: teacherVideoOpacity, backgroundColor: "white" }}
+                        style={{ opacity: 1, backgroundColor: "white" }}
                     >
                         {openvidu.mainStreamManager && (
                             <OpenViduVideoComponent streamManager={openvidu.mainStreamManager} />
@@ -160,7 +160,7 @@ export default function TeacherVideo() {
                     )}
                 </div>
                 {!openvidu.session && (
-                    <div className="flex flex-col justify-center items-center w-full h-full">
+                    <div className="flex flex-col items-center w-full h-full">
                         <div className="bg-white p-5 rounded-xl drop-shadow-md bg-[#]">
                             <p>상담번호 : {user.sessionId}</p>
                             <p>참가자 : {user.username}</p>
@@ -197,21 +197,25 @@ export default function TeacherVideo() {
                     />
                 )}
                 <div className="recordings-list mt-4">
-                    <h2>녹화 파일 목록</h2>
-                    <ul>
-                        {recordings.map((recording) => (
-                            <li key={recording.id}>
-                                {recording.name} -{" "}
-                                <a
-                                    href={`/api/video/recordings/download/${user.sessionId}/recording/${recording.name}`}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                >
-                                    다운로드
-                                </a>
-                            </li>
-                        ))}
-                    </ul>
+                    {recordings.length > 0 && (
+                    <>
+                        <h2>녹화 파일 목록</h2>
+                        <ul>
+                            {recordings.map((recording) => (
+                                <li key={recording.id}>
+                                    {recording.name} -{" "}
+                                    <a
+                                        href={`/api/video/recordings/download/${user.sessionId}/recording/${recording.name}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
+                                        다운로드
+                                    </a>
+                                </li>
+                            ))}
+                        </ul>
+                    </>
+                    )}
                 </div>
                 {/* <div className="recordings-list mt-4">
           <h2>녹화 파일 목록</h2>
