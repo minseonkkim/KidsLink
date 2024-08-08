@@ -48,7 +48,7 @@ export default function ParentBus() {
     mapRef.current = newMap;
 
     const initialPosition = new window.kakao.maps.LatLng(location.lat, location.lng);
-    const imageSize = new window.kakao.maps.Size(64, 69);
+    const imageSize = new window.kakao.maps.Size(64, 95);
     const imageOption = { offset: new window.kakao.maps.Point(27, 69) };
     const markerImage = new window.kakao.maps.MarkerImage(busIcon, imageSize, imageOption);
 
@@ -280,14 +280,15 @@ export default function ParentBus() {
           onClick={() => animateMapToMarker(mapRef.current, parentMarkerRef.current)}
           className="relative bg-white text-red-500 p-2 rounded z-40 rounded-full drop-shadow-lg"
         >
-          <FaBus />
+        <MdGpsFixed />
+          
         </button>
 
         <button
           onClick={() => animateMapToMarker(mapRef.current, busMarkerRef.current)}
           className="relative bg-white text-red-500 p-2 rounded z-40 rounded-full drop-shadow-lg"
         >
-          <MdGpsFixed />
+          <FaBus />
         </button>
       </div>
     </div>
