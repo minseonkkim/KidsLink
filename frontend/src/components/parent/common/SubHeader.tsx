@@ -35,7 +35,7 @@ export default function SubHeader({ title }: CommonHeaderProps) {
 
   const handleBack = () => {
     const path = location.pathname;
-    if (path === '/meeting') {
+    if (path === '/meeting' || path === '/document') {
       navigate('/');
     } else {
       navigate(-1);
