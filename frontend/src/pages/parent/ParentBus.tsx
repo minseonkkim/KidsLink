@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import InfoSection from "../../components/parent/common/InfoSection";
 import daramgi from "../../assets/parent/bus-daramgi.png";
-import busLocation from '../../assets/parent/driving-daramgi.png';
-import myLocation from '../../assets/parent/bus.png';
+import busIcon from '../../assets/parent/bus-driving.gif';
+import currentLocationIcon from '../../assets/parent/marker.png';
 import { receiveBusLocation } from '../../api/webSocket';
 import { postKidBoardingStatus, getKidBoardingStatus } from '../../api/bus';
 import { getParentInfo } from '../../api/Info';
@@ -54,9 +54,16 @@ export default function ParentBus() {
     const imageOption = { offset: new window.kakao.maps.Point(27, 69) };
     const markerImage = new window.kakao.maps.MarkerImage(myLocation, imageSize, imageOption);
 
-    const busMarkerInstance = new window.kakao.maps.Marker({
+    const busMarkerInstance = new window.kakao.maps.CustomOverlay({
       position: initialPosition,
-      image: markerImage,
+      content: `
+        <div style="position: relative; width: 64px; height: 64px;">
+          <img src="${busIcon}" width="64" height="64" />
+        </div>
+      `,
+      yAnchor: 1,
+      xAnchor: 0.5,
+      zIndex: 1,
     });
 
     busMarkerInstance.setMap(newMap);
@@ -165,7 +172,7 @@ export default function ParentBus() {
   }, []);
 
   const updateParentLocation = (markerRef: React.MutableRefObject<any>) => {
-    centerFlag = false
+    centerFlag = false;
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
@@ -187,8 +194,8 @@ export default function ParentBus() {
               parentMarker.setPosition(newParentPosition);
               setParentLocation({ latitude, longitude });
               const map = mapRef.current;
-              
-              if (map&&!isMoving&&!centerFlag&&latitude !== undefined && longitude !== undefined) {  
+
+              if (map && !isMoving && !centerFlag && latitude !== undefined && longitude !== undefined) {
                 map.setCenter(newParentPosition);
                 centerFlag = true;
               }
@@ -268,7 +275,7 @@ export default function ParentBus() {
       <div className='fixed flex justify-end items-center bottom-20 right-0 gap-4 mr-4'>
         <button
           onClick={() => animateMapToMarker(mapRef.current, busMarkerRef.current)}
-          className="relative bg-white text-red-500 p-2 rounded z-40 rounded-full drop-shadow-lg"
+          className="relative bg-white text-yellow-500 p-2 rounded z-40 rounded-full drop-shadow-lg"
         >
           <FaBus />
         </button>

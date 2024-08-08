@@ -8,7 +8,7 @@ interface MenuItemProps {
 export default function MenuItem({ src, label, link, onClick }: MenuItemProps) {
   return (
     <button
-      className="flex flex-col items-center cursor-pointer"
+      className="flex flex-col items-center justify-center cursor-pointer"
       onClick={() => onClick(link)}
     >
       <div className="w-[115px] h-[92px] flex items-center justify-center bg-[#FFF9D7] rounded-full hover:bg-[#FFEC8A] transition-all duration-200">
