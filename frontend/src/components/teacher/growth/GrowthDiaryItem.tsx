@@ -5,6 +5,7 @@ interface GrowthDiaryItemProps {
     diaryId: number;
     createDate: string;
     content: string;
+    thumbnail: string;
     images: { imageId: number, path: string }[];
     onClick: () => void;
 }
@@ -29,34 +30,8 @@ const GrowthDiaryModalContent = ({ createDate, content, images }: GrowthDiaryIte
     </div>
 );
 
-export default function GrowthDiaryItem({ diaryId, createDate, content, images, onClick }: GrowthDiaryItemProps) {
+export default function GrowthDiaryItem({ diaryId, createDate, content, thumbnail, images, onClick }: GrowthDiaryItemProps) {
     const { openModal, Modal } = useModal();
-    
-    const backgroundImageWrapperStyle: React.CSSProperties = {
-        backgroundImage: images.length > 0 ? `url(${images[0].path})` : 'none',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        opacity: 0.4,
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '100%',
-        zIndex: 0,
-    };
-
-    const outerContainerStyle: React.CSSProperties = {
-        position: 'relative',
-        borderRadius: '10px',
-        width: '135px',
-        height: '135px',
-        margin: '17px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        overflow: 'hidden',
-        backgroundColor: images.length === 0 ? '#D5E4B4' : 'transparent',
-    };
 
     const openReadModal = () => {
         openModal(
@@ -64,6 +39,7 @@ export default function GrowthDiaryItem({ diaryId, createDate, content, images, 
                 diaryId={diaryId}
                 createDate={createDate}
                 content={content}
+                thumbnail={thumbnail}
                 images={images}
                 onClick={onClick}
             />
@@ -72,11 +48,21 @@ export default function GrowthDiaryItem({ diaryId, createDate, content, images, 
 
     return (
         <>
-            <div onClick={openReadModal} style={outerContainerStyle}>
-                {images.length > 0 && <div style={backgroundImageWrapperStyle} />}
-                <p style={{ position: 'relative', zIndex: 10, fontWeight: 'bold', fontSize: '18px'}}>{createDate}</p>
+            <div
+                onClick={openReadModal}
+                className={`relative rounded-[10px] w-[133px] h-[133px] lg:m-[17px] m-[15px] flex items-center justify-center overflow-hidden ${
+                    images.length === 0 ? 'bg-[#D5E4B4]' : 'bg-transparent'
+                }`}
+            >
+                {thumbnail && (
+                    <div
+                        className="absolute top-0 left-0 w-full h-full bg-cover bg-center opacity-40"
+                        style={{ backgroundImage: `url(${thumbnail})` }}
+                    />
+                )}
+                <p className="relative z-10 font-bold text-[18px]">{createDate}</p>
             </div>
-            <Modal/>
+            <Modal />
         </>
     );
-};
+}

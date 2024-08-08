@@ -6,7 +6,6 @@ import { useNavigate } from "react-router-dom";
 import useAppStore from "../../stores/store";
 import TestButton from "../../components/TestButton";
 
-
 export default function TeacherMyPage(){
     const navigate = useNavigate();
     const setUserType = useAppStore((state) => state.setUserType);

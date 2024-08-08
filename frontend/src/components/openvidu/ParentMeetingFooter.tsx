@@ -2,7 +2,6 @@ import React from "react";
 import { IoMic, IoMicOff, IoVideocam, IoVideocamOff } from "react-icons/io5";
 import { ImExit } from "react-icons/im";
 
-// Define the types for the props
 interface ControlState {
   video: boolean;
   mic: boolean;
@@ -16,9 +15,9 @@ interface MeetingFooterProps {
   close: () => void;
 }
 
-const ParentMeetingFooter: React.FC<MeetingFooterProps> = ({ control, handleControl, close }) => {
+export default function ParentMeetingFooter({ control, handleControl, close }: MeetingFooterProps) {
   return (
-    <div className="fixed flex items-center jusstify-center w-full h-[100px] bottom-0 bg-transparent flex px-10 py-3 text-white rounded-full z-50 gap-4">
+    <div className="fixed flex items-center justify-center w-full h-[100px] bottom-0 bg-transparent px-10 py-3 text-white rounded-full z-50 gap-4">
       <div className="flex gap-6">
         {control.video ? (
           <IoVideocam
@@ -52,6 +51,4 @@ const ParentMeetingFooter: React.FC<MeetingFooterProps> = ({ control, handleCont
       </div>
     </div>
   );
-};
-
-export default ParentMeetingFooter;
+}

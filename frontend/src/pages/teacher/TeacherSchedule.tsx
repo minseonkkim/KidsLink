@@ -248,7 +248,7 @@ const ScheduleItem: React.FC<ScheduleItemProps> = ({ id, content, confirmationSt
 
 type ValuePiece = Date | null;
 
-const TeacherSchedule: React.FC = () => {
+export default function TeacherSchedule() {
     const [date, setDate] = useState<ValuePiece | [ValuePiece, ValuePiece]>(new Date());
     const [scheduleItems, setScheduleItems] = useState<ScheduleItemType[]>([]);
     const [time, setTime] = useState('');
@@ -396,5 +396,3 @@ const TeacherSchedule: React.FC = () => {
         </DndProvider>
     );
 };
-
-export default TeacherSchedule;

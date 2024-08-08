@@ -3,7 +3,7 @@ import NavigateBack from "../../components/teacher/common/NavigateBack";
 import TeacherHeader from "../../components/teacher/common/TeacherHeader";
 import Title from "../../components/teacher/common/Title";
 import { BsSendCheck } from "react-icons/bs";
-import React, { useContext, useEffect } from 'react';
+import { useContext, useEffect } from 'react';
 import { UNSAFE_NavigationContext, useNavigate } from 'react-router-dom';
 import { createBrowserHistory } from 'history';
 
@@ -15,7 +15,6 @@ export default function TeacherAlbumSendFinish() {
   useEffect(() => {
     const unlisten = history.listen(({ action }) => {
       if (action === 'POP') {
-        // Do your stuff on back button click
         navigate('/');
       }
     });
@@ -35,7 +34,6 @@ export default function TeacherAlbumSendFinish() {
                 <BsSendCheck className="mr-5 text-[25px]"/>
                 <span>앨범이 학부모에게 성공적으로 전송되었습니다!</span>
             </div>
-            <span></span>
         </div>
     </div>
     </>

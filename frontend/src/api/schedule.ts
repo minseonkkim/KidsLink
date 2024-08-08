@@ -71,7 +71,6 @@ export async function getAllParentSchedules(year: number, month: number): Promis
   try {
     const response = await axiosInstance.get<{ data: string[] }>(`schedule/parent?year=${year}&month=${month}`);
     if (response.data) {
-      console.log(response.data.data); // 확인 후 삭제
       return response.data.data;
     } else {
       throw new Error('Failed to fetch schedules');
@@ -87,7 +86,7 @@ export async function getParentSchedules(date: string): Promise<ParentSchedules>
   try {
     const response = await axiosInstance.get<{ data: ParentSchedules }>(`schedule/parent/detail?date=${date}`);
     if (response.data) {
-      console.log(response.data.data); // 확인 후 삭제
+      console.log(response.data.data)
       return response.data.data;
     } else {
       throw new Error('Failed to fetch schedule');
@@ -103,7 +102,6 @@ export async function getTeacherSchedules(date: string): Promise<TeacherSchedule
   try{
     const response = await axiosInstance.get(`schedule/teacher?date=${date}`);
     if (response.data.status === "success") {
-      console.log(response.data.data); // 확인 후 삭제
       return response.data.data;
     } else {
       throw new Error('Failed to fetch schedule');
@@ -119,7 +117,6 @@ export async function createTeacherSchedule(newSchedule: NewSchedule){
   try{
     const response = await axiosInstance.post('schedule/teacher', newSchedule);
     if (response.data.status === "success") {
-      console.log(response.data.data); // 확인 후 삭제
       return response.data.data;
     } else {
       throw new Error('Failed to fetch schedule');
@@ -135,7 +132,7 @@ export async function createTeacherScheduleCheck(teacherScheduleId: number){
   try{
     const response = await axiosInstance.post(`schedule/teacher/${teacherScheduleId}/check`);
     if(response.data.status === "success"){
-      console.log(response.data.data);
+      return response.data.data;
     } else{
       throw new Error('Failed to fetch schedule check');
     }
@@ -150,7 +147,7 @@ export async function deleteTeacherSchedule(teacherScheduleId: number){
   try{
     const response = await axiosInstance.delete(`schedule/teacher/${teacherScheduleId}`);
     if(response.data.status === "success"){
-      console.log(response.data.data);
+      return response.data.data;
     } else{
       throw new Error('Failed to fetch schedule check');
     }

@@ -1,45 +1,48 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { IoMdCalendar } from "react-icons/io";
 import NavigateBack from "../../components/teacher/common/NavigateBack";
 import TeacherHeader from "../../components/teacher/common/TeacherHeader";
 import Title from "../../components/teacher/common/Title";
 import ProfileImg from '../../assets/teacher/profile_img.jpg';
 import { getOneParentInfo } from "../../api/Info";
 import TeacherMeetingSchedule from "../../components/teacher/consulting/TeacherMeetingSchedule";
-import { isMeetingActive, isMeetingVisible } from "../../utils/meeting";
+import { isMeetingActive } from "../../utils/meeting";
 import { ParentTeacherMeeting } from "../../types/meeting";
 import { getConfirmedMeeting } from "../../api/meeting";
 
 export default function TeacherMeeting() {
   const [meetings, setMeetings] = useState<ParentTeacherMeeting[]>([]);
-  const [parentNames, setParentNames] = useState<{ [key: number]: string }>({});
-  
+  const [parentName, setParentName] = useState("");
+  const [parentProfile, setparentProfile] = useState("");
   useEffect(() => {
     const fetchMeetings = async () => {
       try {
-        const data = await GetConfirmedMeeting();
-        // console.log(data);
+        const data = await getConfirmedMeeting();
         setMeetings(data);
 
-        const parentNamesData = await Promise.all(
+        const meetingsWithParentNames = await Promise.all(
           data.map(async (meeting) => {
             try {
               const parentInfo = await getOneParentInfo(meeting.parentId);
-              console.log(parentInfo)
-              return { parentId: meeting.parentId, name: parentInfo.child.name };
+              setParentName(parentInfo.child.name)
+              setparentProfile(parentInfo.profile || ProfileImg)
+              return { 
+                ...meeting, 
+                parentName: parentInfo.child.name,
+                parentProfile: parentInfo.profile || ProfileImg // Use default profile image if not available
+              };
             } catch (error) {
               console.error(`Error fetching parent info for ID ${meeting.parentId}:`, error);
-              return { parentId: meeting.parentId, name: "알 수 없음" };
+              return { 
+                ...meeting, 
+                parentName: "알 수 없음",
+                parentProfile: ProfileImg // Use default profile image if error occurs
+              };
             }
           })
         );
 
-        const parentNamesMap = parentNamesData.reduce((acc, curr) => {
-          acc[curr.parentId] = curr.name;
-          return acc;
-        }, {});
-        setParentNames(parentNamesMap);
+        setMeetings(meetingsWithParentNames);
       } catch (error) {
         console.error("Failed to fetch confirmed meetings:", error);
       }
@@ -47,9 +50,7 @@ export default function TeacherMeeting() {
 
     fetchMeetings();
   }, []);
-  // console.log("meetings: ", meetings)
 
-  // 비활성화 된 경우, 클릭되지 않는 로직 추가해야함.
   return (
     <>
       <TeacherHeader />
@@ -66,14 +67,14 @@ export default function TeacherMeeting() {
               meetings.map((meeting) => (
                 <Link
                   to={`/meeting/${meeting.meetingId}`}
-                  state={{ parentName: parentNames[meeting.parentId] || "알 수 없음" }}
+                  state={{ parentName: parentName }}
                   key={meeting.meetingId}
                 >
                   <TeacherMeetingSchedule
                     date={meeting.meetingDate}
                     time={meeting.meetingTime}
-                    name={parentNames[meeting.parentId] || "알 수 없음"}
-                    profileImgPath={ProfileImg}
+                    name={parentName}
+                    profileImgPath={parentProfile}
                     isActivate={isMeetingActive(meeting.meetingDate, meeting.meetingTime)}
                   />
                 </Link>

@@ -6,9 +6,9 @@ import { LuPencilLine } from "react-icons/lu";
 import NoticeItem from "../../components/teacher/notice/NoticeItem";
 import { MdOutlineNavigateBefore, MdOutlineNavigateNext } from "react-icons/md";
 import useModal from "../../hooks/teacher/useModal.tsx";
-import { getAllNotices, createNotice } from '../../api/notice.ts'; // Combined import
-
-const ITEMS_PER_PAGE = 4;
+import { getAllNotices, createNotice } from '../../api/notice.ts';
+import { showToastError } from '../../components/teacher/common/ToastNotification.tsx';
+import ToastNotification from '../../components/teacher/common/ToastNotification.tsx';
 
 export default function TeacherNotice() {
     const { openModal, closeModal, Modal } = useModal();
@@ -17,6 +17,8 @@ export default function TeacherNotice() {
     const [searchTitle, setSearchTitle] = useState("");
     const [searchDate, setSearchDate] = useState("");
     const [notices, setNotices] = useState([]);
+
+    const ITEMS_PER_PAGE = 4;
 
     useEffect(() => {
         const fetchNotices = async () => {
@@ -168,6 +170,7 @@ export default function TeacherNotice() {
                 </div>
             </div>
             <Modal />
+            <ToastNotification />
         </>
     );
 }
@@ -179,6 +182,16 @@ function CreateNoticeForm({ closeModal, setNotices }) {
     const handleCreateNotice = async (e: React.FormEvent) => {
         e.preventDefault();
 
+        if (!newNoticeTitle.trim()) {
+            showToastError(<div>제목을 작성해주세요</div>);
+            return;
+        }
+
+        if (!newNoticeContent.trim()) {
+            showToastError(<div>내용을 작성해주세요</div>);
+            return;
+        }
+
         const noticeData = {
             title: newNoticeTitle,
             content: newNoticeContent,
@@ -187,7 +200,6 @@ function CreateNoticeForm({ closeModal, setNotices }) {
 
         try {
             await createNotice(noticeData);
-            // Reload notices after creating a new one
             const fetchedNotices = await getAllNotices();
             const sortedNotices = fetchedNotices.sort((a, b) => b.noticeBoardId - a.noticeBoardId);
             setNotices(sortedNotices);
