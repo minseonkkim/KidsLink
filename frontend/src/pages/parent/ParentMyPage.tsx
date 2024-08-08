@@ -72,7 +72,7 @@ export default function ParentMyPage() {
           <div className="flex flex-col justify-center items-center flex-grow">
             <div className="mb-1">
               {parentInfo
-                ? `${parentInfo.child.kindergartenClass.kindergarten.kindergatendName} ${parentInfo.child.kindergartenClass.kindergartenClassName}`
+                ? `${parentInfo.child.kindergartenClass.kindergarten.kindergartenName} : ${parentInfo.child.kindergartenClass.kindergartenClassName}`
                 : ""}
             </div>
             <div className="font-semibold text-[18px]">

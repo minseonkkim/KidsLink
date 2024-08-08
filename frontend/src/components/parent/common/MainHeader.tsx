@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import AlarmBell from './AlarmBell'
-import { Alarm, getAllAlarms } from '../../../api/alarm'
+import { getAllAlarms } from '../../../api/alarm'
 
 export interface Notification {
   id: number;

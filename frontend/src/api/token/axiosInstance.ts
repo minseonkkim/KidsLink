@@ -53,5 +53,5 @@ axiosInstance.interceptors.request.use(
   }
 );
 
-export default axiosInstance;
-export { setAuthorizationToken };
+export default axiosInstance
+export { setAuthorizationToken }
