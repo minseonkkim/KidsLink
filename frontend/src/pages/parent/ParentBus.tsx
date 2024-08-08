@@ -9,6 +9,7 @@ import { getParentInfo } from '../../api/Info';
 import { Toggle } from '../../components/parent/bus/Toggle';
 import { FaBus } from 'react-icons/fa';
 import { MdGpsFixed } from 'react-icons/md';
+import { useParentInfoStore } from '../../stores/useParentInfoStore';
 
 declare global {
   interface Window {
@@ -23,14 +24,86 @@ export default function ParentBus() {
   const [isBoarding, setIsBoarding] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isMoving, setIsMoving] = useState(false);
-  const [parentInfo, setParentInfo] = useState(null);
   const [childId, setChildId] = useState<number | null>(null);
+  const mapRef = useRef<any>(null);
+  const busMarkerRef = useRef<any>(null);
+  const parentMarkerRef = useRef<any>(null);
   const [parentLocation, setParentLocation] = useState<{ latitude?: number, longitude?: number }>({});
+  const { parentInfo, setParentInfo } = useParentInfoStore();
+  const intervalIdRef = useRef<NodeJS.Timeout | null>(null);
+  const isWebSocketInitialized = useRef<boolean>(false);
+  let centerFlag = false;
+  const busCenterFlag = useRef<boolean>(false);
+  const initializeMap = () => {
+    if (mapRef.current || !mapContainer.current) {
+      return;
+    }
 
-  const [map, setMap] = useState<any>(null);
-  const [currentMarker, setCurrentMarker] = useState<any>(null);
-  const [busMarker, setBusMarker] = useState<any>(null);
-  const [wsConnected, setWsConnected] = useState<boolean>(false);
+    const container = mapContainer.current;
+    const options = {
+      center: new window.kakao.maps.LatLng(location.lat, location.lng),
+      level: 3,
+    };
+    const newMap = new window.kakao.maps.Map(container, options);
+    mapRef.current = newMap;
+
+    const initialPosition = new window.kakao.maps.LatLng(location.lat, location.lng);
+    const imageSize = new window.kakao.maps.Size(64, 69);
+    const imageOption = { offset: new window.kakao.maps.Point(27, 69) };
+    const markerImage = new window.kakao.maps.MarkerImage(busIcon, imageSize, imageOption);
+
+    const busMarkerInstance = new window.kakao.maps.Marker({
+      position: initialPosition,
+      image: markerImage,
+    });
+
+    busMarkerInstance.setMap(newMap);
+    busMarkerRef.current = busMarkerInstance;
+
+    const parentInitialPosition = new window.kakao.maps.LatLng(location.lat, location.lng);
+    const parentMarkerImage = new window.kakao.maps.MarkerImage(
+      currentLocationIcon,
+      new window.kakao.maps.Size(30, 30),
+      { offset: new window.kakao.maps.Point(15, 15) }
+    );
+
+    const parentMarkerInstance = new window.kakao.maps.Marker({
+      position: parentInitialPosition,
+      image: parentMarkerImage,
+    });
+
+    parentMarkerInstance.setMap(newMap);
+    parentMarkerRef.current = parentMarkerInstance;
+    updateParentLocation(parentMarkerRef);
+  };
+
+  const initializeWebSocket = async () => {
+    if (isWebSocketInitialized.current) {
+      return;
+    }
+    isWebSocketInitialized.current = true;
+
+    const kindergartenId = parentInfo.child.kindergartenClass.kindergartenClassId;
+    const wsUrl = `${import.meta.env.VITE_WEBSOCKET_URL}/${kindergartenId}`;
+    const ws = new WebSocket(wsUrl);
+    wsRef.current = ws;
+
+    receiveBusLocation(wsRef, setLocation, mapRef, busMarkerRef, setIsMoving, busCenterFlag);
+
+    ws.onclose = () => {
+      console.log('WebSocket closed');
+      isWebSocketInitialized.current = false;
+      centerFlag = false;
+      busCenterFlag.current = false;
+      setIsMoving(false);
+    };
+
+    ws.onerror = (error) => {
+      console.error('WebSocket error:', error);
+      setIsMoving(false);
+    };
+  };
+  
 
   useEffect(() => {
     const apiKey = import.meta.env.VITE_KAKAO_API_KEY;
@@ -42,121 +115,11 @@ export default function ParentBus() {
 
     script.onload = () => {
       window.kakao.maps.load(() => {
-        const container = mapContainer.current;
-        if (container) {
-          const options = {
-            center: new window.kakao.maps.LatLng(location.lat, location.lng),
-            level: 3,
-          };
-          const newMap = new window.kakao.maps.Map(container, options);
-          setMap(newMap);
-
-          const imageSrc = busIcon;
-          const imageSize = new window.kakao.maps.Size(60, 95);
-          const imageOption = { offset: new window.kakao.maps.Point(27, 69) };
-
-          const markerImage = new window.kakao.maps.MarkerImage(imageSrc, imageSize, imageOption);
-          const markerPosition = new window.kakao.maps.LatLng(location.lat, location.lng);
-
-          const busMarkerInstance = new window.kakao.maps.Marker({
-            position: markerPosition,
-            image: markerImage,
-          });
-
-          busMarkerInstance.setMap(newMap);
-          setBusMarker(busMarkerInstance);
-
-          // 현재 위치 마커 생성
-          navigator.geolocation.getCurrentPosition(
-            (position) => {
-              const { latitude, longitude } = position.coords;
-              console.log("현재 좌표 : ",latitude,longitude)
-              const parentPosition = new window.kakao.maps.LatLng(latitude, longitude);
-              const parentMarkerImage = new window.kakao.maps.MarkerImage(
-                currentLocationIcon,
-                new window.kakao.maps.Size(30, 30),
-                { offset: new window.kakao.maps.Point(-10, -10) }
-              );
-
-              const parentMarker = new window.kakao.maps.Marker({
-                position: parentPosition,
-                image: parentMarkerImage,
-                map: newMap,
-              });
-
-              // 애니메이션 요소 추가
-              // 현재위치인지 테스트 필요함
-              const overlayContent = document.createElement('div');
-              overlayContent.style.position = 'relative';
-              overlayContent.style.width = '50px';
-              overlayContent.style.height = '50px';
-
-              const pulseRing = document.createElement('div');
-              pulseRing.className = 'pulse-ring';
-              overlayContent.appendChild(pulseRing);
-
-              const markerIcon = document.createElement('img');
-              markerIcon.src = currentLocationIcon;
-              markerIcon.style.position = 'absolute';
-              markerIcon.style.top = '50%';
-              markerIcon.style.left = '50%';
-              markerIcon.style.width = '30px';
-              markerIcon.style.height = '30px';
-              markerIcon.style.transform = 'translate(-50%, -50%)';
-              overlayContent.appendChild(markerIcon);
-
-              const customOverlay = new window.kakao.maps.CustomOverlay({
-                position: parentPosition,
-                content: overlayContent,
-                yAnchor: 0,
-                xAnchor: 0,
-                zIndex: 1,
-              });
-
-              customOverlay.setMap(newMap);
-              parentMarker.setMap(newMap);
-
-              setCurrentMarker(parentMarker);
-              setParentLocation({ latitude, longitude });
-              newMap.setCenter(parentPosition);
-            },
-            (error) => {
-              console.error("Error getting location", error);
-            },
-            {
-              enableHighAccuracy: true,
-              timeout: 5000,
-              maximumAge: 0,
-            }
-          );
-
-          // WebSocket 연결 설정
-          const cleanup = receiveBusLocation(wsRef, setLocation, newMap, busMarkerInstance, setIsMoving);
-
-          wsRef.current = new WebSocket('ws://your-websocket-url'); // 여기에 실제 웹소켓 URL을 사용하세요
-
-          wsRef.current.onopen = () => {
-            console.log('WebSocket connected');
-            setWsConnected(true);
-          };
-
-          wsRef.current.onclose = () => {
-            console.log('WebSocket disconnected');
-            setWsConnected(false);
-          };
-
-          // 컴포넌트 언마운트 시 WebSocket 연결 해제
-          return () => {
-            if (wsRef.current) {
-              wsRef.current.close();
-            }
-            cleanup();
-          };
-        }
+        initializeMap();
+        initializeWebSocket();
       });
     };
 
-    // 초기 탑승 상태 조회
     const fetchBoardingStatus = async () => {
       setLoading(true);
       try {
@@ -179,12 +142,66 @@ export default function ParentBus() {
     fetchBoardingStatus();
 
     return () => {
-      document.head.removeChild(script);
       if (wsRef.current) {
         wsRef.current.close();
       }
+      if (intervalIdRef.current) {
+        clearInterval(intervalIdRef.current);
+      }
     };
   }, []);
+
+  const updateParentLocation = (markerRef: React.MutableRefObject<any>) => {
+    centerFlag = false
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        const parentPosition = new window.kakao.maps.LatLng(latitude, longitude);
+
+        const parentMarker = markerRef.current;
+        parentMarker.setPosition(parentPosition);
+
+        setParentLocation({ latitude, longitude });
+
+        if (intervalIdRef.current) {
+          clearInterval(intervalIdRef.current);
+        }
+        intervalIdRef.current = setInterval(() => {
+          navigator.geolocation.getCurrentPosition(
+            (pos) => {
+              const { latitude, longitude } = pos.coords;
+              const newParentPosition = new window.kakao.maps.LatLng(latitude, longitude);
+              parentMarker.setPosition(newParentPosition);
+              setParentLocation({ latitude, longitude });
+              const map = mapRef.current;
+              
+              if (map&&!isMoving&&!centerFlag&&latitude !== undefined && longitude !== undefined) {  
+                map.setCenter(newParentPosition);
+                centerFlag = true;
+              }
+              console.log('Parent location updated:', { latitude, longitude });
+            },
+            (err) => {
+              console.error("Error getting location", err);
+            },
+            {
+              enableHighAccuracy: true,
+              timeout: 20000, 
+              maximumAge: 0 
+            }
+          );
+        }, 500);
+      },
+      (error) => {
+        console.error("Error getting location", error);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 20000, 
+        maximumAge: 0 
+      }
+    );
+  };
 
   const handleBoardingStatus = async () => {
     try {
@@ -207,7 +224,6 @@ export default function ParentBus() {
     await handleBoardingStatus();
   };
 
-  // 좌표로 지도의 중심을 애니메이션 효과로 이동시키는 함수
   const animateMapToMarker = (map: any, marker: any) => {
     if (marker) {
       const markerPosition = marker.getPosition();
@@ -215,10 +231,9 @@ export default function ParentBus() {
     }
   };
 
-  const isLocationDefined = location.lat !== undefined && location.lng !== undefined;
   const description1 = "버스가";
-  const main1 = isLocationDefined ? "이동 중" : "운행중인 시간이";
-  const main2 = isLocationDefined ? " 입니다!" : " 아닙니다";
+  const main1 = isMoving ? "이동 중" : "운행중인 시간이";
+  const main2 = isMoving ? " 입니다!" : " 아닙니다";
 
   return (
     <div className="flex flex-col h-screen bg-[#FFEC8A]">
@@ -232,6 +247,20 @@ export default function ParentBus() {
       <div className="flex flex-col flex-grow overflow-hidden rounded-tl-[20px] rounded-tr-[20px] bg-white shadow-top animate-slideUp -mt-10">
         <div className="flex flex-row items-center space-x-4">
           <Toggle isOn={isBoarding} toggleHandler={handleToggleChange} />
+          <button
+            onClick={() => animateMapToMarker(mapRef.current, parentMarkerRef.current)}
+            className="absolute top-[350px] right-[10px] bg-white text-black p-2 rounded z-40 rounded-full drop-shadow-lg"
+          >
+            <MdGpsFixed />
+          </button>
+          <button
+            onClick={() => animateMapToMarker(mapRef.current, busMarkerRef.current)}
+            className="absolute top-[350px] right-[60px] bg-white text-black p-2 rounded z-40 rounded-full drop-shadow-lg"
+          >
+            <div>
+              <FaBus />
+            </div>
+          </button>
         </div>
         <div
           ref={mapContainer}

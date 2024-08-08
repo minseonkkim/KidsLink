@@ -86,6 +86,7 @@ export async function getParentSchedules(date: string): Promise<ParentSchedules>
   try {
     const response = await axiosInstance.get<{ data: ParentSchedules }>(`schedule/parent/detail?date=${date}`);
     if (response.data) {
+      console.log(response.data.data)
       return response.data.data;
     } else {
       throw new Error('Failed to fetch schedule');

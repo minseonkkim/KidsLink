@@ -23,6 +23,8 @@ export default function ParentVideo() {
   const [user, setUser] = useState<User>({
     sessionId: meetingId,
     username: parentInfo?.child?.name || "",
+    classname: "",  // 빌드에러로 인해 기본값 ""으로 수정하였음
+    profile: ""
   });
   const [openvidu, setOpenvidu] = useState<OpenViduState>({
     session: undefined,
