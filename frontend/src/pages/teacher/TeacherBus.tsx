@@ -3,7 +3,6 @@ import BusChild from "../../components/teacher/bus/BusChild";
 import NavigateBack from "../../components/teacher/common/NavigateBack";
 import TeacherHeader from "../../components/teacher/common/TeacherHeader";
 import Title from "../../components/teacher/common/Title";
-import { IoMdArrowDropdown } from "react-icons/io";
 import { MdNavigateBefore, MdNavigateNext } from "react-icons/md";
 import { startWebSocket, stopWebSocket } from '../../api/webSocket';
 import { getAllBusStops, postBusStart } from '../../api/bus';
@@ -16,7 +15,6 @@ const WEBSOCKET_URL = import.meta.env.VITE_WEBSOCKET_URL;
 
 export default function TeacherBus() {
   const { openModal, closeModal, Modal } = useModal();
-  const [isOpen, setIsOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState('등원');
   const [currentStopId, setCurrentStopId] = useState<number | null>(null);
   const [busId, setBusId] = useState<number | null>(null);
@@ -28,7 +26,6 @@ export default function TeacherBus() {
   const setAllChecked = useBusStore((state) => state.setAllChecked);
   const { teacherInfo, setTeacherInfo } = useTeacherInfoStore();
 
-  const dropdownRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement & { touchStartX?: number }>(null);
 
   useEffect(() => {
@@ -68,28 +65,15 @@ export default function TeacherBus() {
 
     window.addEventListener('beforeunload', handleUnload);
     window.addEventListener('unload', handleUnload);
-    document.addEventListener('mousedown', handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
       window.removeEventListener('beforeunload', handleUnload);
       window.removeEventListener('unload', handleUnload);
     };
   }, [teacherInfo, setTeacherInfo]);
 
-  const toggleDropdown = () => {
-    setIsOpen(!isOpen);
-  };
-
-  const handleOptionClick = (option: string) => {
+  const handleOptionChange = (option: string) => {
     setSelectedOption(option);
     setAllChecked(false);
-    setIsOpen(false);
-  };
-
-  const handleClickOutside = (event: MouseEvent) => {
-    if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-      setIsOpen(false);
-    }
   };
 
   const handlePrevStop = () => {
@@ -109,7 +93,7 @@ export default function TeacherBus() {
   };
 
   const startWebSocketConnection = () => {
-    startWebSocket(WEBSOCKET_URL,  teacherInfo.kindergartenId);
+    startWebSocket(WEBSOCKET_URL, teacherInfo.kindergartenId, selectedOption);
     setIsWebSocketActive(true);
     localStorage.setItem('isWebSocketActive', 'true');
   };
@@ -130,18 +114,22 @@ export default function TeacherBus() {
     return <div>Invalid bus stop selected.</div>;
   }
 
-  const renderModalContent = () => (
+  const renderModalContent = (action: '출발' | '도착') => (
     <div className="w-full max-w-md py-3 px-3 bg-white">
       <h2 className="text-2xl font-semibold mb-4">알림</h2>
-      <p className="text-gray-700 mb-6">학부모에게 버스 출발 알림을 전송하시겠습니까?</p>
+      <p className="text-gray-700 mb-6">학부모에게 버스 {action} 알림을 전송하시겠습니까?</p>
       <div className="flex justify-end space-x-3">
         <button
           onClick={() => {
-            postBusStart(busId);
-            startWebSocketConnection();
+            if (action === '출발') {
+              postBusStart(busId);
+              startWebSocketConnection();
+            } else {
+              stopWebSocketConnection();
+            }
             closeModal();
           }}
-          className="px-4 py-2 border-[2px] border-[#7C7C7C] bg-[#E3EEFF] px-3 py-1 font-bold rounded-[10px] shadow-md hover:bg-[#D4DDEA] transition duration-300 ease-in-out"
+          className="px-4 py-2 border-[2px] border-[#7C7C7C] bg-[#E3EEFF] font-bold rounded-[10px] shadow-md hover:bg-[#D4DDEA] transition duration-300 ease-in-out"
         >
           전송
         </button>
@@ -155,16 +143,15 @@ export default function TeacherBus() {
     </div>
   );
 
-  const openCreateModal = () => {
-    openModal(renderModalContent());
+  const openCreateModal = (action: '출발' | '도착') => {
+    openModal(renderModalContent(action));
   };
 
   const handleButtonClick = () => {
     if (isWebSocketActive) {
-      stopWebSocketConnection();
-      setAllChecked(false); // Set all checked states to false when stopping WebSocket
+      openCreateModal('도착');
     } else {
-      openCreateModal();
+      openCreateModal('출발');
     }
   };
 
@@ -200,18 +187,31 @@ export default function TeacherBus() {
           {isWebSocketActive ? '버스 도착' : '버스 출발'}
         </button>
 
-        <div className="absolute top-[180px] left-[30px] lg:left-[150px] rounded-[10px] border-[1px] border-[#7C7C7C] w-[86px]">
-          <button className="text-[18px] flex flex-row items-center justify-center p-2" onClick={toggleDropdown}>
-            <IoMdArrowDropdown className="text-[18px] mr-2" />{selectedOption}
-          </button>
-          {isOpen && (
-            <div className="absolute left-0 mt-1 w-[86px] rounded-[10px] border-[1px] border-[#7C7C7C] bg-white" ref={dropdownRef}>
-              <div className="py-1" role="none">
-                <a href="#" className="text-[18px] block px-4 py-2 text-sm text-center text-gray-700" role="menuitem" onClick={() => handleOptionClick('등원')}>등원</a>
-                <a href="#" className="text-[18px] block px-4 py-2 text-sm text-center text-gray-700" role="menuitem" onClick={() => handleOptionClick('하원')}>하원</a>
-              </div>
-            </div>
-          )}
+        <div className="absolute top-[180px] left-[30px] lg:left-[150px] rounded-[10px] w-auto">
+          <div className="flex py-1 space-x-4">
+            <label className="flex items-center text-sm text-gray-700">
+              <input
+                type="radio"
+                name="busOption"
+                value="등원"
+                checked={selectedOption === '등원'}
+                onChange={() => handleOptionChange('등원')}
+                disabled={isWebSocketActive}
+              />
+              <span className="ml-2">등원</span>
+            </label>
+            <label className="flex items-center text-sm text-gray-700">
+              <input
+                type="radio"
+                name="busOption"
+                value="하원"
+                checked={selectedOption === '하원'}
+                onChange={() => handleOptionChange('하원')}
+                disabled={isWebSocketActive}
+              />
+              <span className="ml-2">하원</span>
+            </label>
+          </div>
         </div>
 
         <div 
