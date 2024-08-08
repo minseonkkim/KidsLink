@@ -152,7 +152,7 @@ export default function ParentBus() {
   }, []);
 
   const updateParentLocation = (markerRef: React.MutableRefObject<any>) => {
-    centerFlag = false;
+    centerFlag = false
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
