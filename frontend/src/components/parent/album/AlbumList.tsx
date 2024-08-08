@@ -32,7 +32,7 @@ export default function AlbumList({ albums, handleAlbumClick }: AlbumListProps) 
           </div>
         ))
       ) : (
-        <p className="text-center text-lg col-span-4">
+        <p className="text-center text-gray-500 col-span-4">
           해당 제목의 앨범이 없습니다.
         </p>
       )}
