@@ -216,7 +216,7 @@ function CreateNoticeForm({ closeModal, setNotices }) {
                 <div className="mb-4 flex flex-col lg:flex-row">
                     <label className="block mr-3 mb-1 font-bold whitespace-nowrap text-[18px]">제목</label>
                     <input
-                        className="border border-gray-300 p-2 rounded w-full lg:w-auto"
+                        className="border border-gray-300 p-2 rounded w-full"
                         value={newNoticeTitle}
                         onChange={(e) => setNewNoticeTitle(e.target.value)}
                     />
@@ -225,7 +225,7 @@ function CreateNoticeForm({ closeModal, setNotices }) {
                 <div className="mb-4 flex flex-col lg:flex-row">
                     <label className="block mr-3 mb-1 font-bold whitespace-nowrap text-[18px]">내용</label>
                     <textarea
-                        className="border border-gray-300 p-2 rounded w-full lg:w-auto"
+                        className="border border-gray-300 p-2 rounded w-full"
                         rows={10}
                         value={newNoticeContent}
                         onChange={(e) => setNewNoticeContent(e.target.value)}

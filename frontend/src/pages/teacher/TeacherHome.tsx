@@ -28,10 +28,15 @@ export default function TeacherHome() {
         return '';
     };
 
-    const fetchSchedules = async () => {
+    const fetchData = async () => {
         try {
-            const fetchedSchedules = (await getTeacherSchedules(formatDate(date))).teacherSchedules;
-            fetchedSchedules.sort((a, b) => {
+            const [info, fetchedSchedules] = await Promise.all([
+                getTeacherInfo(),
+                getTeacherSchedules(formatDate(date)),
+            ]);
+
+            setTeacherInfo(info);
+            const sortedSchedules = fetchedSchedules.teacherSchedules.sort((a, b) => {
                 if (a.confirmationStatus === "T" && b.confirmationStatus !== "T") return -1;
                 if (a.confirmationStatus !== "T" && b.confirmationStatus === "T") return 1;
                 const isANumeric = /^\d/.test(a.content);
@@ -42,32 +47,17 @@ export default function TeacherHome() {
                 if (a.content > b.content) return 1;
                 return 0;
             });
-            setScheduleItems(fetchedSchedules);
+            setScheduleItems(sortedSchedules);
         } catch (error) {
-            console.error("Failed to fetch schedules:", error);
+            console.error('Failed to fetch data', error);
+        } finally {
+            setLoading(false);
         }
     };
 
     useEffect(() => {
-        fetchSchedules();
+        fetchData();
     }, []);
-
-    
-
-    useEffect(() => {
-        const fetchTeacherInfo = async () => {
-            try {
-                const info = await getTeacherInfo();
-                setTeacherInfo(info);
-            } catch (error) {
-                console.error('Failed to fetch teacher info', error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchTeacherInfo();
-    }, [setTeacherInfo]);
 
     if (loading) {
         return <div>Loading...</div>;
@@ -77,16 +67,9 @@ export default function TeacherHome() {
         return <div>Error: Unable to fetch teacher information.</div>;
     }
 
-    // 오늘 날짜 객체 생성
     const today = new Date();
-
-    // 연도 가져오기
     const year = today.getFullYear();
-
-    // 월 가져오기 (0부터 시작하므로 +1 필요)
     const month = String(today.getMonth() + 1).padStart(2, '0');
-
-    // 일 가져오기
     const day = String(today.getDate()).padStart(2, '0');
 
     return (
