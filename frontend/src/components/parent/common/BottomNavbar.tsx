@@ -26,10 +26,6 @@ export default function BottomNavbar() {
 
   const isCurrentPage = (path: string) => location.pathname === path
 
-  const daramgi = if (1===1) {
-    return 1
-  }
-
   const iconColor = '#FFC107'
   return (
     <div className="footer fixed bottom-0 w-full bg-white text-gray-700 h-[60px] flex justify-around items-center shadow-md">
