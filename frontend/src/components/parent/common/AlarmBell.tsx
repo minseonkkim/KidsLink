@@ -4,19 +4,13 @@ import { FcAdvertising, FcReading, FcPicture, FcVoicePresentation, FcContacts } 
 import { FaBus } from 'react-icons/fa'
 import { getAllAlarms, deleteAlarm, deleteAllAlarms } from '../../../api/alarm'
 import { formatDate } from '../../../utils/parent/dateUtils'
+import { Notification } from './MainHeader'
 
 interface Alarm {
   id: number;
   date: string;
   contents: string;
   code: string; 
-}
-
-interface Notification {
-  id: number;
-  date: string;
-  contents: string;
-  code: 'NOTICE' | 'DIARY' | 'ALBUM' | 'BUS' | 'MEETING' | 'DOCUMENT';
 }
 
 interface AlaramBellProps {
