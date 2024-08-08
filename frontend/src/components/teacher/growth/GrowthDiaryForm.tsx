@@ -76,7 +76,7 @@ export default function GrowthDiaryForm({
   const today = new Date().toISOString().split("T")[0];
 
   return (
-    <div className="w-[500px]">
+    <div className="w-[327px] lg:w-[500px]">
       <form onSubmit={handleSubmit}>
         <div className="mb-4 flex flex-row items-center">
           <label className="block mr-3 mb-1 font-bold whitespace-nowrap text-[18px]">

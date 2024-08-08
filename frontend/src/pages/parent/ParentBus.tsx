@@ -48,7 +48,7 @@ export default function ParentBus() {
     mapRef.current = newMap;
 
     const initialPosition = new window.kakao.maps.LatLng(location.lat, location.lng);
-    const imageSize = new window.kakao.maps.Size(64, 69);
+    const imageSize = new window.kakao.maps.Size(64, 95);
     const imageOption = { offset: new window.kakao.maps.Point(27, 69) };
     const markerImage = new window.kakao.maps.MarkerImage(busIcon, imageSize, imageOption);
 
@@ -61,16 +61,37 @@ export default function ParentBus() {
     busMarkerRef.current = busMarkerInstance;
 
     const parentInitialPosition = new window.kakao.maps.LatLng(location.lat, location.lng);
-    const parentMarkerImage = new window.kakao.maps.MarkerImage(
-      currentLocationIcon,
-      new window.kakao.maps.Size(30, 30),
-      { offset: new window.kakao.maps.Point(15, 15) }
-    );
-
-    const parentMarkerInstance = new window.kakao.maps.Marker({
+    
+    // 애니메이션 요소 추가
+    // 현재위치인지 테스트 필요함
+    const overlayContent = document.createElement('div');
+    overlayContent.style.position = 'relative';
+    overlayContent.style.width = '50px';
+    overlayContent.style.height = '50px';
+    const pulseRing = document.createElement('div');
+    pulseRing.className = 'pulse-ring';
+    overlayContent.appendChild(pulseRing);
+    const markerIcon = document.createElement('img');
+    markerIcon.src = currentLocationIcon;
+    markerIcon.style.position = 'absolute';
+    markerIcon.style.top = '50%';
+    markerIcon.style.left = '50%';
+    markerIcon.style.width = '30px';
+    markerIcon.style.height = '30px';
+    markerIcon.style.transform = 'translate(-50%, -50%)';
+    overlayContent.appendChild(markerIcon);
+    const parentMarkerInstance = new window.kakao.maps.CustomOverlay({
       position: parentInitialPosition,
-      image: parentMarkerImage,
+      content: overlayContent,
+      yAnchor: 0,
+      xAnchor: 0,
+      zIndex: 1,
     });
+    parentMarkerInstance.setMap(newMap);
+    
+              
+
+    
 
     parentMarkerInstance.setMap(newMap);
     parentMarkerRef.current = parentMarkerInstance;
@@ -78,13 +99,16 @@ export default function ParentBus() {
   };
 
   const initializeWebSocket = async () => {
+    console.log('WebSocket init');
     if (isWebSocketInitialized.current) {
+      console.log('WebSocket x');
       return;
     }
     isWebSocketInitialized.current = true;
 
-    const kindergartenId = parentInfo.child.kindergartenClass.kindergartenClassId;
+    const kindergartenId = parentInfo.child.kindergartenClass.kindergarten.kindergartenId;
     const wsUrl = `${import.meta.env.VITE_WEBSOCKET_URL}/${kindergartenId}`;
+    console.log(kindergartenId)
     const ws = new WebSocket(wsUrl);
     wsRef.current = ws;
 
@@ -247,20 +271,6 @@ export default function ParentBus() {
       <div className="flex flex-col flex-grow overflow-hidden rounded-tl-[20px] rounded-tr-[20px] bg-white shadow-top animate-slideUp -mt-10">
         <div className="flex flex-row items-center space-x-4">
           <Toggle isOn={isBoarding} toggleHandler={handleToggleChange} />
-          <button
-            onClick={() => animateMapToMarker(mapRef.current, parentMarkerRef.current)}
-            className="absolute top-[350px] right-[10px] bg-white text-black p-2 rounded z-40 rounded-full drop-shadow-lg"
-          >
-            <MdGpsFixed />
-          </button>
-          <button
-            onClick={() => animateMapToMarker(mapRef.current, busMarkerRef.current)}
-            className="absolute top-[350px] right-[60px] bg-white text-black p-2 rounded z-40 rounded-full drop-shadow-lg"
-          >
-            <div>
-              <FaBus />
-            </div>
-          </button>
         </div>
         <div
           ref={mapContainer}
@@ -270,17 +280,18 @@ export default function ParentBus() {
 
       <div className='fixed flex justify-end items-center bottom-20 right-0 gap-4 mr-4'>
         <button
-          onClick={() => animateMapToMarker(map, busMarker)}
+          onClick={() => animateMapToMarker(mapRef.current, parentMarkerRef.current)}
           className="relative bg-white text-red-500 p-2 rounded z-40 rounded-full drop-shadow-lg"
         >
-          <FaBus />
+        <MdGpsFixed />
+          
         </button>
 
         <button
-          onClick={() => animateMapToMarker(map, currentMarker)}
+          onClick={() => animateMapToMarker(mapRef.current, busMarkerRef.current)}
           className="relative bg-white text-red-500 p-2 rounded z-40 rounded-full drop-shadow-lg"
         >
-          <MdGpsFixed />
+          <FaBus />
         </button>
       </div>
     </div>
