@@ -1,4 +1,5 @@
 import axios from "axios";
+import axiosInstance from "./token/axiosInstance";
 
 const APPLICATION_SERVER_URL = import.meta.env.VITE_OPENVIDU_URL;
 const OPENVIDU_SERVER_SECRET = import.meta.env.VITE_OPENVIDU_SECRET;
@@ -82,7 +83,7 @@ export const stopRecording = async (recordingId: string): Promise<any> => {
 };
 
 // 녹화된 영상 가져오기
-export const fetchRecordings = async (): Promise<any[]> => {
+export const fetchRecordings = async (sessionId: string): Promise<any[]> => {
   try {
     const response = await axios.get(`${APPLICATION_SERVER_URL}/recordings`);
     return response.data;
@@ -147,10 +148,13 @@ export const stopSpeechRecognition = () => {
 // 녹화 다운로드
 export const handleDownload = async (userSessionId, recordingName) => {
   try {
-    const response = await axios.get(`/api/video/recordings/download/${userSessionId}/recording/${recordingName}`, {
+    const response = await axiosInstance.get(`/api/video/recordings/download/${userSessionId}/recording/${recordingName}`, {
       responseType: 'blob'
     });
+    console.log(`${APPLICATION_SERVER_URL}/api/video/recordings/download/${userSessionId}/recording/${recordingName}`)
+    console.log(response)
     const url = window.URL.createObjectURL(new Blob([response.data]));
+    console.log(url)
     const link = document.createElement('a');
     link.href = url;
     link.setAttribute('download', `${recordingName}`); // 파일명 설정
