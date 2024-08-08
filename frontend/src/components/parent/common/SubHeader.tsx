@@ -3,17 +3,10 @@ import { useNavigate } from 'react-router-dom'
 import { FaArrowLeft } from 'react-icons/fa'
 import AlarmBell from './AlarmBell'
 import { getAllAlarms } from '../../../api/alarm'
+import { Notification } from './MainHeader'
 
 interface CommonHeaderProps {
   title: string;
-}
-
-interface Notification {
-  id: number;
-  date: string;
-  title: string;
-  contents: string;
-  code: 'NOTICE' | 'DIARY' | 'ALBUM' | 'BUS' |'MEETING' | 'DOCUMENT'
 }
 
 

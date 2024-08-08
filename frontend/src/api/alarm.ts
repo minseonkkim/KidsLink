@@ -1,10 +1,30 @@
+import { Notification } from '../components/parent/common/MainHeader';
 import axiosInstance from './token/axiosInstance'
 
-interface Alarm{
+export interface Alarm{
   id: number;
   contents: string;
   date: string;
   code: string;
+}
+
+const mapAlarmToNotification = (alarm: Alarm): Notification => {
+  // Alarm의 code를 Notification의 code 타입으로 변환
+  const codeMapping: { [key: string]: Notification['code'] } = {
+    'NOTICE': 'NOTICE',
+    'DIARY': 'DIARY',
+    'ALBUM': 'ALBUM',
+    'BUS': 'BUS',
+    'MEETING': 'MEETING',
+    'DOCUMENT': 'DOCUMENT',
+  };
+
+  return {
+    id: alarm.id,
+    date: alarm.date,
+    contents: alarm.contents,
+    code: codeMapping[alarm.code] || 'NOTICE' // 기본값 설정
+  };
 }
 
 // 알람 개수 조회
@@ -24,12 +44,13 @@ export async function getAlarmCount() {
 }
 
 // 알림 조회
-export async function getAllAlarms():Promise<Alarm[]> {
+export async function getAllAlarms():Promise<Notification[]> {
   try  {
     const response = await axiosInstance.get('notification')
 
     if (response.data.status === 'success') {
-      return response.data.data
+      const alarms: Alarm[] = response.data.data;
+      return alarms.map(mapAlarmToNotification);
     } else {
       throw new Error('Failed to get all alarms')
     }
