@@ -117,7 +117,7 @@ export default function TeacherOurClass() {
           투약
         </div>
         <span className="absolute lg:top-[130px] top-[175px] right-[90px] lg:right-[200px] px-2 lg:px-3 py-1 flex flex-row items-center text-lg lg:text-xl font-bold">{dosageCount}명</span>
-        <div className="flex flex-row flex-wrap w-full lg:w-[1200px] lg:mt-0 mt-[50px]" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))' }}>
+        <div className="flex flex-row flex-wrap w-full lg:w-[1200px] lg:mt-0 mt-[50px] justify-around">
           {childs.map((child, index) => (
             <ChildCard
               key={index}
