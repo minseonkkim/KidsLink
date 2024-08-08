@@ -22,7 +22,7 @@ export default function DocumentList({ documents, handleDocumentClick }: Documen
   return (
     <div className="space-y-6">
       {documents.length === 0 ? (
-        <p className="text-center text-gray-500">해당 제목의 문서가 없습니다.</p>
+        <p className="text-center text-gray-500">문서가 없습니다.</p>
       ) : (
         documents.map((doc) => (
           <DocumentItem

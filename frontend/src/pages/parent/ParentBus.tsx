@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import InfoSection from "../../components/parent/common/InfoSection";
 import daramgi from "../../assets/parent/bus-daramgi.png";
-import busIcon from '../../assets/parent/driving-daramgi.png';
+import busIcon from '../../assets/parent/bus-driving.gif';
 import currentLocationIcon from '../../assets/parent/marker.png';
 import { receiveBusLocation } from '../../api/webSocket';
 import { postKidBoardingStatus, getKidBoardingStatus } from '../../api/bus';
@@ -34,6 +34,7 @@ export default function ParentBus() {
   const isWebSocketInitialized = useRef<boolean>(false);
   let centerFlag = false;
   const busCenterFlag = useRef<boolean>(false);
+
   const initializeMap = () => {
     if (mapRef.current || !mapContainer.current) {
       return;
@@ -48,22 +49,25 @@ export default function ParentBus() {
     mapRef.current = newMap;
 
     const initialPosition = new window.kakao.maps.LatLng(location.lat, location.lng);
-    const imageSize = new window.kakao.maps.Size(64, 95);
-    const imageOption = { offset: new window.kakao.maps.Point(27, 69) };
-    const markerImage = new window.kakao.maps.MarkerImage(busIcon, imageSize, imageOption);
 
-    const busMarkerInstance = new window.kakao.maps.Marker({
+    const busMarkerInstance = new window.kakao.maps.CustomOverlay({
       position: initialPosition,
-      image: markerImage,
+      content: `
+        <div style="position: relative; width: 64px; height: 64px;">
+          <img src="${busIcon}" width="64" height="64" />
+        </div>
+      `,
+      yAnchor: 1,
+      xAnchor: 0.5,
+      zIndex: 1,
     });
 
     busMarkerInstance.setMap(newMap);
     busMarkerRef.current = busMarkerInstance;
 
     const parentInitialPosition = new window.kakao.maps.LatLng(location.lat, location.lng);
-    
+
     // 애니메이션 요소 추가
-    // 현재위치인지 테스트 필요함
     const overlayContent = document.createElement('div');
     overlayContent.style.position = 'relative';
     overlayContent.style.width = '50px';
@@ -89,11 +93,6 @@ export default function ParentBus() {
     });
     parentMarkerInstance.setMap(newMap);
     
-              
-
-    
-
-    parentMarkerInstance.setMap(newMap);
     parentMarkerRef.current = parentMarkerInstance;
     updateParentLocation(parentMarkerRef);
   };
@@ -127,7 +126,6 @@ export default function ParentBus() {
       setIsMoving(false);
     };
   };
-  
 
   useEffect(() => {
     const apiKey = import.meta.env.VITE_KAKAO_API_KEY;
@@ -176,7 +174,7 @@ export default function ParentBus() {
   }, []);
 
   const updateParentLocation = (markerRef: React.MutableRefObject<any>) => {
-    centerFlag = false
+    centerFlag = false;
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
@@ -198,8 +196,8 @@ export default function ParentBus() {
               parentMarker.setPosition(newParentPosition);
               setParentLocation({ latitude, longitude });
               const map = mapRef.current;
-              
-              if (map&&!isMoving&&!centerFlag&&latitude !== undefined && longitude !== undefined) {  
+
+              if (map && !isMoving && !centerFlag && latitude !== undefined && longitude !== undefined) {
                 map.setCenter(newParentPosition);
                 centerFlag = true;
               }
@@ -210,8 +208,8 @@ export default function ParentBus() {
             },
             {
               enableHighAccuracy: true,
-              timeout: 20000, 
-              maximumAge: 0 
+              timeout: 20000,
+              maximumAge: 0
             }
           );
         }, 500);
@@ -221,8 +219,8 @@ export default function ParentBus() {
       },
       {
         enableHighAccuracy: true,
-        timeout: 20000, 
-        maximumAge: 0 
+        timeout: 20000,
+        maximumAge: 0
       }
     );
   };
@@ -256,8 +254,8 @@ export default function ParentBus() {
   };
 
   const description1 = "버스가";
-  const main1 = isMoving ? "이동 중" : "운행중인 시간이";
-  const main2 = isMoving ? " 입니다!" : " 아닙니다";
+  const main1 = isMoving ? "이동 중" : "운행 중";
+  const main2 = isMoving ? " 입니다!" : "이 아닙니다";
 
   return (
     <div className="flex flex-col h-screen bg-[#FFEC8A]">
@@ -281,7 +279,7 @@ export default function ParentBus() {
       <div className='fixed flex justify-end items-center bottom-20 right-0 gap-4 mr-4'>
         <button
           onClick={() => animateMapToMarker(mapRef.current, busMarkerRef.current)}
-          className="relative bg-white text-red-500 p-2 rounded z-40 rounded-full drop-shadow-lg"
+          className="relative bg-white text-yellow-500 p-2 rounded z-40 rounded-full drop-shadow-lg"
         >
           <FaBus />
         </button>
