@@ -1,5 +1,6 @@
 import { GoHome, GoHomeFill } from 'react-icons/go'
-import { IoChatbubbleEllipsesOutline, IoChatbubbleEllipsesSharp, IoCalendarClearOutline, IoCalendarClear } from 'react-icons/io5'
+import { IoCalendarClearOutline, IoCalendarClear } from 'react-icons/io5'
+import { BsCameraVideo, BsCameraVideoFill } from "react-icons/bs";
 import { FaRegUser, FaUser } from 'react-icons/fa6'
 import { useNavigate, useLocation } from 'react-router-dom'
 
@@ -19,7 +20,15 @@ export default function BottomNavbar() {
     navigate('/mypage')
   }
 
+  const handleMeetingClick = () => {
+    navigate('/meeting')
+  }
+
   const isCurrentPage = (path: string) => location.pathname === path
+
+  const daramgi = if (1===1) {
+    return 1
+  }
 
   const iconColor = '#FFC107'
   return (
@@ -31,11 +40,11 @@ export default function BottomNavbar() {
           <GoHome className="w-7 h-7 text-gray-300" />
         )}
       </div>
-      <div className="footer-item flex flex-col items-center">
-        {isCurrentPage('/messages') ? (
-          <IoChatbubbleEllipsesSharp className="w-7 h-7" style={{ color: iconColor }} />
+      <div className="footer-item flex flex-col items-center" onClick={handleMeetingClick}>
+        {isCurrentPage('/meeting') ? (
+          <BsCameraVideoFill className="w-7 h-7" style={{ color: iconColor }} />
         ) : (
-          <IoChatbubbleEllipsesOutline className="w-7 h-7 text-gray-300" />
+          <BsCameraVideo className="w-7 h-7 text-gray-300" />
         )}
       </div>
       <div className="footer-item flex flex-col items-center" onClick={handleScheduleClick}>
