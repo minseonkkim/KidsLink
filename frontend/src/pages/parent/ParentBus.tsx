@@ -1,8 +1,8 @@
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import InfoSection from "../../components/parent/common/InfoSection";
 import daramgi from "../../assets/parent/bus-daramgi.png";
-import busIcon from '../../assets/parent/driving-daramgi.png';
-import currentLocationIcon from '../../assets/parent/marker.png';
+import busLocation from '../../assets/parent/driving-daramgi.png';
+import myLocation from '../../assets/parent/bus.png';
 import { receiveBusLocation } from '../../api/webSocket';
 import { postKidBoardingStatus, getKidBoardingStatus } from '../../api/bus';
 import { getParentInfo } from '../../api/Info';
@@ -24,6 +24,7 @@ export default function ParentBus() {
   const [isBoarding, setIsBoarding] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isMoving, setIsMoving] = useState(false);
+  const [busOption, setBusOption] = useState('등원'); // 새로운 상태 추가
   const [childId, setChildId] = useState<number | null>(null);
   const mapRef = useRef<any>(null);
   const busMarkerRef = useRef<any>(null);
@@ -34,6 +35,7 @@ export default function ParentBus() {
   const isWebSocketInitialized = useRef<boolean>(false);
   let centerFlag = false;
   const busCenterFlag = useRef<boolean>(false);
+
   const initializeMap = () => {
     if (mapRef.current || !mapContainer.current) {
       return;
@@ -48,9 +50,9 @@ export default function ParentBus() {
     mapRef.current = newMap;
 
     const initialPosition = new window.kakao.maps.LatLng(location.lat, location.lng);
-    const imageSize = new window.kakao.maps.Size(64, 95);
+    const imageSize = new window.kakao.maps.Size(40, 40);
     const imageOption = { offset: new window.kakao.maps.Point(27, 69) };
-    const markerImage = new window.kakao.maps.MarkerImage(busIcon, imageSize, imageOption);
+    const markerImage = new window.kakao.maps.MarkerImage(myLocation, imageSize, imageOption);
 
     const busMarkerInstance = new window.kakao.maps.Marker({
       position: initialPosition,
@@ -62,8 +64,6 @@ export default function ParentBus() {
 
     const parentInitialPosition = new window.kakao.maps.LatLng(location.lat, location.lng);
     
-    // 애니메이션 요소 추가
-    // 현재위치인지 테스트 필요함
     const overlayContent = document.createElement('div');
     overlayContent.style.position = 'relative';
     overlayContent.style.width = '50px';
@@ -72,12 +72,12 @@ export default function ParentBus() {
     pulseRing.className = 'pulse-ring';
     overlayContent.appendChild(pulseRing);
     const markerIcon = document.createElement('img');
-    markerIcon.src = currentLocationIcon;
+    markerIcon.src = busLocation;
     markerIcon.style.position = 'absolute';
     markerIcon.style.top = '50%';
     markerIcon.style.left = '50%';
-    markerIcon.style.width = '30px';
-    markerIcon.style.height = '30px';
+    markerIcon.style.width = '64px';
+    markerIcon.style.height = '95px';
     markerIcon.style.transform = 'translate(-50%, -50%)';
     overlayContent.appendChild(markerIcon);
     const parentMarkerInstance = new window.kakao.maps.CustomOverlay({
@@ -88,34 +88,24 @@ export default function ParentBus() {
       zIndex: 1,
     });
     parentMarkerInstance.setMap(newMap);
-    
-              
-
-    
-
-    parentMarkerInstance.setMap(newMap);
     parentMarkerRef.current = parentMarkerInstance;
     updateParentLocation(parentMarkerRef);
   };
 
   const initializeWebSocket = async () => {
-    console.log('WebSocket init');
     if (isWebSocketInitialized.current) {
-      console.log('WebSocket x');
       return;
     }
     isWebSocketInitialized.current = true;
 
     const kindergartenId = parentInfo.child.kindergartenClass.kindergarten.kindergartenId;
     const wsUrl = `${import.meta.env.VITE_WEBSOCKET_URL}/${kindergartenId}`;
-    console.log(kindergartenId)
     const ws = new WebSocket(wsUrl);
     wsRef.current = ws;
 
-    receiveBusLocation(wsRef, setLocation, mapRef, busMarkerRef, setIsMoving, busCenterFlag);
+    receiveBusLocation(wsRef, setLocation, mapRef, busMarkerRef, setIsMoving, busCenterFlag, setBusOption); // setBusOption 추가
 
     ws.onclose = () => {
-      console.log('WebSocket closed');
       isWebSocketInitialized.current = false;
       centerFlag = false;
       busCenterFlag.current = false;
@@ -127,7 +117,6 @@ export default function ParentBus() {
       setIsMoving(false);
     };
   };
-  
 
   useEffect(() => {
     const apiKey = import.meta.env.VITE_KAKAO_API_KEY;
@@ -203,15 +192,14 @@ export default function ParentBus() {
                 map.setCenter(newParentPosition);
                 centerFlag = true;
               }
-              console.log('Parent location updated:', { latitude, longitude });
             },
             (err) => {
               console.error("Error getting location", err);
             },
             {
               enableHighAccuracy: true,
-              timeout: 20000, 
-              maximumAge: 0 
+              timeout: 20000,
+              maximumAge: 0
             }
           );
         }, 500);
@@ -221,8 +209,8 @@ export default function ParentBus() {
       },
       {
         enableHighAccuracy: true,
-        timeout: 20000, 
-        maximumAge: 0 
+        timeout: 20000,
+        maximumAge: 0
       }
     );
   };
@@ -256,15 +244,14 @@ export default function ParentBus() {
   };
 
   const description1 = "버스가";
-  const main1 = isMoving ? "이동 중" : "운행중인 시간이";
-  const main2 = isMoving ? " 입니다!" : " 아닙니다";
+  const main1 = busOption === '등원' ? (isMoving ? "등원 중이에요." : "운행 중이 아니에요") : (isMoving ? "하원 중입니다." : "운행 중이 아니에요");
 
   return (
     <div className="flex flex-col h-screen bg-[#FFEC8A]">
       <InfoSection
         description1={description1}
         main1={main1}
-        main2={main2}
+        main2=""
         imageSrc={daramgi}
         altText="다람쥐"
       />
