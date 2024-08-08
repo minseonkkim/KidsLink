@@ -1,16 +1,17 @@
-import { useState, useEffect } from "react"
-import Calendar from "react-calendar"
-import moment from "moment"
-import "moment/locale/ko"
-import { getAllParentSchedules, getParentSchedules } from "../../api/schedule"
-import styled from "styled-components"
+import React, { useState, useEffect } from "react";
+import Calendar from "react-calendar";
+import moment from "moment";
+import "moment/locale/ko";
+import { getAllParentSchedules, getParentSchedules } from "../../api/schedule";
+import { getMeetingInfo } from '../../api/meeting';
+import styled from "styled-components";
 import {
   FaPills,
   FaRegTimesCircle,
   FaSchool,
   FaChalkboardTeacher,
-} from "react-icons/fa"
-import "react-calendar/dist/Calendar.css"
+} from "react-icons/fa";
+import "react-calendar/dist/Calendar.css";
 
 const StyledCalendar = styled(Calendar)`
   * {
@@ -145,6 +146,16 @@ interface DetailedSchedule {
   meetingSchedules: MeetingSchedule[];
 }
 
+interface MeetingInfo {
+  id: number;
+  date: string;
+  time: string;
+  teacherId: number;
+  teacherName: string;
+  parentId: number;
+  childName: string;
+}
+
 export default function ParentSchedule() {
   const [value, setValue] = useState<Date>(new Date());
   const [selectedDate, setSelectedDate] = useState<string | null>(
@@ -153,6 +164,7 @@ export default function ParentSchedule() {
   const [schedules, setSchedules] = useState<string[]>([]);
   const [detailedSchedules, setDetailedSchedules] =
     useState<DetailedSchedule | null>(null);
+  const [meetingInfoMap, setMeetingInfoMap] = useState<{ [key: number]: MeetingInfo }>({});
 
   const fetchSchedules = async (year: number, month: number) => {
     try {
@@ -167,6 +179,19 @@ export default function ParentSchedule() {
     try {
       const detailedSchedule = await getParentSchedules(date);
       setDetailedSchedules(detailedSchedule);
+
+      // Fetch meeting info for each meeting schedule
+      if (detailedSchedule.meetingSchedules.length > 0) {
+        const meetingInfoPromises = detailedSchedule.meetingSchedules.map((meeting) =>
+          getMeetingInfo(meeting.meetingId)
+        );
+        const meetingInfoResults = await Promise.all(meetingInfoPromises);
+        const meetingInfoMap = meetingInfoResults.reduce((acc, info) => {
+          acc[info.id] = info;
+          return acc;
+        }, {} as { [key: number]: MeetingInfo });
+        setMeetingInfoMap(meetingInfoMap);
+      }
     } catch (error) {
       console.error("Failed to fetch detailed schedule:", error);
     }
@@ -189,7 +214,7 @@ export default function ParentSchedule() {
   const handleDateClick = (date: Date) => {
     const formattedDate = moment(date).format("YYYY-MM-DD");
     setSelectedDate(formattedDate);
-    setValue(value);
+    setValue(date);
   };
 
   const getActiveMonth = (activeStartDate: Date) => {
@@ -282,18 +307,24 @@ export default function ParentSchedule() {
             )}
             {detailedSchedules.meetingSchedules.length > 0 && (
               <div>
-                {detailedSchedules.meetingSchedules.map((schedule) => (
-                  <div
-                    key={schedule.meetingId}
-                    className="flex items-center px-4 py-3 rounded-2xl gap-4"
-                  >
-                    <div className="flex items-center gap-2 bg-[#D5E4B4] rounded-xl py-2 px-4">
-                      <FaChalkboardTeacher className="text-green-600" />
-                      <span>상담</span>
+                {detailedSchedules.meetingSchedules.map((schedule) => {
+                  const meetingInfo = meetingInfoMap[schedule.meetingId];
+                  return (
+                    <div
+                      key={schedule.meetingId}
+                      className="flex items-center px-4 py-3 rounded-2xl gap-4"
+                    >
+                      <div className="flex items-center gap-2 bg-[#D5E4B4] rounded-xl py-2 px-4">
+                        <FaChalkboardTeacher className="text-green-600" />
+                        <span>상담</span>
+                      </div>
+                      <p>
+                        {schedule.meetingTime}{" "}
+                        {meetingInfo && ` ${meetingInfo.teacherName} 선생님과의 상담`}
+                      </p>
                     </div>
-                    <p>{schedule.meetingTime}</p>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>
