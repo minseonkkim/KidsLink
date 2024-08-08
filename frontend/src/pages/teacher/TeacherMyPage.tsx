@@ -4,7 +4,6 @@ import Title from "../../components/teacher/common/Title";
 import { logout } from "../../api/member";
 import { useNavigate } from "react-router-dom";
 import useAppStore from "../../stores/store";
-import TestButton from "../../components/TestButton";
 
 export default function TeacherMyPage(){
     const navigate = useNavigate();
@@ -28,7 +27,6 @@ export default function TeacherMyPage(){
             <Title title="마이페이지" />
             <div className="flex justify-center items-center">
                 <button onClick={handleLogout} className="bg-[#f4f4f4] px-2 py-1 rounded-[20px] text-[13px]">로그아웃</button>
-                <TestButton />
             </div>
         </div>
     </>
