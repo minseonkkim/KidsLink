@@ -6,9 +6,8 @@ import { getAllAlarms } from '../../../api/alarm'
 interface Notification {
   id: number;
   date: string;
-  title: string;
   contents: string;
-  code: 'NOTICE' | 'DIARY' | 'ALBUM' | 'BUS' |'MEETING' | 'DOCUMENT';
+  code: string;
 }
 
 export default function MainHeader() {
