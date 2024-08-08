@@ -22,7 +22,7 @@ export default function ChildCard({ name, gender, age, absent, dosage, profileIm
     const openAbsentModal = (index: number) => {
         setCurrentAbsentIndex(index);
         openModal(
-            <div className="relative">
+            <div className="relative" style={{ width: window.innerWidth < 1024 ? '330px' : 'auto' }}>
                 <AbsentDocument absentId={absentId[index]} onUpdate={() => {}} isOurClass={true}/>
                 <div className="w-full h-[40px]">
                     {absentId.length > 1 && (
@@ -52,7 +52,7 @@ export default function ChildCard({ name, gender, age, absent, dosage, profileIm
     const openDosageModal = (index: number) => {
         setCurrentDosageIndex(index);
         openModal(
-            <div className="relative">
+            <div className="relative" style={{ width: window.innerWidth < 1024 ? '330px' : 'auto' }}>
                 <DosageDocument dosageId={dosageId[index]} onUpdate={() => {}} isOurClass={true}/>
                 <div className="w-full h-[40px]">
                     {dosageId.length > 1 && (
@@ -103,21 +103,21 @@ export default function ChildCard({ name, gender, age, absent, dosage, profileIm
     };
 
     return (
-        <div className="w-[200px] h-[250px] mx-[20px] my-4 relative drop-shadow-md">
-            <div className="w-[180px] h-[250px] absolute inset-0 rounded-[10px] bg-[#fff9d7]" />
-            <p className="w-[90px] absolute left-[45px] top-[170px] text-xl font-bold text-center text-[#363636]">
+        <div className="w-[152px] lg:w-[180px] h-[220px] lg:h-[250px] lg:mx-[20px] mx-[18px] my-4 relative drop-shadow-md rounded-[10px] bg-[#fff9d7]">
+            {/* <div className="w-[180px] h-[250px] absolute inset-0 rounded-[10px] bg-[#fff9d7]" /> */}
+            <p className="w-[90px] absolute lg:left-[45px] lg:top-[170px] left-[33px] top-[160px] text-xl font-bold text-center text-[#363636]">
                 {name}
             </p>
-            <p className="w-[100px] absolute left-[40px] top-[190px] text-l mt-3 font-medium text-center text-[#363636]">
+            <p className="w-[100px] absolute lg:left-[40px] lg:top-[190px] left-[25px] top-[178px] text-l mt-3 font-medium text-center text-[#363636]">
                 {gender === "M" ? "남자" : "여자"} / 만 {age}세
             </p>
             {absent && (
                 <div onClick={() => openAbsentModal(0)}
-                className="w-[60px] h-[30px] absolute left-[10px] top-[10px] rounded-[5px] bg-[#ffdfdf] cursor-pointer flex justify-center items-center font-bold">
+                className="w-[60px] h-[30px] absolute lg:left-[10px] lg:top-[10px] left-[3px] top-[8px] rounded-[5px] bg-[#ffdfdf] cursor-pointer flex justify-center items-center font-bold">
                     결석
                 </div>
             )}
-            <div className="w-[100px] h-[100px] absolute left-[40px] top-[40px]">
+            <div className="w-[103px] h-[100px] absolute lg:left-[40px] lg:top-[40px] top-[30px] left-[25px]">
                 <img
                     src={profileImgPath}
                     className="w-[110px] h-[110px] mt-3 object-cover rounded-full"
@@ -125,7 +125,7 @@ export default function ChildCard({ name, gender, age, absent, dosage, profileIm
             </div>
             {dosage && (
                 <div onClick={() => openDosageModal(0)} 
-                className="cursor-pointer w-[60px] h-[30px] absolute left-[110px] top-[10px] rounded-[5px] bg-[#e7dfff] flex justify-center items-center font-bold">
+                className="cursor-pointer w-[60px] h-[30px] absolute lg:right-[10px] lg:top-[10px] right-[3px] top-[8px] rounded-[5px] bg-[#e7dfff] flex justify-center items-center font-bold">
                     투약
                 </div>
             )}
