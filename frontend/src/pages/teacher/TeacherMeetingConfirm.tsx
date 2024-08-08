@@ -47,15 +47,25 @@ export default function TeacherMeetingConfirm() {
     };
 
     const groupByParentId = (data: Meeting[]): GroupedMeetings => {
-        return data.reduce((acc, current) => {
+        const grouped = data.reduce((acc, current) => {
             const { parentId, childName, date, time } = current;
             if (!acc[parentId]) {
                 acc[parentId] = { childName, times: [] };
             }
             acc[parentId].times.push({ date, time });
-            acc[parentId].times.reverse();  // Reverse the times array
             return acc;
         }, {} as GroupedMeetings);
+
+        // 날짜와 시간을 기준으로 정렬
+        for (const parentId in grouped) {
+            grouped[parentId].times.sort((a, b) => {
+                const dateA = new Date(`${a.date} ${a.time}`);
+                const dateB = new Date(`${b.date} ${b.time}`);
+                return dateA.getTime() - dateB.getTime();
+            });
+        }
+
+        return grouped;
     };
 
     useEffect(() => {
