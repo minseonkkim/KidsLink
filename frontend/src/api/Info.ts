@@ -2,7 +2,7 @@ import axiosInstance from './token/axiosInstance';
 
 interface Kindergarten {
   kindergartenId: number;
-  kindergatendName: string;
+  kindergartenName: string;
 }
 
 interface KindergartenClass {
@@ -51,6 +51,7 @@ export async function getParentInfo(): Promise<ParentInfo> {
     const response = await axiosInstance.get('/parent');
 
     if (response.data.status === 'success') {
+      console.log(response.data.data)
       return response.data.data
     } else {
       throw new Error('Failed to fetch parent-info')
