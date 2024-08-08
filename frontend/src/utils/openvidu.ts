@@ -136,11 +136,10 @@ export const fetchParentInfo = async (
 };
 
 export const fetchRecordingsList = async (
-  sessionId: string,
     setRecordings: React.Dispatch<React.SetStateAction<Recording[]>>
   ) => {
     try {
-      const recordings = await fetchRecordings(sessionId);
+      const recordings = await fetchRecordings();
       setRecordings(recordings);
     } catch (error) {
       console.error("Error fetching recordings:", error);
