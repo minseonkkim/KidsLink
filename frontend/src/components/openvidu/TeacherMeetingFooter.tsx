@@ -79,6 +79,11 @@ export default function TeacherMeetingFooter({ control, handleControl, close, st
         </div>
       </div>
       <div className="flex items-center gap-4">
+        {isRecording ? (
+          <div>REC</div>
+        ) : (
+        <div></div>
+        )}
         <button
           className={`text-2xl ${isRecording ? 'text-red-600' : 'text-black'}`}
           onClick={stopRecording}
