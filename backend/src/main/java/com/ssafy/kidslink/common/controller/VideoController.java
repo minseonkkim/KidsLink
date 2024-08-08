@@ -16,6 +16,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -129,6 +130,20 @@ public class VideoController {
     public ResponseEntity<List<Recording>> listRecordings() throws OpenViduJavaClientException, OpenViduHttpException {
         List<Recording> recordings = openvidu.listRecordings();
         return new ResponseEntity<>(recordings, HttpStatus.OK);
+    }
+
+    /**
+     * Get a list of recordings for a specific session
+     * @param sessionId The ID of the session
+     * @return The list of recordings for the specified session
+     */
+    @GetMapping("/recordings/{sessionId}")
+    public ResponseEntity<List<Recording>> listRecordingsBySessionId(@PathVariable String sessionId) throws OpenViduJavaClientException, OpenViduHttpException {
+        List<Recording> allRecordings = openvidu.listRecordings();
+        List<Recording> filteredRecordings = allRecordings.stream()
+                .filter(recording -> recording.getSessionId().equals(sessionId))
+                .collect(Collectors.toList());
+        return new ResponseEntity<>(filteredRecordings, HttpStatus.OK);
     }
 
     /**
