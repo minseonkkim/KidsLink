@@ -143,3 +143,21 @@ export const stopSpeechRecognition = () => {
     recognition.stop();
   }
 };
+
+// 녹화 다운로드
+export const handleDownload = async (userSessionId, recordingName) => {
+  try {
+    const response = await axios.get(`/api/video/recordings/download/${userSessionId}/recording/${recordingName}`, {
+      responseType: 'blob'
+    });
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `${recordingName}`); // 파일명 설정
+    document.body.appendChild(link);
+    link.click();
+    link.parentNode.removeChild(link);
+  } catch (error) {
+    console.error('Download failed:', error);
+  }
+};
