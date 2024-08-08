@@ -1,12 +1,11 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import AlarmBell from './AlarmBell'
-import { getAllAlarms } from '../../../api/alarm'
+import { Alarm, getAllAlarms } from '../../../api/alarm'
 
-interface Notification {
+export interface Notification {
   id: number;
   date: string;
-  title: string;
   contents: string;
   code: 'NOTICE' | 'DIARY' | 'ALBUM' | 'BUS' |'MEETING' | 'DOCUMENT';
 }
@@ -20,6 +19,7 @@ export default function MainHeader() {
     const fetchNotifications = async () => {
       try {
         console.log("Fetching notifications...");
+
         const fetchedNotifications = await getAllAlarms();
         setNotifications(fetchedNotifications.reverse());
         setNotificationCount(fetchedNotifications.length);
