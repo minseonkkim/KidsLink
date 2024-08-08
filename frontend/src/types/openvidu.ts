@@ -3,8 +3,8 @@ import { OpenVidu, Publisher, Session, StreamEvent, StreamManager, Subscriber } 
 export interface User {
     sessionId?: string;
     username: string;
-    classname: string;
-    profile: string;
+    classname?: string;
+    profile?: string;
   }
   
 export interface OpenViduState {
