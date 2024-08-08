@@ -1,29 +1,32 @@
 let ws: WebSocket | null = null;
+// src/websocket.ts
 let intervalId: number | null = null;
 
-export const startWebSocket = (url: string) => {
-  if (ws && ws.readyState !== WebSocket.CLOSED) {
-    console.log('WebSocket already open');
-    return;
-  }
+export const startWebSocket = (url: string, kindergartenId: number) => {
+  const wsUrl = `${url}/${kindergartenId}`;
+  ws = new WebSocket(wsUrl);
 
-  ws = new WebSocket(url);
 
   ws.onopen = () => {
     console.log('WebSocket connection opened');
+
+    // 서버로 인증 토큰과 kindergartenId를 전송
+    ws.send(JSON.stringify({ type: 'authenticate', kindergartenId: kindergartenId }));
 
     if (navigator.geolocation) {
       const sendLocation = () => {
         navigator.geolocation.getCurrentPosition(
           (position) => {
             const data = {
+              type: 'location',
               latitude: position.coords.latitude,
               longitude: position.coords.longitude,
+              kindergartenId
             };
             console.log('Sending location:', data);
             if (ws && ws.readyState === WebSocket.OPEN) {
               ws.send(JSON.stringify(data));
-              console.log('Location sent successfully');
+
             }
           },
           (error) => {
@@ -31,14 +34,16 @@ export const startWebSocket = (url: string) => {
           },
           {
             enableHighAccuracy: true,
+            timeout: 20000, 
+            maximumAge: 0 
           }
         );
       };
-
       sendLocation();
-      intervalId = window.setInterval(sendLocation, 1000);
+      intervalId = window.setInterval(sendLocation, 500);
     }
   };
+
 
   ws.onclose = () => {
     console.log('WebSocket connection closed');
@@ -55,38 +60,50 @@ export const startWebSocket = (url: string) => {
 
 export const stopWebSocket = () => {
   if (ws) {
-    ws.send(JSON.stringify(JSON.stringify({ type: 'disconnect' })));
+    ws.send(JSON.stringify({ type: 'disconnect' }));
     ws.close();
   }
   if (intervalId) {
     clearInterval(intervalId);
   }
 };
-export function receiveBusLocation(wsRef, setLocation, map, marker, setIsMoving) {
-  const WEBSOCKET_URL = import.meta.env.VITE_WEBSOCKET_URL;
-  if (wsRef.current) {
-    wsRef.current.close();
-  }
-  const ws = new WebSocket(WEBSOCKET_URL);
-  wsRef.current = ws;
-  let count = 0;
 
+
+export function receiveBusLocation(wsRef, setLocation, mapRef,busMarkerRef, setIsMoving,busCenterFlag ) {
+  const ws = wsRef.current;
+  if (!ws) {
+    console.error('WebSocket is not initialized');
+    return;
+  }
+  let count = 0;
+  let lastCenter = null;
+  busCenterFlag.current = false;
   ws.onmessage = (event) => {
-    let newCenter = new window.kakao.maps.LatLng({ lat: 37.5665, lng: 126.9780 });
     const data = JSON.parse(event.data);
     if (data.type === 'disconnect') {
-      newCenter = new window.kakao.maps.LatLng({ lat: 37.5665, lng: 126.9780 });
+      busCenterFlag.current = false
+      console.log( busCenterFlag.current)
+      if (busMarkerRef.current && lastCenter) {
+        busMarkerRef.current.setPosition(lastCenter);
+      }
+
       setIsMoving(false);
-      ws.close();
-    }
-    else{
+    } else {
       console.log('Received location:', ++count, data);
       setLocation({ lat: data.latitude, lng: data.longitude });
       setIsMoving(true);
-      newCenter = new window.kakao.maps.LatLng(data.latitude, data.longitude);
+
+      const newCenter = new window.kakao.maps.LatLng(data.latitude, data.longitude);
+      lastCenter = newCenter;
+      const map = mapRef.current;
+      if (map&&!busCenterFlag.current&&data.latitude !== undefined && data.longitude !== undefined) {  
+        map.setCenter(newCenter)
+        busCenterFlag.current = true
+      }
+      if (busMarkerRef.current) {
+        busMarkerRef.current.setPosition(newCenter);
+      }
     }
-    map.setCenter(newCenter);
-    marker.setPosition(newCenter);
   };
 
   ws.onclose = () => {

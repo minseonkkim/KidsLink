@@ -109,7 +109,7 @@ export default function TeacherBus() {
   };
 
   const startWebSocketConnection = () => {
-    startWebSocket(WEBSOCKET_URL);
+    startWebSocket(WEBSOCKET_URL,  teacherInfo.kindergartenId);
     setIsWebSocketActive(true);
     localStorage.setItem('isWebSocketActive', 'true');
   };

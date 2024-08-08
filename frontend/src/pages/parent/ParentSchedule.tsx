@@ -1,47 +1,17 @@
 import React, { useState, useEffect } from "react";
 import Calendar from "react-calendar";
 import moment from "moment";
-import "moment/locale/ko"; // 한글 설정
-import { getAllParentSchedules, getParentSchedules } from "../../api/schedule"; // API 함수 불러오기
+import "moment/locale/ko";
+import { getAllParentSchedules, getParentSchedules } from "../../api/schedule";
+import { getMeetingInfo } from '../../api/meeting';
 import styled from "styled-components";
-import 'react-calendar/dist/Calendar.css'; // react-calendar 기본 스타일
-
-interface DosageSchedule {
-  dosageId: number;
-  startDate: string;
-  endDate: string;
-  name: string;
-  volume: string;
-  times: string;
-  details: string;
-}
-
-interface AbsentSchedule {
-  absentId: number;
-  startDate: string;
-  endDate: string;
-  reason: string;
-  details: string;
-}
-
-interface KindergartenSchedule {
-  id: number;
-  date: string;
-  content: string;
-}
-
-interface MeetingSchedule {
-  meetingId: number;
-  meetingDate: string;
-  meetingTime: string;
-}
-
-interface DetailedSchedule {
-  dosageSchedules: DosageSchedule[];
-  absentSchedules: AbsentSchedule[];
-  kindergartenSchedules: KindergartenSchedule[];
-  meetingSchedules: MeetingSchedule[];
-}
+import {
+  FaPills,
+  FaRegTimesCircle,
+  FaSchool,
+  FaChalkboardTeacher,
+} from "react-icons/fa";
+import "react-calendar/dist/Calendar.css";
 
 const StyledCalendar = styled(Calendar)`
   * {
@@ -139,6 +109,52 @@ const StyledCalendar = styled(Calendar)`
   }
 `;
 
+interface DosageSchedule {
+  dosageId: number;
+  startDate: string;
+  endDate: string;
+  name: string;
+  volume: string;
+  times: string;
+  details: string;
+}
+
+interface AbsentSchedule {
+  absentId: number;
+  startDate: string;
+  endDate: string;
+  reason: string;
+  details: string;
+}
+
+interface KindergartenSchedule {
+  id: number;
+  date: string;
+  content: string;
+}
+
+interface MeetingSchedule {
+  meetingId: number;
+  meetingDate: string;
+  meetingTime: string;
+}
+
+interface DetailedSchedule {
+  dosageSchedules: DosageSchedule[];
+  absentSchedules: AbsentSchedule[];
+  kindergartenSchedules: KindergartenSchedule[];
+  meetingSchedules: MeetingSchedule[];
+}
+
+interface MeetingInfo {
+  id: number;
+  date: string;
+  time: string;
+  teacherId: number;
+  teacherName: string;
+  parentId: number;
+  childName: string;
+}
 
 export default function ParentSchedule() {
   const [value, setValue] = useState<Date>(new Date());
@@ -146,7 +162,9 @@ export default function ParentSchedule() {
     moment(value).format("YYYY-MM-DD")
   );
   const [schedules, setSchedules] = useState<string[]>([]);
-  const [detailedSchedules, setDetailedSchedules] = useState<DetailedSchedule | null>(null);
+  const [detailedSchedules, setDetailedSchedules] =
+    useState<DetailedSchedule | null>(null);
+  const [meetingInfoMap, setMeetingInfoMap] = useState<{ [key: number]: MeetingInfo }>({});
 
   const fetchSchedules = async (year: number, month: number) => {
     try {
@@ -161,11 +179,19 @@ export default function ParentSchedule() {
     try {
       const detailedSchedule = await getParentSchedules(date);
       setDetailedSchedules(detailedSchedule);
-      console.log(
-        "Fetched detailed schedules for date:",
-        date,
-        detailedSchedule
-      );
+
+      // Fetch meeting info for each meeting schedule
+      if (detailedSchedule.meetingSchedules.length > 0) {
+        const meetingInfoPromises = detailedSchedule.meetingSchedules.map((meeting) =>
+          getMeetingInfo(meeting.meetingId)
+        );
+        const meetingInfoResults = await Promise.all(meetingInfoPromises);
+        const meetingInfoMap = meetingInfoResults.reduce((acc, info) => {
+          acc[info.id] = info;
+          return acc;
+        }, {} as { [key: number]: MeetingInfo });
+        setMeetingInfoMap(meetingInfoMap);
+      }
     } catch (error) {
       console.error("Failed to fetch detailed schedule:", error);
     }
@@ -188,7 +214,7 @@ export default function ParentSchedule() {
   const handleDateClick = (date: Date) => {
     const formattedDate = moment(date).format("YYYY-MM-DD");
     setSelectedDate(formattedDate);
-    setValue(value);
+    setValue(date);
   };
 
   const getActiveMonth = (activeStartDate: Date) => {
@@ -204,111 +230,106 @@ export default function ParentSchedule() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center bg-[#FFEC8A]">
-      <div className="w-full h-screen mt-24 flex flex-col items-center">
-        <div className="w-full h-full bg-white shadow-top px-5 rounded-t-2xl">
-          <div className="flex flex-col justify-center items-center pt-4 bg-white pt-10">
-            <div className="w-full relative overflow-hidden rounded-2xl"
-            style={{ display: "flex", justifyContent: "center"  }}>
-              <StyledCalendar
-                locale="ko"
-                onChange={(date) => handleDateClick(date as Date)}
-                value={value}
-                next2Label={null}
-                prev2Label={null}
-                formatDay={(locale: string, date: Date) => moment(date).format("D")}
-                tileContent={addContent}
-                showNeighboringMonth={true}
-                onActiveStartDateChange={({ activeStartDate }) => getActiveMonth(activeStartDate!)}
-              />
-            </div>
+    <div className="relative min-h-[100dvh] flex flex-col bg-[#FFEC8A] overflow-hidden">
+      <div className="absolute bottom-0 h-[80%] flex flex-col w-full bg-white shadow-top rounded-tl-[20px] rounded-tr-[20px] pt-12 animate-slideUp">
+        <div className="flex flex-col justify-center items-center">
+          <div
+            className="w-full relative overflow-hidden rounded-2xl"
+            style={{ display: "flex", justifyContent: "center" }}
+          >
+            <StyledCalendar
+              locale="ko"
+              onChange={(date) => handleDateClick(date as Date)}
+              value={value}
+              next2Label={null}
+              prev2Label={null}
+              formatDay={(locale: string, date: Date) =>
+                moment(date).format("D")
+              }
+              tileContent={addContent}
+              showNeighboringMonth={true}
+              onActiveStartDateChange={({ activeStartDate }) =>
+                getActiveMonth(activeStartDate!)
+              }
+            />
           </div>
-
-          {selectedDate && detailedSchedules && (
-            <div className="w-full p-4">
-              {detailedSchedules.dosageSchedules.length > 0 && (
-                <div>
-                  <ul>
-                    {detailedSchedules.dosageSchedules.map((schedule) => (
-                      <div
-                        key={schedule.dosageId}
-                        className="flex flex-col p-4 rounded-2xl bg-[#FFF9D7] border border-[#FFEC8A] hover:bg-[#FFEC8A] transition-colors duration-200 cursor-pointer"
-                      >
-                        <p className="text-base font-bold text-[#757575]">
-                          {`[투약] ${schedule.startDate} - ${schedule.endDate}`}
-                        </p>
-                        <p className="text-lg font-medium text-[#353c4e]">
-                          {`${schedule.name} - ${schedule.volume} - ${schedule.times}회`}
-                        </p>
-                        <p className="text-sm text-[#757575]">
-                          {schedule.details}
-                        </p>
-                      </div>
-                    ))}
-                  </ul>
-                </div>
-              )}
-              {detailedSchedules.absentSchedules.length > 0 && (
-                <div>
-                  <ul>
-                    {detailedSchedules.absentSchedules.map((schedule) => (
-                      <div
-                        key={schedule.absentId}
-                        className="flex flex-col p-4 rounded-2xl bg-[#FFF9D7] border border-[#FFEC8A] hover:bg-[#FFEC8A] transition-colors duration-200 cursor-pointer"
-                      >
-                        <p className="text-base font-bold text-[#757575]">
-                          {`[결석] ${schedule.startDate} - ${schedule.endDate}`}
-                        </p>
-                        <p className="text-lg font-medium text-[#353c4e]">
-                          {`${schedule.reason} - ${schedule.details}`}
-                        </p>
-                      </div>
-                    ))}
-                  </ul>
-                </div>
-              )}
-              {detailedSchedules.kindergartenSchedules.length > 0 && (
-                <div>
-                  <ul>
-                    {detailedSchedules.kindergartenSchedules.map((schedule) => (
-                      <div
-                        key={schedule.id}
-                        className="flex flex-col p-4 rounded-2xl bg-[#FFF9D7] border border-[#FFEC8A] hover:bg-[#FFEC8A] transition-colors duration-200 cursor-pointer"
-                      >
-                        <p className="text-base font-bold text-[#757575]">
-                          {schedule.date}
-                        </p>
-                        <p className="text-lg font-medium text-[#353c4e]">
-                          {`[유치원] ${schedule.content}`}
-                        </p>
-                      </div>
-                    ))}
-                  </ul>
-                </div>
-              )}
-              {detailedSchedules.meetingSchedules.length > 0 && (
-                <div>
-                  <ul>
-                    {detailedSchedules.meetingSchedules.map((schedule) => (
-                      <div
-                        key={schedule.meetingId}
-                        className="flex flex-col p-4 rounded-2xl bg-[#FFF9D7] border border-[#FFEC8A] hover:bg-[#FFEC8A] transition-colors duration-200 cursor-pointer"
-                      >
-                        <p className="text-base font-bold text-[#757575]">
-                          {schedule.meetingDate}
-                        </p>
-                        <p className="text-lg font-medium text-[#353c4e]">
-                          {`[회의] ${schedule.meetingTime}`}
-                        </p>
-                      </div>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </div>
-          )}
         </div>
+
+        {selectedDate && detailedSchedules && (
+          <div className="w-full py-8 px-8 overflow-y-auto">
+            {detailedSchedules.dosageSchedules.length > 0 && (
+              <div>
+                {detailedSchedules.dosageSchedules.map((schedule) => (
+                  <div
+                    key={schedule.dosageId}
+                    className="flex items-center px-4 py-2 rounded-2xl gap-4"
+                  >
+                    <div className="flex items-center gap-2 bg-[#E7DFFF] rounded-xl py-2 px-4">
+                      <FaPills className="text-purple-600" />
+                      <span>투약</span>
+                    </div>
+                    <p>{schedule.name}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+            {detailedSchedules.absentSchedules.length > 0 && (
+              <div>
+                {detailedSchedules.absentSchedules.map((schedule) => (
+                  <div
+                    key={schedule.absentId}
+                    className="flex items-center px-4 py-3 rounded-2xl gap-4"
+                  >
+                    <div className="flex items-center gap-2 bg-[#FFDFDF] rounded-xl py-2 px-4">
+                      <FaRegTimesCircle className="text-red-600" />
+                      <span>결석</span>
+                    </div>
+                    <p>{schedule.reason}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+            {detailedSchedules.kindergartenSchedules.length > 0 && (
+              <div>
+                {detailedSchedules.kindergartenSchedules.map((schedule) => (
+                  <div
+                    key={schedule.id}
+                    className="flex items-center px-4 py-3 rounded-2xl gap-4"
+                  >
+                    <div className="flex items-center gap-2 bg-[#FFF7CA] rounded-xl py-2 px-4">
+                      <FaSchool className="text-yellow-600" />
+                      <span>학사일정</span>
+                    </div>
+                    <p>{schedule.content}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+            {detailedSchedules.meetingSchedules.length > 0 && (
+              <div>
+                {detailedSchedules.meetingSchedules.map((schedule) => {
+                  const meetingInfo = meetingInfoMap[schedule.meetingId];
+                  return (
+                    <div
+                      key={schedule.meetingId}
+                      className="flex items-center px-4 py-3 rounded-2xl gap-4"
+                    >
+                      <div className="flex items-center gap-2 bg-[#D5E4B4] rounded-xl py-2 px-4">
+                        <FaChalkboardTeacher className="text-green-600" />
+                        <span>상담</span>
+                      </div>
+                      <p>
+                        {schedule.meetingTime}{" "}
+                        {meetingInfo && ` ${meetingInfo.teacherName} 선생님과의 상담`}
+                      </p>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
-};
+}
