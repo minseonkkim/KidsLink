@@ -127,10 +127,15 @@ export default function TeacherVideo() {
         <TeacherHeader />
         {/* 비디오 영역은 항상 렌더링됨 */}
         <div className="relative w-full h-full flex">
-          <div className="absolute top-[150px] left-[100px] font-bold text-[20px] flex flex-row items-center">
-            <img src={user.profile} className="w-[40px] h-[40px] rounded-full object-cover mr-3" />
-            {user.classname} 선생님
-          </div>
+          {openvidu.session && (
+            <div className="absolute top-[150px] left-[100px] font-bold text-[20px] flex flex-row items-center">
+              <img
+                src={user.profile}
+                className="w-[40px] h-[40px] rounded-full object-cover mr-3"
+              />
+              {user.classname} 선생님
+            </div>
+          )}
           <div
             className="absolute top-[200px] left-[100px] w-[600px] h-auto rounded-lg bg-white"
             style={{ opacity: teacherVideoOpacity, backgroundColor: "white" }}
@@ -139,7 +144,9 @@ export default function TeacherVideo() {
               <OpenViduVideoComponent streamManager={openvidu.mainStreamManager} />
             )}
           </div>
-          <div className="absolute top-[150px] right-[648px] font-bold text-[20px]">학부모</div>
+          {openvidu.session && (
+            <div className="absolute top-[150px] right-[648px] font-bold text-[20px]">학부모</div>
+          )}
           {openvidu.session && (
             <div
               className="absolute top-[200px] right-[100px] w-[600px] h-[340px] rounded-lg bg-white"
@@ -161,7 +168,7 @@ export default function TeacherVideo() {
               <p>상담번호 : {user.sessionId}</p>
               <p>참가자 : {user.username}</p>
               <p>
-                학부모가 욕설을 할 경우 자동으로 녹화가 진행됩니다. 녹화중지를 원하실 경우,
+                학부모가 욕설을 할 경우 자동으로 녹화가 진행됩니다. <br/> 녹화중지를 원하실 경우,
                 "녹화중지" 버튼을 눌러주세요.
               </p>
               <div className="flex justify-center mt-2">
@@ -192,19 +199,21 @@ export default function TeacherVideo() {
             isRecording={!!currentRecordingId}
           />
         )}
-        <div className="recordings-list mt-4">
-          <h2>녹화 파일 목록</h2>
-          <ul>
-            {recordings.map((recording) => (
-              <li key={recording.id}>
-                {recording.name} -{" "}
-                <button onClick={() => handleDownload(user.sessionId, recording.name)}>
-                  Download Recording
-                </button>
-              </li>
-            ))}
-          </ul>
-        </div>
+        {!openvidu.session && (
+          <div className="recordings-list mt-4">
+            <h2>녹화 파일 목록</h2>
+            <ul>
+              {recordings.map((recording) => (
+                <li key={recording.id}>
+                  {recording.name} -{" "}
+                  <button onClick={() => handleDownload(user.sessionId, recording.name)}>
+                    Download Recording
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
         {/* <div className="recordings-list mt-4">
           <h2>녹화 파일 목록</h2>
           <ul>
