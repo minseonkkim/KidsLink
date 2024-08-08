@@ -4,6 +4,7 @@ let intervalId: number | null = null;
 
 export const startWebSocket = (url: string, kindergartenId: number) => {
   const wsUrl = `${url}/${kindergartenId}`;
+  console.log(kindergartenId)
   ws = new WebSocket(wsUrl);
 
 
@@ -82,7 +83,6 @@ export function receiveBusLocation(wsRef, setLocation, mapRef,busMarkerRef, setI
     const data = JSON.parse(event.data);
     if (data.type === 'disconnect') {
       busCenterFlag.current = false
-      console.log( busCenterFlag.current)
       if (busMarkerRef.current && lastCenter) {
         busMarkerRef.current.setPosition(lastCenter);
       }
