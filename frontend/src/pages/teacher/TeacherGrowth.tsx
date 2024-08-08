@@ -152,12 +152,12 @@ export default function TeacherGrowth() {
   return (
     <>
       <TeacherHeader />
-      <div className="mt-[120px] px-[150px]">
+      <div className="mt-[120px] px-[20px] lg:px-[150px]">
         <NavigateBack backPage="홈" backLink="/" />
         <Title title="성장일지" />
-        <div className="flex flex-row justify-between">
-          <div className="rounded-[10px] bg-[#f4f4f4] w-[380px] h-[520px] p-[10px]">
-            <div className="bg-[#fff] h-[53px] rounded-[10px] flex items-center p-3 mx-2 mt-2 mb-4">
+        <div className="flex flex-col lg:flex-row justify-between">
+          <div className="rounded-[10px] bg-[#f4f4f4] w-full lg:w-[380px] h-[325px] lg:h-[520px] p-[10px] mb-4 lg:mb-0">
+            <div className="bg-[#fff] lg:h-[53px] h-[46px] rounded-[10px] flex items-center p-3 mx-2 mt-2 mb-4">
               <IoSearch className="text-[25px] mr-3" />
               <input
                 type="text"
@@ -167,11 +167,11 @@ export default function TeacherGrowth() {
                 placeholder="이름으로 검색하세요"
               />
             </div>
-            <div className="flex flex-wrap w-[360px] h-[420px] overflow-y-auto custom-scrollbar">
+            <div className="flex flex-wrap w-full lg:w-[360px] h-[230px] lg:h-[420px] overflow-y-auto custom-scrollbar">
               {filteredChildren.map((child) => (
                 <div
                   key={child.childId}
-                  className={`border-[3px] rounded-[10px] h-[185px] m-1 ${
+                  className={`border-[3px] rounded-[10px] h-[181px] m-1 ${
                     child.childId === currentChildId
                       ? "border-[#B2D170]"
                       : "border-transparent"
@@ -188,11 +188,11 @@ export default function TeacherGrowth() {
               ))}
             </div>
           </div>
-          <div className="rounded-[10px] bg-[#f4f4f4] w-[720px] h-[520px] p-[10px]">
-            <div className="flex flex-wrap content-start w-[700px] h-[500px] rounded-[20px] bg-[#f4f4f4] overflow-auto custom-scrollbar p-1">
+          <div className="rounded-[10px] bg-[#f4f4f4] w-full lg:w-[720px] lg:h-[520px] h-[380px] p-[10px]">
+            <div className="flex flex-wrap content-start w-full lg:w-[700px] lg:h-[500px] h-[360px] rounded-[20px] bg-[#f4f4f4] overflow-auto custom-scrollbar p-1">
               <div
                 onClick={openCreateModal}
-                className="bg-[#fff] rounded-[10px] w-[135px] h-[135px] m-[17px] flex items-center justify-center font-bold text-[18px]"
+                className="bg-[#fff] rounded-[10px] w-[133px] h-[133px] lg:m-[17px] m-[15px] flex items-center justify-center font-bold text-[18px]"
               >
                 <FiPlusCircle className="text-[30px]" />
               </div>
