@@ -277,18 +277,16 @@ export default function ParentBus() {
 
       <div className='fixed flex justify-end items-center bottom-20 right-0 gap-4 mr-4'>
         <button
-          onClick={() => animateMapToMarker(mapRef.current, parentMarkerRef.current)}
-          className="relative bg-white text-red-500 p-2 rounded z-40 rounded-full drop-shadow-lg"
-        >
-        <MdGpsFixed />
-          
-        </button>
-
-        <button
           onClick={() => animateMapToMarker(mapRef.current, busMarkerRef.current)}
           className="relative bg-white text-red-500 p-2 rounded z-40 rounded-full drop-shadow-lg"
         >
           <FaBus />
+        </button>
+        <button
+          onClick={() => animateMapToMarker(mapRef.current, parentMarkerRef.current)}
+          className="relative bg-white text-red-500 p-2 rounded z-40 rounded-full drop-shadow-lg"
+        >
+          <MdGpsFixed />
         </button>
       </div>
     </div>
