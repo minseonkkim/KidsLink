@@ -83,9 +83,9 @@ export const stopRecording = async (recordingId: string): Promise<any> => {
 };
 
 // 녹화된 영상 가져오기
-export const fetchRecordings = async (sessionId: string): Promise<any[]> => {
+export const fetchRecordings = async (): Promise<any[]> => {
   try {
-    const response = await axiosInstance.get(`${import.meta.env.VITE_OPENVIDU_URL}/recordings/${sessionId}`);
+    const response = await axiosInstance.get(`${import.meta.env.VITE_OPENVIDU_URL}/recordings`);
     return response.data;
   } catch (error) {
     console.error("Error fetching recordings:", error);
