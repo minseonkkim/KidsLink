@@ -60,7 +60,7 @@ export default function TeacherHeader() {
     };
 
     const renderModalContent = useCallback(() => (
-        <div className="lg:w-[550px] w-[320px] max-h-[450px] p-2">
+        <div className="lg:w-[430px] w-[320px] max-h-[450px] p-2">
     <div className="flex flex-row justify-between">
         <div className="text-[23px] font-bold mb-4">알림 목록</div>
         {alertList.length > 0 &&
