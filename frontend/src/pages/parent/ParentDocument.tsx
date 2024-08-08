@@ -106,7 +106,7 @@ export default function ParentDocument() {
   return (
     <div className="flex flex-col h-screen bg-[#FFEC8A]">
       <InfoSection
-        main1="자녀의 소식"
+        main1="아이의 소식"
         main2="을"
         description2="전달해 주세요!"
         imageSrc={daramgi}
