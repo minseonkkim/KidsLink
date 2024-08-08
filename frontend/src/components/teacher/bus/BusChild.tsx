@@ -11,6 +11,7 @@ interface BusChildProps {
   profile: string | null;
 }
 
+
 export default function BusChild({ busStopId, childId, childName, parentTel, status, checked, profile }: BusChildProps) {
   const toggleChildChecked = useBusStore((state) => state.toggleChildChecked);
 
