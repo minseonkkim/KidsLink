@@ -99,13 +99,16 @@ export default function ParentBus() {
   };
 
   const initializeWebSocket = async () => {
+    console.log('WebSocket init');
     if (isWebSocketInitialized.current) {
+      console.log('WebSocket x');
       return;
     }
     isWebSocketInitialized.current = true;
 
-    const kindergartenId = parentInfo.child.kindergartenClass.kindergartenClassId;
+    const kindergartenId = parentInfo.child.kindergartenClass.kindergarten.kindergartenId;
     const wsUrl = `${import.meta.env.VITE_WEBSOCKET_URL}/${kindergartenId}`;
+    console.log(kindergartenId)
     const ws = new WebSocket(wsUrl);
     wsRef.current = ws;
 
