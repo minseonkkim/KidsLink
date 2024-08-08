@@ -177,12 +177,12 @@ export async function logout() {
         localStorage.removeItem("accessToken")
         localStorage.removeItem("expiredAt")
       }
-      // 세션 스토리지에서 userType 제거
-      if (sessionStorage.getItem("user-storage")) {
-        sessionStorage.removeItem("user-storage");
-      }
+      // zustand 상태 초기화
+      useAppStore.getState().resetState()
+      // 세션 스토리지에서 user-storage 키 제거
+      sessionStorage.removeItem('user-storage')
       console.log("Logout successful:", response.data.data)
-      return response.data.data;
+      return response.data.data
     } else {
       throw new Error("Logout failed: " + response.data.message)
     }

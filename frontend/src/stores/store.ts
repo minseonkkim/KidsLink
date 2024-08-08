@@ -41,6 +41,9 @@ export interface AppState {
   // 소셜 로그인을 위해 회원가입하는 사용자 구분
   isSocialLogin: boolean;
   setIsSocialLogin: (isSocialLogin: boolean) => void;
+
+  // 상태 초기화 메서드
+  resetState: () => void;
 }
 
 const useAppStore = create<AppState>()(
@@ -85,6 +88,27 @@ const useAppStore = create<AppState>()(
       // 소셜 로그인을 위해 회원가입하는 사용자 상태 및 메서드
       isSocialLogin: false,
       setIsSocialLogin: (isSocialLogin) => set({ isSocialLogin }),
+
+      // 상태 초기화 메서드
+      resetState: () =>
+        set(() => ({
+          username: '',
+          password: '',
+          passwordConfirm: '',
+          name: '',
+          nickname: '',
+          email: '',
+          tel: '',
+          profile: undefined,
+          gender: '',
+          childName: '',
+          birth: '',
+          kindergartenId: 0,
+          kindergartenClassId: 0,
+          childProfile: undefined,
+          userType: '',
+          isSocialLogin: false,
+        })),
     }),
     {
       name: 'user-storage',
@@ -97,7 +121,9 @@ const useAppStore = create<AppState>()(
         setItem: (name, value) => {
           sessionStorage.setItem(name, JSON.stringify(value))
         },
-        removeItem: (name) => sessionStorage.removeItem(name),
+        removeItem: (name) => {
+          sessionStorage.removeItem(name)
+        },
       },
     }
   )
