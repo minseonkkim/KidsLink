@@ -1,7 +1,7 @@
 import { useLocation, useParams, useNavigate } from "react-router-dom";
 import { ChangeEvent, useEffect, useState } from "react";
 import OpenViduVideoComponent from "../../components/openvidu/VideoComponent";
-import { handleDownload, handleSpeechRecognition, stopRecording } from "../../api/openvidu";
+import { handleSpeechRecognition, stopRecording } from "../../api/openvidu";
 import TeacherHeader from "../../components/teacher/common/TeacherHeader";
 import MeetingBackground from "../../assets/teacher/meeting_background.png";
 import { useTeacherInfoStore } from "../../stores/useTeacherInfoStore";
@@ -47,10 +47,6 @@ export default function TeacherVideo() {
   const [otherVideoActive, setOtherVideoActive] = useState(false);
   const [otherOpacity, setOtherOpacity] = useState(false);
 
-  const DownloadLink = ({ userSessionId, recordingName }) => (
-    <button onClick={() => handleDownload(userSessionId, recordingName)}>Download Recording</button>
-  );
-
   useEffect(() => {
     if (otherVideoActive) {
       if (otherOpacity) {
@@ -80,7 +76,7 @@ export default function TeacherVideo() {
   }, [teacherInfo, setTeacherInfo]);
 
   useEffect(() => {
-    fetchRecordingsList(user.sessionId, setRecordings);
+    fetchRecordingsList(setRecordings);
   }, []);
 
   useEffect(() => {
@@ -105,7 +101,7 @@ export default function TeacherVideo() {
       try {
         const stoppedRecording = await stopRecording(currentRecordingId);
         setCurrentRecordingId(null);
-        fetchRecordingsList(user.sessionId, setRecordings);
+        fetchRecordingsList(setRecordings);
       } catch (error) {
         console.error("Error stopping recording:", error);
       }
@@ -199,6 +195,8 @@ export default function TeacherVideo() {
             isRecording={!!currentRecordingId}
           />
         )}
+        {/* 
+        해당 위치 제외하고, 녹화 목록 컴포넌트 따로 제외하기
         {!openvidu.session && (
           <div className="recordings-list mt-4">
             <h2>녹화 파일 목록</h2>
@@ -213,20 +211,7 @@ export default function TeacherVideo() {
               ))}
             </ul>
           </div>
-        )}
-        {/* <div className="recordings-list mt-4">
-          <h2>녹화 파일 목록</h2>
-          <ul>
-            {recordings.map((recording) => (
-              <li key={recording.id}>
-                {recording.name} -{" "}
-                <a href={recording.url} target="_blank" rel="noopener noreferrer">
-                  다운로드
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div> */}
+        )} */}
       </div>
     </div>
   );
