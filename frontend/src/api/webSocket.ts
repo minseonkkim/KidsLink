@@ -1,18 +1,16 @@
 let ws: WebSocket | null = null;
-// src/websocket.ts
 let intervalId: number | null = null;
 
-export const startWebSocket = (url: string, kindergartenId: number) => {
+export const startWebSocket = (url: string, kindergartenId: number, selectedOption: string) => {
   const wsUrl = `${url}/${kindergartenId}`;
   console.log(kindergartenId)
   ws = new WebSocket(wsUrl);
 
-
   ws.onopen = () => {
     console.log('WebSocket connection opened');
-
-    // 서버로 인증 토큰과 kindergartenId를 전송
-    ws.send(JSON.stringify({ type: 'authenticate', kindergartenId: kindergartenId }));
+    
+    // 서버로 인증 토큰과 kindergartenId, selectedOption 전송
+    ws.send(JSON.stringify({ type: 'authenticate', kindergartenId: kindergartenId, selectedOption: selectedOption }));
 
     if (navigator.geolocation) {
       const sendLocation = () => {
@@ -22,12 +20,12 @@ export const startWebSocket = (url: string, kindergartenId: number) => {
               type: 'location',
               latitude: position.coords.latitude,
               longitude: position.coords.longitude,
-              kindergartenId
+              kindergartenId,
+              selectedOption // selectedOption 포함
             };
             console.log('Sending location:', data);
             if (ws && ws.readyState === WebSocket.OPEN) {
               ws.send(JSON.stringify(data));
-
             }
           },
           (error) => {
@@ -35,8 +33,8 @@ export const startWebSocket = (url: string, kindergartenId: number) => {
           },
           {
             enableHighAccuracy: true,
-            timeout: 20000, 
-            maximumAge: 0 
+            timeout: 20000,
+            maximumAge: 0
           }
         );
       };
@@ -44,7 +42,6 @@ export const startWebSocket = (url: string, kindergartenId: number) => {
       intervalId = window.setInterval(sendLocation, 500);
     }
   };
-
 
   ws.onclose = () => {
     console.log('WebSocket connection closed');
@@ -70,7 +67,8 @@ export const stopWebSocket = () => {
 };
 
 
-export function receiveBusLocation(wsRef, setLocation, mapRef,busMarkerRef, setIsMoving,busCenterFlag ) {
+
+export function receiveBusLocation(wsRef, setLocation, mapRef, busMarkerRef, setIsMoving, busCenterFlag, setBusOption) {
   const ws = wsRef.current;
   if (!ws) {
     console.error('WebSocket is not initialized');
@@ -92,11 +90,12 @@ export function receiveBusLocation(wsRef, setLocation, mapRef,busMarkerRef, setI
       console.log('Received location:', ++count, data);
       setLocation({ lat: data.latitude, lng: data.longitude });
       setIsMoving(true);
+      setBusOption(data.selectedOption); // 버스 옵션 설정
 
       const newCenter = new window.kakao.maps.LatLng(data.latitude, data.longitude);
       lastCenter = newCenter;
       const map = mapRef.current;
-      if (map&&!busCenterFlag.current&&data.latitude !== undefined && data.longitude !== undefined) {  
+      if (map && !busCenterFlag.current && data.latitude !== undefined && data.longitude !== undefined) {
         map.setCenter(newCenter)
         busCenterFlag.current = true
       }
