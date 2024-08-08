@@ -146,15 +146,15 @@ public class VideoController {
 
     /**
      * Download a recording by ID
-     * @param recordingId The Recording ID
+     * @param sessionId The Recording ID
      * @return The Recording file
      */
-    @GetMapping("/recordings/download/{recordingId}")
-    public ResponseEntity<FileSystemResource> downloadRecording(@PathVariable("recordingId") String recordingId) {
+    @GetMapping("/recordings/download/{sessionId}/recording/{recordingName}")
+    public ResponseEntity<FileSystemResource> downloadRecording(@PathVariable("sessionId") String sessionId, @PathVariable("recordingName") String recordingName) {
         // TODO #1 아래 코드 참고해서 recordingId가 정확하게 경로를 가리키는지 확인해보기
-        File file = new File(recordingPath + "/" + recordingId + "/" + recordingId + ".mp4");
+        File file = new File(recordingPath + "/" + sessionId + "/" + recordingName + ".mp4");
 //        recordingPath = "C:/uploads";
-//        System.out.println("recordingPath = " + recordingPath);
+//        System.out.println("recordingPath = " + recordingPath);x`
 //        System.out.println("recordingId = " + recordingId);
 //        File file = new File(recordingPath + "/" + recordingId + ".jpg");
         if (!file.exists()) {
