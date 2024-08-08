@@ -11,11 +11,16 @@ interface BusChildProps {
   profile: string | null;
 }
 
+
 export default function BusChild({ busStopId, childId, childName, parentTel, status, checked, profile }: BusChildProps) {
   const toggleChildChecked = useBusStore((state) => state.toggleChildChecked);
 
   const handleCheckboxChange = () => {
     toggleChildChecked(busStopId, childId);
+  };
+
+  const handleCallClick = () => {
+    window.location.href = `tel:${parentTel}`;
   };
 
   return (
@@ -31,7 +36,7 @@ export default function BusChild({ busStopId, childId, childName, parentTel, sta
       </div>
       <div className="flex flex-col items-start w-[178px]">
         <p className="font-bold text-[20px]">{childName}</p>
-        <div className="flex flex-row items-center">
+        <div className="flex flex-row items-center" onClick={handleCallClick} style={{ cursor: 'pointer' }}>
           <IoCallOutline className="mr-2 text-[#7C7C7C]" />
           <p className="text-[#7C7C7C] text-[14px]">{parentTel}</p>
         </div>
