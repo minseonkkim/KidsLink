@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import BusChild from "../../components/teacher/bus/BusChild";
 import NavigateBack from "../../components/teacher/common/NavigateBack";
 import TeacherHeader from "../../components/teacher/common/TeacherHeader";
@@ -9,7 +9,7 @@ import { startWebSocket, stopWebSocket } from '../../api/webSocket';
 import { getAllBusStops, postBusStart } from '../../api/bus';
 import { getTeacherInfo } from '../../api/Info';
 import { useBusStore } from '../../stores/useBusStore';
-import useTeacherInfoStore from '../../stores/useTeacherInfoStore'; 
+import { useTeacherInfoStore } from '../../stores/useTeacherInfoStore';
 import useModal from "../../hooks/teacher/useModal.tsx";
 
 const WEBSOCKET_URL = import.meta.env.VITE_WEBSOCKET_URL;
@@ -29,12 +29,13 @@ export default function TeacherBus() {
   const { teacherInfo, setTeacherInfo } = useTeacherInfoStore();
 
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement & { touchStartX?: number }>(null);
 
   useEffect(() => {
     const fetchBusStops = async () => {
       try {
         let kindergartenId;
-        
+
         if (teacherInfo) {
           kindergartenId = teacherInfo.kindergartenId;
         } else {
@@ -42,17 +43,17 @@ export default function TeacherBus() {
           setTeacherInfo(fetchedTeacherInfo);
           kindergartenId = fetchedTeacherInfo.kindergartenId;
         }
-        
+
         const stops = await getAllBusStops(kindergartenId);
         const stopsWithChecked = stops.map(stop => ({
           ...stop,
-          children: stop.children.map(child => ({ ...child, checked: false })),
+          children: stop.children ? stop.children.map(child => ({ ...child, checked: false })) : [],
         }));
         setBusStops(stopsWithChecked);
-        setBusId(stops[0].busId);
+        setBusId(stops[0]?.busId || null);
 
         if (stopsWithChecked.length > 0) {
-          setCurrentStopId(stopsWithChecked[0].busStopId); 
+          setCurrentStopId(stopsWithChecked[0].busStopId);
         }
       } catch (error) {
         console.error(error);
@@ -71,7 +72,7 @@ export default function TeacherBus() {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
       window.removeEventListener('beforeunload', handleUnload);
-      window.addEventListener('unload', handleUnload);
+      window.removeEventListener('unload', handleUnload);
     };
   }, [teacherInfo, setTeacherInfo]);
 
@@ -81,7 +82,7 @@ export default function TeacherBus() {
 
   const handleOptionClick = (option: string) => {
     setSelectedOption(option);
-    setAllChecked(false); // Reset all checked states
+    setAllChecked(false);
     setIsOpen(false);
   };
 
@@ -167,17 +168,39 @@ export default function TeacherBus() {
     }
   };
 
+  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+    const touch = e.touches[0];
+    containerRef.current!.touchStartX = touch.clientX;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (!containerRef.current!.touchStartX) return;
+
+    const touch = e.touches[0];
+    const touchEndX = touch.clientX;
+
+    const diff = containerRef.current!.touchStartX - touchEndX;
+
+    if (diff > 50) {
+      handleNextStop();
+      containerRef.current!.touchStartX = undefined;
+    } else if (diff < -50) {
+      handlePrevStop();
+      containerRef.current!.touchStartX = undefined;
+    }
+  };
+
   return (
     <>
       <TeacherHeader />
-      <div className="mt-[120px] px-[150px]">
+      <div className="mt-[120px] px-[10px] lg:px-[150px]">
         <NavigateBack backPage="홈" backLink='/' />
         <Title title="등하원관리" />
-        <button onClick={handleButtonClick} className="absolute top-[125px] right-[150px] border-[2px] border-[#7C7C7C] bg-[#E3EEFF] px-3 py-1 font-bold rounded-[10px] hover:bg-[#D4DDEA] flex flex-row items-center">
+        <button onClick={handleButtonClick} className="absolute top-[125px] right-[30px] lg:right-[150px] border-[2px] border-[#7C7C7C] bg-[#E3EEFF] px-3 py-1 font-bold rounded-[10px] hover:bg-[#D4DDEA] flex flex-row items-center">
           {isWebSocketActive ? '버스 도착' : '버스 출발'}
         </button>
 
-        <div className="absolute top-[180px] left-[150px] rounded-[10px] border-[1px] border-[#7C7C7C] w-[86px]">
+        <div className="absolute top-[180px] left-[30px] lg:left-[150px] rounded-[10px] border-[1px] border-[#7C7C7C] w-[86px]">
           <button className="text-[18px] flex flex-row items-center justify-center p-2" onClick={toggleDropdown}>
             <IoMdArrowDropdown className="text-[18px] mr-2" />{selectedOption}
           </button>
@@ -191,22 +214,36 @@ export default function TeacherBus() {
           )}
         </div>
 
-        <div className="flex items-center justify-between">
-          <div className={`w-[210px] h-[330px] ${currentStopId !== busStops[0].busStopId ? 'bg-[#F4F8ED]' : 'bg-transparent'} rounded-[20px] flex items-center justify-center font-bold text-[24px]`}>
+        <div 
+          className="flex flex-col lg:flex-row items-center justify-between lg:space-x-4 lg:mt-0 mt-[70px]" 
+          ref={containerRef}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+        >
+          <div className={`hidden lg:flex w-[210px] h-[330px] ${currentStopId !== busStops[0].busStopId ? 'bg-[#F4F8ED]' : 'bg-transparent'} rounded-[20px] items-center justify-center font-bold text-[24px]`}>
             {currentStopId !== busStops[0].busStopId ? busStops[busStops.findIndex(stop => stop.busStopId === currentStopId) - 1].busStopName : ''}
           </div>
-          <MdNavigateBefore className={`${currentStopId === busStops[0].busStopId && 'invisible'} text-[50px] text-[#8CAD1E] cursor-pointer`} onClick={handlePrevStop} />
-          <div className="bg-[#D5E4B4] rounded-[20px] w-[420px] h-[510px] p-[20px] m-4">
+          <MdNavigateBefore className={`hidden lg:block ${currentStopId === busStops[0].busStopId && 'invisible'} text-[50px] text-[#8CAD1E] cursor-pointer`} onClick={handlePrevStop} />
+          <div className="bg-[#D5E4B4] rounded-[20px] w-[360px] lg:w-[420px] h-[510px] p-[20px] m-4">
             <p className="font-bold text-[24px] text-center mb-3">{currentStop.busStopName}</p>
-            <div className="bg-[#fff] rounded-[10px] w-[380px] h-[420px] m-1 p-3">
+            <div className="bg-[#fff] rounded-[10px] w-[320px] lg:w-[380px] h-[420px] m-1 p-1 lg:p-3">
               <div className="flex flex-row my-1">
-                <div className="flex items-center justify-center font-bold w-[280px]">탑승자</div>
-                <div className="flex items-center justify-center font-bold w-[60px]">탑승여부</div>
+                <div className="flex items-center justify-center font-bold lg:w-[280px] w-[240px]">탑승자</div>
+                <div className="flex items-center justify-center font-bold lg:w-[60px] w-[60px]">탑승여부</div>
               </div>
-              <div className="relative w-[360px] h-[370px] overflow-auto custom-scrollbar">
+              <div className="relative w-[310px] lg:w-[360px] h-[370px] overflow-auto custom-scrollbar">
                 {currentStop.children.length > 0 ? (
-                  currentStop.children.map(({ childName, parentTel, status, checked }, idx) => (
-                    <BusChild key={idx} busStopId={currentStop.busStopId} childName={childName} parentTel={parentTel} status={status} checked={checked} />
+                  currentStop.children.map(({ child, parentTel, status, checked }, idx) => (
+                    <BusChild
+                      key={idx}
+                      busStopId={currentStop.busStopId}
+                      childId={child.childId}
+                      childName={child.name}
+                      parentTel={parentTel}
+                      status={status}
+                      checked={checked}
+                      profile={child.profile}
+                    />
                   ))
                 ) : (
                   <div className="absolute top-[30%] left-0 right-0 text-center">
@@ -216,8 +253,8 @@ export default function TeacherBus() {
               </div>
             </div>
           </div>
-          <MdNavigateNext className={`${currentStopId === busStops[busStops.length - 1].busStopId && 'invisible'} text-[50px] text-[#8CAD1E] cursor-pointer`} onClick={handleNextStop} />
-          <div className={`w-[210px] h-[330px] ${currentStopId !== busStops[busStops.length - 1].busStopId ? 'bg-[#F4F8ED]' : 'bg-transparent'} rounded-[20px] flex items-center justify-center font-bold text-[24px]`}>
+          <MdNavigateNext className={`hidden lg:block ${currentStopId === busStops[busStops.length - 1].busStopId && 'invisible'} text-[50px] text-[#8CAD1E] cursor-pointer`} onClick={handleNextStop} />
+          <div className={`hidden lg:flex w-[210px] h-[330px] ${currentStopId !== busStops[busStops.length - 1].busStopId ? 'bg-[#F4F8ED]' : 'bg-transparent'} rounded-[20px] items-center justify-center font-bold text-[24px]`}>
             {currentStopId !== busStops[busStops.length - 1].busStopId ? busStops[busStops.findIndex(stop => stop.busStopId === currentStopId) + 1].busStopName : ''}
           </div>
         </div>

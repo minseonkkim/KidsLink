@@ -35,7 +35,6 @@ export async function getKidAllGrowthDiarys(childId: number) {
     const response = await axiosInstance.get(`diary/child/${childId}`)
 
     if (response.data.status === 'success') {
-      console.log(response.data.data) // 확인 후 삭제
       return response.data.data
     } else {
       throw new Error('Failed to get growth-diary')
@@ -52,7 +51,6 @@ export async function getGrowthDiary(diaryId: number) {
     const response = await axiosInstance.get(`diary/${diaryId}`)
 
     if (response.data.status === 'success') {
-      console.log(response.data.data) // 확인 후 삭제
       return response.data.data
     } else {
       throw new Error('Failed to get growth-diary')
@@ -69,11 +67,8 @@ export async function createDiary(childId: number, diary: FormDiaryData) {
   formData.append('diaryDate', diary.diaryDate);
   formData.append('content', diary.content);
   diary.files.forEach((file) => {
-    formData.append('files', file); // Use the same name for each file to ensure they are treated as an array
+    formData.append('files', file); 
   });
-
-  console.log(diary)
-  console.log(diary.files,"sdf")
 
   try {
     const response = await axiosInstance.post(`diary/child/${childId}`, diary, {

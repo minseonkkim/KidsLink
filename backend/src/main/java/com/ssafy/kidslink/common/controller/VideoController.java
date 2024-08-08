@@ -5,10 +5,15 @@ import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.File;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
@@ -23,6 +28,9 @@ public class VideoController {
 
     @Value("${openvidu.secret}")
     private String OPENVIDU_SECRET;
+
+    @Value("${openvidu.recording.path}")
+    private String recordingPath;
 
     private OpenVidu openvidu;
 
@@ -81,11 +89,19 @@ public class VideoController {
     @PostMapping("/sessions/{sessionId}/recordings/start")
     public ResponseEntity<String> startRecording(@PathVariable("sessionId") String sessionId) throws OpenViduJavaClientException, OpenViduHttpException {
         System.out.println("녹화시작");
+        // 현재 날짜를 "yyyyMMdd" 형식으로 포맷팅
+        String currentDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+
+        // 세션 ID와 날짜를 사용하여 녹화 파일명 생성
+        String recordingName = sessionId + "_" + currentDate;
+
         RecordingProperties properties = new RecordingProperties.Builder()
+                .name(recordingName)
                 .outputMode(Recording.OutputMode.COMPOSED)
                 .hasAudio(true)
                 .hasVideo(true)
                 .build();
+
         Recording recording = this.openvidu.startRecording(sessionId, properties);
         return new ResponseEntity<>(recording.getId(), HttpStatus.OK);
     }
@@ -127,5 +143,25 @@ public class VideoController {
         return new ResponseEntity<>(recording, HttpStatus.OK);
     }
 
+
+    /**
+     * Download a recording by ID
+     * @param sessionId The Recording ID
+     * @return The Recording file
+     */
+    @GetMapping("/recordings/download/{sessionId}/recording/{recordingName}")
+    public ResponseEntity<FileSystemResource> downloadRecording(@PathVariable("sessionId") String sessionId, @PathVariable("recordingName") String recordingName) {
+        // TODO #1 아래 코드 참고해서 recordingId가 정확하게 경로를 가리키는지 확인해보기
+        File file = new File(recordingPath + "/" + sessionId + "/" + recordingName + ".mp4");
+        if (!file.exists()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        FileSystemResource resource = new FileSystemResource(file);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getName() + "\"");
+        headers.add(HttpHeaders.CONTENT_TYPE, "video/mp4");
+        headers.add(HttpHeaders.CONTENT_LENGTH, String.valueOf(file.length()));
+        return new ResponseEntity<>(resource, headers, HttpStatus.OK);
+    }
 
 }

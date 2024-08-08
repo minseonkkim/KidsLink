@@ -25,7 +25,6 @@ export default function TeacherDocument() {
     const fetchDocuments = async () => {
       try {
         const fetchedDocuments = await getClassAllDocuments();
-        console.log(fetchedDocuments);
 
         const reversedDocuments = fetchedDocuments.reverse();
         setDocuments(reversedDocuments);
@@ -42,7 +41,6 @@ export default function TeacherDocument() {
           }
         }
 
-        // Fetch and store child images
         const images = {};
         for (const document of reversedDocuments) {
           const profileImgPath = await findChildImg(document.details.childId);
@@ -95,7 +93,6 @@ export default function TeacherDocument() {
   };
 
   const findChildImg = async (childId: number): Promise<string> => {
-    // Check if the image URL is already in the cache
     if (childImages[childId]) {
       return childImages[childId];
     }
@@ -103,7 +100,6 @@ export default function TeacherDocument() {
     const childInfo = await getChildInfo(childId);
     const profileImgPath = childInfo.profile;
 
-    // Store the image URL in the state to optimize future requests
     setChildImages(prevImages => ({
       ...prevImages,
       [childId]: profileImgPath
@@ -123,12 +119,12 @@ export default function TeacherDocument() {
   return (
     <>
       <TeacherHeader />
-      <div className="mt-[120px] px-[150px]">
+      <div className="mt-[120px] lg:px-[150px] px-[20px]">
         <NavigateBack backPage="홈" backLink='/' />
         <Title title="문서관리" />
-        <div className="flex flex-row justify-between">
-          <div className="rounded-[20px] bg-[#f4f4f4] w-[380px] h-[520px] p-[10px]">
-            <div className="bg-[#fff] h-[53px] rounded-[10px] flex items-center p-3 mx-2 my-3">
+        <div className="flex flex-col lg:flex-row justify-between">
+          <div className="rounded-[20px] bg-[#f4f4f4] lg:w-[380px] w-full lg:h-[520px] h-[320px] p-[10px] mb-3 lg:mb-0">
+            <div className="bg-[#fff] lg:h-[53px] h-[46px] rounded-[10px] flex items-center p-3 mx-2 my-3">
               <IoSearch className="text-[25px] mr-3" />
               <input
                 type="text"
@@ -138,14 +134,14 @@ export default function TeacherDocument() {
                 onChange={e => setSearchTerm(e.target.value)}
               />
             </div>
-            <div className="rounded-[20px] bg-[#f4f4f4] w-[360px] h-[420px] overflow-y-auto custom-scrollbar">
+            <div className="bg-[#f4f4f4] lg:w-[360px] w-full lg:h-[420px] h-[230px] overflow-y-auto custom-scrollbar">
               {displayedDocuments.map((document, index) => (
                 <div
                   key={index}
                   className={`${document.type === "Absent"
                     ? (document.details.absentId === selectedDocumentId && document.type === selectedDocumentType ? 'border-[3px]' : 'border-none')
                     : (document.details.dosageId === selectedDocumentId && document.type === selectedDocumentType ? 'border-[3px]' : 'border-none')}
-                  m-[10px] mb-[15px] w-[320px] h-[100px] rounded-[15px] border-[#B2D170] cursor-pointer`}
+                  m-[10px] mb-[15px] w-full lg:w-[320px] lg:h-[100px] h-[80px] rounded-[15px] border-[#B2D170] cursor-pointer`}
                   onClick={() => handleDocumentClick(document.type, document.type === "Absent" ? document.details.absentId : document.details.dosageId)}
                 >
                   <DocumentChild
@@ -160,7 +156,7 @@ export default function TeacherDocument() {
               {loading && <p>Loading more documents...</p>}
             </div>
           </div>
-          <div className='border-[#B2D170] border-[3px] rounded-[20px]'>
+          <div className='border-[#B2D170] border-[3px] rounded-[20px] lg:w-[calc(100%-400px)] w-full'>
             {selectedDocumentType === "Absent" ? 
             (selectedDocumentId !== null && <AbsentDocument absentId={selectedDocumentId} onUpdate={handleDocumentUpdate} isOurClass={false} />) : 
             (selectedDocumentId !== null && <DosageDocument dosageId={selectedDocumentId} onUpdate={handleDocumentUpdate} isOurClass={false}/>)

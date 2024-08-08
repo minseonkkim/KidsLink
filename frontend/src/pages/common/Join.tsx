@@ -24,8 +24,7 @@ export default function Join() {
     // location.state에서 데이터 추출
     if (location.state) {
       const { username, email } = location.state as { username: string; email: string }
-
-      console.log("소셜에서 가져오고 있는 data: ", username, email)
+      
       setIsSocialLogin(true)
       setUsername(username)
       setEmail(email)

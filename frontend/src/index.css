@@ -201,6 +201,27 @@ body {
   box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.1), 0 -10px 15px rgba(0, 0, 0, 0.1);
   }
 
+/* ParentBus.module.css */
+.pulse-ring {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  border: 5px solid rgba(255, 0, 0, 0.5); /* Blue color with some transparency */
+  border-radius: 50%;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(0.5);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(2.5);
+    opacity: 0;
+  }
+}
+
 /* 확인 */
 /* .border-custom-gradient {
   border-image: linear-gradient(to right, #F8DE56 50%, #D9D9D9 50%);
