@@ -46,7 +46,7 @@ export default function TeacherAlbumHistory() {
             <TeacherHeader />
             <div className="px-[150px] mt-[120px]">
                 <NavigateBack backPage="사진분류" backLink='/album' />
-                <Title title="사진분류내역" />
+                <Title title="사진전송내역" />
                 {childrenAlbums.map((childAlbum) => {
                     const totalImages = childAlbum.albums.reduce((acc, album) => acc + album.images.length, 0);
 
