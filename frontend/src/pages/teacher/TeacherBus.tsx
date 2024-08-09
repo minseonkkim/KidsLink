@@ -29,47 +29,61 @@ export default function TeacherBus() {
   const containerRef = useRef<HTMLDivElement & { touchStartX?: number }>(null);
 
   useEffect(() => {
-    const fetchBusStops = async () => {
-      try {
-        let kindergartenId;
+  const fetchBusStops = async () => {
+    try {
+      let kindergartenId;
 
-        if (teacherInfo) {
-          kindergartenId = teacherInfo.kindergartenId;
-        } else {
-          const fetchedTeacherInfo = await getTeacherInfo();
-          setTeacherInfo(fetchedTeacherInfo);
-          kindergartenId = fetchedTeacherInfo.kindergartenId;
-        }
-
-        const stops = await getAllBusStops(kindergartenId);
-        const stopsWithChecked = stops.map(stop => ({
-          ...stop,
-          children: stop.children ? stop.children.map(child => ({ ...child, checked: false })) : [],
-        }));
-        setBusStops(stopsWithChecked);
-        setBusId(stops[0]?.busId || null);
-
-        if (stopsWithChecked.length > 0) {
-          setCurrentStopId(stopsWithChecked[0].busStopId);
-        }
-      } catch (error) {
-        console.error(error);
+      if (teacherInfo) {
+        kindergartenId = teacherInfo.kindergartenId;
+      } else {
+        const fetchedTeacherInfo = await getTeacherInfo();
+        setTeacherInfo(fetchedTeacherInfo);
+        kindergartenId = fetchedTeacherInfo.kindergartenId;
       }
-    };
 
-    fetchBusStops();
+      const stops = await getAllBusStops(kindergartenId);
+      console.log("stops: ", stops);
+      
+      // 각 child에 checked 필드를 추가하고 기본값을 false로 설정
+      const stopsWithChecked = busStops.map(stop => ({
+        ...stop,
+        children: stop.children 
+          ? stop.children.map(child => ({
+              ...child,
+              checked: child.checked !== undefined ? child.checked : false
+            })) 
+          : [],
+      }));
 
-    const handleUnload = () => {
-      localStorage.removeItem('isWebSocketActive');
-    };
+      // Zustand 스토어에 busStops 상태로 저장
+      setBusStops(stopsWithChecked);
 
-    window.addEventListener('beforeunload', handleUnload);
-    window.addEventListener('unload', handleUnload);
-    return () => {
-      window.removeEventListener('beforeunload', handleUnload);
-      window.removeEventListener('unload', handleUnload);
-    };
-  }, [teacherInfo, setTeacherInfo]);
+      console.log(stopsWithChecked);
+      console.log("busStops: ",  busStops);
+
+      setBusId(stops[0]?.busId || null);
+
+      if (stopsWithChecked.length > 0) {
+        setCurrentStopId(stopsWithChecked[0].busStopId);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  fetchBusStops();
+
+  const handleUnload = () => {
+    localStorage.removeItem('isWebSocketActive');
+  };
+
+  window.addEventListener('beforeunload', handleUnload);
+  window.addEventListener('unload', handleUnload);
+  return () => {
+    window.removeEventListener('beforeunload', handleUnload);
+    window.removeEventListener('unload', handleUnload);
+  };
+}, [teacherInfo, setTeacherInfo]);
 
   useEffect(() => {
     if (!isWebSocketActive) {
