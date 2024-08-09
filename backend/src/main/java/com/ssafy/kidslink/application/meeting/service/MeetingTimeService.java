@@ -41,7 +41,7 @@ public class MeetingTimeService {
     private final TeacherNotificationRepository teacherNotificationRepository;
     private final SelectedMeetingRepository selectedMeetingRepository;
     private final ParentNotificationRepository parentNotificationRepository;
-
+    boolean flag = false;
     public void openMeetingTimes(String teacherUsername, List<OpenMeetingTimeDTO> openMeetingTimeDTOList) {
         Teacher teacher = teacherRepository.findByTeacherUsername(teacherUsername);
 
@@ -140,137 +140,133 @@ public class MeetingTimeService {
             SelectedMeetingDTO meeting = new SelectedMeetingDTO();
             meeting.setTime(selectedMeeting.getSelectedMeetingTime());
             meeting.setDate(selectedMeeting.getSelectedMeetingDate());
-            meeting.setTeahcerId(teacher.getTeacherId());
+            meeting.setTeacherId(teacher.getTeacherId());
             meeting.setTeacherName(teacher.getTeacherName());
-            meeting.setParentId(selectedMeeting.getParent().getParentId());
-            meeting.setChildName(selectedMeeting.getParent().getChildren().iterator().next().getChildName());
+            Parent parent = selectedMeeting.getParent();
+            meeting.setParentUsername(parent.getParentUsername());
+            meeting.setChildName(parent.getChildren().iterator().next().getChildName());
             meetings.add(meeting);
         }
 
         return meetings;
     }
 
-
-    public List<MeetingRoomDTO> confirmMeeting(String teacherUsername) {
-        Teacher teacher = teacherRepository.findByTeacherUsername(teacherUsername);
-        List<SelectedMeeting> meetings = selectedMeetingRepository.findByTeacher(teacher);
-        List<MeetingSchedule> meetingSchedules = allocateMeetings(meetings, teacher);
-        List<MeetingRoomDTO> confirmMeetings = new ArrayList<>();
-
-        for (MeetingSchedule meetingSchedule : meetingSchedules) {
-            meetingScheduleRepository.save(meetingSchedule);
-            confirmMeetings.add(meetingScheduleMapper.toMeetingRoomDTO(meetingSchedule));
-
-        }
-
-        // TODO #1 부모한테 예약 확정 알림 보내기 -> 부모 한명에게만 보내기
-        for (Parent parent : parentRepository.findByKindergartenClassId(teacher.getKindergartenClass().getKindergartenClassId())) {
-            ParentNotification parentNotification = new ParentNotification();
-
-            parentNotification.setCode(NotificationCode.MEETING);
-            parentNotification.setParent(parent);
-            parentNotification.setParentNotificationDate(LocalDate.now());
-            parentNotification.setParentNotificationText("상담 예약이 확정되었습니다.");
-
-            parentNotificationRepository.save(parentNotification);
-        }
-
-        return confirmMeetings;
-    }
-
-    private List<MeetingSchedule> allocateMeetings(List<SelectedMeeting> meetings, Teacher teacher) {
-        // 학부모가 요청한 모든 시간대 목록 생성
-        Map<Parent, List<SelectedMeeting>> parentMeetings = new HashMap<>();
-        for (SelectedMeeting meeting : meetings) {
-            Parent parent = meeting.getParent();
-            parentMeetings.putIfAbsent(parent, new ArrayList<>());
-            parentMeetings.get(parent).add(meeting);
-        }
-
-        List<Parent> parents = new ArrayList<>(parentMeetings.keySet());
-        int n = parents.size();
-
-        // DP 테이블 초기화
-        int[] dp = new int[1 << n];
-        List<SelectedMeeting>[] dpMeetings = new ArrayList[1 << n];
-        for (int i = 0; i < (1 << n); i++) {
-            dpMeetings[i] = new ArrayList<>();
-        }
-
-        // 가능한 모든 시간대
-        Set<String> allSlots = new HashSet<>();
-        for (SelectedMeeting meeting : meetings) {
-            String slot = meeting.getSelectedMeetingDate() + " " + meeting.getSelectedMeetingTime();
-            allSlots.add(slot);
-        }
-        List<String> slots = new ArrayList<>(allSlots);
-
-        // DP를 이용하여 최대 학부모 상담 배정 계산
-        for (String slot : slots) {
-            int[] newDp = dp.clone();
-            List<SelectedMeeting>[] newDpMeetings = new ArrayList[1 << n];
-            for (int i = 0; i < (1 << n); i++) {
-                newDpMeetings[i] = new ArrayList<>(dpMeetings[i]);
-            }
-
-            for (int mask = 0; mask < (1 << n); mask++) {
-                for (int i = 0; i < n; i++) {
-                    if ((mask & (1 << i)) == 0) {
-                        Parent parent = parents.get(i);
-                        for (SelectedMeeting meeting : parentMeetings.get(parent)) {
-                            String meetingSlot = meeting.getSelectedMeetingDate() + " " + meeting.getSelectedMeetingTime();
-                            if (meetingSlot.equals(slot)) {
-                                int newMask = mask | (1 << i);
-                                if (newDp[newMask] < dp[mask] + 1) {
-                                    newDp[newMask] = dp[mask] + 1;
-                                    newDpMeetings[newMask] = new ArrayList<>(dpMeetings[mask]);
-                                    newDpMeetings[newMask].add(meeting);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            dp = newDp;
-            dpMeetings = newDpMeetings;
-        }
-
-        // 최적의 배정 조합 선택
-        int bestMask = 0;
-        for (int mask = 0; mask < (1 << n); mask++) {
-            if (dp[mask] > dp[bestMask]) {
-                bestMask = mask;
-            }
-        }
-
-        // MeetingSchedule 리스트 생성
-        List<MeetingSchedule> meetingSchedules = new ArrayList<>();
-        for (SelectedMeeting meeting : dpMeetings[bestMask]) {
-            MeetingSchedule meetingSchedule = new MeetingSchedule();
-            meetingSchedule.setMeetingScheduleDate(meeting.getSelectedMeetingDate());
-            meetingSchedule.setMeetingScheduleTime(meeting.getSelectedMeetingTime());
-            meetingSchedule.setTeacher(teacher);
-            meetingSchedule.setParent(meeting.getParent());
-            meetingSchedules.add(meetingSchedule);
-        }
-
+    public List<SelectedMeetingDTO> classifySchedule(List<SelectedMeetingDTO> selectedMeetingDTOs){
+        List<SelectedMeetingDTO> meetingSchedules = allocateMeetings(selectedMeetingDTOs);
         return meetingSchedules;
     }
 
+//    public List<MeetingRoomDTO> confirmMeeting(String teacherUsername) {
+//        Teacher teacher = teacherRepository.findByTeacherUsername(teacherUsername);
+//        List<SelectedMeeting> meetings = selectedMeetingRepository.findByTeacher(teacher);
+//        List<MeetingSchedule> meetingSchedules = allocateMeetings(meetings, teacher);
+//        List<MeetingRoomDTO> confirmMeetings = new ArrayList<>();
+//
+//        for (MeetingSchedule meetingSchedule : meetingSchedules) {
+//            meetingScheduleRepository.save(meetingSchedule);
+//            confirmMeetings.add(meetingScheduleMapper.toMeetingRoomDTO(meetingSchedule));
+//        }
+//
+//        // TODO #1 부모한테 예약 확정 알림 보내기 -> 부모 한명에게만 보내기
+//        for (Parent parent : parentRepository.findByKindergartenClassId(teacher.getKindergartenClass().getKindergartenClassId())) {
+//            ParentNotification parentNotification = new ParentNotification();
+//
+//            parentNotification.setCode(NotificationCode.MEETING);
+//            parentNotification.setParent(parent);
+//            parentNotification.setParentNotificationDate(LocalDate.now());
+//            parentNotification.setParentNotificationText("상담 예약이 확정되었습니다.");
+//
+//            parentNotificationRepository.save(parentNotification);
+//        }
+//
+//        return confirmMeetings;
+//    }
+
+    private List<SelectedMeetingDTO> allocateMeetings(List<SelectedMeetingDTO> selectedMeetingDTOs) {
+        // 학부모별로 가능한 시간대를 그룹화
+        Map<String, List<SelectedMeetingDTO>> parentMeetingMap = new HashMap<>();
+
+        for (SelectedMeetingDTO dto : selectedMeetingDTOs) {
+            String parentUsername = dto.getParentUsername();
+
+            // parentName에 해당하는 리스트가 이미 존재하는지 확인
+            if (!parentMeetingMap.containsKey(parentUsername)) {
+                parentMeetingMap.put(parentUsername, new ArrayList<>());
+            }
+
+            // parentName에 해당하는 리스트에 dto 추가
+            parentMeetingMap.get(parentUsername).add(dto);
+        }
+
+        // 모든 학부모가 무조건 하나의 시간대를 가지도록 선택
+        List<SelectedMeetingDTO> result = new ArrayList<>();
+        List<String> parents = new ArrayList<>(parentMeetingMap.keySet());
+        System.out.println(parents);
+        SelectedMeetingDTO[] resultArr = new SelectedMeetingDTO[100];
+        backtrack(parents,parentMeetingMap, resultArr,result, 0);
+
+        return result;
+    }
+    private void backtrack( List<String> parents, Map<String, List<SelectedMeetingDTO>> parentMeetingMap,
+                           SelectedMeetingDTO[] resultArr,List<SelectedMeetingDTO> result, int index) {
+        if (flag){
+            System.out.println("flag");
+            return;
+        }
+        // 모든 학부모에 대해 시간대 선택이 완료되었을 경우
+        if (index == parents.size()) {
+            HashSet <String> slotSet = new HashSet<>();
+
+            for (int i = 0; i < parents.size(); i++) {
+                String slot = resultArr[i].getDate() + " " + resultArr[i].getTime();
+                if(slotSet.contains(slot)) {
+                    return;
+                }
+                slotSet.add(slot);
+            }
+
+            for (int i = 0; i < 100; i++) {
+                if(resultArr[i]==null){
+                    break;
+                }
+                result.add(resultArr[i]);
+            }
+            flag = true;
+            System.out.println(Arrays.toString(resultArr));
+            return;
+        }
+
+        String parentName = parents.get(index);
+        List<SelectedMeetingDTO> meetings = parentMeetingMap.get(parentName);
+
+        for (int i = 0; i<meetings.size();i++) {
+            SelectedMeetingDTO meeting = meetings.get(i);
+
+            // 현재 선택한 결과를 배열에 저장
+            resultArr[index] = meeting;
+
+            // 다음 학부모에 대해 백트래킹
+            backtrack(parents, parentMeetingMap, resultArr, result,index + 1);
+
+            // 선택을 취소 (백트래킹)
+            resultArr[index] = null;
+        }
+    }
 
 
     public MeetingRoomDTO enterMeeting(int id){
-        Optional<MeetingSchedule> meetingSchedule = meetingScheduleRepository.findById(id);
+        MeetingSchedule meetingSchedule = meetingScheduleRepository.findById(id).orElseThrow();
 
         MeetingRoomDTO meetingRoomDTO = new MeetingRoomDTO();
         meetingRoomDTO.setId(id);
-        meetingRoomDTO.setDate(meetingSchedule.get().getMeetingScheduleDate());
-        meetingRoomDTO.setTime(meetingSchedule.get().getMeetingScheduleTime());
-        meetingRoomDTO.setParentId(meetingSchedule.get().getParent().getParentId());
-        meetingRoomDTO.setChildName(meetingSchedule.get().getParent().getChildren().iterator().next().getChildName());
-        meetingRoomDTO.setTeacherId(meetingSchedule.get().getTeacher().getTeacherId());
-        meetingRoomDTO.setTeacherName(meetingSchedule.get().getTeacher().getTeacherName());
+        meetingRoomDTO.setDate(meetingSchedule.getMeetingScheduleDate());
+        meetingRoomDTO.setTime(meetingSchedule.getMeetingScheduleTime());
+        Parent parent = meetingSchedule.getParent();
+        Teacher teacher = meetingSchedule.getTeacher();
+        meetingRoomDTO.setParentId(parent.getParentId());
+        meetingRoomDTO.setChildName(parent.getChildren().iterator().next().getChildName());
+        meetingRoomDTO.setTeacherId(teacher.getTeacherId());
+        meetingRoomDTO.setTeacherName(teacher.getTeacherName());
 
         return meetingRoomDTO;
     }

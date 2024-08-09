@@ -24,7 +24,6 @@ import ParentMeetingSubmit from "./pages/parent/ParentMeetingSubmit";
 import ParentSchedule from "./pages/parent/ParentSchedule";
 import ParentMyPage from "./pages/parent/ParentMyPage";
 import ParentVideo from "./pages/parent/ParentVideo";
-
 import TeacherDocument from "./pages/teacher/TeacherDocument";
 import TeacherNotice from "./pages/teacher/TeacherNotice";
 import TeacherAlbum from "./pages/teacher/TeacherAlbum";
