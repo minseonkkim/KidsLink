@@ -120,23 +120,43 @@ export default function TeacherVideo() {
 
   const handleStartMainRecording = async () => {
     if (isRecording) return;
-  
+
     setIsRecording(true);
-    clearInterval(intervalIdRef.current); // 세그먼트 녹화 타이머 중지
-  
-    // 세그먼트 녹화 중지 및 병합
-    await stopSegmentRecording(segmentList.current[segmentList.current.length - 1]);
-    segmentList.current = []; // 세그먼트 리스트 초기화
-  
-    // 메인 녹화를 시작하는 로직
-    console.log("Starting main recording...");
-    const mainRecordingId = await startMainRecording(user.sessionId);
-    console.log("Main recording ID:", mainRecordingId);
-    setCurrentRecordingId(mainRecordingId);
-  
+    
+    // 세그먼트 녹화 타이머 중지
+    if (intervalIdRef.current) {
+        clearInterval(intervalIdRef.current);
+        intervalIdRef.current = null;
+    }
+
+    try {
+        // 세그먼트 리스트가 비어있지 않은 경우에만 녹화 중지
+        if (segmentList.current.length > 0) {
+            const lastSegmentId = segmentList.current[segmentList.current.length - 1];
+            console.log("Stopping segment recording, ID:", lastSegmentId);
+            await stopSegmentRecording(lastSegmentId);
+        }
+
+        // 세그먼트 리스트 초기화
+        segmentList.current = [];
+
+        // 메인 녹화를 시작하는 로직
+        console.log("Starting main recording...");
+        const mainRecordingId = await startMainRecording(user.sessionId);
+
+        if (mainRecordingId) {
+            setCurrentRecordingId(mainRecordingId);
+            console.log("Main recording started with ID:", mainRecordingId);
+        } else {
+            console.error("Failed to start main recording, recording ID is undefined or null.");
+        }
+    } catch (error) {
+        console.error("Error occurred during main recording setup:", error);
+    }
+
     // 상태 업데이트 후 값을 확인
-    console.log("Updated currentRecordingId:", mainRecordingId);
-  };
+    console.log("Updated currentRecordingId:", currentRecordingId);
+};
 
   const handleStopRecording = async () => {
     if (!isRecording) return;

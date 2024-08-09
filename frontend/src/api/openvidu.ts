@@ -215,6 +215,7 @@ export const stopRecording = async (
       clearInterval(intervalIdRef.current); // 세그먼트 녹화 타이머 중지
     }
 
+    console.log("segmentList", segmentList)
     for (const segmentId of segmentList) {
       await stopSegmentRecording(segmentId); // 모든 세그먼트 녹화 중지
     }
