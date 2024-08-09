@@ -43,7 +43,7 @@ export const getToken = async (mySessionId: string): Promise<string> => {
 };
 // 세그먼트 녹화 시작
 export const startSegmentRecording = async (sessionId: string): Promise<string> => {
-  const url = `${APPLICATION_SERVER_URL}/api/video/sessions/${sessionId}/recordings/start`;
+  const url = `${APPLICATION_SERVER_URL}/sessions/${sessionId}/recordings/start`;
   
   try {
     const response = await axios.post(
@@ -67,7 +67,7 @@ export const startSegmentRecording = async (sessionId: string): Promise<string> 
 
 // 세그먼트 녹화 중지
 export const stopSegmentRecording = async (recordingId: string): Promise<void> => {
-  const url = `${APPLICATION_SERVER_URL}/api/video/recordings/stop/${recordingId}`;
+  const url = `${APPLICATION_SERVER_URL}/recordings/stop/${recordingId}`;
 
   try {
     await axios.post(url, {}, { headers: { "Content-Type": "application/json" } });
@@ -79,7 +79,7 @@ export const stopSegmentRecording = async (recordingId: string): Promise<void> =
 
 // 세그먼트 병합
 const mergeSegments = async (segmentList: string[]): Promise<string> => {
-  const url = `${APPLICATION_SERVER_URL}/api/video/recordings/save`;
+  const url = `${APPLICATION_SERVER_URL}/recordings/save`;
 
   try {
     const response = await axios.post(
@@ -165,7 +165,7 @@ export const handleSpeechRecognition = async (
 
 // 메인 녹화 시작
 export const startMainRecording = async (sessionId: string): Promise<string> => {
-  const url = `${APPLICATION_SERVER_URL}/api/video/sessions/${sessionId}/recordings/start`;
+  const url = `${APPLICATION_SERVER_URL}/sessions/${sessionId}/recordings/start`;
 
   try {
     const response = await axios.post(
@@ -189,7 +189,7 @@ export const startMainRecording = async (sessionId: string): Promise<string> => 
 
 // 메인 녹화 중지
 export const stopMainRecording = async (recordingId: string): Promise<void> => {
-  const url = `${APPLICATION_SERVER_URL}/api/video/recordings/stop/${recordingId}`;
+  const url = `${APPLICATION_SERVER_URL}/recordings/stop/${recordingId}`;
 
   try {
     await axios.post(url, {}, { headers: { "Content-Type": "application/json" } });
