@@ -197,7 +197,7 @@ export default function TeacherReservation() {
             tileDisabled={({ date, view }) => view === 'month' && isPastDate(date)}
           />
 
-          <div className="w-[665px]">
+          <div className="w-[640px] ml-[23px]">
             <div className="flex flex-row justify-between mr-[20px]">
               <div className="text-[22px] flex flex-row items-center h-[22px] font-bold text-[#8CAD1E] my-5">
                 <FaRegCalendar className="mr-3"/>
