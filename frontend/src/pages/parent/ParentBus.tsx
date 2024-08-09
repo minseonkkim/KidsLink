@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import InfoSection from "../../components/parent/common/InfoSection";
 import daramgi from "../../assets/parent/bus-daramgi.png";
 import busIcon from '../../assets/parent/bus-driving.gif';
-import currentLocationIcon from '../../assets/parent/marker.png';
 import { receiveBusLocation } from '../../api/webSocket';
 import { postKidBoardingStatus, getKidBoardingStatus } from '../../api/bus';
 import { getParentInfo } from '../../api/Info';
@@ -26,6 +25,7 @@ export default function ParentBus() {
   const [isMoving, setIsMoving] = useState(false);
   const [busOption, setBusOption] = useState('등원'); // 새로운 상태 추가
   const [childId, setChildId] = useState<number | null>(null);
+  const [kindergartenId, setKindergartenId] = useState(null);
   const mapRef = useRef<any>(null);
   const busMarkerRef = useRef<any>(null);
   const parentMarkerRef = useRef<any>(null);
@@ -35,6 +35,27 @@ export default function ParentBus() {
   const isWebSocketInitialized = useRef<boolean>(false);
   let centerFlag = false;
   const busCenterFlag = useRef<boolean>(false);
+
+  useEffect(() => {
+    async function fetchParentInfo() {
+      try {
+        let currentKindergartenId = kindergartenId;
+        if (!currentKindergartenId) {
+          const fetchedParentInfo = await getParentInfo();
+          setParentInfo(fetchedParentInfo);
+          currentKindergartenId = fetchedParentInfo.child.kindergartenClass.kindergartenClassId;
+        }
+
+        if (currentKindergartenId) {
+          setKindergartenId(currentKindergartenId);
+          console.log("유치원 ID : ", kindergartenId);
+        }
+      } catch (error) {
+        console.log("유치원 ID 조회 실패", error);
+      }
+    }
+    fetchParentInfo();
+  }, [kindergartenId, setParentInfo]);
 
   const initializeMap = () => {
     if (mapRef.current || !mapContainer.current) {
@@ -50,9 +71,6 @@ export default function ParentBus() {
     mapRef.current = newMap;
 
     const initialPosition = new window.kakao.maps.LatLng(location.lat, location.lng);
-    const imageSize = new window.kakao.maps.Size(40, 40);
-    const imageOption = { offset: new window.kakao.maps.Point(27, 69) };
-    const markerImage = new window.kakao.maps.MarkerImage(daramgi, imageSize, imageOption);
 
     const busMarkerInstance = new window.kakao.maps.CustomOverlay({
       position: initialPosition,
@@ -61,7 +79,7 @@ export default function ParentBus() {
           <img src="${busIcon}" width="64" height="64" />
         </div>
       `,
-      yAnchor: 1,
+      yAnchor: 0.5,
       xAnchor: 0.5,
       zIndex: 1,
     });
@@ -70,7 +88,7 @@ export default function ParentBus() {
     busMarkerRef.current = busMarkerInstance;
 
     const parentInitialPosition = new window.kakao.maps.LatLng(location.lat, location.lng);
-    
+
     const overlayContent = document.createElement('div');
     overlayContent.style.position = 'relative';
     overlayContent.style.width = '50px';
@@ -79,19 +97,19 @@ export default function ParentBus() {
     pulseRing.className = 'pulse-ring';
     overlayContent.appendChild(pulseRing);
     const markerIcon = document.createElement('img');
-    markerIcon.src = markerImage;
+    markerIcon.src = daramgi;
     markerIcon.style.position = 'absolute';
     markerIcon.style.top = '50%';
     markerIcon.style.left = '50%';
-    markerIcon.style.width = '64px';
-    markerIcon.style.height = '95px';
+    markerIcon.style.width = '40px';
+    markerIcon.style.height = '60px';
     markerIcon.style.transform = 'translate(-50%, -50%)';
     overlayContent.appendChild(markerIcon);
     const parentMarkerInstance = new window.kakao.maps.CustomOverlay({
       position: parentInitialPosition,
       content: overlayContent,
-      yAnchor: 0,
-      xAnchor: 0,
+      yAnchor: 0.5,
+      xAnchor: 0.5,
       zIndex: 1,
     });
     parentMarkerInstance.setMap(newMap);
@@ -105,7 +123,7 @@ export default function ParentBus() {
     }
     isWebSocketInitialized.current = true;
 
-    const kindergartenId = parentInfo.child.kindergartenClass.kindergarten.kindergartenId;
+    const kindergartenId = parentInfo?.child.kindergartenClass.kindergarten.kindergartenId;
     const wsUrl = `${import.meta.env.VITE_WEBSOCKET_URL}/${kindergartenId}`;
     const ws = new WebSocket(wsUrl);
     wsRef.current = ws;
@@ -250,8 +268,18 @@ export default function ParentBus() {
     }
   };
 
+  const currentTime = new Date().getHours();
+  const main1 = isWebSocketInitialized.current
+    ? currentTime < 12
+      ? isMoving
+        ? "등원 중이에요."
+        : "운행 중이 아니에요"
+      : isMoving
+      ? "하원 중이에요."
+      : "운행 중이 아니에요"
+    : "운행 중이 아니에요";
+
   const description1 = "버스가";
-  const main1 = busOption === '등원' ? (isMoving ? "등원 중이에요." : "운행 중이 아니에요") : (isMoving ? "하원 중입니다." : "운행 중이 아니에요");
 
   return (
     <div className="flex flex-col h-screen bg-[#FFEC8A]">
