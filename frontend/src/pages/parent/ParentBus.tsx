@@ -52,7 +52,7 @@ export default function ParentBus() {
     const initialPosition = new window.kakao.maps.LatLng(location.lat, location.lng);
     const imageSize = new window.kakao.maps.Size(40, 40);
     const imageOption = { offset: new window.kakao.maps.Point(27, 69) };
-    const markerImage = new window.kakao.maps.MarkerImage(myLocation, imageSize, imageOption);
+    const markerImage = new window.kakao.maps.MarkerImage(daramgi, imageSize, imageOption);
 
     const busMarkerInstance = new window.kakao.maps.CustomOverlay({
       position: initialPosition,
@@ -79,7 +79,7 @@ export default function ParentBus() {
     pulseRing.className = 'pulse-ring';
     overlayContent.appendChild(pulseRing);
     const markerIcon = document.createElement('img');
-    markerIcon.src = busLocation;
+    markerIcon.src = markerImage;
     markerIcon.style.position = 'absolute';
     markerIcon.style.top = '50%';
     markerIcon.style.left = '50%';
