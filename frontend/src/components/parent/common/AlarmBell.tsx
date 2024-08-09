@@ -5,6 +5,7 @@ import { FaBus } from 'react-icons/fa'
 import { getAllAlarms, deleteAlarm, deleteAllAlarms } from '../../../api/alarm'
 import { formatDate } from '../../../utils/parent/dateUtils'
 import { Notification } from './MainHeader'
+import ThreeModel from '../../ThreeModel'
 
 interface Alarm {
   id: number;
@@ -127,6 +128,10 @@ export default function AlaramBell({ notificationCount: initialNotificationCount
                 </div>
               ))}
             </div>
+          </div>
+
+          <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-40">
+            <ThreeModel />
           </div>
         </>
       )}

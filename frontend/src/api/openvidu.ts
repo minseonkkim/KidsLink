@@ -4,12 +4,6 @@ import axiosInstance from "./token/axiosInstance";
 const APPLICATION_SERVER_URL = import.meta.env.VITE_OPENVIDU_URL;
 const OPENVIDU_SERVER_SECRET = import.meta.env.VITE_OPENVIDU_SECRET;
 
-interface Recording {
-  id: string;
-  name: string;
-  url: string; // Assuming the URL to access the recording is available
-}
-
 declare global {
   interface Window {
     SpeechRecognition: any;
@@ -17,11 +11,7 @@ declare global {
   }
 }
 
-export const getToken = async (mySessionId: string): Promise<string> => {
-  const sessionId = await createSession(mySessionId);
-  return await createToken(sessionId);
-};
-
+// 세션 생성
 const createSession = async (sessionId: string): Promise<string> => {
   const response = await axios.post(
     `${APPLICATION_SERVER_URL}/sessions`,
@@ -29,12 +19,13 @@ const createSession = async (sessionId: string): Promise<string> => {
     {
       headers: {
         "Content-Type": "application/json",
-      }
+      },
     }
   );
-  return response.data; // 세션 ID 반환, data.id를 통해 올바른 값 추출
+  return response.data; // 세션 ID 반환
 };
 
+// 토큰 생성
 const createToken = async (sessionId: string): Promise<string> => {
   const response = await axios.post(
     `${APPLICATION_SERVER_URL}/sessions/${sessionId}/connections`,
@@ -46,46 +37,72 @@ const createToken = async (sessionId: string): Promise<string> => {
   return response.data; // 토큰 반환
 };
 
-// 녹화 시작
-const startRecording = async (sessionId: string): Promise<string> => {
+export const getToken = async (mySessionId: string): Promise<string> => {
+  const sessionId = await createSession(mySessionId);
+  return await createToken(sessionId);
+};
+// 세그먼트 녹화 시작
+export const startSegmentRecording = async (sessionId: string): Promise<string> => {
+  const url = `${APPLICATION_SERVER_URL}/sessions/${sessionId}/recordings/start`;
+
   try {
     const response = await axios.post(
-      `${APPLICATION_SERVER_URL}/sessions/${sessionId}/recordings/start`,
+      url,
       {
         outputMode: "COMPOSED",
         recordingMode: "ALWAYS",
-        name: "recording-name",
+        name: `segment-${Date.now()}`,
         hasAudio: true,
-        hasVideo: true
+        hasVideo: true,
       },
       { headers: { "Content-Type": "application/json" } }
     );
+
     return response.data;
   } catch (error) {
-    console.error("Error starting recording:", error);
+    console.error("Error starting segment recording:", error);
     throw error;
   }
 };
 
-// 녹화 중지
-export const stopRecording = async (recordingId: string): Promise<any> => {
+// 세그먼트 녹화 중지
+export const stopSegmentRecording = async (recordingId: string): Promise<void> => {
+  const url = `${APPLICATION_SERVER_URL}/recordings/stop/${recordingId}`;
+
   try {
-    const response = await axios.post(
-      `${APPLICATION_SERVER_URL}/recordings/stop/${recordingId}`,
-      {},
-      { headers: { "Content-Type": "application/json" } }
-    );
-    return response.data;
+    await axios.post(url, {}, { headers: { "Content-Type": "application/json" } });
   } catch (error) {
-    console.error("Error stopping recording:", error);
+    console.error("Error stopping segment recording:", error);
     throw error;
   }
+};
+
+// 세그먼트 병합
+const mergeSegments = async (segmentList: string[]): Promise<string> => {
+  const url = `${APPLICATION_SERVER_URL}/recordings/save`;
+
+  try {
+    const response = await axios.post(url, segmentList, {
+      headers: { "Content-Type": "application/json" },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error("Error merging segments:", error);
+    throw error;
+  }
+};
+
+// 욕설 감지
+const detectProfanity = (text: string): boolean => {
+  const profanityList = ["김범수", "바보"]; // 필요에 따라 단어 추가
+  return profanityList.some((word) => text.includes(word));
 };
 
 // 녹화된 영상 가져오기
-export const fetchRecordings = async (sessionId: string): Promise<any[]> => {
+export const fetchRecordings = async (): Promise<any[]> => {
   try {
-    const response = await axiosInstance.get(`${import.meta.env.VITE_OPENVIDU_URL}/recordings/${sessionId}`);
+    const response = await axiosInstance.get(`${import.meta.env.VITE_OPENVIDU_URL}/recordings`);
     return response.data;
   } catch (error) {
     console.error("Error fetching recordings:", error);
@@ -93,16 +110,13 @@ export const fetchRecordings = async (sessionId: string): Promise<any[]> => {
   }
 };
 
-// 욕설 감지
-const detectProfanity = (text: string): boolean => {
-  const profanityList = ["김범수", "바보"]; // Add more words as needed
-  return profanityList.some((word) => text.includes(word));
-};
-
-// stt()
-export const handleSpeechRecognition = async ( 
+// STT 및 세그먼트 녹화 처리
+export const handleSpeechRecognition = async (
   sessionId: string,
-  setRecordingId: React.Dispatch<React.SetStateAction<string | null>>
+  setRecordingId: React.Dispatch<React.SetStateAction<string | null>>,
+  segmentList: React.MutableRefObject<string[]>,
+  intervalIdRef: React.MutableRefObject<number | null>,
+  startMainRecording: () => void
 ) => {
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SpeechRecognition) {
@@ -118,14 +132,17 @@ export const handleSpeechRecognition = async (
     for (let i = event.resultIndex; i < event.results.length; i++) {
       if (event.results[i].isFinal) {
         const transcript = event.results[i][0].transcript;
-        console.log(transcript);
+        console.log("STT Result:", transcript);
+
         if (detectProfanity(transcript)) {
-          console.log("Profanity detected. Starting recording...");
-          alert("욕설이 감지되었습니다. 녹화가 시작됩니다."); // 알림창 추가 ----> ***************TODO : 수정필요*************
-          const recordingId = await startRecording(sessionId);
-          console.log("Recording started with ID:", recordingId);
-          setRecordingId(recordingId);
-          recognition.stop(); // 중복 녹화를 방지하기 위해 감지 중지
+          console.log("Profanity detected. Starting main recording...");
+
+          if (segmentList.current.length > 0) {
+            await stopSegmentRecording(segmentList.current[segmentList.current.length - 1]);
+          }
+
+          startMainRecording();
+          recognition.stop(); // STT 중지
         }
       }
     }
@@ -136,32 +153,129 @@ export const handleSpeechRecognition = async (
   };
 
   recognition.start();
+
+  intervalIdRef.current = window.setInterval(async () => {
+    if (segmentList.current.length > 0) {
+      const lastSegmentId = segmentList.current[segmentList.current.length - 1];
+      console.log("Stopping last segment recording, ID:", lastSegmentId);
+      await stopSegmentRecording(lastSegmentId);
+    }
+
+    const newSegmentId = await startSegmentRecording(sessionId);
+    console.log("Started new segment recording, ID:", newSegmentId, " for session:", sessionId);
+    segmentList.current.push(newSegmentId);
+    setRecordingId(newSegmentId);
+  }, 5000);
 };
 
-export const stopSpeechRecognition = () => {
-  const recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (recognition) {
-    recognition.stop();
+// 메인 녹화 시작
+export const startMainRecording = async (sessionId: string): Promise<string> => {
+  const url = `${APPLICATION_SERVER_URL}/sessions/${sessionId}/recordings/start`;
+
+  try {
+    const response = await axios.post(
+      url,
+      {
+        outputMode: "COMPOSED",
+        recordingMode: "ALWAYS",
+        name: `main-${Date.now()}`,
+        hasAudio: true,
+        hasVideo: true,
+      },
+      { headers: { "Content-Type": "application/json" } }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error("Error starting main recording:", error);
+    throw error;
   }
 };
 
-// 녹화 다운로드
-export const handleDownload = async (userSessionId, recordingName) => {
+// 메인 녹화 중지
+export const stopMainRecording = async (recordingId: string): Promise<void> => {
+  const url = `${APPLICATION_SERVER_URL}/recordings/stop/${recordingId}`;
+
   try {
-    const response = await axiosInstance.get(`/api/video/recordings/download/${userSessionId}/recording/${recordingName}`, {
-      responseType: 'blob'
+    await axios.post(url, {}, { headers: { "Content-Type": "application/json" } });
+  } catch (error) {
+    console.error("Error stopping main recording:", error);
+    throw error;
+  }
+};
+
+// 녹화 중지 버튼 - 세그먼트 병합 및 녹화 중지
+export const stopRecording = async (
+  sessionId: string,
+  segmentList: string[],
+  intervalIdRef: React.MutableRefObject<number | null>
+) => {
+  try {
+    if (intervalIdRef.current) {
+      clearInterval(intervalIdRef.current); // 세그먼트 녹화 타이머 중지
+    }
+
+    console.log("segmentList", segmentList)
+    for (const segmentId of segmentList) {
+      await stopSegmentRecording(segmentId); // 모든 세그먼트 녹화 중지
+    }
+
+    const mergedFilePath = await mergeSegments(segmentList); // 세그먼트 병합
+    console.log("Merged recording available at:", mergedFilePath);
+
+    return mergedFilePath;
+  } catch (error) {
+    console.error("Error stopping and merging recordings:", error);
+    throw error;
+  }
+};
+
+export const handleDownload = async (url: string) => {
+  try {
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/octet-stream",
+      },
     });
-    console.log(`${APPLICATION_SERVER_URL}/api/video/recordings/download/${userSessionId}/recording/${recordingName}`)
-    console.log(response)
-    const url = window.URL.createObjectURL(new Blob([response.data]));
-    console.log(url)
-    const link = document.createElement('a');
-    link.href = url;
-    link.setAttribute('download', `${recordingName}`); // 파일명 설정
+
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+
+    const contentDisposition = response.headers.get("Content-Disposition");
+    const contentType = response.headers.get("Content-Type");
+    const blob = await response.blob();
+
+    let fileName = "download";
+    if (contentDisposition) {
+      const fileNameMatch = contentDisposition.match(/filename="?(.+)"?/);
+      if (fileNameMatch.length > 1) {
+        fileName = fileNameMatch[1];
+      }
+    } else if (contentType) {
+      const extension = contentType.split("/")[1];
+      fileName = `kidslink.${extension}`;
+    }
+
+    const link = document.createElement("a");
+    const objectURL = URL.createObjectURL(blob);
+    link.href = objectURL;
+    link.download = fileName;
     document.body.appendChild(link);
     link.click();
-    link.parentNode.removeChild(link);
+    document.body.removeChild(link);
+    URL.revokeObjectURL(objectURL);
   } catch (error) {
-    console.error('Download failed:', error);
+    console.error("Failed to download file:", error);
   }
+  // window.location.href = url;
 };
+
+// // 기존 기능은 그대로 유지 - Chat GPT 추가
+// export const stopSpeechRecognition = () => {
+//   const recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+//   if (recognition) {
+//     recognition.stop();
+//   }
+// };

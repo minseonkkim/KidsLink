@@ -1,7 +1,7 @@
 import React from 'react';
 import { useDrag, useDrop } from 'react-dnd';
-import { FaTrash } from 'react-icons/fa6';
 import { ImageItem, DragItem } from '../../../types/album';
+import { FaMinusCircle } from 'react-icons/fa';
 
 interface ImageItemComponentProps {
   image: ImageItem;
@@ -9,12 +9,20 @@ interface ImageItemComponentProps {
   itemIndex: number;
   moveImage: (dragIndex: number, hoverIndex: number, itemIndex: number, targetItemIndex: number) => void;
   deleteImage: (itemIndex: number, imgIndex: number) => void;
+  isFailedCategory: boolean;
 }
 
-export default function ImageItemComponent({ image, index, itemIndex, moveImage, deleteImage }: ImageItemComponentProps) {
+export default function ImageItemComponent({
+  image,
+  index,
+  itemIndex,
+  moveImage,
+  deleteImage,
+  isFailedCategory,
+}: ImageItemComponentProps) {
   const [{ isDragging }, drag] = useDrag({
     type: 'image',
-    item: { index, itemIndex },
+    item: { index, itemIndex, image }, // Include full image object
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
     }),
@@ -47,12 +55,14 @@ export default function ImageItemComponent({ image, index, itemIndex, moveImage,
           이미지 없음
         </div>
       )}
-      <button
-        className="absolute top-1 right-1 bg-red-600 text-white p-1 rounded-full"
-        onClick={() => deleteImage(itemIndex, index)}
-      >
-        <FaTrash />
-      </button>
+      {!isFailedCategory && (
+        <button
+          className="absolute top-1 right-1 bg-red-600 text-white p-[2px] rounded-full"
+          onClick={() => deleteImage(itemIndex, index)}
+        >
+          <FaMinusCircle size={18} />
+        </button>
+      )}
     </div>
   );
 }

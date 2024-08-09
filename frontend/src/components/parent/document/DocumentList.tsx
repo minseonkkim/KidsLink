@@ -21,9 +21,17 @@ interface DocumentListProps {
 export default function DocumentList({ documents, handleDocumentClick }: DocumentListProps) {
   return (
     <div className="space-y-6">
-      {documents.map((doc) => (
-        <DocumentItem key={`${doc.type}-${doc.documentId}`} doc={doc} handleDocumentClick={handleDocumentClick} />
-      ))}
+      {documents.length === 0 ? (
+        <p className="text-center text-gray-500">문서가 없습니다.</p>
+      ) : (
+        documents.map((doc) => (
+          <DocumentItem
+            key={`${doc.type}-${doc.documentId}`}
+            doc={doc}
+            handleDocumentClick={handleDocumentClick}
+          />
+        ))
+      )}
     </div>
   )
 }

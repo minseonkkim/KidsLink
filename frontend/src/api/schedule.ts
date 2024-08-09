@@ -1,5 +1,4 @@
-import { IoEllipseSharp } from 'react-icons/io5';
-import axiosInstance from './token/axiosInstance';
+import axiosInstance from './token/axiosInstance'
 
 interface KindergartenSchedule {
   id: number;
@@ -71,6 +70,7 @@ export async function getAllParentSchedules(year: number, month: number): Promis
   try {
     const response = await axiosInstance.get<{ data: string[] }>(`schedule/parent?year=${year}&month=${month}`);
     if (response.data) {
+      console.log("학부모 전체 일정: ", response.data.data)
       return response.data.data;
     } else {
       throw new Error('Failed to fetch schedules');
@@ -86,7 +86,6 @@ export async function getParentSchedules(date: string): Promise<ParentSchedules>
   try {
     const response = await axiosInstance.get<{ data: ParentSchedules }>(`schedule/parent/detail?date=${date}`);
     if (response.data) {
-      console.log(response.data.data)
       return response.data.data;
     } else {
       throw new Error('Failed to fetch schedule');
@@ -102,6 +101,7 @@ export async function getTeacherSchedules(date: string): Promise<TeacherSchedule
   try{
     const response = await axiosInstance.get(`schedule/teacher?date=${date}`);
     if (response.data.status === "success") {
+      console.log("선생님 전체 일정", response.data.data);
       return response.data.data;
     } else {
       throw new Error('Failed to fetch schedule');

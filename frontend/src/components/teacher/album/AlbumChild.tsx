@@ -1,4 +1,4 @@
-import { FaTrash } from "react-icons/fa6";
+import { FaMinusCircle } from "react-icons/fa";
 
 interface Image {
     path: string;
@@ -22,9 +22,9 @@ export default function AlbumChild({ name, isFocus, images }: AlbumChildProps) {
                     <div key={index} className="relative w-full h-32">
                         <img src={item.path} className="object-cover w-full h-full rounded-md" />
                         <button 
-                            className="absolute top-1 right-1 bg-red-600 text-white p-1 rounded-full"
+                            className="absolute top-1 right-1 bg-red-600 text-white p-[2px] rounded-full"
                         >
-                            <FaTrash />
+                            <FaMinusCircle size={18} />
                         </button>
                     </div>
                 ))}

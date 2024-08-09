@@ -9,6 +9,7 @@ import com.ssafy.kidslink.application.album.mapper.AlbumMapper;
 import com.ssafy.kidslink.application.album.repository.AlbumRepository;
 import com.ssafy.kidslink.application.child.domain.Child;
 import com.ssafy.kidslink.application.child.dto.ChildDTO;
+import com.ssafy.kidslink.application.child.mapper.ChildMapper;
 import com.ssafy.kidslink.application.child.repository.ChildRepository;
 import com.ssafy.kidslink.application.child.service.ChildService;
 import com.ssafy.kidslink.application.image.domain.Image;
@@ -16,6 +17,7 @@ import com.ssafy.kidslink.application.image.dto.ImageDTO;
 import com.ssafy.kidslink.application.image.repository.ImageRepository;
 import com.ssafy.kidslink.application.image.service.ImageService;
 import com.ssafy.kidslink.application.kindergarten.domain.KindergartenClass;
+import com.ssafy.kidslink.application.kindergarten.repository.KindergartenClassRepository;
 import com.ssafy.kidslink.application.notification.domain.ParentNotification;
 import com.ssafy.kidslink.application.notification.respository.ParentNotificationRepository;
 import com.ssafy.kidslink.application.teacher.domain.Teacher;
@@ -45,6 +47,8 @@ public class AlbumService {
     private final AlbumRepository albumRepository;
     private final AlbumMapper albumMapper;
     private final ParentNotificationRepository parentNotificationRepository;
+    private final KindergartenClassRepository kindergartenClassRepository;
+    private final ChildMapper childMapper;
     @Value("${ai.server.url}")
     private String aiServerUrl;
 
@@ -197,6 +201,24 @@ public class AlbumService {
 
     public AlbumDTO getAlbumById(int albumId) {
         return albumMapper.toDTO(albumRepository.findById(albumId).orElseThrow(() -> new RuntimeException("Album not found with id " + albumId)));
+    }
+
+    public List<ChildAlbumDTO> getAllChildrenAlbums(int kindergartenClassId) {
+        KindergartenClass kindergartenClass = kindergartenClassRepository.findById(kindergartenClassId).orElseThrow();
+        List<Child> children = childRepository.findByKindergartenClass(kindergartenClass);
+        List<ChildAlbumDTO> childAlbumDTOs = new ArrayList<>();
+        for (Child child : children) {
+            ChildAlbumDTO childAlbumDTO = new ChildAlbumDTO();
+            childAlbumDTO.setChild(childMapper.toDTO(child));
+            List<Album> albums = albumRepository.findByChild(child);
+            List<AlbumDTO> albumDTOs = new ArrayList<>();
+            for (Album album : albums) {
+                albumDTOs.add(albumMapper.toDTO(album));
+            }
+            childAlbumDTO.setAlbums(albumDTOs);
+            childAlbumDTOs.add(childAlbumDTO);
+        }
+        return childAlbumDTOs;
     }
 
 }

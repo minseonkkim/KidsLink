@@ -1,6 +1,5 @@
-import pill from '../../../assets/parent/pill.png'
-import absentIcon from '../../../assets/parent/absent.png'
 import checkedIcon from '../../../assets/parent/check.png'
+import { FaPills, FaRegTimesCircle } from "react-icons/fa"
 
 interface Document {
   id: number;
@@ -32,11 +31,11 @@ export default function DocumentItem({ doc, handleDocumentClick }: DocumentItemP
             {`${doc.startDate} ~ ${doc.endDate}`}
           </p>
           <div className="flex items-center">
-            <img
-              src={doc.type === 'dosage' ? pill : absentIcon}
-              alt={doc.type === 'dosage' ? 'pill' : 'absent'}
-              className="w-7 h-7 mr-4"
-            />
+              {doc.type === 'dosage' ? (
+                <FaPills className="w-4 h-4 mr-2 text-purple-600" aria-label="pill" />
+              ) : (
+                <FaRegTimesCircle className="w-4 h-4 mr-2 text-red-600" aria-label="absent" />
+              )}
             <p className="text-lg font-bold text-[#353c4e] pt-1">
               {doc.title}
             </p>
@@ -46,7 +45,7 @@ export default function DocumentItem({ doc, handleDocumentClick }: DocumentItemP
           <img
             src={checkedIcon}
             alt="checked"
-            className="w-[30px] h-[30px] ml-auto object-contain"
+            className="w-[24px] h-[24px] ml-auto object-contain"
           />
         )}
       </div>

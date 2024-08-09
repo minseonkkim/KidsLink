@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { IoCameraOutline } from "react-icons/io5";
-import { FaTrash } from "react-icons/fa";
 import { FormDiaryData, createDiary } from "../../../api/growthdiary.ts";
 import { showToastError } from "../common/ToastNotification.tsx";
+import { FaMinusCircle } from "react-icons/fa";
 
 export default function GrowthDiaryForm({
   closeModal,
@@ -76,7 +76,7 @@ export default function GrowthDiaryForm({
   const today = new Date().toISOString().split("T")[0];
 
   return (
-    <div className="w-[500px]">
+    <div className="w-[327px] lg:w-[500px]">
       <form onSubmit={handleSubmit}>
         <div className="mb-4 flex flex-row items-center">
           <label className="block mr-3 mb-1 font-bold whitespace-nowrap text-[18px]">
@@ -121,9 +121,9 @@ export default function GrowthDiaryForm({
                 <button
                   type="button"
                   onClick={() => handleRemoveImage(index)}
-                  className="p-1 absolute top-1 right-1 bg-red-600 text-white rounded-full w-5 h-5 flex items-center justify-center"
+                  className="absolute top-1 right-1 bg-red-600 text-white p-[2px] rounded-full w-5 h-5 flex items-center justify-center"
                 >
-                  <FaTrash />
+                  <FaMinusCircle size={18} />
                 </button>
               </div>
             ))}

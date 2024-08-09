@@ -147,6 +147,8 @@ CREATE TABLE `bus_stop` (
     `bus_stop_id` INT NOT NULL AUTO_INCREMENT,
     `bus_stop_name` VARCHAR(100) NULL,
     `bus_id` INT NOT NULL,
+  `latitude` DECIMAL(20,17) NULL, -- 위도 (-90 ~ 90, 적도가 0도이며, 한국은 33 ~ 43도에 위치)
+  `longitude` DECIMAL(20,17) NULL, -- 경도 (-180 ~ 180, 한국은 124 ~ 132도에 위치)
     PRIMARY KEY (`bus_stop_id`),
     FOREIGN KEY (`bus_id`) REFERENCES `bus`(`bus_id`)
     ON DELETE CASCADE

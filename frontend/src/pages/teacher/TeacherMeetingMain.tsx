@@ -5,6 +5,7 @@ import Title from "../../components/teacher/common/Title";
 import CalendarImg from "../../assets/teacher/calendar_img.png";
 import CheckImg from "../../assets/teacher/check_img.png";
 import VideoConsultingImg from "../../assets/teacher/video_consulting_img.png";
+import { Link } from "react-router-dom";
 
 export default function TeacherMeetingMain() {
     return (
@@ -13,6 +14,9 @@ export default function TeacherMeetingMain() {
             <div className="mt-[130px] px-[20px] lg:px-[130px]">
                 <NavigateBack backPage="홈" backLink='/' />
                 <Title title="화상상담" />
+                {/* 이동하기위한 요소 */}
+                <Link to="/meeting/recordings">Go to Recordings</Link>
+
                 <div className="flex flex-col lg:flex-row items-center justify-center lg:mt-[95px] mt-10 space-y-8 lg:space-y-0 lg:space-x-10">
                     <MeetingMainButton 
                         title="상담가능시간 open" 
