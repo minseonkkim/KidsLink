@@ -1,5 +1,8 @@
+import moment from "moment";
+import { ValuePiece } from "../meeting";
+
 // YYYY-MM-DD -> YYYY년 MM월 DD일
-export default function formatDate(input) {
+export function formatDate(input) {
     let dateString;
 
     if (input instanceof Date) {
@@ -20,3 +23,15 @@ export default function formatDate(input) {
 
     return `${year}년 ${formattedMonth}월 ${formattedDay}일`;
 }
+
+
+
+// YYYY-MM-DD 
+export function formatSendDate (date: ValuePiece | [ValuePiece, ValuePiece]): string {
+    if (date instanceof Date) {
+      return moment(date).format("YYYY-MM-DD");
+    } else if (Array.isArray(date) && date[0] instanceof Date) {
+      return moment(date[0]).format("YYYY-MM-DD");
+    }
+    return '';
+  };
