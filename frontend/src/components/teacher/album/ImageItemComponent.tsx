@@ -1,7 +1,7 @@
 import React from 'react';
 import { useDrag, useDrop } from 'react-dnd';
-import { FaTrash } from 'react-icons/fa6';
 import { ImageItem, DragItem } from '../../../types/album';
+import { FaMinusCircle } from 'react-icons/fa';
 
 interface ImageItemComponentProps {
   image: ImageItem;
@@ -48,10 +48,10 @@ export default function ImageItemComponent({ image, index, itemIndex, moveImage,
         </div>
       )}
       <button
-        className="absolute top-1 right-1 bg-red-600 text-white p-1 rounded-full"
+        className="absolute top-1 right-1 bg-red-600 text-white p-[2px] rounded-full"
         onClick={() => deleteImage(itemIndex, index)}
       >
-        <FaTrash />
+        <FaMinusCircle size={18} />
       </button>
     </div>
   );
