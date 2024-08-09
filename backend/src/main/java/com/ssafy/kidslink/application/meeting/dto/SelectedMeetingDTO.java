@@ -12,8 +12,8 @@ import java.time.LocalDate;
 public class SelectedMeetingDTO {
     private LocalDate date;
     private String time;
-    private int teahcerId;
+    private int teacherId;
     private String teacherName;
-    private int parentId;
+    private String parentUsername;
     private String childName;
 }

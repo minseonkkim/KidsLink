@@ -1,5 +1,6 @@
 package com.ssafy.kidslink.application.meeting.controller;
 
+import com.ssafy.kidslink.application.meeting.domain.MeetingSchedule;
 import com.ssafy.kidslink.application.meeting.dto.*;
 import com.ssafy.kidslink.application.meeting.service.MeetingTimeService;
 import com.ssafy.kidslink.common.dto.APIError;
@@ -199,33 +200,61 @@ public class MeetingTimeController {
 
     }
 
-    @PostMapping("/confirm")
-    public ResponseEntity<APIResponse<List<MeetingRoomDTO>>> confirmMeeting(@AuthenticationPrincipal Object principal){
+    @PostMapping("/classify")
+    public ResponseEntity<APIResponse<List<SelectedMeetingDTO>>> classifySchedule(@AuthenticationPrincipal Object principal,@RequestBody List<SelectedMeetingDTO> selectedMeetingDTOS){
         if(principal instanceof CustomUserDetails){
             CustomUserDetails userDetails = (CustomUserDetails) principal;
 
-            List<MeetingRoomDTO> meetings = meetingTimeService.confirmMeeting(userDetails.getUsername());
+            List<SelectedMeetingDTO> meetings = meetingTimeService.classifySchedule(selectedMeetingDTOS);
             meetingTimeService.deleteMeeting(userDetails.getUsername());
             meetingTimeService.deleteMeetingTime(userDetails.getUsername());
-            APIResponse<List<MeetingRoomDTO>> responseData = new APIResponse<>(
+            APIResponse<List<SelectedMeetingDTO>> responseData = new APIResponse<>(
                     "success",
                     meetings,
-                    "상담 일정 확정에 성공하였습니다.",
+                    "상담 일정 분류에 성공하였습니다.",
                     null
             );
             return new ResponseEntity<>(responseData, HttpStatus.OK);
         }
         APIError apiError = new APIError("UNAUTHORIZED", "유효한 JWT 토큰이 필요합니다.");
 
-        APIResponse<List<MeetingRoomDTO>> responseData = new APIResponse<>(
+        APIResponse<List<SelectedMeetingDTO>> responseData = new APIResponse<>(
                 "fail",
                 null,
-                "상담 일정 확정을 실패했습니다.",
+                "상담 일정 분류에 실패했습니다.",
                 apiError
         );
 
         return new ResponseEntity<>(responseData, HttpStatus.BAD_REQUEST);
     }
+
+//    @PostMapping("/confirm")
+//    public ResponseEntity<APIResponse<List<MeetingRoomDTO>>> confirmMeeting(@AuthenticationPrincipal Object principal){
+//        if(principal instanceof CustomUserDetails){
+//            CustomUserDetails userDetails = (CustomUserDetails) principal;
+//
+//            List<MeetingRoomDTO> meetings = meetingTimeService.confirmMeeting(userDetails.getUsername());
+//            meetingTimeService.deleteMeeting(userDetails.getUsername());
+//            meetingTimeService.deleteMeetingTime(userDetails.getUsername());
+//            APIResponse<List<MeetingRoomDTO>> responseData = new APIResponse<>(
+//                    "success",
+//                    meetings,
+//                    "상담 일정 확정에 성공하였습니다.",
+//                    null
+//            );
+//            return new ResponseEntity<>(responseData, HttpStatus.OK);
+//        }
+//        APIError apiError = new APIError("UNAUTHORIZED", "유효한 JWT 토큰이 필요합니다.");
+//
+//        APIResponse<List<MeetingRoomDTO>> responseData = new APIResponse<>(
+//                "fail",
+//                null,
+//                "상담 일정 확정을 실패했습니다.",
+//                apiError
+//        );
+//
+//        return new ResponseEntity<>(responseData, HttpStatus.BAD_REQUEST);
+//    }
 
     @GetMapping("/selected")
     public ResponseEntity<APIResponse<List<SelectedMeetingDTO>>> getSelectedMeetings(@AuthenticationPrincipal Object principal){
