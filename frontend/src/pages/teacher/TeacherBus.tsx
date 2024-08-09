@@ -71,6 +71,12 @@ export default function TeacherBus() {
     };
   }, [teacherInfo, setTeacherInfo]);
 
+  useEffect(() => {
+    if (!isWebSocketActive) {
+      setAllChecked(false);
+    }
+  }, [isWebSocketActive, setAllChecked]);
+
   const handleOptionChange = (option: string) => {
     setSelectedOption(option);
     setAllChecked(false);
@@ -186,33 +192,6 @@ export default function TeacherBus() {
         <button onClick={handleButtonClick} className="absolute top-[125px] right-[30px] lg:right-[150px] border-[2px] border-[#7C7C7C] bg-[#E3EEFF] px-3 py-1 font-bold rounded-[10px] hover:bg-[#D4DDEA] flex flex-row items-center">
           {isWebSocketActive ? '버스 도착' : '버스 출발'}
         </button>
-
-        <div className="absolute top-[180px] left-[30px] lg:left-[150px] rounded-[10px] w-auto">
-          <div className="flex py-1 space-x-4">
-            <label className="flex items-center text-sm text-gray-700">
-              <input
-                type="radio"
-                name="busOption"
-                value="등원"
-                checked={selectedOption === '등원'}
-                onChange={() => handleOptionChange('등원')}
-                disabled={isWebSocketActive}
-              />
-              <span className="ml-2">등원</span>
-            </label>
-            <label className="flex items-center text-sm text-gray-700">
-              <input
-                type="radio"
-                name="busOption"
-                value="하원"
-                checked={selectedOption === '하원'}
-                onChange={() => handleOptionChange('하원')}
-                disabled={isWebSocketActive}
-              />
-              <span className="ml-2">하원</span>
-            </label>
-          </div>
-        </div>
 
         <div 
           className="flex flex-col lg:flex-row items-center justify-between lg:space-x-4 lg:mt-0 mt-[70px]" 
