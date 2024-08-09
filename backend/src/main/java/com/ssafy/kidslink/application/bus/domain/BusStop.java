@@ -24,7 +24,7 @@ public class BusStop {
     @Column(name = "latitude")
     private float latitude;
 
-    @Column(name = "longtitude")
+    @Column(name = "longitude")
     private float longitude;
 
     @ManyToOne
