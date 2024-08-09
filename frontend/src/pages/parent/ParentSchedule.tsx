@@ -7,7 +7,7 @@ import {
   getParentSchedules,
 } from "../../api/schedule";
 import { getMeetingInfo } from "../../api/meeting";
-import styled from "styled-components";
+import styled, { createGlobalStyle } from "styled-components";
 import {
   FaPills,
   FaRegTimesCircle,
@@ -16,13 +16,19 @@ import {
 } from "react-icons/fa";
 import daramgi from "../../assets/parent/cute-daramgi.png"; // 드람기 이미지 경로
 
+// 전체 화면 스크롤 비활성화
+const GlobalStyle = createGlobalStyle`
+  body {
+    overflow: hidden; /* 전체 화면 스크롤 비활성화 */
+  }
+`;
+
 const CalendarContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 20px;
   border-radius: 20px;
-  box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2); /* 입체감을 위한 그림자 */
   background-color: #ffffff; /* 흰색 배경 */
 `;
 
@@ -35,11 +41,11 @@ const StyledCalendar = styled(Calendar)`
 
   .react-calendar {
     width: 100% !important;
-    background-color: #ffebcd !important; /* 부드러운 베이지 배경 */
     border-radius: 20px; /* 둥근 모서리 */
     font-family: "Comic Sans MS", cursive, sans-serif !important; /* 귀여운 폰트 */
     padding: 20px; /* 내부 여백 */
     border: none; /* 테두리 제거 */
+    box-shadow: none; /* 그림자 제거 */
   }
 
   .react-calendar__navigation {
@@ -48,7 +54,6 @@ const StyledCalendar = styled(Calendar)`
     border-radius: 20px 20px 0 0;
     height: 50px;
     background: transparent; /* 배경 투명 */
-    margin-bottom: 20px;
     padding: 0 10px;
   }
 
@@ -141,19 +146,42 @@ const StyledCalendar = styled(Calendar)`
   }
 `;
 
+const ScrollContainer = styled.div`
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: calc(100vh - 80px); /* 상단에서 50px 떨어진 위치 */
+  background-color: #fff;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  padding-top: 20px;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-bottom: 150px;
+  overflow-y: auto; /* 내부 스크롤 활성화 */
+`;
+
+const ScheduleListContainer = styled.div<{ hasContent: boolean }>`
+  padding: 15px;
+  border-radius: 15px;
+  background-color: #f9f9f9; /* 흰색 배경 */
+  box-shadow: ${({ hasContent }) =>
+    hasContent ? "0 4px 8px rgba(0, 0, 0, 0.1)" : "none"};
+`;
+
 const ScheduleList = styled.div`
   width: 100%;
-  margin-top: 20px;
+  margin-top: 10px;
 `;
 
 const ScheduleItem = styled.div`
   display: flex;
   align-items: center;
-  padding: 15px;
-  margin-bottom: 10px;
-  border-radius: 15px;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* 입체감 추가 */
-  background-color: #fff; /* 흰색 배경 */
+  margin-bottom: 12px; /* 리스트 간의 간격 감소 */
+  padding: 12px;
+  border-radius: 12px;
+  background-color: #ffffff; /* 흰색 배경 */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
   transition: transform 0.2s ease-in-out;
 
   &:hover {
@@ -161,14 +189,13 @@ const ScheduleItem = styled.div`
   }
 
   & > div {
-    background-color: #ffebcd;
-    border-radius: 10px;
+    border-radius: 50%;
     padding: 10px;
     margin-right: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* 아이콘 배경에 입체감 추가 */
+    box-shadow: none; /* 아이콘 배경의 그림자 제거 */
   }
 
   p {
@@ -177,53 +204,6 @@ const ScheduleItem = styled.div`
     color: #353c4e;
   }
 `;
-
-interface DosageSchedule {
-  dosageId: number;
-  startDate: string;
-  endDate: string;
-  name: string;
-  volume: string;
-  times: string;
-  details: string;
-}
-
-interface AbsentSchedule {
-  absentId: number;
-  startDate: string;
-  endDate: string;
-  reason: string;
-  details: string;
-}
-
-interface KindergartenSchedule {
-  id: number;
-  date: string;
-  content: string;
-}
-
-interface MeetingSchedule {
-  meetingId: number;
-  meetingDate: string;
-  meetingTime: string;
-}
-
-interface DetailedSchedule {
-  dosageSchedules: DosageSchedule[];
-  absentSchedules: AbsentSchedule[];
-  kindergartenSchedules: KindergartenSchedule[];
-  meetingSchedules: MeetingSchedule[];
-}
-
-interface MeetingInfo {
-  id: number;
-  date: string;
-  time: string;
-  teacherId: number;
-  teacherName: string;
-  parentId: number;
-  childName: string;
-}
 
 export default function ParentSchedule() {
   const [value, setValue] = useState<Date>(new Date());
@@ -301,9 +281,17 @@ export default function ParentSchedule() {
     ) : null;
   };
 
+  const hasContent =
+    detailedSchedules &&
+    (detailedSchedules.dosageSchedules.length > 0 ||
+      detailedSchedules.absentSchedules.length > 0 ||
+      detailedSchedules.kindergartenSchedules.length > 0 ||
+      detailedSchedules.meetingSchedules.length > 0);
+
   return (
-    <div className="relative min-h-[100dvh] flex flex-col bg-[#FFEC8A] overflow-hidden">
-      <div className="absolute bottom-0 h-[80%] px-4 flex flex-col w-full bg-white shadow-top rounded-tl-[20px] rounded-tr-[20px] pt-12 animate-slideUp">
+    <div className="relative min-h-[100dvh] flex flex-col bg-[#FFEC8A]">
+      <GlobalStyle />
+      <ScrollContainer>
         <div className="flex flex-col justify-center items-center">
           <CalendarContainer>
             <StyledCalendar
@@ -324,66 +312,70 @@ export default function ParentSchedule() {
           </CalendarContainer>
         </div>
 
-        {selectedDate && detailedSchedules && (
-          <ScheduleList>
-            {detailedSchedules.dosageSchedules.length > 0 && (
-              <div>
-                {detailedSchedules.dosageSchedules.map((schedule) => (
-                  <ScheduleItem key={schedule.dosageId}>
-                    <div>
-                      <FaPills className="text-purple-600" />
-                    </div>
-                    <p>{schedule.name}</p>
-                  </ScheduleItem>
-                ))}
-              </div>
-            )}
-            {detailedSchedules.absentSchedules.length > 0 && (
-              <div>
-                {detailedSchedules.absentSchedules.map((schedule) => (
-                  <ScheduleItem key={schedule.absentId}>
-                    <div>
-                      <FaRegTimesCircle className="text-red-600" />
-                    </div>
-                    <p>{schedule.reason}</p>
-                  </ScheduleItem>
-                ))}
-              </div>
-            )}
-            {detailedSchedules.kindergartenSchedules.length > 0 && (
-              <div>
-                {detailedSchedules.kindergartenSchedules.map((schedule) => (
-                  <ScheduleItem key={schedule.id}>
-                    <div>
-                      <FaSchool className="text-yellow-600" />
-                    </div>
-                    <p>{schedule.content}</p>
-                  </ScheduleItem>
-                ))}
-              </div>
-            )}
-            {detailedSchedules.meetingSchedules.length > 0 && (
-              <div>
-                {detailedSchedules.meetingSchedules.map((schedule) => {
-                  const meetingInfo = meetingInfoMap[schedule.meetingId];
-                  return (
-                    <ScheduleItem key={schedule.meetingId}>
-                      <div>
-                        <FaChalkboardTeacher className="text-green-600" />
-                      </div>
-                      <p>
-                        {schedule.meetingTime}{" "}
-                        {meetingInfo &&
-                          ` ${meetingInfo.teacherName} 선생님과의 상담`}
-                      </p>
-                    </ScheduleItem>
-                  );
-                })}
-              </div>
-            )}
-          </ScheduleList>
-        )}
-      </div>
+        <div className="px-4">
+          {selectedDate && detailedSchedules && (
+            <ScheduleListContainer hasContent={hasContent}>
+              <ScheduleList>
+                {detailedSchedules.dosageSchedules.length > 0 && (
+                  <div>
+                    {detailedSchedules.dosageSchedules.map((schedule) => (
+                      <ScheduleItem key={schedule.dosageId}>
+                        <div className="bg-[#E7DFFF] text-purple-600">
+                          <FaPills />
+                        </div>
+                        <p>{schedule.name}</p>
+                      </ScheduleItem>
+                    ))}
+                  </div>
+                )}
+                {detailedSchedules.absentSchedules.length > 0 && (
+                  <div>
+                    {detailedSchedules.absentSchedules.map((schedule) => (
+                      <ScheduleItem key={schedule.absentId}>
+                        <div className="bg-[#FFDFDF] text-red-600">
+                          <FaRegTimesCircle />
+                        </div>
+                        <p>{schedule.reason}</p>
+                      </ScheduleItem>
+                    ))}
+                  </div>
+                )}
+                {detailedSchedules.kindergartenSchedules.length > 0 && (
+                  <div>
+                    {detailedSchedules.kindergartenSchedules.map((schedule) => (
+                      <ScheduleItem key={schedule.id}>
+                        <div className="bg-[#FFF7CA] text-yellow-600">
+                          <FaSchool />
+                        </div>
+                        <p>{schedule.content}</p>
+                      </ScheduleItem>
+                    ))}
+                  </div>
+                )}
+                {detailedSchedules.meetingSchedules.length > 0 && (
+                  <div>
+                    {detailedSchedules.meetingSchedules.map((schedule) => {
+                      const meetingInfo = meetingInfoMap[schedule.meetingId];
+                      return (
+                        <ScheduleItem key={schedule.meetingId}>
+                          <div className="bg-[#FFF7CA] text-green-600">
+                            <FaChalkboardTeacher />
+                          </div>
+                          <p>
+                            {schedule.meetingTime}{" "}
+                            {meetingInfo &&
+                              ` ${meetingInfo.teacherName} 선생님과의 상담`}
+                          </p>
+                        </ScheduleItem>
+                      );
+                    })}
+                  </div>
+                )}
+              </ScheduleList>
+            </ScheduleListContainer>
+          )}
+        </div>
+      </ScrollContainer>
     </div>
   );
 }

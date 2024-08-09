@@ -290,7 +290,7 @@ export default function ParentBus() {
         imageSrc={daramgi}
         altText="다람쥐"
       />
-      <div className="flex flex-col flex-grow overflow-hidden rounded-tl-[20px] rounded-tr-[20px] bg-white shadow-top animate-slideUp -mt-10">
+      <div className="flex flex-col flex-grow overflow-hidden rounded-tl-[20px] rounded-tr-[20px] bg-white shadow-top animate-slideUp">
         <div className="flex flex-row items-center space-x-4">
           <Toggle isOn={isBoarding} toggleHandler={handleToggleChange} />
         </div>

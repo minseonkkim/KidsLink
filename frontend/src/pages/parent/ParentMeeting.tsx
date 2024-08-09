@@ -54,7 +54,7 @@ export default function ParentMeeting() {
         altText="다람쥐"
       />
 
-      <div className="flex flex-col flex-grow overflow-hidden rounded-tl-[20px] rounded-tr-[20px] bg-white shadow-top px-12 pt-12 pb-4 animate-slideUp -mt-10">
+      <div className="flex flex-col flex-grow overflow-hidden rounded-tl-[20px] rounded-tr-[20px] bg-white shadow-top px-12 pt-12 pb-4 animate-slideUp">
         {meetings.length === 0 ? (
           <p className="text-center text-gray-500">예약된 상담이 없습니다.</p>
         ) : (
