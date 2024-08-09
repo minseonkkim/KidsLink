@@ -145,6 +145,8 @@ public class BusStopService {
             busStopDTO.setBusStopName(busStops.get(i).getBusStopName());
             List<BusStopChildDTO> busStopChildren = getBusStopChildren(busStopId);
             busStopDTO.setChildren(busStopChildren);
+            busStopDTO.setLatitude(busStops.get(i).getLatitude());
+            busStopDTO.setLongitude(busStops.get(i).getLongitude());
             busStopDTOList.add(busStopDTO);
         }
         return busStopDTOList;
