@@ -16,6 +16,44 @@ import {
 } from "react-icons/fa";
 import daramgi from "../../assets/parent/cute-daramgi.png"; // 드람기 이미지 경로
 
+// 타입 정의 추가
+interface DosageSchedule {
+  dosageId: number;
+  name: string;
+  // 다른 필요한 필드들...
+}
+
+interface AbsentSchedule {
+  absentId: number;
+  reason: string;
+  // 다른 필요한 필드들...
+}
+
+interface KindergartenSchedule {
+  id: number;
+  content: string;
+  // 다른 필요한 필드들...
+}
+
+interface MeetingSchedule {
+  meetingId: number;
+  meetingTime: string;
+  // 다른 필요한 필드들...
+}
+
+interface DetailedSchedule {
+  dosageSchedules: DosageSchedule[];
+  absentSchedules: AbsentSchedule[];
+  kindergartenSchedules: KindergartenSchedule[];
+  meetingSchedules: MeetingSchedule[];
+}
+
+interface MeetingInfo {
+  id: number;
+  teacherName: string;
+  // 다른 필요한 필드들...
+}
+
 // 전체 화면 스크롤 비활성화
 const GlobalStyle = createGlobalStyle`
   body {
