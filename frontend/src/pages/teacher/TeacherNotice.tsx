@@ -90,7 +90,7 @@ export default function TeacherNotice() {
             <div className="lg:mt-[85px] mt-[120px] lg:px-[150px] flex flex-col items-center px-4">
                 <NavigateBack backPage="홈" backLink='/' />
                 <Title title="알림장" />
-                <button onClick={openCreateModal} className="absolute top-[175px] lg:right-[150px] right-[130px] border-[2px] border-[#7C7C7C] bg-[#E3EEFF] px-3 py-1 font-bold rounded-[10px] hover:bg-[#D4DDEA] flex flex-row items-center">
+                <button onClick={openCreateModal} className="absolute top-[175px] lg:top-[125px] lg:right-[150px] right-[130px] border-[2px] border-[#7C7C7C] bg-[#E3EEFF] px-3 py-1 font-bold rounded-[10px] hover:bg-[#D4DDEA] flex flex-row items-center">
                     <LuPencilLine className="mr-2" />알림장 작성하기
                 </button>
                 <div className="flex justify-center w-full lg:mt-[5px] mt-[50px]">

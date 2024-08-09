@@ -7,6 +7,8 @@ import { FaMinusCircle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import PulseLoader from "react-spinners/PulseLoader";
 import { handleClassify, handleDeleteImage, handleImageUpload } from "../../utils/album";
+import { BiCategory } from "react-icons/bi";
+import { Link } from "react-router-dom";
 
 export default function TeacherAlbum() {
   const navigate = useNavigate();
@@ -30,6 +32,14 @@ export default function TeacherAlbum() {
       <div className="px-[150px] mt-[120px]">
         <NavigateBack backPage="홈" backLink='/'/>
         <Title title="사진분류" tooltipContent={<div className="leading-relaxed w-[240px]">업로드한 사진을 AI가 아이별로 분류하고, 해당 아이의 학부모에게 전송합니다. 정상적으로 분류되지 않은 사진은 수동으로 분류할 수 있으니 안심하세요!</div>}/>
+        <Link to="/album/history">
+          <button
+            className="absolute top-[125px] right-[150px] border-[2px] border-[#7C7C7C] bg-[#E3EEFF] px-3 py-1 font-bold rounded-[10px] hover:bg-[#D4DDEA] flex flex-row items-center"
+          >
+            <BiCategory className="mr-2"/>
+            분류내역
+          </button>
+        </Link>
         <div className={`h-[470px] flex flex-row items-center ${images.length === 0 || loading ? 'justify-center' : 'justify-between'}`}>
           {!loading &&
           <div className={`flex flex-col items-center ${images.length === 0 ? 'mx-auto' : ''}`}>
