@@ -14,7 +14,7 @@ export default function TeacherDocument() {
   const [documents, setDocuments] = useState([]);
   const [filteredDocuments, setFilteredDocuments] = useState([]);
   const [displayedDocuments, setDisplayedDocuments] = useState([]);
-  const [selectedDocumentType, setSelectedDocumentType] = useState("");
+  const [selectedDocumentType, setSelectedDocumentType] = useState("전체");
   const [selectedDocumentId, setSelectedDocumentId] = useState<number | null>(null);
   const [childImages, setChildImages] = useState<{ [key: number]: string }>({});
   const [loading, setLoading] = useState(false);
@@ -32,7 +32,7 @@ export default function TeacherDocument() {
 
         if (reversedDocuments.length > 0) {
           const lastDocument = reversedDocuments[0];
-          setSelectedDocumentType(lastDocument.type);
+          setSelectedDocumentType("전체");
 
           if (lastDocument.type === "Absent") {
             setSelectedDocumentId(lastDocument.details.absentId);
@@ -56,12 +56,21 @@ export default function TeacherDocument() {
   }, []);
 
   useEffect(() => {
-    setFilteredDocuments(
-      documents.filter(document =>
+    let filtered = documents;
+
+    if (selectedDocumentType && selectedDocumentType !== "전체") {
+      filtered = documents.filter(document => document.type === selectedDocumentType);
+    }
+
+    if (searchTerm) {
+      filtered = filtered.filter(document =>
         document.details.childName.includes(searchTerm)
-      )
-    );
-  }, [searchTerm, documents]);
+      );
+    }
+
+    setFilteredDocuments(filtered);
+    setDisplayedDocuments([]); // 필터가 변경될 때 표시된 문서 목록을 초기화합니다.
+  }, [searchTerm, documents, selectedDocumentType]);
 
   useEffect(() => {
     const loadMoreDocuments = () => {
@@ -112,8 +121,12 @@ export default function TeacherDocument() {
     const fetchedDocuments = await getClassAllDocuments();
     const reversedDocuments = fetchedDocuments.reverse();
     setDocuments(reversedDocuments);
-    setFilteredDocuments(reversedDocuments);
-    setDisplayedDocuments([]);
+    // 여기서 필터링 및 상태 초기화를 다시 처리하지 않고 상태를 유지
+  };
+
+  const handleFilterClick = (type) => {
+    setSelectedDocumentType(type);
+    setDisplayedDocuments([]); // 필터가 변경될 때 표시된 문서 목록을 초기화합니다.
   };
 
   return (
@@ -124,17 +137,22 @@ export default function TeacherDocument() {
         <Title title="문서관리" />
         <div className="flex flex-col lg:flex-row justify-between">
           <div className="rounded-[20px] bg-[#f4f4f4] lg:w-[380px] w-full lg:h-[520px] h-[320px] p-[10px] mb-3 lg:mb-0">
-            <div className="flex flex-wrap">
-              {/* 결석 버튼 */}
+            <div className="flex space-x-2 ml-2 my-4">
+            <button
+              className={`rounded-[10px] ${selectedDocumentType === "전체" ? 'bg-[#D9D9D9] border-[2px] border-[#A0A0A0]' : 'bg-[#f4f4f4] border-[2px] border-[#d3d3d3]'} flex items-center justify-center w-[55px] h-[30px] font-bold text-[15px] cursor-pointer`}
+              onClick={() => handleFilterClick("전체")}
+            >
+              전체
+            </button>
               <button
-                className={`m-[10px] mb-[15px] w-full lg:w-[320px] lg:h-[100px] h-[80px] rounded-[15px] border-[3px] border-[#B2D170] cursor-pointer`}
+                className={`rounded-[10px] ${selectedDocumentType === "Absent" ? 'bg-[#FFDFDF] border-[2px] border-[#FF5A5A]' : 'bg-[#f4f4f4] border-[2px] border-[#d3d3d3]'} flex items-center justify-center w-[55px] h-[30px] font-bold text-[15px] cursor-pointer`}
+                onClick={() => handleFilterClick("Absent")}
               >
                 결석
               </button>
-
-              {/* 투약 버튼 */}
               <button
-                className={`m-[10px] mb-[15px] w-full lg:w-[320px] lg:h-[100px] h-[80px] rounded-[15px] border-[3px] border-[#B2D170] cursor-pointer`}
+                className={`rounded-[10px] ${selectedDocumentType === "Dosage" ? 'bg-[#E7DFFF] border-[2px] border-[#A085FF]' : 'bg-[#f4f4f4] border-[2px] border-[#d3d3d3]'} flex items-center justify-center w-[55px] h-[30px] font-bold text-[15px] cursor-pointer`}
+                onClick={() => handleFilterClick("Dosage")}
               >
                 투약
               </button>
@@ -150,7 +168,7 @@ export default function TeacherDocument() {
                 onChange={e => setSearchTerm(e.target.value)}
               />
             </div>
-            <div className="bg-[#f4f4f4] lg:w-[360px] w-full lg:h-[420px] h-[230px] overflow-y-auto custom-scrollbar">
+            <div className="bg-[#f4f4f4] lg:w-[360px] w-full lg:h-[355px] h-[230px] overflow-y-auto custom-scrollbar">
               {displayedDocuments.map((document, index) => (
                 <div
                   key={index}
