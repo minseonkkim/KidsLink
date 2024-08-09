@@ -5,8 +5,14 @@ import { Slider } from "@mui/material";
 import { FaMicrophone, FaMicrophoneSlash } from "react-icons/fa";
 import { TeacherMeetingFooterProps } from "../../types/meeting";
 
-export default function TeacherMeetingFooter({ control, handleControl, close, stopRecording, isRecording }: TeacherMeetingFooterProps) {
-
+export default function TeacherMeetingFooter({
+  control,
+  handleControl,
+  close,
+  startRecording,
+  stopRecording,
+  isRecording,
+}: TeacherMeetingFooterProps) {
   const isMuted = control.muted || control.volume === 0;
 
   return (
@@ -62,16 +68,16 @@ export default function TeacherMeetingFooter({ control, handleControl, close, st
                 handleControl((prev) => ({ ...prev, volume: newVal as number }))
               }
               sx={{
-                width: '100%',
-                color: 'yellow',
-                '& .MuiSlider-thumb': {
-                  backgroundColor: '#FFD700',
+                width: "100%",
+                color: "yellow",
+                "& .MuiSlider-thumb": {
+                  backgroundColor: "#FFD700",
                 },
-                '& .MuiSlider-track': {
-                  backgroundColor: '#FFD700',
+                "& .MuiSlider-track": {
+                  backgroundColor: "#FFD700",
                 },
-                '& .MuiSlider-rail': {
-                  backgroundColor: '#FFD700',
+                "& .MuiSlider-rail": {
+                  backgroundColor: "#FFD700",
                 },
               }}
             />
@@ -79,21 +85,14 @@ export default function TeacherMeetingFooter({ control, handleControl, close, st
         </div>
       </div>
       <div className="flex items-center gap-4">
-        {isRecording ? (
-          <div>REC</div>
-        ) : (
-        <div></div>
-        )}
+        {isRecording && <div className="text-red-600 font-bold">REC</div>}
         <button
-          className={`text-2xl ${isRecording ? 'text-red-600' : 'text-black'}`}
-          onClick={stopRecording}
+          className={`text-2xl ${isRecording ? "text-red-600" : "text-black"}`}
+          onClick={isRecording ? stopRecording : startRecording} // 녹화 시작 및 중지 핸들링 - Chat GPT 수정
         >
-          {isRecording ? '녹음 중지' : '녹음 시작'}
+          {isRecording ? "녹화 중지" : "녹화 시작"}
         </button>
-        <RxCrossCircled
-          className="ml-3 text-3xl cursor-pointer text-red-600"
-          onClick={close}
-        />
+        <RxCrossCircled className="ml-3 text-3xl cursor-pointer text-red-600" onClick={close} />
       </div>
     </div>
   );

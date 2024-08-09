@@ -1,7 +1,12 @@
 import { useLocation, useParams, useNavigate } from "react-router-dom";
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState, useRef } from "react"; // useRef 추가
 import OpenViduVideoComponent from "../../components/openvidu/VideoComponent";
-import { handleSpeechRecognition, stopRecording } from "../../api/openvidu";
+import {
+  handleSpeechRecognition,
+  stopRecording,
+  startSegmentRecording,
+  stopSegmentRecording,
+} from "../../api/openvidu"; // 필요한 함수들 추가
 import TeacherHeader from "../../components/teacher/common/TeacherHeader";
 import MeetingBackground from "../../assets/teacher/meeting_background.png";
 import { useTeacherInfoStore } from "../../stores/useTeacherInfoStore";
@@ -47,6 +52,9 @@ export default function TeacherVideo() {
   const [otherVideoActive, setOtherVideoActive] = useState(false);
   const [otherOpacity, setOtherOpacity] = useState(false);
 
+  const segmentList = useRef<string[]>([]); // 세그먼트 리스트 관리 - Chat GPT 추가
+  const intervalIdRef = useRef<number | null>(null); // 인터벌 ID 관리 - Chat GPT 추가
+
   useEffect(() => {
     if (otherVideoActive) {
       if (otherOpacity) {
@@ -86,22 +94,42 @@ export default function TeacherVideo() {
     }
   }, [control, openvidu.publisher]);
 
-  useEffect(() => {
-    if (isSessionJoined) {
-      handleSpeechRecognition(user.sessionId, setCurrentRecordingId);
-    }
-  }, [isSessionJoined, user.sessionId]);
+  // 녹화 시작 핸들러 - Chat GPT 추가
+  const handleStartRecording = async () => {
+    if (user.sessionId) {
+      try {
+        const recordingId = await startSegmentRecording(user.sessionId);
+        setCurrentRecordingId(recordingId);
+        segmentList.current.push(recordingId);
+        console.log("Recording started with ID:", recordingId);
 
-  const handleUserChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setUser((prevUser) => ({ ...prevUser, [event.target.name]: event.target.value }));
+        intervalIdRef.current = window.setInterval(async () => {
+          const lastSegmentId = segmentList.current[segmentList.current.length - 1];
+          await stopSegmentRecording(lastSegmentId);
+
+          const newRecordingId = await startSegmentRecording(user.sessionId);
+          segmentList.current.push(newRecordingId);
+          setCurrentRecordingId(newRecordingId);
+        }, 5000);
+      } catch (error) {
+        console.error("Error starting recording:", error);
+      }
+    }
   };
 
   const handleStopRecording = async () => {
     if (currentRecordingId) {
       try {
-        const stoppedRecording = await stopRecording(currentRecordingId);
-        setCurrentRecordingId(null);
-        fetchRecordingsList(setRecordings);
+        // 필요한 파라미터들을 채워서 stopRecording 함수를 호출
+        const mergedFilePath = await stopRecording(
+          user.sessionId, // sessionId
+          segmentList.current, // 세그먼트 리스트
+          intervalIdRef // 인터벌 ID 관리
+        );
+  
+        setCurrentRecordingId(null); // 녹화 ID 초기화
+        fetchRecordingsList(setRecordings); // 녹화 목록 갱신
+        console.log("Recording stopped and merged. File path:", mergedFilePath);
       } catch (error) {
         console.error("Error stopping recording:", error);
       }
@@ -112,9 +140,8 @@ export default function TeacherVideo() {
     leaveSession(openvidu, setOpenvidu, setIsSessionJoined, navigate);
   };
 
-  // 상대방 비디오 상태에 따라 불투명도 설정a
+  // 상대방 비디오 상태에 따라 불투명도 설정
   const teacherVideoOpacity = control.video ? 1 : 0.8;
-  // const parentVideoOpacity = otherVideoActive ? 1 : 0.8;
 
   return (
     <div className="relative flex flex-col justify-center items-center w-screen h-screen min-w-[1000px] overflow-hidden">
@@ -191,27 +218,11 @@ export default function TeacherVideo() {
             control={control}
             handleControl={setControl}
             close={handleLeaveSession}
+            startRecording={handleStartRecording} // 녹화 시작 핸들러 전달 - Chat GPT 추가
             stopRecording={handleStopRecording}
             isRecording={!!currentRecordingId}
           />
         )}
-        {/* 
-        해당 위치 제외하고, 녹화 목록 컴포넌트 따로 제외하기
-        {!openvidu.session && (
-          <div className="recordings-list mt-4">
-            <h2>녹화 파일 목록</h2>
-            <ul>
-              {recordings.map((recording) => (
-                <li key={recording.id}>
-                  {recording.name} -{" "}
-                  <button onClick={() => handleDownload(user.sessionId, recording.name)}>
-                    Download Recording
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )} */}
       </div>
     </div>
   );
