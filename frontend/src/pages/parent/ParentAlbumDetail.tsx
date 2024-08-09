@@ -49,12 +49,12 @@ export default function AlbumDetail() {
         {/* 테이프 효과 */}
         <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 w-16 h-8 bg-yellow-300 z-10"></div>
 
-        <p className="text-[20px] font-bold text-[#212121] mb-2 text-center">
+        <p className="text-[20px] font-bold text-[#212121] mb-8 text-center">
           {album.albumName}
         </p>
-        <p className="text-[14px] font-light text-[#353c4e] mb-6 text-center">
+        {/* <p className="text-[14px] font-light text-[#353c4e] mb-6 text-center">
           {formatDate(album.albumDate)}
-        </p>
+        </p> */}
         <AlbumContent images={album.images} albumId={albumId} />
       </div>
     </div>
