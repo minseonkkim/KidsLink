@@ -28,14 +28,47 @@ export default function TeacherHome() {
         return '';
     };
 
-    const fetchData = async () => {
-        try {
-            const [info, fetchedSchedules] = await Promise.all([
-                getTeacherInfo(),
-                getTeacherSchedules(formatDate(date)),
-            ]);
+    const getCachedData = (key, expiryMinutes = 60) => {
+        const cachedData = localStorage.getItem(key);
+        if (cachedData) {
+            const { value, expiry } = JSON.parse(cachedData);
+            if (Date.now() < expiry) {
+                return value;
+            }
+        }
+        return null;
+    };
+    const setCachedData = (key, value, expiryMinutes = 60) => {
+        const expiry = Date.now() + expiryMinutes * 60 * 1000; // Expiry in milliseconds
+        const cachedData = JSON.stringify({ value, expiry });
+        localStorage.setItem(key, cachedData);
+    };
+    
 
+    const fetchData = async () => {
+        setLoading(true);
+        try {
+            // Check if data is already cached
+            const cachedTeacherInfo = getCachedData('teacherInfo');
+            const cachedSchedules = getCachedData(`schedules_${formatDate(date)}`);
+    
+            let info = cachedTeacherInfo;
+            let fetchedSchedules = cachedSchedules;
+    
+            // Fetch teacher info if not cached
+            if (!cachedTeacherInfo) {
+                info = await getTeacherInfo();
+                setCachedData('teacherInfo', info, 60); // Cache for 60 minutes
+            }
+    
+            // Fetch schedules if not cached
+            if (!cachedSchedules) {
+                fetchedSchedules = await getTeacherSchedules(formatDate(date));
+                setCachedData(`schedules_${formatDate(date)}`, fetchedSchedules, 60); // Cache for 60 minutes
+            }
+    
             setTeacherInfo(info);
+    
             const sortedSchedules = fetchedSchedules.teacherSchedules.sort((a, b) => {
                 if (a.confirmationStatus === "T" && b.confirmationStatus !== "T") return -1;
                 if (a.confirmationStatus !== "T" && b.confirmationStatus === "T") return 1;
@@ -47,6 +80,7 @@ export default function TeacherHome() {
                 if (a.content > b.content) return 1;
                 return 0;
             });
+    
             setScheduleItems(sortedSchedules);
         } catch (error) {
             console.error('Failed to fetch data', error);
@@ -54,13 +88,14 @@ export default function TeacherHome() {
             setLoading(false);
         }
     };
+    
 
     useEffect(() => {
         fetchData();
     }, []);
 
     if (loading) {
-        return <div>Loading...</div>;
+        return <div></div>;
     }
 
     if (!teacherInfo) {
