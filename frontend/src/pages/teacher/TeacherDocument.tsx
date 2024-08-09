@@ -124,6 +124,22 @@ export default function TeacherDocument() {
         <Title title="문서관리" />
         <div className="flex flex-col lg:flex-row justify-between">
           <div className="rounded-[20px] bg-[#f4f4f4] lg:w-[380px] w-full lg:h-[520px] h-[320px] p-[10px] mb-3 lg:mb-0">
+            <div className="flex flex-wrap">
+              {/* 결석 버튼 */}
+              <button
+                className={`m-[10px] mb-[15px] w-full lg:w-[320px] lg:h-[100px] h-[80px] rounded-[15px] border-[3px] border-[#B2D170] cursor-pointer`}
+              >
+                결석
+              </button>
+
+              {/* 투약 버튼 */}
+              <button
+                className={`m-[10px] mb-[15px] w-full lg:w-[320px] lg:h-[100px] h-[80px] rounded-[15px] border-[3px] border-[#B2D170] cursor-pointer`}
+              >
+                투약
+              </button>
+            </div>
+
             <div className="bg-[#fff] lg:h-[53px] h-[46px] rounded-[10px] flex items-center p-3 mx-2 my-3">
               <IoSearch className="text-[25px] mr-3" />
               <input
