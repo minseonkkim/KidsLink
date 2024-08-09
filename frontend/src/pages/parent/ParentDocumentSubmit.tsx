@@ -21,6 +21,7 @@ export default function ParentDocument() {
     [key: string]: string | number | undefined;
   }>({});
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
+  const [errors, setErrors] = useState<{ [key: string]: string | null }>({});
   const childId = useParentInfoStore(
     (state) => state.parentInfo?.child.childId
   );
@@ -31,6 +32,7 @@ export default function ParentDocument() {
 
   const handleOptionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedOption(event.target.value);
+    setErrors({}); // 옵션 변경 시 에러 메시지 초기화
   };
 
   const handleDateChange = (update: [Date | null, Date | null]) => {
@@ -40,6 +42,7 @@ export default function ParentDocument() {
     if (end) {
       setIsOpen(false);
     }
+    setErrors({ ...errors, dateRange: null }); // 날짜 선택 시 에러 초기화
   };
 
   const handleInputChange = (
@@ -47,9 +50,35 @@ export default function ParentDocument() {
   ) => {
     const { name, value } = event.target;
     setFormData({ ...formData, [name]: value });
+    setErrors({ ...errors, [name]: null }); // 입력 필드 변경 시 해당 에러 메시지 초기화
+  };
+
+  const validateForm = () => {
+    const newErrors: { [key: string]: string | null } = {};
+
+    if (!startDate || !endDate) {
+      newErrors["dateRange"] = "기간을 선택해주세요.";
+    }
+
+    if (selectedOption === "dosage") {
+      if (!formData.name) {
+        newErrors["name"] = "약의 종류를 입력해주세요.";
+      }
+    } else if (selectedOption === "absent") {
+      if (!formData.reason) {
+        newErrors["reason"] = "사유를 입력해주세요.";
+      }
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async () => {
+    if (!validateForm()) {
+      return;
+    }
+
     const commonData = {
       startDate: startDate?.toISOString().split("T")[0] || "",
       endDate: endDate?.toISOString().split("T")[0] || "",
@@ -142,11 +171,13 @@ export default function ParentDocument() {
                 handleDateClick={handleDateClick}
                 handleDateChange={handleDateChange}
               />
+              {errors.dateRange && <p className="text-red-500 text-sm">{errors.dateRange}</p>}
             </div>
             <InputFields
               formData={formData}
               handleInputChange={handleInputChange}
               selectedOption={selectedOption}
+              errors={errors} // 에러 상태를 전달
             />
             <div className="flex justify-center mt-10">
               <button
@@ -164,4 +195,4 @@ export default function ParentDocument() {
       )}
     </div>
   );
-};
+}

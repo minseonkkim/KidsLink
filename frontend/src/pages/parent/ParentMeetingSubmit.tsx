@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getAllPossibleReservations, postAllPossibleReservations, } from "../../api/meeting";
+import { getAllPossibleReservations, postAllPossibleReservations } from "../../api/meeting";
 import { useNavigate } from "react-router-dom";
 import Modal from "../../components/parent/common/Modal";
 import { ParentReservation, Reservation } from "../../types/meeting";
@@ -8,19 +8,47 @@ const ParentMeetingSubmit = () => {
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [selectedMeetings, setSelectedMeetings] = useState<Set<number>>(new Set());
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
+  const [showMaxSelectionWarning, setShowMaxSelectionWarning] = useState<boolean>(false);
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchReservations = async () => {
       try {
         const fetchedReservations = await getAllPossibleReservations();
-        setReservations(fetchedReservations);
+        const filteredReservations = filterReservations(fetchedReservations);
+        setReservations(filteredReservations);
       } catch (error) {
         console.error("Failed to fetch reservations:", error);
       }
     };
     fetchReservations();
   }, []);
+
+  const filterReservations = (reservations: Reservation[]) => {
+    const now = new Date();
+    return reservations.filter((reservation) => {
+      const reservationDate = new Date(reservation.date);
+
+      // 오늘 이전 날짜는 필터링
+      if (reservationDate < new Date(now.getFullYear(), now.getMonth(), now.getDate())) {
+        return false;
+      }
+
+      // 오늘 날짜에 대해 시간 필터링
+      if (
+        reservationDate.getFullYear() === now.getFullYear() &&
+        reservationDate.getMonth() === now.getMonth() &&
+        reservationDate.getDate() === now.getDate()
+      ) {
+        const [hour, minute] = reservation.time.split(":").map(Number);
+        if (hour < now.getHours() || (hour === now.getHours() && minute <= now.getMinutes())) {
+          return false; // 이미 지난 시간대는 표시하지 않음
+        }
+      }
+
+      return true;
+    });
+  };
 
   const handleTimeSlotClick = (meetingId: number) => {
     setSelectedMeetings((prevSelectedMeetings) => {
@@ -31,7 +59,7 @@ const ParentMeetingSubmit = () => {
         if (newSelectedMeetings.size < 3) {
           newSelectedMeetings.add(meetingId);
         } else {
-          alert("상담 시간은 최대 3개까지 선택하실 수 있습니다.");
+          setShowMaxSelectionWarning(true); // 모달 창을 띄움
         }
       }
       return newSelectedMeetings;
@@ -46,7 +74,7 @@ const ParentMeetingSubmit = () => {
         meetingTime: reservation?.time ?? '',
       };
     });
-    console.log("selectedReservations: ",selectedReservations)
+
     try {
       await postAllPossibleReservations(selectedReservations);
       setIsSubmitted(true);
@@ -58,6 +86,10 @@ const ParentMeetingSubmit = () => {
   const handleModalClose = () => {
     setIsSubmitted(false);
     navigate('/meeting');
+  };
+
+  const handleMaxSelectionModalClose = () => {
+    setShowMaxSelectionWarning(false);
   };
 
   const groupedReservations = reservations.reduce((acc, reservation) => {
@@ -114,6 +146,12 @@ const ParentMeetingSubmit = () => {
         <Modal
           message="제출이 완료되었습니다!"
           onClose={handleModalClose}
+        />
+      )}
+      {showMaxSelectionWarning && (
+        <Modal
+          message="상담 시간은 최대 3개까지 선택하실 수 있습니다."
+          onClose={handleMaxSelectionModalClose}
         />
       )}
     </div>

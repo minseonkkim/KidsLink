@@ -73,7 +73,7 @@ export default function ParentDiary() {
         altText="다람쥐"
       />
 
-      <div className="flex flex-col flex-grow overflow-hidden rounded-tl-[20px] rounded-tr-[20px] bg-white shadow-top px-12 py-4 animate-slideUp -mt-10">
+      <div className="flex flex-col flex-grow overflow-hidden rounded-tl-[20px] rounded-tr-[20px] bg-white shadow-top px-12 py-4 animate-slideUp">
         <YearMonthSelector
           selectedYear={selectedYear}
           selectedMonth={selectedMonth}
