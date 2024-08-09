@@ -78,7 +78,7 @@ export const stopSegmentRecording = async (recordingId: string): Promise<void> =
 };
 
 // 세그먼트 병합
-const mergeSegments = async (segmentList: string[]): Promise<string> => {
+export const mergeSegments = async (segmentList: string[]): Promise<string> => {
   const url = `${APPLICATION_SERVER_URL}/recordings/save`;
 
   try {
@@ -165,7 +165,7 @@ export const handleSpeechRecognition = async (
     console.log("Started new segment recording, ID:", newSegmentId, " for session:", sessionId);
     segmentList.current.push(newSegmentId);
     setRecordingId(newSegmentId);
-  }, 5000);
+  }, 15000);
 };
 
 // 메인 녹화 시작
