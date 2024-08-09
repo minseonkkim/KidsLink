@@ -29,67 +29,76 @@ export default function TeacherBus() {
   const containerRef = useRef<HTMLDivElement & { touchStartX?: number }>(null);
 
   useEffect(() => {
-  const fetchBusStops = async () => {
-    try {
-      let kindergartenId;
-
-      if (teacherInfo) {
-        kindergartenId = teacherInfo.kindergartenId;
-      } else {
-        const fetchedTeacherInfo = await getTeacherInfo();
-        setTeacherInfo(fetchedTeacherInfo);
-        kindergartenId = fetchedTeacherInfo.kindergartenId;
+    const fetchBusStops = async () => {
+      try {
+        let kindergartenId;
+  
+        if (teacherInfo) {
+          kindergartenId = teacherInfo.kindergartenId;
+        } else {
+          const fetchedTeacherInfo = await getTeacherInfo();
+          setTeacherInfo(fetchedTeacherInfo);
+          kindergartenId = fetchedTeacherInfo.kindergartenId;
+        }
+  
+        let stops = await getAllBusStops(kindergartenId);
+        console.log("stops: ", stops);
+  
+        setBusStops(stops.map(stop => {
+          const existingStop = busStops.find(prevStop => prevStop.busStopId === stop.busStopId);
+          return {
+            ...stop,
+            children: stop.children.map(child => {
+              const existingChild = existingStop?.children.find(prevChild => prevChild.child.childId === child.child.childId);
+              return {
+                ...child,
+                checked: existingChild ? existingChild.checked : false, // 기존의 checked 값 유지
+              };
+            }),
+          };
+        }));
+  
+        console.log("스토어에서 가져온 busStops: ", busStops);
+  
+        setBusId(stops[0]?.busId || null);
+  
+        if (stops.length > 0) {
+          setCurrentStopId(stops[0].busStopId);
+        }
+      } catch (error) {
+        console.error(error);
       }
-
-      const stops = await getAllBusStops(kindergartenId);
-      console.log("stops: ", stops);
-      
-      // 각 child에 checked 필드를 추가하고 기본값을 false로 설정
-      const stopsWithChecked = busStops.map(stop => ({
-        ...stop,
-        children: stop.children 
-          ? stop.children.map(child => ({
-              ...child,
-              checked: child.checked !== undefined ? child.checked : false
-            })) 
-          : [],
-      }));
-
-      // Zustand 스토어에 busStops 상태로 저장
-      setBusStops(stopsWithChecked);
-
-      console.log(stopsWithChecked);
-      console.log("busStops: ",  busStops);
-
-      setBusId(stops[0]?.busId || null);
-
-      if (stopsWithChecked.length > 0) {
-        setCurrentStopId(stopsWithChecked[0].busStopId);
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  fetchBusStops();
-
-  const handleUnload = () => {
-    localStorage.removeItem('isWebSocketActive');
-  };
-
-  window.addEventListener('beforeunload', handleUnload);
-  window.addEventListener('unload', handleUnload);
-  return () => {
-    window.removeEventListener('beforeunload', handleUnload);
-    window.removeEventListener('unload', handleUnload);
-  };
-}, [teacherInfo, setTeacherInfo]);
+    };
+  
+    fetchBusStops();
+  
+    const handleUnload = () => {
+      localStorage.removeItem('isWebSocketActive');
+    };
+  
+    window.addEventListener('beforeunload', handleUnload);
+    window.addEventListener('unload', handleUnload);
+    return () => {
+      window.removeEventListener('beforeunload', handleUnload);
+      window.removeEventListener('unload', handleUnload);
+    };
+  }, [teacherInfo, setTeacherInfo]);
+  
+  
+  
 
   useEffect(() => {
     if (!isWebSocketActive) {
       setAllChecked(false);
     }
   }, [isWebSocketActive, setAllChecked]);
+
+  useEffect(() => {
+    // busStops 상태가 변경될 때마다 현재 정류장을 다시 설정
+    if (busStops.length > 0 && !currentStopId) {
+      setCurrentStopId(busStops[0].busStopId);
+    }
+  }, [busStops]);
 
   const handleOptionChange = (option: string) => {
     setSelectedOption(option);
@@ -129,6 +138,7 @@ export default function TeacherBus() {
   }
 
   const currentStop = busStops.find(stop => stop.busStopId === currentStopId);
+  console.log("currentStop",currentStop)
 
   if (!currentStop) {
     return <div>Invalid bus stop selected.</div>;
@@ -226,7 +236,7 @@ export default function TeacherBus() {
               </div>
               <div className="relative w-[310px] lg:w-[360px] h-[370px] overflow-auto custom-scrollbar">
                 {currentStop.children.length > 0 ? (
-                  currentStop.children.map(({ child, parentTel, status, checked }, idx) => (
+                  currentStop.children.map((({ child, parentTel, status, checked }, idx) => (
                     <BusChild
                       key={idx}
                       busStopId={currentStop.busStopId}
@@ -237,7 +247,7 @@ export default function TeacherBus() {
                       checked={checked}
                       profile={child.profile}
                     />
-                  ))
+                  )))
                 ) : (
                   <div className="absolute top-[30%] left-0 right-0 text-center">
                     <p className="text-[20px] text-gray-500">탑승 인원이 없습니다</p>
