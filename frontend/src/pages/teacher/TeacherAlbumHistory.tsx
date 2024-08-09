@@ -5,9 +5,11 @@ import Title from "../../components/teacher/common/Title";
 import { getAllClassChildAlbum } from "../../api/album";
 import { useTeacherInfoStore } from "../../stores/useTeacherInfoStore";
 import AlbumFolder from "../../components/teacher/album/AlbumFolder";
+import useModal from "../../hooks/teacher/useModal";
 
 export default function TeacherAlbumHistory() {
     const [childrenAlbums, setChildrenAlbums] = useState([]);
+    const { openModal, closeModal, Modal } = useModal(); // useModal 훅 사용
 
     useEffect(() => {
         const teacherInfo = useTeacherInfoStore.getState().teacherInfo;
@@ -24,6 +26,21 @@ export default function TeacherAlbumHistory() {
         fetchAlbums();
     }, []);
 
+    const handleAlbumClick = (images) => {
+        openModal(
+            <div className="grid grid-cols-3 gap-4 h-[500px] overflow-y-auto custom-scrollbar">
+                {images.map((image) => (
+                    <img
+                        key={image.imageId}
+                        src={image.path}
+                        alt={`Album image ${image.imageId}`}
+                        className="w-full h-auto rounded-md"
+                    />
+                ))}
+            </div>
+        );
+    };
+
     return (
         <>
             <TeacherHeader />
@@ -31,7 +48,6 @@ export default function TeacherAlbumHistory() {
                 <NavigateBack backPage="사진분류" backLink='/album' />
                 <Title title="사진분류내역" />
                 {childrenAlbums.map((childAlbum) => {
-                    // 앨범 내 전체 사진 개수 계산
                     const totalImages = childAlbum.albums.reduce((acc, album) => acc + album.images.length, 0);
 
                     return (
@@ -46,19 +62,27 @@ export default function TeacherAlbumHistory() {
                                 {childAlbum.albums.length > 0 ? (
                                     <ul className="flex flex-row flex-wrap">
                                         {childAlbum.albums.map((album) => (
-                                            <li key={album.albumId} className="mr-4 mb-4">
-                                                <AlbumFolder title={album.albumName} coverImg={album.images[0].path} />
+                                            <li
+                                                key={album.albumId}
+                                                className="mr-4 mb-4"
+                                                onClick={() => handleAlbumClick(album.images)} // 클릭 시 모달 열기
+                                            >
+                                                <AlbumFolder
+                                                    title={album.albumName}
+                                                    coverImg={album.images[0]?.path}
+                                                />
                                             </li>
                                         ))}
                                     </ul>
                                 ) : (
-                                    <p></p>
+                                    <p>앨범이 없습니다.</p>
                                 )}
                             </div>
                         </div>
                     );
                 })}
             </div>
+            <Modal />
         </>
     );
 }
