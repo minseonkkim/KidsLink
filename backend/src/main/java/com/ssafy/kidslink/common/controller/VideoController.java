@@ -129,12 +129,17 @@ public class VideoController {
     @PostMapping("/recordings/save")
     public ResponseEntity<String> saveSegments(@RequestBody List<String> segmentList) {
         try {
-            String sessionId = segmentList.get(0).split("_")[0];  // 예시로 세션 ID를 추출
-            String segmentDirectoryPath = "/path/to/recordings/" + sessionId;
-            String mergedFilePath = "/path/to/recordings/" + sessionId + "/merged_output.mp4";
+            // 예시로 첫 번째 세그먼트에서 sessionId와 세그먼트 번호를 추출
+            String sessionId = segmentList.get(0).split("_")[0];
+            String segmentDirectoryPath = recordingPath + "/" + sessionId;
 
+            // 병합된 파일의 경로 설정
+            String mergedFilePath = segmentDirectoryPath + "/merged_output.mp4";
+
+            // 세그먼트 병합 로직 호출
             mergeSegmentsToMP4(segmentList, segmentDirectoryPath, mergedFilePath);
 
+            // 병합된 파일의 경로 반환
             return new ResponseEntity<>(mergedFilePath, HttpStatus.OK);
         } catch (IOException | InterruptedException e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -156,7 +161,9 @@ public class VideoController {
         String fileListPath = segmentDirectoryPath + "/segments.txt";
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileListPath))) {
             for (String segment : segmentList) {
-                writer.write("file '" + segmentDirectoryPath + "/" + segment + ".mp4'\n");
+                // 각 세그먼트의 디렉터리 경로와 파일명을 조합하여 파일 목록 생성
+                String segmentPath = segmentDirectoryPath + "/" + segment + "/recordingName.mp4";
+                writer.write("file '" + segmentPath + "'\n");
             }
         }
         return fileListPath;

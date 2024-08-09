@@ -7,7 +7,8 @@ import {
   // startSegmentRecording,
   stopSegmentRecording,
   startMainRecording, // 메인 녹화 관련 함수 추가
-  stopMainRecording, // 메인 녹화 관련 함수 추가
+  stopMainRecording,
+  mergeSegments, // 메인 녹화 관련 함수 추가
 } from "../../api/openvidu";
 import TeacherHeader from "../../components/teacher/common/TeacherHeader";
 import MeetingBackground from "../../assets/teacher/meeting_background.png";
@@ -118,44 +119,31 @@ export default function TeacherVideo() {
     }
   }, [isSessionJoined, isRecording]);
 
-  const handleStartMainRecording = async () => {
-    if (isRecording) return;
+// handleStartMainRecording 함수 수정
+const handleStartMainRecording = async () => {
+  if (isRecording) return;
 
-    setIsRecording(true);
-    
-    // 세그먼트 녹화 타이머 중지
-    if (intervalIdRef.current) {
-        clearInterval(intervalIdRef.current);
-        intervalIdRef.current = null;
-    }
+  setIsRecording(true);
+  clearInterval(intervalIdRef.current); // 세그먼트 녹화 타이머 중지
 
-    try {
-        // 세그먼트 리스트가 비어있지 않은 경우에만 녹화 중지
-        if (segmentList.current.length > 0) {
-            const lastSegmentId = segmentList.current[segmentList.current.length - 1];
-            console.log("Stopping segment recording, ID:", lastSegmentId);
-            await stopSegmentRecording(lastSegmentId);
-        }
+  // 최신 3개의 세그먼트만 병합
+  const segmentsToMerge = segmentList.current.slice(-3);
 
-        // 세그먼트 리스트 초기화
-        segmentList.current = [];
+  if (segmentsToMerge.length > 0) {
+      await stopSegmentRecording(segmentsToMerge[segmentsToMerge.length - 1]);
 
-        // 메인 녹화를 시작하는 로직
-        console.log("Starting main recording...");
-        const mainRecordingId = await startMainRecording(user.sessionId);
+      // 백엔드에 세그먼트 병합 요청
+      const mergedFilePath = await mergeSegments(segmentsToMerge);
+      console.log("Merged segments saved to:", mergedFilePath);
+  }
 
-        if (mainRecordingId) {
-            setCurrentRecordingId(mainRecordingId);
-            console.log("Main recording started with ID:", mainRecordingId);
-        } else {
-            console.error("Failed to start main recording, recording ID is undefined or null.");
-        }
-    } catch (error) {
-        console.error("Error occurred during main recording setup:", error);
-    }
+  segmentList.current = []; // 세그먼트 리스트 초기화
 
-    // 상태 업데이트 후 값을 확인
-    console.log("Updated currentRecordingId:", currentRecordingId);
+  // 메인 녹화를 시작하는 로직
+  const mainRecordingId = await startMainRecording(user.sessionId);
+  setCurrentRecordingId(mainRecordingId);
+
+  console.log("Main recording started with ID:", mainRecordingId);
 };
 
   const handleStopRecording = async () => {
