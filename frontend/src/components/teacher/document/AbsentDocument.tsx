@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import DocumentItem from "./DocumentItem";
 import { checkAbsentDocument, getAbsentDocument } from "../../../api/document";
-import formatDate from "../../../utils/teacher/formatDate";
+import {formatDate} from "../../../utils/teacher/formatDate";
 
 interface AbsentDocumentProps {
   absentId: number;
