@@ -11,9 +11,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -34,6 +38,8 @@ public class VideoController {
     private String recordingPath;
 
     private OpenVidu openvidu;
+
+    private List<String> segmentList = new ArrayList<>();
 
     @PostConstruct
     public void init() {
@@ -120,7 +126,41 @@ public class VideoController {
         return new ResponseEntity<>(recording, HttpStatus.OK);
     }
 
+    @PostMapping("/recordings/save")
+    public ResponseEntity<String> saveSegments(@RequestBody List<String> segmentList) {
+        try {
+            String sessionId = segmentList.get(0).split("_")[0];  // 예시로 세션 ID를 추출
+            String segmentDirectoryPath = "/path/to/recordings/" + sessionId;
+            String mergedFilePath = "/path/to/recordings/" + sessionId + "/merged_output.mp4";
 
+            mergeSegmentsToMP4(segmentList, segmentDirectoryPath, mergedFilePath);
+
+            return new ResponseEntity<>(mergedFilePath, HttpStatus.OK);
+        } catch (IOException | InterruptedException e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    private void mergeSegmentsToMP4(List<String> segmentList, String segmentDirectoryPath, String mergedFilePath) throws IOException, InterruptedException {
+        // segments.txt 파일 생성
+        String fileListPath = createFileList(segmentList, segmentDirectoryPath);
+
+        // FFmpeg 명령어 실행
+        ProcessBuilder pb = new ProcessBuilder("ffmpeg", "-f", "concat", "-safe", "0", "-i", fileListPath, "-c", "copy", mergedFilePath);
+        pb.redirectErrorStream(true);
+        Process process = pb.start();
+        process.waitFor();
+    }
+
+    private String createFileList(List<String> segmentList, String segmentDirectoryPath) throws IOException {
+        String fileListPath = segmentDirectoryPath + "/segments.txt";
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileListPath))) {
+            for (String segment : segmentList) {
+                writer.write("file '" + segmentDirectoryPath + "/" + segment + ".mp4'\n");
+            }
+        }
+        return fileListPath;
+    }
 
     /**
      * Get a list of all recordings
