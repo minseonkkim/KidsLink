@@ -3,10 +3,10 @@ import TeacherHeader from "../../components/teacher/common/TeacherHeader";
 import Title from "../../components/teacher/common/Title";
 import { useState, ChangeEvent, useEffect } from "react";
 import { FiUpload } from "react-icons/fi";
-import { FaTrash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import PulseLoader from "react-spinners/PulseLoader";
 import { handleClassify, handleDeleteImage, handleImageUpload } from "../../utils/album";
+import { FaMinusCircle } from "react-icons/fa";
 
 export default function TeacherAlbum() {
   const navigate = useNavigate();
@@ -47,9 +47,9 @@ export default function TeacherAlbum() {
                     <img src={URL.createObjectURL(file)} alt={`upload-${index}`} className={`object-cover w-full h-full rounded-md ${loading ? 'loading' : ''}`} />
                     <button 
                       onClick={() => handleDeleteImage(index, setImages)} 
-                      className={`absolute top-1 right-1 bg-red-600 text-white p-1 rounded-full ${loading ? 'loading' : ''}`}
+                      className={`absolute top-1 right-1 bg-red-600 text-white p-[2px] rounded-full ${loading ? 'loading' : ''}`}
                     >
-                      <FaTrash />
+                      <FaMinusCircle size={18} />
                     </button>
                   </div>
                 ))}
