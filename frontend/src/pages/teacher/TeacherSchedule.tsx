@@ -4,7 +4,7 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import NavigateBack from "../../components/teacher/common/NavigateBack";
 import TeacherHeader from "../../components/teacher/common/TeacherHeader";
 import Title from "../../components/teacher/common/Title";
-import moment from "moment";
+import formatDate from "../../utils/teacher/formatDate";
 import { FaRegCalendar, FaXmark } from "react-icons/fa6";
 import { createTeacherSchedule, createTeacherScheduleCheck, deleteTeacherSchedule, getTeacherSchedules } from "../../api/schedule";
 import StyledCalendar from "../../components/teacher/common/StyledCalendar";
@@ -103,14 +103,14 @@ export default function TeacherSchedule() {
     fetchSchedules();
   }, [date])
 
-  const formatDate = (date: ValuePiece | [ValuePiece, ValuePiece]): string => {
-    if (date instanceof Date) {
-      return moment(date).format("YYYY-MM-DD");
-    } else if (Array.isArray(date) && date[0] instanceof Date) {
-      return moment(date[0]).format("YYYY-MM-DD");
-    }
-    return '';
-  };
+  // const formatDate = (date: ValuePiece | [ValuePiece, ValuePiece]): string => {
+  //   if (date instanceof Date) {
+  //     return moment(date).format("YYYY-MM-DD");
+  //   } else if (Array.isArray(date) && date[0] instanceof Date) {
+  //     return moment(date[0]).format("YYYY-MM-DD");
+  //   }
+  //   return '';
+  // };
 
   const deleteItem = async (id: number) => {
     await deleteTeacherSchedule(id);
