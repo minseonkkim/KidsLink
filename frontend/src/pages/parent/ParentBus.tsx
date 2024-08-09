@@ -3,6 +3,7 @@ import InfoSection from "../../components/parent/common/InfoSection";
 import daramgi from "../../assets/parent/bus-daramgi.png";
 import busIcon from '../../assets/parent/driving-daramgi.png';
 import currentLocationIcon from '../../assets/parent/marker.png';
+import busStopIcon from '../../assets/parent/bus_stop_icon.jpg';
 import { receiveBusLocation } from '../../api/webSocket';
 import { postKidBoardingStatus, getKidBoardingStatus } from '../../api/bus';
 import { getParentInfo } from '../../api/Info';
@@ -34,69 +35,71 @@ export default function ParentBus() {
   const isWebSocketInitialized = useRef<boolean>(false);
   let centerFlag = false;
   const busCenterFlag = useRef<boolean>(false);
-  const initializeMap = () => {
-    if (mapRef.current || !mapContainer.current) {
-      return;
-    }
 
-    const container = mapContainer.current;
-    const options = {
-      center: new window.kakao.maps.LatLng(location.lat, location.lng),
-      level: 3,
-    };
-    const newMap = new window.kakao.maps.Map(container, options);
-    mapRef.current = newMap;
-
-    const initialPosition = new window.kakao.maps.LatLng(location.lat, location.lng);
-    const imageSize = new window.kakao.maps.Size(64, 95);
-    const imageOption = { offset: new window.kakao.maps.Point(27, 69) };
-    const markerImage = new window.kakao.maps.MarkerImage(busIcon, imageSize, imageOption);
-
-    const busMarkerInstance = new window.kakao.maps.Marker({
-      position: initialPosition,
+  const createMarker = (map, position, imageUrl) => {
+    const imageSize = new window.kakao.maps.Size(40, 40);
+    const imageOption = { offset: new window.kakao.maps.Point(20, 20) };
+    const markerImage = new window.kakao.maps.MarkerImage(imageUrl, imageSize, imageOption);
+  
+    const marker = new window.kakao.maps.Marker({
+      position: position,
       image: markerImage,
     });
-
-    busMarkerInstance.setMap(newMap);
-    busMarkerRef.current = busMarkerInstance;
-
-    const parentInitialPosition = new window.kakao.maps.LatLng(location.lat, location.lng);
-    
-    // 애니메이션 요소 추가
-    // 현재위치인지 테스트 필요함
-    const overlayContent = document.createElement('div');
-    overlayContent.style.position = 'relative';
-    overlayContent.style.width = '50px';
-    overlayContent.style.height = '50px';
-    const pulseRing = document.createElement('div');
-    pulseRing.className = 'pulse-ring';
-    overlayContent.appendChild(pulseRing);
-    const markerIcon = document.createElement('img');
-    markerIcon.src = currentLocationIcon;
-    markerIcon.style.position = 'absolute';
-    markerIcon.style.top = '50%';
-    markerIcon.style.left = '50%';
-    markerIcon.style.width = '30px';
-    markerIcon.style.height = '30px';
-    markerIcon.style.transform = 'translate(-50%, -50%)';
-    overlayContent.appendChild(markerIcon);
-    const parentMarkerInstance = new window.kakao.maps.CustomOverlay({
-      position: parentInitialPosition,
-      content: overlayContent,
-      yAnchor: 0,
-      xAnchor: 0,
-      zIndex: 1,
-    });
-    parentMarkerInstance.setMap(newMap);
-    
-              
-
-    
-
-    parentMarkerInstance.setMap(newMap);
-    parentMarkerRef.current = parentMarkerInstance;
-    updateParentLocation(parentMarkerRef);
+  
+    marker.setMap(map);
+    return marker;
   };
+  const initializeMap = () => {
+  if (mapRef.current || !mapContainer.current) {
+    return;
+  }
+
+  const container = mapContainer.current;
+  const options = {
+    center: new window.kakao.maps.LatLng(location.lat, location.lng),
+    level: 3,
+  };
+  const newMap = new window.kakao.maps.Map(container, options);
+  mapRef.current = newMap;
+
+  const initialPosition = new window.kakao.maps.LatLng(location.lat, location.lng);
+  const busMarker = createMarker(newMap, initialPosition, busIcon);
+  busMarkerRef.current = busMarker;
+
+  const parentInitialPosition = new window.kakao.maps.LatLng(location.lat, location.lng);
+  
+  // 애니메이션 요소 추가
+  const overlayContent = document.createElement('div');
+  overlayContent.style.position = 'relative';
+  overlayContent.style.width = '50px';
+  overlayContent.style.height = '50px';
+  const pulseRing = document.createElement('div');
+  pulseRing.className = 'pulse-ring';
+  overlayContent.appendChild(pulseRing);
+  const markerIcon = document.createElement('img');
+  markerIcon.src = currentLocationIcon;
+  markerIcon.style.position = 'absolute';
+  markerIcon.style.top = '50%';
+  markerIcon.style.left = '50%';
+  markerIcon.style.width = '30px';
+  markerIcon.style.height = '30px';
+  markerIcon.style.transform = 'translate(-50%, -50%)';
+  overlayContent.appendChild(markerIcon);
+  const parentMarkerInstance = new window.kakao.maps.CustomOverlay({
+    position: parentInitialPosition,
+    content: overlayContent,
+    yAnchor: 0,
+    xAnchor: 0,
+    zIndex: 1,
+  });
+  parentMarkerInstance.setMap(newMap);
+  parentMarkerRef.current = parentMarkerInstance;
+  updateParentLocation(parentMarkerRef);
+
+  // 새로운 마커를 추가합니다
+  const newMarkerPosition = new window.kakao.maps.LatLng(35.1911678, 126.8102566);
+  createMarker(newMap, newMarkerPosition, busStopIcon);
+};
 
   const initializeWebSocket = async () => {
     console.log('WebSocket init');
