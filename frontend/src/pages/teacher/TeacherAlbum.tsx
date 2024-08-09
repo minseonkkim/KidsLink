@@ -3,7 +3,7 @@ import TeacherHeader from "../../components/teacher/common/TeacherHeader";
 import Title from "../../components/teacher/common/Title";
 import { useState, ChangeEvent, useEffect } from "react";
 import { FiUpload } from "react-icons/fi";
-import { FaTrash } from "react-icons/fa";
+import { FaMinusCircle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import PulseLoader from "react-spinners/PulseLoader";
 import { handleClassify, handleDeleteImage, handleImageUpload } from "../../utils/album";
@@ -29,7 +29,7 @@ export default function TeacherAlbum() {
       <TeacherHeader/>
       <div className="px-[150px] mt-[120px]">
         <NavigateBack backPage="홈" backLink='/'/>
-        <Title title="사진분류"/>
+        <Title title="사진분류" tooltipContent={<div className="leading-relaxed">업로드한 사진을 AI가 아이별로 분류하고, 해당 아이의 학부모에게 전송합니다. 정상적으로 분류되지 않은 사진은 수동으로 분류할 수 있으니 안심하세요!</div>}/>
         <div className={`h-[470px] flex flex-row items-center ${images.length === 0 || loading ? 'justify-center' : 'justify-between'}`}>
           {!loading &&
           <div className={`flex flex-col items-center ${images.length === 0 ? 'mx-auto' : ''}`}>
@@ -47,9 +47,9 @@ export default function TeacherAlbum() {
                     <img src={URL.createObjectURL(file)} alt={`upload-${index}`} className={`object-cover w-full h-full rounded-md ${loading ? 'loading' : ''}`} />
                     <button 
                       onClick={() => handleDeleteImage(index, setImages)} 
-                      className={`absolute top-1 right-1 bg-red-600 text-white p-1 rounded-full ${loading ? 'loading' : ''}`}
+                      className={`absolute top-1 right-1 bg-red-600 text-white p-[2px] rounded-full ${loading ? 'loading' : ''}`}
                     >
-                      <FaTrash />
+                      <FaMinusCircle size={18} />
                     </button>
                   </div>
                 ))}
@@ -61,7 +61,7 @@ export default function TeacherAlbum() {
               )}
               <button 
                 onClick={() => handleClassify(images, setLoading, navigate)} 
-                className="flex items-center justify-center mt-5 font-bold py-2 px-4 bg-gradient-to-br from-[#FFF3B1] to-[#D5E4B4] rounded-[10px] w-[240px] h-[50px]"
+                className="animate-pulse-button flex items-center justify-center mt-5 font-bold py-2 px-4 bg-gradient-to-br from-[#FFF3B1] to-[#D5E4B4] rounded-[10px] w-[240px] h-[50px] transition-transform transform hover:scale-105 active:scale-95"
                 disabled={loading}
               >
                 {loading ? <PulseLoader color="#fff"/> : '아이별로 분류하기'}
@@ -70,6 +70,19 @@ export default function TeacherAlbum() {
           )}
         </div>
       </div>
+      <style>{`
+        @keyframes pulse {
+          0%, 100% {
+            transform: scale(1);
+          }
+          50% {
+            transform: scale(1.05);
+          }
+        }
+        .animate-pulse-button {
+          animation: pulse 2s infinite;
+        }
+      `}</style>
     </>
   );
 }

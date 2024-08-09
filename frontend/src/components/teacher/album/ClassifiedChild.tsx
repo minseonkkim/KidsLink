@@ -22,6 +22,8 @@ export default function ClassifiedChild({ item, index, moveImage, deleteImage }:
     },
   });
 
+  const isFailedCategory = item.child === null; // Check if the category is "분류실패"
+
   return (
     <div ref={drop} className="w-full mb-4">
       <div className="flex flex-row w-full">
@@ -45,6 +47,7 @@ export default function ClassifiedChild({ item, index, moveImage, deleteImage }:
               itemIndex={index}
               moveImage={moveImage}
               deleteImage={deleteImage}
+              isFailedCategory={isFailedCategory}
             />
           ))}
         </div>
@@ -52,4 +55,3 @@ export default function ClassifiedChild({ item, index, moveImage, deleteImage }:
     </div>
   );
 }
-

@@ -39,7 +39,7 @@ export default function ChildName({ child, index, moveImage }: ChildNameProps) {
           ? 'bg-[#EAEAEA] text-[#363636]'
           : 'bg-[#EAEAEA] text-[#363636]'
       }`}
-      style={{ minWidth: '120px' }}
+      style={{ minWidth: '120px', zIndex: 9999 }} // Ensure ChildName is above the overlay
     >
       {child ? child.name : '분류실패'}
     </div>
