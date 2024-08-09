@@ -1,6 +1,7 @@
 package com.ssafy.kidslink.application.album.controller;
 
 import com.ssafy.kidslink.application.album.dto.AlbumDTO;
+import com.ssafy.kidslink.application.album.dto.ChildAlbumDTO;
 import com.ssafy.kidslink.application.album.dto.ClassifyImageDTO;
 import com.ssafy.kidslink.application.album.dto.RequestAlbumDTO;
 import com.ssafy.kidslink.application.album.service.AlbumService;
@@ -124,6 +125,19 @@ public class AlbumController {
         );
         return ResponseEntity.status(HttpStatus.OK).body(responseData);
     }
+
+    @GetMapping("/class/{kindergartenClassId}/albums")
+    public ResponseEntity<APIResponse<List<ChildAlbumDTO>>> getAllChildrenAlbums(@PathVariable("kindergartenClassId") int kindergartenClassId) {
+        List<ChildAlbumDTO> childrenAlbums = albumService.getAllChildrenAlbums(kindergartenClassId);
+        APIResponse<List<ChildAlbumDTO>> responseData = new APIResponse<>(
+                "success",
+                childrenAlbums,
+                "반 아이들 앨범을 성공적으로 조회했습니다.",
+                null
+        );
+        return ResponseEntity.status(HttpStatus.OK).body(responseData);
+    }
+
 
     @GetMapping("/{albumId}")
     public ResponseEntity<APIResponse<AlbumDTO>> getAlbumById(@PathVariable("albumId") int albumId) {
