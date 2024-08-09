@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import DocumentItem from "./DocumentItem";
 import { checkDosageDocument, getDosageDocument } from "../../../api/document";
+import formatDate from "../../../utils/teacher/formatDate";
 
 interface DosageDocumentProps {
     dosageId: number;
@@ -62,7 +63,7 @@ export default function DosageDocument({ dosageId, onUpdate, isOurClass }: Dosag
                 }
             </div>
             <div className="text-[16px] lg:text-[20px] my-4 lg:my-8">
-                <DocumentItem title="기간" content={`${dosageDocument.startDate} ~ ${dosageDocument.endDate}`} />
+                <DocumentItem title="기간" content={`${formatDate(dosageDocument.startDate)} ~ ${formatDate(dosageDocument.endDate)}`} />
                 <DocumentItem title="약의 종류" content={dosageDocument.name} />
                 <DocumentItem title="투약 용량" content={dosageDocument.volume} />
                 <DocumentItem title="투약 횟수" content={dosageDocument.num} />
