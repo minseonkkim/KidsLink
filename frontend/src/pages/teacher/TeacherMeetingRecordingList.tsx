@@ -47,9 +47,9 @@ const TeacherMeetingRecordingList: React.FC = () => {
   return (
     <>
       <TeacherHeader /> 
-      <div className="mt-[130px] px-[20px] lg:px-[130px]">
+      <div className="mt-[130px] px-[20px] lg:px-[150px]">
         <NavigateBack backPage="화상상담" backLink="/meeting" />
-        <Title title="녹화 파일 목록"/>
+        <Title title="녹화된 상담"/>
         {noRecordings ? (
           <p className="text-gray-600">저장된 녹화본이 없습니다.</p>
         ) : (
@@ -59,10 +59,10 @@ const TeacherMeetingRecordingList: React.FC = () => {
                 <span>{recording.name}</span>
                 <div>
                   <button onClick={() => handleDownload(recording.url)} className="mr-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">
-                    Download
+                    다운로드
                   </button>
                   <button onClick={() => handleDelete(recording.id)} className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-700">
-                    Delete
+                    삭제
                   </button>
                 </div>
               </li>

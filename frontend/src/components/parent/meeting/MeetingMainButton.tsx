@@ -41,10 +41,9 @@ export default function MeetingMainButton({
     return (
         <div
             onClick={() => navigate(link)}
-            className={`relative transition-transform transform hover:scale-105 bg-[#f4f4f4] rounded-lg drop-shadow-md border-[#a2a2a2] p-7 w-[350px] ${isLg ? 'h-[200px]' : 'h-[180px]'} rounded-[20px] my-[50px] overflow-hidden cursor-pointer`}
+            className={`relative transition-transform transform hover:scale-105 bg-[#f4f4f4] hover:bg-[#ececec] rounded-lg drop-shadow-md border-[#a2a2a2] p-7 w-[240px] ${isLg ? 'h-[240px]' : 'h-[180px]'} rounded-[20px] my-[50px] overflow-hidden cursor-pointer`}
         >
             <h2 className="text-[25px] text-[#363636] mb-4 font-bold relative z-10">{title}</h2>
-            {/* {isLg && <p className="text-[15px] relative z-10 mt-30">{description}</p>} */}
             <img
                 src={image}
                 style={{
