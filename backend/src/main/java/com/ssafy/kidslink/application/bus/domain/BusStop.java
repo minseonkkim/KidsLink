@@ -1,6 +1,5 @@
 package com.ssafy.kidslink.application.bus.domain;
 
-import com.ssafy.kidslink.application.bus.domain.Bus;
 import com.ssafy.kidslink.application.child.domain.Child;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -21,6 +20,12 @@ public class BusStop {
 
     @Column(length = 100, name = "bus_stop_name")
     private String busStopName;
+
+    @Column(name = "latitude")
+    private float latitude;
+
+    @Column(name = "longtitude")
+    private float longitude;
 
     @ManyToOne
     @JoinColumn(name = "bus_id", nullable = false)
