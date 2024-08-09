@@ -73,6 +73,7 @@ export async function getClassAllDocuments(){
           details: item.type === 'Absent' ? item.absent : item.dosage,
         };
       });
+      console.log(documents)
       return documents;
     } else {
       throw new Error('Failed to get documents');

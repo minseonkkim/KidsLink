@@ -1,7 +1,9 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import DocumentItem from "./DocumentItem";
 import { checkDosageDocument, getDosageDocument } from "../../../api/document";
-import {formatDate} from "../../../utils/teacher/formatDate";
+import { formatDate } from "../../../utils/teacher/formatDate";
+import { showToastSuccess } from "../../../components/teacher/common/ToastNotification";
+import ToastNotification from "../../../components/teacher/common/ToastNotification";
 
 interface DosageDocumentProps {
     dosageId: number;
@@ -20,7 +22,7 @@ export default function DosageDocument({ dosageId, onUpdate, isOurClass }: Dosag
             } catch (error) {
                 console.error('Failed to fetch dosage document:', error);
             }
-        }
+        };
 
         fetchDosageDocument();
     }, [dosageId]);
@@ -30,15 +32,16 @@ export default function DosageDocument({ dosageId, onUpdate, isOurClass }: Dosag
             try {
                 await checkDosageDocument(dosageId);
                 setDosageDocument({ ...dosageDocument, confirmationStatus: "T" });
-                onUpdate(); // Update the parent component
+                onUpdate(); 
+                
+                showToastSuccess(<div>문서가 승인되었습니다.</div>);
             } catch (error) {
                 console.error('Failed to check dosage document:', error);
             }
         }
     };
 
-    const handleCheckboxChange = () => {
-    };
+    const handleCheckboxChange = () => {};
 
     if (!dosageDocument) {
         return <div>Loading...</div>;
@@ -62,15 +65,21 @@ export default function DosageDocument({ dosageId, onUpdate, isOurClass }: Dosag
                 </div>
                 }
             </div>
-            <div className="text-[16px] lg:text-[20px] my-4 lg:my-8">
+            <div className="text-[16px] lg:text-[20px] my-4 lg:my-8 lg:h-[370px] overflow-y-auto custom-scrollbar">
                 <DocumentItem title="기간" content={`${formatDate(dosageDocument.startDate)} ~ ${formatDate(dosageDocument.endDate)}`} />
                 <DocumentItem title="약의 종류" content={dosageDocument.name} />
                 <DocumentItem title="투약 용량" content={dosageDocument.volume} />
                 <DocumentItem title="투약 횟수" content={dosageDocument.num} />
                 <DocumentItem title="투약 시간" content={dosageDocument.times} />
                 <DocumentItem title="보관 방법" content={dosageDocument.storageInfo} />
-                <DocumentItem title="특이사항" content={dosageDocument.details} />
+                <DocumentItem 
+                    title="특이사항" 
+                    content={dosageDocument.details.split('\n').map((line, index) => (
+                        <p key={index} className="mb-2">{line}</p>
+                    ))} 
+                />
             </div>
+            <ToastNotification />
         </div>
     );
 }
