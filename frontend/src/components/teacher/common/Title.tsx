@@ -20,7 +20,7 @@ export default function Title({title, tooltipContent}: TitleProps){
             >
                 <FaInfoCircle size={30} color={isHovered ? "#8CAD1E" : "#C0D290"}/>
                 {showTooltip && (
-                  <div className="absolute top-full left-0 mt-2 w-[220px] p-4 bg-white border border-gray-300 rounded shadow-lg z-10 text-sm">
+                  <div className="absolute top-full left-0 mt-2 p-3 bg-white border border-gray-300 rounded shadow-lg z-10 text-sm">
                       {tooltipContent}
                   </div>
                 )}

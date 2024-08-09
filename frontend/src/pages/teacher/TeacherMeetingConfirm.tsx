@@ -95,7 +95,7 @@ export default function TeacherMeetingConfirm() {
             <TeacherHeader />
             <div className="mt-32 px-32">
                 <NavigateBack backPage="화상상담" backLink='/meeting' />
-                <Title title="상담시간 확정" />
+                <Title title="상담시간 확정" tooltipContent={<div className="w-[280px] leading-relaxed">키즈링크만의 알고리즘으로 최대한 많은 학부모와 상담을 할 수 있도록 상담 시간을 확정해드려요.</div>}/>
                 {Object.keys(groupedMeetings).length !== 0 && 
                 <button 
                     className="absolute top-[125px] right-[150px] mt-2 h-[40px] border-2 border-[#7C7C7C] bg-[#E3EEFF] px-3 py-1 font-bold rounded-[10px] hover:bg-[#D4DDEA]"

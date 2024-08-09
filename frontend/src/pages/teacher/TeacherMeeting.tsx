@@ -64,7 +64,7 @@ export default function TeacherMeeting() {
       <TeacherHeader />
       <div className="mt-[130px] px-[130px]">
         <NavigateBack backPage="화상상담" backLink='/meeting' />
-        <Title title="예약된 화상상담" />
+        <Title title="예약된 화상상담" tooltipContent={<div className="w-[260px] leading-relaxed">화상상담 10분 전부터 방에 입장할 수 있어요.</div>} />
         <div className="flex justify-center items-center">
           <div className="flex flex-row flex-wrap items-start content-start">
             {meetings.length === 0 ? (

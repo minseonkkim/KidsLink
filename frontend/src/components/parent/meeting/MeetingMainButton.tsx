@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 
 interface MeetingMainProps {
@@ -25,6 +25,7 @@ export default function MeetingMainButton({
     imgLeftSm
 }: MeetingMainProps) {
     const [isLg, setIsLg] = useState(window.innerWidth >= 1024);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const handleResize = () => {
@@ -38,21 +39,22 @@ export default function MeetingMainButton({
     }, []);
 
     return (
-        <Link to={link}>
-            <div className={`relative transition-transform transform hover:scale-105 bg-[#f4f4f4] rounded-lg drop-shadow-md border-[#a2a2a2] p-7 mx-1 w-[350px] ${isLg ? 'h-[320px]' : 'h-[200px]'} rounded-[20px] overflow-hidden`}>
-                <h2 className="text-[25px] text-[#363636] mb-4 font-bold relative z-10">{title}</h2>
-                {isLg && <p className="text-[15px] relative z-10 mt-30">{description}</p>}
-                <img
-                    src={image}
-                    style={{
-                        width: `${imgWidth}px`,
-                        position: 'absolute',
-                        top: isLg ? `${imgTopLg}px` : `${imgTopSm}px`,
-                        left: isLg ? `${imgLeftLg}px` : `${imgLeftSm}px`,
-                        opacity: 0.4
-                    }}
-                />
-            </div>
-        </Link>
+        <div
+            onClick={() => navigate(link)}
+            className={`relative transition-transform transform hover:scale-105 bg-[#f4f4f4] rounded-lg drop-shadow-md border-[#a2a2a2] p-7 w-[350px] ${isLg ? 'h-[200px]' : 'h-[180px]'} rounded-[20px] my-[50px] overflow-hidden cursor-pointer`}
+        >
+            <h2 className="text-[25px] text-[#363636] mb-4 font-bold relative z-10">{title}</h2>
+            {/* {isLg && <p className="text-[15px] relative z-10 mt-30">{description}</p>} */}
+            <img
+                src={image}
+                style={{
+                    width: `${imgWidth}px`,
+                    position: 'absolute',
+                    top: isLg ? `${imgTopLg}px` : `${imgTopSm}px`,
+                    left: isLg ? `${imgLeftLg}px` : `${imgLeftSm}px`,
+                    opacity: 0.4
+                }}
+            />
+        </div>
     );
 }
