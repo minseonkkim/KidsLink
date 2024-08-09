@@ -18,7 +18,7 @@ export default function AlbumFolder({title, coverImg}: AlbumFolderProps) {
                 backgroundImage: `url(${coverImg})`,
                 backgroundSize: "cover",
                 backgroundPosition: "center",
-                backgroundColor: 'rgba(255, 255, 255, 0.7)', // 투명도 30%를 적용하기 위해 배경에 반투명 흰색을 추가
+                backgroundColor: 'rgba(255, 255, 255, 0.65)', // 투명도 30%를 적용하기 위해 배경에 반투명 흰색을 추가
                 backgroundBlendMode: 'overlay' // 이미지와 배경색을 오버레이하여 투명도 효과를 적용
             }}>{title}</div>
         </div>
