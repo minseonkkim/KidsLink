@@ -10,6 +10,12 @@ import { createTeacherSchedule, createTeacherScheduleCheck, deleteTeacherSchedul
 import StyledCalendar from "../../components/teacher/common/StyledCalendar";
 import { getOneParentInfo } from "../../api/Info";
 
+interface KindergartenItemType {
+  id: number;
+  content: string;
+  date: string;
+}
+
 interface ScheduleItemType {
   id: number;
   content: string;
@@ -87,6 +93,7 @@ export default function TeacherSchedule() {
   const [date, setDate] = useState<ValuePiece | [ValuePiece, ValuePiece]>(new Date());
   const [scheduleItems, setScheduleItems] = useState<ScheduleItemType[]>([]);
   const [meetingItems, setMeetingItems] = useState<MeetingItemProps[]>([]);
+  const [kindergartenScheduleItems, setKindergartenScheduleItems] = useState<KindergartenItemType[]>([]);
   const [time, setTime] = useState('');
   const [todo, setTodo] = useState('');
 
@@ -133,16 +140,25 @@ export default function TeacherSchedule() {
       }
       setMeetingItems(fetchedMeetings);
     } catch (error) {
-      console.error("Failed to fetch schedules:", error);
+      console.error("Failed to fetch meeting schedules:", error);
     }
   };
   
+  const fetchKindergartenSchedules = async () => {
+    try{
+      const fetchedKindergartenSchedules: KindergartenItemType[] = (await getTeacherSchedules(formatSendDate(date))).kindergartenSchedules;
+      setKindergartenScheduleItems(fetchedKindergartenSchedules);
+    } catch(error){
+      console.error("Failed to fetch kindergarten schedules:", error);
+    }
+  }
   
   
 
   useEffect(() => {
     fetchTeacherSchedules();
     fetchMeetingSchedules();
+    fetchKindergartenSchedules();
   }, [date])
 
   const deleteItem = async (id: number) => {
@@ -207,12 +223,26 @@ export default function TeacherSchedule() {
             </div>
             <div className="border-[2px] border-[#8CAD1E] rounded-[10px] h-[270px] lg:h-[330px]">
               <div className="overflow-y-auto custom-scrollbar h-[310px] m-[10px]">
-                {scheduleItems.length === 0 && meetingItems.length === 0 ? (
+                {scheduleItems.length === 0 && meetingItems.length === 0 && kindergartenScheduleItems.length === 0? (
                   <div className="flex justify-center items-center lg:h-[310px] h-[250px]">
                     일정이 없어요.
                   </div>
                 ) : (
                   <>
+                    {kindergartenScheduleItems.length !== 0 &&
+                      <div className="mb-3">
+                        <div className="font-bold text-[18px] m-1">학사일정</div>
+                        {kindergartenScheduleItems.map((item, index) => (
+                          <div 
+                            key={item.id}
+                            className={'mx-1 my-3 text-[18px]'}
+                          >
+                            {item.content}
+                          </div>
+                        ))}
+                        {meetingItems.length !== 0 || scheduleItems.length !== 0 && <hr/>}
+                      </div>
+                    }
                     {meetingItems.length !== 0 &&
                       <div className="mb-3">
                         <div className="font-bold text-[18px] m-1">화상상담</div>
@@ -224,22 +254,25 @@ export default function TeacherSchedule() {
                             {item.meetingTime} {item.childName} 학부모
                           </div>
                         ))}
-                        <hr></hr>
+                        {scheduleItems.length !== 0 && <hr/>}
                       </div>
                     }
-                    {scheduleItems.length !== 0 && <div className="font-bold text-[18px] m-1">개인일정</div>}
-                    {scheduleItems.map(({ id, content, confirmationStatus }, index) => (
-                      <ScheduleItem
-                        key={id}
-                        id={id}
-                        content={content}
-                        confirmationStatus={confirmationStatus}
-                        index={index}
-                        moveItem={moveItem}
-                        deleteItem={deleteItem}
-                        toggleComplete={toggleComplete}
-                      />
-                    ))}
+                    {scheduleItems.length !== 0 && 
+                    <div>
+                      <div className="font-bold text-[18px] m-1">개인일정</div>
+                      {scheduleItems.map(({ id, content, confirmationStatus }, index) => (
+                        <ScheduleItem
+                          key={id}
+                          id={id}
+                          content={content}
+                          confirmationStatus={confirmationStatus}
+                          index={index}
+                          moveItem={moveItem}
+                          deleteItem={deleteItem}
+                          toggleComplete={toggleComplete}
+                        />
+                      ))}</div>
+                    }
                   </>
                 )}
               </div>
