@@ -19,18 +19,21 @@ interface BusStore {
   busStops: BusStop[];
   setBusStops: (stops: BusStop[]) => void;
   toggleChildChecked: (busStopId: number, childId: number) => void;
-  setAllChecked: (checked: boolean) => void;
+  setAllChecked: (checked: boolean) => void; // Add this line
 }
 
-export const useBusStore = create<BusStore>((set, get) => ({
+export const useBusStore = create<BusStore>((set) => ({
   busStops: [],
-  setBusStops: (stops) => {
-    const newStops = stops.map((stop) => ({
-      ...stop,
-      children: stop.children ? stop.children.map((child) => ({ ...child, checked: false })) : [],
-    }));
-    set({ busStops: newStops });
-  },
+  setBusStops: (stops) => 
+    set({
+      busStops: stops.map(stop => ({
+        ...stop,
+        children: stop.children.map(child => ({
+          ...child,
+          checked: child.checked !== undefined ? child.checked : false, 
+        })),
+      })),
+    }),
   toggleChildChecked: (busStopId, childId) =>
     set((state) => ({
       busStops: state.busStops.map((stop) =>

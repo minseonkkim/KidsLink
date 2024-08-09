@@ -38,6 +38,7 @@ export async function getAllBusStops(kindergartenId: number) {
     const response = await axiosInstance.get(`busstop/kindergarten/${kindergartenId}`)
 
     if (response.data.status === 'success') {
+      console.log(response.data.data)
       return response.data.data
     } else {
       throw new Error('Failed to get all-busstops')
