@@ -19,7 +19,7 @@ const createSession = async (sessionId: string): Promise<string> => {
     {
       headers: {
         "Content-Type": "application/json",
-      }
+      },
     }
   );
   return response.data; // 세션 ID 반환
@@ -44,7 +44,7 @@ export const getToken = async (mySessionId: string): Promise<string> => {
 // 세그먼트 녹화 시작
 export const startSegmentRecording = async (sessionId: string): Promise<string> => {
   const url = `${APPLICATION_SERVER_URL}/sessions/${sessionId}/recordings/start`;
-  
+
   try {
     const response = await axios.post(
       url,
@@ -82,11 +82,9 @@ const mergeSegments = async (segmentList: string[]): Promise<string> => {
   const url = `${APPLICATION_SERVER_URL}/recordings/save`;
 
   try {
-    const response = await axios.post(
-      url,
-      segmentList,
-      { headers: { "Content-Type": "application/json" } }
-    );
+    const response = await axios.post(url, segmentList, {
+      headers: { "Content-Type": "application/json" },
+    });
 
     return response.data;
   } catch (error) {
@@ -135,10 +133,14 @@ export const handleSpeechRecognition = async (
       if (event.results[i].isFinal) {
         const transcript = event.results[i][0].transcript;
         console.log("STT Result:", transcript);
-  
+
         if (detectProfanity(transcript)) {
           console.log("Profanity detected. Starting main recording...");
-          await stopSegmentRecording(segmentList.current[segmentList.current.length - 1]);
+
+          if (segmentList.current.length > 0) {
+            await stopSegmentRecording(segmentList.current[segmentList.current.length - 1]);
+          }
+
           startMainRecording();
           recognition.stop(); // STT 중지
         }
@@ -152,12 +154,15 @@ export const handleSpeechRecognition = async (
 
   recognition.start();
 
-  // 주기적으로 세그먼트 녹화 중지 및 새 세그먼트 시작
   intervalIdRef.current = window.setInterval(async () => {
-    const lastSegmentId = segmentList.current[segmentList.current.length - 1];
-    await stopSegmentRecording(lastSegmentId);
+    if (segmentList.current.length > 0) {
+      const lastSegmentId = segmentList.current[segmentList.current.length - 1];
+      console.log("Stopping last segment recording, ID:", lastSegmentId);
+      await stopSegmentRecording(lastSegmentId);
+    }
 
     const newSegmentId = await startSegmentRecording(sessionId);
+    console.log("Started new segment recording, ID:", newSegmentId, " for session:", sessionId);
     segmentList.current.push(newSegmentId);
     setRecordingId(newSegmentId);
   }, 5000);
