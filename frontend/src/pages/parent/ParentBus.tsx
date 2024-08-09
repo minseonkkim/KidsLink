@@ -116,57 +116,6 @@ export default function ParentBus() {
     parentMarkerRef.current = parentMarkerInstance;
     updateParentLocation(parentMarkerRef);
   };
-  const initializeMap = () => {
-  if (mapRef.current || !mapContainer.current) {
-    return;
-  }
-
-  const container = mapContainer.current;
-  const options = {
-    center: new window.kakao.maps.LatLng(location.lat, location.lng),
-    level: 3,
-  };
-  const newMap = new window.kakao.maps.Map(container, options);
-  mapRef.current = newMap;
-
-  const initialPosition = new window.kakao.maps.LatLng(location.lat, location.lng);
-  const busMarker = createMarker(newMap, initialPosition, busIcon);
-  busMarkerRef.current = busMarker;
-
-  const parentInitialPosition = new window.kakao.maps.LatLng(location.lat, location.lng);
-  
-  // 애니메이션 요소 추가
-  const overlayContent = document.createElement('div');
-  overlayContent.style.position = 'relative';
-  overlayContent.style.width = '50px';
-  overlayContent.style.height = '50px';
-  const pulseRing = document.createElement('div');
-  pulseRing.className = 'pulse-ring';
-  overlayContent.appendChild(pulseRing);
-  const markerIcon = document.createElement('img');
-  markerIcon.src = currentLocationIcon;
-  markerIcon.style.position = 'absolute';
-  markerIcon.style.top = '50%';
-  markerIcon.style.left = '50%';
-  markerIcon.style.width = '30px';
-  markerIcon.style.height = '30px';
-  markerIcon.style.transform = 'translate(-50%, -50%)';
-  overlayContent.appendChild(markerIcon);
-  const parentMarkerInstance = new window.kakao.maps.CustomOverlay({
-    position: parentInitialPosition,
-    content: overlayContent,
-    yAnchor: 0,
-    xAnchor: 0,
-    zIndex: 1,
-  });
-  parentMarkerInstance.setMap(newMap);
-  parentMarkerRef.current = parentMarkerInstance;
-  updateParentLocation(parentMarkerRef);
-
-  // 새로운 마커를 추가합니다
-  const newMarkerPosition = new window.kakao.maps.LatLng(35.1911678, 126.8102566);
-  createMarker(newMap, newMarkerPosition, busStopIcon);
-};
 
   const initializeWebSocket = async () => {
     if (isWebSocketInitialized.current) {
