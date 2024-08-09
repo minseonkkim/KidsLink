@@ -70,7 +70,7 @@ export default function AbsentDocument({ absentId, onUpdate, isOurClass }: Absen
         <DocumentItem title="사유" content={absentDocument.reason} />
         <DocumentItem 
           title="기타사항" 
-          content={absentDocument.details.split('\n').map((line, index) => (
+          content={(absentDocument.details || '').split('\n').map((line: string, index: number) => (
             <p key={index} className="mb-2">{line}</p>
           ))} 
         />
