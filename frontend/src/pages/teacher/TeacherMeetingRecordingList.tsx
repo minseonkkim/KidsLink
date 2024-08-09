@@ -3,6 +3,7 @@ import TeacherHeader from "../../components/teacher/common/TeacherHeader";
 import NavigateBack from "../../components/teacher/common/NavigateBack";
 import { fetchRecordingsList } from "../../utils/openvidu";
 import { Recording } from "../../types/openvidu";
+import { handleDownload } from "../../api/openvidu";
 
 const dummyRecordings: Recording[] = [
   { id: "1", name: "Recording 1", url: "/path/to/recording1" },
@@ -31,48 +32,6 @@ const TeacherMeetingRecordingList: React.FC = () => {
     }
     console.log(recordings);
   }, [recordings]);
-
-  const handleDownload = async (url: string) => {
-    try {
-      const response = await fetch(url, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/octet-stream",
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-
-      const contentDisposition = response.headers.get("Content-Disposition");
-      const contentType = response.headers.get("Content-Type");
-      const blob = await response.blob();
-
-      let fileName = "download";
-      if (contentDisposition) {
-        const fileNameMatch = contentDisposition.match(/filename="?(.+)"?/);
-        if (fileNameMatch.length > 1) {
-          fileName = fileNameMatch[1];
-        }
-      } else if (contentType) {
-        const extension = contentType.split("/")[1];
-        fileName = `kidslink.${extension}`;
-      }
-
-      const link = document.createElement("a");
-      const objectURL = URL.createObjectURL(blob);
-      link.href = objectURL;
-      link.download = fileName;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(objectURL);
-    } catch (error) {
-      console.error("Failed to download file:", error);
-    }
-    // window.location.href = url;
-  };
 
   const handleDelete = (id: string) => {
     setRecordings(recordings.filter((recording) => recording.id !== id));
