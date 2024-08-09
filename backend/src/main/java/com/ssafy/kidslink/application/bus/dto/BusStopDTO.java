@@ -12,6 +12,8 @@ import java.util.List;
 public class BusStopDTO {
     int busId;
     int busStopId;
+    float latitude;
+    float longitude;
     String busStopName;
     List<BusStopChildDTO> children;
 }
