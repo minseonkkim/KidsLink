@@ -11,11 +11,7 @@ declare global {
   }
 }
 
-export const getToken = async (mySessionId: string): Promise<string> => {
-  const sessionId = await createSession(mySessionId);
-  return await createToken(sessionId);
-};
-
+// 세션 생성
 const createSession = async (sessionId: string): Promise<string> => {
   const response = await axios.post(
     `${APPLICATION_SERVER_URL}/sessions`,
@@ -26,9 +22,10 @@ const createSession = async (sessionId: string): Promise<string> => {
       }
     }
   );
-  return response.data; // 세션 ID 반환, data.id를 통해 올바른 값 추출
+  return response.data; // 세션 ID 반환
 };
 
+// 토큰 생성
 const createToken = async (sessionId: string): Promise<string> => {
   const response = await axios.post(
     `${APPLICATION_SERVER_URL}/sessions/${sessionId}/connections`,
@@ -40,7 +37,11 @@ const createToken = async (sessionId: string): Promise<string> => {
   return response.data; // 토큰 반환
 };
 
-// 녹화 시작 (세그먼트 녹화) - Chat GPT 추가
+export const getToken = async (mySessionId: string): Promise<string> => {
+  const sessionId = await createSession(mySessionId);
+  return await createToken(sessionId);
+};
+// 세그먼트 녹화 시작
 export const startSegmentRecording = async (sessionId: string): Promise<string> => {
   const url = `${APPLICATION_SERVER_URL}/api/video/sessions/${sessionId}/recordings/start`;
   
@@ -50,78 +51,54 @@ export const startSegmentRecording = async (sessionId: string): Promise<string> 
       {
         outputMode: "COMPOSED",
         recordingMode: "ALWAYS",
-        name: `segment-${Date.now()}`, // 세그먼트 파일명에 타임스탬프를 포함
+        name: `segment-${Date.now()}`,
         hasAudio: true,
         hasVideo: true,
       },
       { headers: { "Content-Type": "application/json" } }
     );
 
-    if (response.data && typeof response.data === 'string') {
-      return response.data;
-    } else {
-      throw new Error('Unexpected response format');
-    }
+    return response.data;
   } catch (error) {
-    if (axios.isAxiosError(error)) {
-      console.error("Network or server error when starting segment recording:", error.message);
-    } else {
-      console.error("Unexpected error when starting segment recording:", error);
-    }
+    console.error("Error starting segment recording:", error);
     throw error;
   }
 };
 
-// 녹화 중지 (세그먼트 녹화 중지) - Chat GPT 추가
-export const stopSegmentRecording = async (recordingId: string): Promise<any> => {
+// 세그먼트 녹화 중지
+export const stopSegmentRecording = async (recordingId: string): Promise<void> => {
   const url = `${APPLICATION_SERVER_URL}/api/video/recordings/stop/${recordingId}`;
 
   try {
-    const response = await axios.post(
-      url,
-      {},
-      { headers: { "Content-Type": "application/json" } }
-    );
-
-    if (response.data) {
-      return response.data;
-    } else {
-      throw new Error('Unexpected response format');
-    }
+    await axios.post(url, {}, { headers: { "Content-Type": "application/json" } });
   } catch (error) {
-    if (axios.isAxiosError(error)) {
-      console.error("Network or server error when stopping segment recording:", error.message);
-    } else {
-      console.error("Unexpected error when stopping segment recording:", error);
-    }
+    console.error("Error stopping segment recording:", error);
     throw error;
   }
 };
 
-// 세그먼트 병합 요청 - Chat GPT 추가
+// 세그먼트 병합
 const mergeSegments = async (segmentList: string[]): Promise<string> => {
   const url = `${APPLICATION_SERVER_URL}/api/video/recordings/save`;
 
   try {
     const response = await axios.post(
       url,
-      segmentList, // 병합할 세그먼트 ID 리스트
+      segmentList,
       { headers: { "Content-Type": "application/json" } }
     );
 
-    if (response.data && typeof response.data === 'string') {
-      return response.data; // 병합된 파일의 경로 반환
-    } else {
-      throw new Error('Unexpected response format');
-    }
+    return response.data;
   } catch (error) {
-    if (axios.isAxiosError(error)) {
-      console.error("Network or server error when merging segments:", error.message);
-    } else {
-      console.error("Unexpected error when merging segments:", error);
-    }
+    console.error("Error merging segments:", error);
     throw error;
   }
+};
+
+// 욕설 감지
+const detectProfanity = (text: string): boolean => {
+  const profanityList = ["김범수", "바보"]; // 필요에 따라 단어 추가
+  return profanityList.some((word) => text.includes(word));
 };
 
 // 녹화된 영상 가져오기
@@ -135,16 +112,13 @@ export const fetchRecordings = async (): Promise<any[]> => {
   }
 };
 
-// 욕설 감지
-const detectProfanity = (text: string): boolean => {
-  const profanityList = ["김범수", "바보"]; // Add more words as needed
-  return profanityList.some((word) => text.includes(word));
-};
-
-// stt() 및 세그먼트 녹화 처리 - Chat GPT 추가
+// STT 및 세그먼트 녹화 처리
 export const handleSpeechRecognition = async (
   sessionId: string,
-  setRecordingId: React.Dispatch<React.SetStateAction<string | null>>
+  setRecordingId: React.Dispatch<React.SetStateAction<string | null>>,
+  segmentList: React.MutableRefObject<string[]>,
+  intervalIdRef: React.MutableRefObject<number | null>,
+  startMainRecording: () => void
 ) => {
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SpeechRecognition) {
@@ -156,22 +130,17 @@ export const handleSpeechRecognition = async (
   recognition.continuous = true;
   recognition.interimResults = true;
 
-  const segmentList: string[] = []; // 세그먼트 리스트 - Chat GPT 추가
-
   recognition.onresult = async (event) => {
     for (let i = event.resultIndex; i < event.results.length; i++) {
       if (event.results[i].isFinal) {
         const transcript = event.results[i][0].transcript;
-        console.log(transcript);
+        console.log("STT Result:", transcript);
+  
         if (detectProfanity(transcript)) {
-          console.log("Profanity detected. Starting recording...");
-          alert("욕설이 감지되었습니다. 녹화가 시작됩니다."); // 알림창 추가 ----> ***************TODO : 수정필요*************
-          
-          const recordingId = await startSegmentRecording(sessionId); // 세그먼트 녹화 시작 - Chat GPT 추가
-          segmentList.push(recordingId); // 세그먼트 리스트에 추가 - Chat GPT 추가
-          console.log("Recording started with ID:", recordingId);
-          setRecordingId(recordingId);
-          recognition.stop(); // 중복 녹화를 방지하기 위해 감지 중지
+          console.log("Profanity detected. Starting main recording...");
+          await stopSegmentRecording(segmentList.current[segmentList.current.length - 1]);
+          startMainRecording();
+          recognition.stop(); // STT 중지
         }
       }
     }
@@ -183,25 +152,59 @@ export const handleSpeechRecognition = async (
 
   recognition.start();
 
-  // 주기적으로 세그먼트 녹화 중지 및 새 세그먼트 시작 - Chat GPT 추가
-  setInterval(async () => {
-    if (segmentList.length > 0) {
-      const lastSegmentId = segmentList[segmentList.length - 1];
-      await stopSegmentRecording(lastSegmentId); // 마지막 세그먼트 녹화 중지
-    }
+  // 주기적으로 세그먼트 녹화 중지 및 새 세그먼트 시작
+  intervalIdRef.current = window.setInterval(async () => {
+    const lastSegmentId = segmentList.current[segmentList.current.length - 1];
+    await stopSegmentRecording(lastSegmentId);
 
-    const newRecordingId = await startSegmentRecording(sessionId); // 새로운 세그먼트 녹화 시작
-    segmentList.push(newRecordingId); // 세그먼트 리스트에 추가
+    const newSegmentId = await startSegmentRecording(sessionId);
+    segmentList.current.push(newSegmentId);
+    setRecordingId(newSegmentId);
   }, 5000);
-
-  // 세션 종료 시 세그먼트 병합 - Chat GPT 추가
-  window.addEventListener('beforeunload', async () => {
-    await mergeSegments(segmentList); // 세그먼트 병합
-  });
 };
 
-// 녹화 중지 버튼 - 완전한 녹화 종료 및 세그먼트 병합 - Chat GPT 추가
-export const stopRecording = async (sessionId: string, segmentList: string[], intervalIdRef: React.MutableRefObject<number | null>) => {
+// 메인 녹화 시작
+export const startMainRecording = async (sessionId: string): Promise<string> => {
+  const url = `${APPLICATION_SERVER_URL}/api/video/sessions/${sessionId}/recordings/start`;
+
+  try {
+    const response = await axios.post(
+      url,
+      {
+        outputMode: "COMPOSED",
+        recordingMode: "ALWAYS",
+        name: `main-${Date.now()}`,
+        hasAudio: true,
+        hasVideo: true,
+      },
+      { headers: { "Content-Type": "application/json" } }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error("Error starting main recording:", error);
+    throw error;
+  }
+};
+
+// 메인 녹화 중지
+export const stopMainRecording = async (recordingId: string): Promise<void> => {
+  const url = `${APPLICATION_SERVER_URL}/api/video/recordings/stop/${recordingId}`;
+
+  try {
+    await axios.post(url, {}, { headers: { "Content-Type": "application/json" } });
+  } catch (error) {
+    console.error("Error stopping main recording:", error);
+    throw error;
+  }
+};
+
+// 녹화 중지 버튼 - 세그먼트 병합 및 녹화 중지
+export const stopRecording = async (
+  sessionId: string,
+  segmentList: string[],
+  intervalIdRef: React.MutableRefObject<number | null>
+) => {
   try {
     if (intervalIdRef.current) {
       clearInterval(intervalIdRef.current); // 세그먼트 녹화 타이머 중지
@@ -263,10 +266,10 @@ export const handleDownload = async (url: string) => {
   // window.location.href = url;
 };
 
-// 기존 기능은 그대로 유지 - Chat GPT 추가
-export const stopSpeechRecognition = () => {
-  const recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (recognition) {
-    recognition.stop();
-  }
-};
+// // 기존 기능은 그대로 유지 - Chat GPT 추가
+// export const stopSpeechRecognition = () => {
+//   const recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+//   if (recognition) {
+//     recognition.stop();
+//   }
+// };
