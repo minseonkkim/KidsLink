@@ -90,3 +90,21 @@ export async function sendAlbumToParent(sendData: SendData){
     throw error
   }
 }
+
+
+// 우리반 앨범 모두 조회
+export async function getAllClassChildAlbum(classId: number){
+  try{
+    const response = await axiosInstance.get(`album/class/${classId}/albums`);
+
+    if (response.data.status === 'success') {
+      return response.data.data
+    } else {
+      throw new Error('Failed to get all class child album')
+    }
+    
+  } catch (error) {
+    console.error(error)
+    throw error
+  }
+}
