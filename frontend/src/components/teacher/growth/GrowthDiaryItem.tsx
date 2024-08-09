@@ -11,7 +11,7 @@ interface GrowthDiaryItemProps {
 }
 
 const GrowthDiaryModalContent = ({ createDate, content, images }: GrowthDiaryItemProps) => (
-    <div className="w-[500px] h-[400px] p-4">
+    <div className="w-[327px] lg:w-[500px] h-[400px] p-4">
         <div className="block mb-4 font-bold text-[18px]">{createDate}</div>
         {images.length > 0 && (
             <div className="flex flex-row overflow-x-auto">

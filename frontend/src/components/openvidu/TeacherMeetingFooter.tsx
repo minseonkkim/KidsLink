@@ -5,8 +5,15 @@ import { Slider } from "@mui/material";
 import { FaMicrophone, FaMicrophoneSlash } from "react-icons/fa";
 import { TeacherMeetingFooterProps } from "../../types/meeting";
 
-export default function TeacherMeetingFooter({ control, handleControl, close, stopRecording, isRecording }: TeacherMeetingFooterProps) {
-
+export default function TeacherMeetingFooter({
+  control,
+  handleControl,
+  close,
+  startRecording,
+  stopRecording,
+  isRecording,
+}: TeacherMeetingFooterProps) {
+  console.log("TeacherMeetingFooter 렌더링, isRecording 상태:", isRecording);
   const isMuted = control.muted || control.volume === 0;
 
   return (
@@ -16,12 +23,18 @@ export default function TeacherMeetingFooter({ control, handleControl, close, st
           {control.video ? (
             <IoVideocam
               className="cursor-pointer text-3xl text-black"
-              onClick={() => handleControl((prev) => ({ ...prev, video: false }))}
+              onClick={() => {
+                console.log("Video off");
+                handleControl((prev) => ({ ...prev, video: false }));
+              }}
             />
           ) : (
             <IoVideocamOff
               className="cursor-pointer text-[#B8B8B8] text-3xl"
-              onClick={() => handleControl((prev) => ({ ...prev, video: true }))}
+              onClick={() => {
+                console.log("Video on");
+                handleControl((prev) => ({ ...prev, video: true }));
+              }}
             />
           )}
         </div>
@@ -30,12 +43,18 @@ export default function TeacherMeetingFooter({ control, handleControl, close, st
           {control.mic ? (
             <FaMicrophone
               className="cursor-pointer text-3xl text-black"
-              onClick={() => handleControl((prev) => ({ ...prev, mic: false }))}
+              onClick={() => {
+                console.log("Mic off");
+                handleControl((prev) => ({ ...prev, mic: false }));
+              }}
             />
           ) : (
             <FaMicrophoneSlash
               className="cursor-pointer text-3xl text-[#B8B8B8]"
-              onClick={() => handleControl((prev) => ({ ...prev, mic: true }))}
+              onClick={() => {
+                console.log("Mic on");
+                handleControl((prev) => ({ ...prev, mic: true }));
+              }}
             />
           )}
         </div>
@@ -44,12 +63,18 @@ export default function TeacherMeetingFooter({ control, handleControl, close, st
           {isMuted ? (
             <IoVolumeMute
               className="cursor-pointer text-3xl text-[#B8B8B8] mr-3"
-              onClick={() => handleControl((prev) => ({ ...prev, muted: false }))}
+              onClick={() => {
+                console.log("Volume unmute");
+                handleControl((prev) => ({ ...prev, muted: false }));
+              }}
             />
           ) : (
             <IoVolumeHigh
               className="cursor-pointer text-3xl text-black mr-3"
-              onClick={() => handleControl((prev) => ({ ...prev, muted: true }))}
+              onClick={() => {
+                console.log("Volume mute");
+                handleControl((prev) => ({ ...prev, muted: true }));
+              }}
             />
           )}
           <div className="w-48 py-2 items-center">
@@ -58,20 +83,21 @@ export default function TeacherMeetingFooter({ control, handleControl, close, st
               step={0.1}
               min={0.0}
               max={1.0}
-              onChange={(event, newVal) =>
-                handleControl((prev) => ({ ...prev, volume: newVal as number }))
-              }
+              onChange={(event, newVal) => {
+                console.log("Volume changed to:", newVal);
+                handleControl((prev) => ({ ...prev, volume: newVal as number }));
+              }}
               sx={{
-                width: '100%',
-                color: 'yellow',
-                '& .MuiSlider-thumb': {
-                  backgroundColor: '#FFD700',
+                width: "100%",
+                color: "yellow",
+                "& .MuiSlider-thumb": {
+                  backgroundColor: "#FFD700",
                 },
-                '& .MuiSlider-track': {
-                  backgroundColor: '#FFD700',
+                "& .MuiSlider-track": {
+                  backgroundColor: "#FFD700",
                 },
-                '& .MuiSlider-rail': {
-                  backgroundColor: '#FFD700',
+                "& .MuiSlider-rail": {
+                  backgroundColor: "#FFD700",
                 },
               }}
             />
@@ -79,16 +105,14 @@ export default function TeacherMeetingFooter({ control, handleControl, close, st
         </div>
       </div>
       <div className="flex items-center gap-4">
+        {isRecording && <div className="text-red-600 font-bold">REC</div>}
         <button
-          className={`text-2xl ${isRecording ? 'text-red-600' : 'text-black'}`}
-          onClick={stopRecording}
+          className={`text-2xl ${isRecording ? "text-red-600" : "text-black"}`}
+          onClick={isRecording ? stopRecording : startRecording} // 상태에 따라 적절한 함수 호출
         >
-          {isRecording ? '녹음 중지' : '녹음 시작'}
+          {isRecording ? "녹화 중지" : "녹화 시작"}
         </button>
-        <RxCrossCircled
-          className="ml-3 text-3xl cursor-pointer text-red-600"
-          onClick={close}
-        />
+        <RxCrossCircled className="ml-3 text-3xl cursor-pointer text-red-600" onClick={close} />
       </div>
     </div>
   );

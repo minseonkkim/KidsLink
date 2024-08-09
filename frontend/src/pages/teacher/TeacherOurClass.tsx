@@ -106,18 +106,18 @@ export default function TeacherOurClass() {
   return (
     <>
       <TeacherHeader />
-      <div className="mt-[85px] px-[150px] flex flex-col items-center">
+      <div className="lg:mt-[85px] mt-[120px] px-4 lg:px-[150px] flex flex-col items-center">
         <NavigateBack backPage="홈" backLink='/' />
         <Title title={teacherInfo ? teacherInfo.kindergartenClassName : ""} />
-        <div className="absolute top-[125px] right-[400px] bg-[#ffdfdf] px-5 py-2 font-bold rounded-[10px] flex flex-row items-center text-xl font-bold">
+        <div className="absolute lg:top-[125px] top-[175px] right-[280px] lg:right-[400px] bg-[#ffdfdf] px-3 py-1 lg:px-5 lg:py-2 font-bold rounded-[10px] flex flex-row items-center text-lg lg:text-xl font-bold">
           결석
         </div>
-        <span className="absolute top-[125px] right-[350px] px-3 py-2 flex flex-row items-center text-xl font-bold">{absentCount}명</span>
-        <div className="absolute top-[125px] right-[250px] bg-[#e7dfff] px-5 py-2 font-bold rounded-[10px] flex flex-row items-center text-xl font-bold">
+        <span className="absolute lg:top-[130px] top-[175px] right-[230px] lg:right-[350px] px-2 lg:px-3 py-1 flex flex-row items-center text-lg lg:text-xl font-bold">{absentCount}명</span>
+        <div className="absolute lg:top-[125px] top-[175px] right-[140px] lg:right-[250px] bg-[#e7dfff] px-3 py-1 lg:px-5 lg:py-2 font-bold rounded-[10px] flex flex-row items-center text-lg lg:text-xl font-bold">
           투약
         </div>
-        <span className="absolute top-[125px] right-[200px] px-3 py-2 flex flex-row items-center text-xl font-bold">{dosageCount}명</span>
-        <div className="flex flex-row flex-wrap w-[1200px]" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))' }}>
+        <span className="absolute lg:top-[130px] top-[175px] right-[90px] lg:right-[200px] px-2 lg:px-3 py-1 flex flex-row items-center text-lg lg:text-xl font-bold">{dosageCount}명</span>
+        <div className="flex flex-row flex-wrap w-full lg:w-[1200px] lg:mt-0 mt-[50px] justify-around">
           {childs.map((child, index) => (
             <ChildCard
               key={index}

@@ -14,6 +14,104 @@ import ClassifiedChild from '../../components/teacher/album/ClassifiedChild';
 import ChildName from '../../components/teacher/album/ChildName';
 import { AlbumItem, Child } from '../../types/album';
 import ToastNotification, { showToastError, showToastSuccess } from '../../components/teacher/common/ToastNotification';
+import { useDragLayer } from 'react-dnd';
+
+interface DragItem {
+  index: number;
+  itemIndex: number;
+  image: { path: string };
+};
+
+export function DragOverlay() {
+  const { isDragging, currentOffset, item } = useDragLayer((monitor) => ({
+    isDragging: monitor.isDragging(),
+    currentOffset: monitor.getSourceClientOffset(),
+    item: monitor.getItem(),
+  }));
+
+  if (!isDragging || !item || !currentOffset) {
+    return null;
+  }
+
+  const transform = `translate(${currentOffset.x}px, ${currentOffset.y}px)`;
+
+  return (
+    <>
+      {/* Darkened background overlay */}
+      <div
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          backgroundColor: 'rgba(0, 0, 0, 0.65)',
+          zIndex: 9998,
+          pointerEvents: 'none',
+        }}
+      />
+
+      {/* Render the dragged item */}
+      <div
+        style={{
+          transform,
+          WebkitTransform: transform,
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          zIndex: 10000,
+          pointerEvents: 'none',
+          width: '150px', 
+          height: '150px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          borderRadius: '8px',
+          boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.65)',
+          backgroundColor: '#fff',
+        }}
+      >
+        {item.image && (
+          <img
+            src={item.image.path}
+            alt="dragged"
+            className="object-cover"
+            style={{
+              width: '100%',
+              height: '100%',
+              borderRadius: '8px',
+            }}
+          />
+        )}
+      </div>
+    </>
+  );
+}
+
+export function ChildNameContainer({ classChildren, moveImage }) {
+  const { isDragging } = useDragLayer((monitor) => ({
+    isDragging: monitor.isDragging(),
+  }));
+
+  return (
+    <div
+      className="flex flex-wrap mb-2 justify-center"
+      style={{
+        position: 'fixed', 
+        top: '50%',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        display: isDragging ? 'flex' : 'none',
+        zIndex: 10000, 
+        width: '100%',
+      }}
+    >
+      {classChildren.map((child, index) => (
+        <ChildName key={index} child={child} index={index + 1} moveImage={moveImage} />
+      ))}
+    </div>
+  );
+}
 
 export default function TeacherAlbumFinish() {
   const location = useLocation();
@@ -110,6 +208,7 @@ export default function TeacherAlbumFinish() {
   return (
     <DndProvider backend={HTML5Backend}>
       <TeacherHeader />
+      <DragOverlay /> {/* Add the DragOverlay here */}
       <div className="mt-[120px] px-[150px]">
         <NavigateBack backPage="홈" backLink="/" />
         <Title title="사진분류" />
@@ -130,12 +229,9 @@ export default function TeacherAlbumFinish() {
               className="border-b-[2px] border-[#363636] w-[290px] px-2 py-0.5 focus:outline-none"
             />
           </div>
-          <div className="mb-2 text-[17px]">잘못된 분류가 있나요? 드래그로 수정해보세요</div>
-          <div className="flex flex-wrap mb-2 justify-center">
-            {classChildren.map((child, index) => (
-              <ChildName key={index} child={child} index={index + 1} moveImage={moveImage} />
-            ))}
-          </div>
+          <div className="mb-3 text-[17px]">잘못된 분류가 있나요? 드래그로 수정해보세요</div>
+          <ChildNameContainer classChildren={classChildren} moveImage={moveImage}/>
+
           {result.map((item, index) => (
             item.images.length > 0 && (
               <ClassifiedChild key={index} item={item} index={index} moveImage={moveImage} deleteImage={deleteImage} />

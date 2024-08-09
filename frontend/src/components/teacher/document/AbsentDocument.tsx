@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import DocumentItem from "./DocumentItem";
 import { checkAbsentDocument, getAbsentDocument } from "../../../api/document";
+import {formatDate} from "../../../utils/teacher/formatDate";
 
 interface AbsentDocumentProps {
   absentId: number;
@@ -62,7 +63,7 @@ export default function AbsentDocument({ absentId, onUpdate, isOurClass }: Absen
         }
       </div>
       <div className="text-[16px] lg:text-[20px] my-4 lg:my-8">
-        <DocumentItem title="기간" content={`${absentDocument.startDate} ~ ${absentDocument.endDate}`} />
+        <DocumentItem title="기간" content={`${formatDate(absentDocument.startDate)} ~ ${formatDate(absentDocument.endDate)}`} />
         <DocumentItem title="사유" content={absentDocument.reason} />
         <DocumentItem title="기타사항" content={absentDocument.details} />
       </div>

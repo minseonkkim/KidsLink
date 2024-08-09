@@ -41,6 +41,7 @@ import TeacherAlbumSendFinish from "./pages/teacher/TeacherAlbumSendFinish";
 import TeacherVideo from "./pages/teacher/TeacherVideo";
 import TeacherMeetingMain from "./pages/teacher/TeacherMeetingMain";
 import TeacherMeetingConfirm from "./pages/teacher/TeacherMeetingConfirm";
+import TeacherMeetingRecordingList from "./pages/teacher/TeacherMeetingRecordingList";
 
 export default function App() {
   const userType = useAppStore((state: AppState) => state.userType);
@@ -94,6 +95,7 @@ export default function App() {
           <Route path="/meeting/:meetingId" element={<TeacherVideo />} />
           <Route path="/meeting" element={<TeacherMeetingMain />} />
           <Route path="/meeting/confirm" element={<TeacherMeetingConfirm />} />
+          <Route path="/meeting/recordings" element={<TeacherMeetingRecordingList />} />
           {/* 교사 사용자에 대한 잘못된 경로 */}
           <Route
             path="*"

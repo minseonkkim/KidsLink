@@ -6,12 +6,14 @@ interface InputFieldsProps {
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => void;
   selectedOption: string;
+  errors: { [key: string]: string | null }; // 에러 메시지 추가
 }
 
 export default function InputFields({
   formData,
   handleInputChange,
   selectedOption,
+  errors,
 }: InputFieldsProps) {
   const fields =
     selectedOption === "dosage"
@@ -60,6 +62,10 @@ export default function InputFields({
               className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#FDDA6E]"
               onChange={handleInputChange}
             />
+          )}
+          {/* 에러 메시지를 필드 아래에 추가 */}
+          {errors[label] && (
+            <p className="text-red-500 text-sm mt-1">{errors[label]}</p>
           )}
         </div>
       ))}

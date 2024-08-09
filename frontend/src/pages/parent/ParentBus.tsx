@@ -1,9 +1,7 @@
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import InfoSection from "../../components/parent/common/InfoSection";
 import daramgi from "../../assets/parent/bus-daramgi.png";
-import busIcon from '../../assets/parent/driving-daramgi.png';
-import currentLocationIcon from '../../assets/parent/marker.png';
-import busStopIcon from '../../assets/parent/bus_stop_icon.jpg';
+import busIcon from '../../assets/parent/bus-driving.gif';
 import { receiveBusLocation } from '../../api/webSocket';
 import { postKidBoardingStatus, getKidBoardingStatus } from '../../api/bus';
 import { getParentInfo } from '../../api/Info';
@@ -25,7 +23,9 @@ export default function ParentBus() {
   const [isBoarding, setIsBoarding] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isMoving, setIsMoving] = useState(false);
+  const [busOption, setBusOption] = useState('등원'); // 새로운 상태 추가
   const [childId, setChildId] = useState<number | null>(null);
+  const [kindergartenId, setKindergartenId] = useState(null);
   const mapRef = useRef<any>(null);
   const busMarkerRef = useRef<any>(null);
   const parentMarkerRef = useRef<any>(null);
@@ -36,18 +36,85 @@ export default function ParentBus() {
   let centerFlag = false;
   const busCenterFlag = useRef<boolean>(false);
 
-  const createMarker = (map, position, imageUrl) => {
-    const imageSize = new window.kakao.maps.Size(40, 40);
-    const imageOption = { offset: new window.kakao.maps.Point(20, 20) };
-    const markerImage = new window.kakao.maps.MarkerImage(imageUrl, imageSize, imageOption);
-  
-    const marker = new window.kakao.maps.Marker({
-      position: position,
-      image: markerImage,
+  useEffect(() => {
+    async function fetchParentInfo() {
+      try {
+        let currentKindergartenId = kindergartenId;
+        if (!currentKindergartenId) {
+          const fetchedParentInfo = await getParentInfo();
+          setParentInfo(fetchedParentInfo);
+          currentKindergartenId = fetchedParentInfo.child.kindergartenClass.kindergartenClassId;
+        }
+
+        if (currentKindergartenId) {
+          setKindergartenId(currentKindergartenId);
+          console.log("유치원 ID : ", kindergartenId);
+        }
+      } catch (error) {
+        console.log("유치원 ID 조회 실패", error);
+      }
+    }
+    fetchParentInfo();
+  }, [kindergartenId, setParentInfo]);
+
+  const initializeMap = () => {
+    if (mapRef.current || !mapContainer.current) {
+      return;
+    }
+
+    const container = mapContainer.current;
+    const options = {
+      center: new window.kakao.maps.LatLng(location.lat, location.lng),
+      level: 3,
+    };
+    const newMap = new window.kakao.maps.Map(container, options);
+    mapRef.current = newMap;
+
+    const initialPosition = new window.kakao.maps.LatLng(location.lat, location.lng);
+
+    const busMarkerInstance = new window.kakao.maps.CustomOverlay({
+      position: initialPosition,
+      content: `
+        <div style="position: relative; width: 64px; height: 64px;">
+          <img src="${busIcon}" width="64" height="64" />
+        </div>
+      `,
+      yAnchor: 0.5,
+      xAnchor: 0.5,
+      zIndex: 1,
     });
-  
-    marker.setMap(map);
-    return marker;
+
+    busMarkerInstance.setMap(newMap);
+    busMarkerRef.current = busMarkerInstance;
+
+    const parentInitialPosition = new window.kakao.maps.LatLng(location.lat, location.lng);
+
+    const overlayContent = document.createElement('div');
+    overlayContent.style.position = 'relative';
+    overlayContent.style.width = '50px';
+    overlayContent.style.height = '50px';
+    const pulseRing = document.createElement('div');
+    pulseRing.className = 'pulse-ring';
+    overlayContent.appendChild(pulseRing);
+    const markerIcon = document.createElement('img');
+    markerIcon.src = daramgi;
+    markerIcon.style.position = 'absolute';
+    markerIcon.style.top = '50%';
+    markerIcon.style.left = '50%';
+    markerIcon.style.width = '40px';
+    markerIcon.style.height = '60px';
+    markerIcon.style.transform = 'translate(-50%, -50%)';
+    overlayContent.appendChild(markerIcon);
+    const parentMarkerInstance = new window.kakao.maps.CustomOverlay({
+      position: parentInitialPosition,
+      content: overlayContent,
+      yAnchor: 0.5,
+      xAnchor: 0.5,
+      zIndex: 1,
+    });
+    parentMarkerInstance.setMap(newMap);
+    parentMarkerRef.current = parentMarkerInstance;
+    updateParentLocation(parentMarkerRef);
   };
   const initializeMap = () => {
   if (mapRef.current || !mapContainer.current) {
@@ -102,23 +169,19 @@ export default function ParentBus() {
 };
 
   const initializeWebSocket = async () => {
-    console.log('WebSocket init');
     if (isWebSocketInitialized.current) {
-      console.log('WebSocket x');
       return;
     }
     isWebSocketInitialized.current = true;
 
-    const kindergartenId = parentInfo.child.kindergartenClass.kindergarten.kindergartenId;
+    const kindergartenId = parentInfo?.child.kindergartenClass.kindergarten.kindergartenId;
     const wsUrl = `${import.meta.env.VITE_WEBSOCKET_URL}/${kindergartenId}`;
-    console.log(kindergartenId)
     const ws = new WebSocket(wsUrl);
     wsRef.current = ws;
 
-    receiveBusLocation(wsRef, setLocation, mapRef, busMarkerRef, setIsMoving, busCenterFlag);
+    receiveBusLocation(wsRef, setLocation, mapRef, busMarkerRef, setIsMoving, busCenterFlag, setBusOption); // setBusOption 추가
 
     ws.onclose = () => {
-      console.log('WebSocket closed');
       isWebSocketInitialized.current = false;
       centerFlag = false;
       busCenterFlag.current = false;
@@ -130,7 +193,6 @@ export default function ParentBus() {
       setIsMoving(false);
     };
   };
-  
 
   useEffect(() => {
     const apiKey = import.meta.env.VITE_KAKAO_API_KEY;
@@ -179,7 +241,7 @@ export default function ParentBus() {
   }, []);
 
   const updateParentLocation = (markerRef: React.MutableRefObject<any>) => {
-    centerFlag = false
+    centerFlag = false;
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
@@ -201,20 +263,19 @@ export default function ParentBus() {
               parentMarker.setPosition(newParentPosition);
               setParentLocation({ latitude, longitude });
               const map = mapRef.current;
-              
-              if (map&&!isMoving&&!centerFlag&&latitude !== undefined && longitude !== undefined) {  
+
+              if (map && !isMoving && !centerFlag && latitude !== undefined && longitude !== undefined) {
                 map.setCenter(newParentPosition);
                 centerFlag = true;
               }
-              console.log('Parent location updated:', { latitude, longitude });
             },
             (err) => {
               console.error("Error getting location", err);
             },
             {
               enableHighAccuracy: true,
-              timeout: 20000, 
-              maximumAge: 0 
+              timeout: 20000,
+              maximumAge: 0
             }
           );
         }, 500);
@@ -224,8 +285,8 @@ export default function ParentBus() {
       },
       {
         enableHighAccuracy: true,
-        timeout: 20000, 
-        maximumAge: 0 
+        timeout: 20000,
+        maximumAge: 0
       }
     );
   };
@@ -258,20 +319,29 @@ export default function ParentBus() {
     }
   };
 
+  const currentTime = new Date().getHours();
+  const main1 = isWebSocketInitialized.current
+    ? currentTime < 12
+      ? isMoving
+        ? "등원 중이에요."
+        : "운행 중이 아니에요"
+      : isMoving
+      ? "하원 중이에요."
+      : "운행 중이 아니에요"
+    : "운행 중이 아니에요";
+
   const description1 = "버스가";
-  const main1 = isMoving ? "이동 중" : "운행중인 시간이";
-  const main2 = isMoving ? " 입니다!" : " 아닙니다";
 
   return (
     <div className="flex flex-col h-screen bg-[#FFEC8A]">
       <InfoSection
         description1={description1}
         main1={main1}
-        main2={main2}
+        main2=""
         imageSrc={daramgi}
         altText="다람쥐"
       />
-      <div className="flex flex-col flex-grow overflow-hidden rounded-tl-[20px] rounded-tr-[20px] bg-white shadow-top animate-slideUp -mt-10">
+      <div className="flex flex-col flex-grow overflow-hidden rounded-tl-[20px] rounded-tr-[20px] bg-white shadow-top animate-slideUp">
         <div className="flex flex-row items-center space-x-4">
           <Toggle isOn={isBoarding} toggleHandler={handleToggleChange} />
         </div>
@@ -283,18 +353,16 @@ export default function ParentBus() {
 
       <div className='fixed flex justify-end items-center bottom-20 right-0 gap-4 mr-4'>
         <button
+          onClick={() => animateMapToMarker(mapRef.current, busMarkerRef.current)}
+          className="relative bg-white text-yellow-500 p-2 rounded z-40 rounded-full drop-shadow-lg"
+        >
+          <FaBus />
+        </button>
+        <button
           onClick={() => animateMapToMarker(mapRef.current, parentMarkerRef.current)}
           className="relative bg-white text-red-500 p-2 rounded z-40 rounded-full drop-shadow-lg"
         >
-        <MdGpsFixed />
-          
-        </button>
-
-        <button
-          onClick={() => animateMapToMarker(mapRef.current, busMarkerRef.current)}
-          className="relative bg-white text-red-500 p-2 rounded z-40 rounded-full drop-shadow-lg"
-        >
-          <FaBus />
+          <MdGpsFixed />
         </button>
       </div>
     </div>

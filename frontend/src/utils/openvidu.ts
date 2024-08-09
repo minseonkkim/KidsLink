@@ -1,5 +1,5 @@
 import { OpenVidu, StreamEvent, StreamPropertyChangedEvent } from "openvidu-browser";
-import { handleSpeechRecognition, fetchRecordings, getToken, stopSpeechRecognition } from "../api/openvidu";
+import { fetchRecordings, getToken } from "../api/openvidu";
 import { OpenViduState, Recording, User } from "../types/openvidu";
 import { getParentInfo } from "../api/Info";
 
@@ -136,11 +136,10 @@ export const fetchParentInfo = async (
 };
 
 export const fetchRecordingsList = async (
-  sessionId: string,
     setRecordings: React.Dispatch<React.SetStateAction<Recording[]>>
   ) => {
     try {
-      const recordings = await fetchRecordings(sessionId);
+      const recordings = await fetchRecordings();
       setRecordings(recordings);
     } catch (error) {
       console.error("Error fetching recordings:", error);

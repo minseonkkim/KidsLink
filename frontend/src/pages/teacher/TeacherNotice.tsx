@@ -87,18 +87,18 @@ export default function TeacherNotice() {
     return (
         <>
             <TeacherHeader />
-            <div className="mt-[85px] px-[150px] flex flex-col items-center">
+            <div className="lg:mt-[85px] mt-[120px] lg:px-[150px] flex flex-col items-center px-4">
                 <NavigateBack backPage="홈" backLink='/' />
                 <Title title="알림장" />
-                <button onClick={openCreateModal} className="absolute top-[125px] right-[150px] border-[2px] border-[#7C7C7C] bg-[#E3EEFF] px-3 py-1 font-bold rounded-[10px] hover:bg-[#D4DDEA] flex flex-row items-center">
+                <button onClick={openCreateModal} className="absolute top-[175px] lg:right-[150px] right-[130px] border-[2px] border-[#7C7C7C] bg-[#E3EEFF] px-3 py-1 font-bold rounded-[10px] hover:bg-[#D4DDEA] flex flex-row items-center">
                     <LuPencilLine className="mr-2" />알림장 작성하기
                 </button>
-                <div className="flex justify-center w-full mt-[5px]">
-                    <div className="w-1/2 p-0 flex">
+                <div className="flex justify-center w-full lg:mt-[5px] mt-[50px]">
+                    <div className="lg:w-1/2 w-full p-0 flex">
                         <select
                             value={searchType}
                             onChange={handleSearchTypeChange}
-                            className="w-1/4 border-2 border-[#f4f4f4] focus:outline-none text-lg rounded-[8px] px-2 py-1"
+                            className="lg:w-1/4 w:1/3 border-2 border-[#f4f4f4] focus:outline-none text-lg rounded-[8px] px-2 py-1"
                         >
                             <option value="title">제목 검색</option>
                             <option value="date">날짜 검색</option>
@@ -109,20 +109,20 @@ export default function TeacherNotice() {
                                 placeholder="제목 검색"
                                 value={searchTitle}
                                 onChange={handleSearchTitleChange}
-                                className="w-3/4 border-2 border-[#f4f4f4] focus:outline-none text-lg ml-2 custom-placeholder::placeholder px-2 py-1 rounded-[8px]"
+                                className="w-3/4 w:2/3 border-2 border-[#f4f4f4] focus:outline-none text-lg ml-2 custom-placeholder::placeholder px-2 py-1 rounded-[8px]"
                             />
                         ) : (
                             <input
                                 type="date"
                                 value={searchDate}
                                 onChange={handleSearchDateChange}
-                                className="w-3/4 border-2 border-[#f4f4f4] focus:outline-none text-lg ml-2 custom-placeholder::placeholder px-2 py-1 rounded-[8px]"
+                                className="w-3/4 w:2/3 border-2 border-[#f4f4f4] focus:outline-none text-lg ml-2 custom-placeholder::placeholder px-2 py-1 rounded-[8px]"
                                 max="9999-12-31"
                             />
                         )}
                     </div>
                 </div>
-                <div>
+                <div className="w-full lg:w-auto">
                     {displayedItems.map((item, index) => (
                         <NoticeItem
                             key={index}
@@ -133,7 +133,6 @@ export default function TeacherNotice() {
                         />
                     ))}
                 </div>
-                
                 <div className="flex justify-center w-full">
                     <nav>
                         <ul className="inline-flex items-center">
@@ -205,16 +204,16 @@ function CreateNoticeForm({ closeModal, setNotices }) {
             setNotices(sortedNotices);
             setNewNoticeTitle("");
             setNewNoticeContent("");
-            closeModal(); // Close the modal after successful creation
+            closeModal();
         } catch (error) {
             console.error('Failed to create notice:', error);
         }
     };
 
     return (
-        <div className="w-[500px]">
+        <div className="w-[90vw] lg:w-[500px]">
             <form onSubmit={handleCreateNotice}>
-                <div className="mb-4 flex flex-row">
+                <div className="mb-4 flex flex-col lg:flex-row">
                     <label className="block mr-3 mb-1 font-bold whitespace-nowrap text-[18px]">제목</label>
                     <input
                         className="border border-gray-300 p-2 rounded w-full"
@@ -223,7 +222,7 @@ function CreateNoticeForm({ closeModal, setNotices }) {
                     />
                 </div>
                 
-                <div className="mb-4 flex flex-row">
+                <div className="mb-4 flex flex-col lg:flex-row">
                     <label className="block mr-3 mb-1 font-bold whitespace-nowrap text-[18px]">내용</label>
                     <textarea
                         className="border border-gray-300 p-2 rounded w-full"
