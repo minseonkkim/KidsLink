@@ -28,12 +28,14 @@ export const useBusStore = create<BusStore>((set) => ({
     set({
       busStops: stops.map(stop => ({
         ...stop,
-        children: stop.children.map(child => ({
-          ...child,
-          checked: child.checked !== undefined ? child.checked : false, 
-        })),
-      })),
-    }),
+        children: stop.children 
+          ? stop.children.map(child => ({
+              ...child,
+              checked: child.checked !== undefined ? child.checked : false
+            })) 
+          : [],
+      })
+    )}),
   toggleChildChecked: (busStopId, childId) =>
     set((state) => ({
       busStops: state.busStops.map((stop) =>
