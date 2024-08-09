@@ -145,8 +145,8 @@ export default function TeacherDocument() {
         <NavigateBack backPage="홈" backLink='/' />
         <Title title="문서관리" />
         <div className="flex flex-col lg:flex-row justify-between">
-          <div className="rounded-[20px] bg-[#f4f4f4] lg:w-[380px] w-full lg:h-[520px] h-[320px] p-[10px] mb-3 lg:mb-0">
-            <div className="flex space-x-2 ml-2 my-4">
+          <div className="rounded-[20px] bg-[#f4f4f4] lg:w-[380px] w-full lg:h-[550px] h-[320px] p-[10px] mb-3 lg:mb-0">
+            <div className="flex space-x-2 ml-3 my-4">
               <button
                 className={`rounded-[10px] ${selectedDocumentType === "전체" ? 'bg-[#D9D9D9] border-[2px] border-[#A0A0A0]' : 'bg-[#f4f4f4] border-[2px] border-[#d3d3d3]'} flex items-center justify-center w-[55px] h-[30px] font-bold text-[15px] cursor-pointer`}
                 onClick={() => handleFilterClick("전체")}
@@ -177,7 +177,7 @@ export default function TeacherDocument() {
                 onChange={e => setSearchTerm(e.target.value)}
               />
             </div>
-            <div className="bg-[#f4f4f4] lg:w-[360px] w-full lg:h-[355px] h-[230px] overflow-y-auto custom-scrollbar">
+            <div className="bg-[#f4f4f4] lg:w-[360px] w-full lg:h-[400px] h-[230px] overflow-y-auto custom-scrollbar">
               {displayedDocuments.map((document, index) => (
                 <div
                   key={index}
