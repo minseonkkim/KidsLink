@@ -1,12 +1,14 @@
-import { useLocation, useParams, useNavigate } from "react-router-dom";
-import { ChangeEvent, useEffect, useState, useRef } from "react"; // useRef 추가
+import { useParams, useNavigate } from "react-router-dom";
+import { useEffect, useState, useRef } from "react";
 import OpenViduVideoComponent from "../../components/openvidu/VideoComponent";
 import {
   handleSpeechRecognition,
-  stopRecording,
-  startSegmentRecording,
+  // stopRecording,
+  // startSegmentRecording,
   stopSegmentRecording,
-} from "../../api/openvidu"; // 필요한 함수들 추가
+  startMainRecording, // 메인 녹화 관련 함수 추가
+  stopMainRecording, // 메인 녹화 관련 함수 추가
+} from "../../api/openvidu";
 import TeacherHeader from "../../components/teacher/common/TeacherHeader";
 import MeetingBackground from "../../assets/teacher/meeting_background.png";
 import { useTeacherInfoStore } from "../../stores/useTeacherInfoStore";
@@ -18,8 +20,8 @@ import DefaultProfile from "../../assets/teacher/default_profile.png";
 
 export default function TeacherVideo() {
   const navigate = useNavigate();
-  const location = useLocation();
-  const { parentName } = location.state || {};
+  // const location = useLocation();
+  // const { parentName } = location.state || {};
   const { meetingId } = useParams<{ meetingId: string }>();
   const { teacherInfo, setTeacherInfo } = useTeacherInfoStore();
   const [user, setUser] = useState<User>({
@@ -34,11 +36,11 @@ export default function TeacherVideo() {
     publisher: undefined,
     subscribers: [],
   });
-  const [tabOpen, setTabOpen] = useState<TabState>({
-    formTab: false,
-    profileTab: false,
-    chatTab: false,
-  });
+  // const [tabOpen, setTabOpen] = useState<TabState>({
+  //   formTab: false,
+  //   profileTab: false,
+  //   chatTab: false,
+  // });
   const [control, setControl] = useState<ControlState>({
     video: false,
     mic: false,
@@ -46,16 +48,20 @@ export default function TeacherVideo() {
     volume: 0.2,
   });
   const [recordings, setRecordings] = useState<Recording[]>([]);
-  const [currentRecordingId, setCurrentRecordingId] = useState<string | null>(null);
   const [isSessionJoined, setIsSessionJoined] = useState(false);
+
   const [myStreamId, setMyStreamId] = useState<string | undefined>(undefined);
   const [otherVideoActive, setOtherVideoActive] = useState(false);
   const [otherOpacity, setOtherOpacity] = useState(false);
 
-  const segmentList = useRef<string[]>([]); // 세그먼트 리스트 관리 - Chat GPT 추가
-  const intervalIdRef = useRef<number | null>(null); // 인터벌 ID 관리 - Chat GPT 추가
+  const segmentList = useRef<string[]>([]);
+  const intervalIdRef = useRef<number | null>(null);
+
+  const [isRecording, setIsRecording] = useState(false); // 녹화 상태 관리
+  const [currentRecordingId, setCurrentRecordingId] = useState<string | null>(null);
 
   useEffect(() => {
+    console.log("useEffect - otherVideoActive changed", otherVideoActive);
     if (otherVideoActive) {
       if (otherOpacity) {
         setOtherOpacity(false);
@@ -67,80 +73,92 @@ export default function TeacherVideo() {
 
   useEffect(() => {
     async function fetchTeacherInfo() {
+      console.log("Fetching teacher info...");
       try {
         const fetchedTeacherInfo = await getTeacherInfo();
+        console.log("Fetched teacher info:", fetchedTeacherInfo);
         setTeacherInfo(fetchedTeacherInfo);
         setUser((prevUser) => ({ ...prevUser, username: fetchedTeacherInfo.name }));
       } catch (error) {
-        console.error("Failed to fetch teacher info:", error);
+        console.log("Failed to fetch teacher info:", error);
       }
     }
 
     if (!teacherInfo) {
       fetchTeacherInfo();
     } else {
+      console.log("Teacher info already available", teacherInfo);
       setUser((prevUser) => ({ ...prevUser, username: teacherInfo.name }));
     }
   }, [teacherInfo, setTeacherInfo]);
 
   useEffect(() => {
+    console.log("Fetching recordings...");
     fetchRecordingsList(setRecordings);
   }, []);
 
   useEffect(() => {
     if (openvidu.publisher) {
+      console.log("Publishing audio:", control.mic);
       openvidu.publisher.publishAudio(control.mic);
+      console.log("Publishing video:", control.video);
       openvidu.publisher.publishVideo(control.video);
     }
   }, [control, openvidu.publisher]);
 
-  // 녹화 시작 핸들러 - Chat GPT 추가
-  const handleStartRecording = async () => {
-    if (user.sessionId) {
-      try {
-        const recordingId = await startSegmentRecording(user.sessionId);
-        setCurrentRecordingId(recordingId);
-        segmentList.current.push(recordingId);
-        console.log("Recording started with ID:", recordingId);
-
-        intervalIdRef.current = window.setInterval(async () => {
-          const lastSegmentId = segmentList.current[segmentList.current.length - 1];
-          await stopSegmentRecording(lastSegmentId);
-
-          const newRecordingId = await startSegmentRecording(user.sessionId);
-          segmentList.current.push(newRecordingId);
-          setCurrentRecordingId(newRecordingId);
-        }, 5000);
-      } catch (error) {
-        console.error("Error starting recording:", error);
-      }
+  useEffect(() => {
+    if (isSessionJoined && !isRecording) {
+      handleSpeechRecognition(
+        user.sessionId,
+        setCurrentRecordingId,
+        segmentList,
+        intervalIdRef,
+        handleStartMainRecording
+      );
     }
+  }, [isSessionJoined, isRecording]);
+
+  const handleStartMainRecording = async () => {
+    if (isRecording) return;
+
+    setIsRecording(true);
+    clearInterval(intervalIdRef.current); // 세그먼트 녹화 타이머 중지
+
+    // 세그먼트 녹화 중지 및 병합
+    await stopSegmentRecording(segmentList.current[segmentList.current.length - 1]);
+    segmentList.current = []; // 세그먼트 리스트 초기화
+
+    // 메인 녹화를 시작하는 로직
+    const mainRecordingId = await startMainRecording(user.sessionId);
+    setCurrentRecordingId(mainRecordingId);
   };
 
   const handleStopRecording = async () => {
-    if (currentRecordingId) {
-      try {
-        // 필요한 파라미터들을 채워서 stopRecording 함수를 호출
-        const mergedFilePath = await stopRecording(
-          user.sessionId, // sessionId
-          segmentList.current, // 세그먼트 리스트
-          intervalIdRef // 인터벌 ID 관리
-        );
-  
-        setCurrentRecordingId(null); // 녹화 ID 초기화
-        fetchRecordingsList(setRecordings); // 녹화 목록 갱신
-        console.log("Recording stopped and merged. File path:", mergedFilePath);
-      } catch (error) {
-        console.error("Error stopping recording:", error);
-      }
-    }
+    if (!isRecording) return;
+
+    setIsRecording(false);
+
+    // 메인 녹화를 중지하는 로직
+    await stopMainRecording(currentRecordingId);
+
+    // 녹화 중지 후 다시 세그먼트 녹화 시작
+    handleSpeechRecognition(
+      user.sessionId,
+      setCurrentRecordingId,
+      segmentList,
+      intervalIdRef,
+      handleStartMainRecording
+    );
   };
 
   const handleLeaveSession = () => {
+    console.log("Leaving session...");
+    if (isRecording) {
+      handleStopRecording(); // 세션 종료 시 녹화 중지
+    }
     leaveSession(openvidu, setOpenvidu, setIsSessionJoined, navigate);
   };
 
-  // 상대방 비디오 상태에 따라 불투명도 설정
   const teacherVideoOpacity = control.video ? 1 : 0.8;
 
   return (
@@ -148,7 +166,6 @@ export default function TeacherVideo() {
       <img src={MeetingBackground} className="absolute top-0 left-0 w-full h-full object-cover" />
       <div className="relative z-10 w-full h-full flex flex-col items-center">
         <TeacherHeader />
-        {/* 비디오 영역은 항상 렌더링됨 */}
         <div className="relative w-full h-full flex">
           {openvidu.session && (
             <div className="absolute top-[150px] left-[100px] font-bold text-[20px] flex flex-row items-center">
@@ -218,9 +235,9 @@ export default function TeacherVideo() {
             control={control}
             handleControl={setControl}
             close={handleLeaveSession}
-            startRecording={handleStartRecording} // 녹화 시작 핸들러 전달 - Chat GPT 추가
-            stopRecording={handleStopRecording}
-            isRecording={!!currentRecordingId}
+            startRecording={handleStartMainRecording} // 녹화 시작 함수 전달
+            stopRecording={handleStopRecording} // 녹화 중지 함수 전달
+            isRecording={isRecording} // 녹화 상태 전달
           />
         )}
       </div>
