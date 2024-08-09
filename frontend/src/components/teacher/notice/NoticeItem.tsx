@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { IoIosArrowDown } from "react-icons/io";
 import { IoIosArrowUp } from "react-icons/io";
-import formatDate from "../../../utils/teacher/formatDate";
+import { formatDate } from "../../../utils/teacher/formatDate";
 
 interface NoticeItemProps {
     id: number;

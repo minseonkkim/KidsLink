@@ -4,10 +4,11 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import NavigateBack from "../../components/teacher/common/NavigateBack";
 import TeacherHeader from "../../components/teacher/common/TeacherHeader";
 import Title from "../../components/teacher/common/Title";
-import formatDate from "../../utils/teacher/formatDate";
+import { formatDate, formatSendDate } from "../../utils/teacher/formatDate";
 import { FaRegCalendar, FaXmark } from "react-icons/fa6";
 import { createTeacherSchedule, createTeacherScheduleCheck, deleteTeacherSchedule, getTeacherSchedules } from "../../api/schedule";
 import StyledCalendar from "../../components/teacher/common/StyledCalendar";
+import { getOneParentInfo } from "../../api/Info";
 
 interface ScheduleItemType {
   id: number;
@@ -27,6 +28,15 @@ interface ScheduleItemProps {
   moveItem: (fromIndex: number, toIndex: number) => void;
   deleteItem: (id: number) => void;
   toggleComplete: (id: number) => void;
+}
+
+interface MeetingItemProps {
+  meetingId: number;
+  meetingDate: string;
+  meetingTime: string;
+  parentId: number;
+  teacherId: number;
+  childName?: string;
 }
 
 const ScheduleItem: React.FC<ScheduleItemProps> = ({ id, content, confirmationStatus, index, moveItem, deleteItem, toggleComplete }) => {
@@ -49,7 +59,7 @@ const ScheduleItem: React.FC<ScheduleItemProps> = ({ id, content, confirmationSt
     }),
   });
 
-  drag(drop(ref)); // 주석 해제하면 드래그앤드롭 할수있음
+  // drag(drop(ref)); // 주석 해제하면 드래그앤드롭 할수있음
 
   return (
     <div
@@ -63,7 +73,7 @@ const ScheduleItem: React.FC<ScheduleItemProps> = ({ id, content, confirmationSt
         disabled={confirmationStatus === "T"}
         onChange={() => toggleComplete(id)}
       />
-      <p className={`${confirmationStatus === "T" ? 'text-[#B8B8B8]' : ''} text-[18px] flex-grow`}>{content}</p>
+      <p className={`${confirmationStatus === "T" ? 'text-[#B8B8B8] line-through' : ''} text-[18px] flex-grow`}>{content}</p>
       <button onClick={() => deleteItem(id)} className="text-red-500 hover:text-red-700">
         <FaXmark />
       </button>
@@ -76,12 +86,13 @@ type ValuePiece = Date | null;
 export default function TeacherSchedule() {
   const [date, setDate] = useState<ValuePiece | [ValuePiece, ValuePiece]>(new Date());
   const [scheduleItems, setScheduleItems] = useState<ScheduleItemType[]>([]);
+  const [meetingItems, setMeetingItems] = useState<MeetingItemProps[]>([]);
   const [time, setTime] = useState('');
   const [todo, setTodo] = useState('');
 
-  const fetchSchedules = async () => {
+  const fetchTeacherSchedules = async () => {
     try {
-      const fetchedSchedules = (await getTeacherSchedules(formatDate(date))).teacherSchedules;
+      const fetchedSchedules = (await getTeacherSchedules(formatSendDate(date))).teacherSchedules;
       fetchedSchedules.sort((a, b) => {
         if (a.confirmationStatus === "T" && b.confirmationStatus !== "T") return -1;
         if (a.confirmationStatus !== "T" && b.confirmationStatus === "T") return 1;
@@ -99,22 +110,44 @@ export default function TeacherSchedule() {
     }
   }
 
-  useEffect(() => {
-    fetchSchedules();
-  }, [date])
+  const fetchMeetingSchedules = async () => {
+    try {
+      const fetchedMeetings: MeetingItemProps[] = (await getTeacherSchedules(formatSendDate(date))).meetingSchedules;
+  
+      fetchedMeetings.sort((a, b) => {
+        const [hoursA, minutesA] = a.meetingTime.split(':').map(Number);
+        const [hoursB, minutesB] = b.meetingTime.split(':').map(Number);
+  
+        const timeA = new Date(0, 0, 0, hoursA, minutesA);
+        const timeB = new Date(0, 0, 0, hoursB, minutesB);
+  
+        return timeA.getTime() - timeB.getTime();
+      });
+  
+      for (let i = 0; i < fetchedMeetings.length; i++) {
+        const parentId = fetchedMeetings[i].parentId;
+        if (parentId) {
+          const parentInfo = await getOneParentInfo(parentId);
+          fetchedMeetings[i].childName = parentInfo.child.name;
+        }
+      }
+      setMeetingItems(fetchedMeetings);
+    } catch (error) {
+      console.error("Failed to fetch schedules:", error);
+    }
+  };
+  
+  
+  
 
-  // const formatDate = (date: ValuePiece | [ValuePiece, ValuePiece]): string => {
-  //   if (date instanceof Date) {
-  //     return moment(date).format("YYYY-MM-DD");
-  //   } else if (Array.isArray(date) && date[0] instanceof Date) {
-  //     return moment(date[0]).format("YYYY-MM-DD");
-  //   }
-  //   return '';
-  // };
+  useEffect(() => {
+    fetchTeacherSchedules();
+    fetchMeetingSchedules();
+  }, [date])
 
   const deleteItem = async (id: number) => {
     await deleteTeacherSchedule(id);
-    fetchSchedules();
+    fetchTeacherSchedules();
   };
 
   const moveItem = useCallback((fromIndex: number, toIndex: number) => {
@@ -126,13 +159,13 @@ export default function TeacherSchedule() {
 
   const handleAddScheduleItem = async () => {
     const scheduleData = {
-      date: formatDate(date),
+      date: formatSendDate(date),
       content: time + ' ' + todo,
     };
 
     try {
       await createTeacherSchedule(scheduleData);
-      fetchSchedules();
+      fetchTeacherSchedules();
       setTime('');
       setTodo('');
     } catch (error) {
@@ -142,7 +175,13 @@ export default function TeacherSchedule() {
 
   const toggleComplete = async (id: number) => {
     await createTeacherScheduleCheck(id);
-    fetchSchedules();
+    fetchTeacherSchedules();
+  };
+
+  const isFutureMeeting = (meetingDate: string, meetingTime: string) => {
+    const meetingDateTime = new Date(`${meetingDate}T${meetingTime}`);
+    const now = new Date();
+    return meetingDateTime > now;
   };
 
   return (
@@ -168,23 +207,40 @@ export default function TeacherSchedule() {
             </div>
             <div className="border-[2px] border-[#8CAD1E] rounded-[10px] h-[270px] lg:h-[330px]">
               <div className="overflow-y-auto custom-scrollbar h-[310px] m-[10px]">
-                {scheduleItems.length === 0 ? (
+                {scheduleItems.length === 0 && meetingItems.length === 0 ? (
                   <div className="flex justify-center items-center lg:h-[310px] h-[250px]">
                     일정이 없어요.
                   </div>
                 ) : (
-                  scheduleItems.map(({ id, content, confirmationStatus }, index) => (
-                    <ScheduleItem
-                      key={id}
-                      id={id}
-                      content={content}
-                      confirmationStatus={confirmationStatus}
-                      index={index}
-                      moveItem={moveItem}
-                      deleteItem={deleteItem}
-                      toggleComplete={toggleComplete}
-                    />
-                  ))
+                  <>
+                    {meetingItems.length !== 0 &&
+                      <div className="mb-3">
+                        <div className="font-bold text-[18px] m-1">화상상담</div>
+                        {meetingItems.map((item, index) => (
+                          <div 
+                            key={item.meetingId}
+                            className={`mx-1 my-3 text-[18px] ${isFutureMeeting(item.meetingDate, item.meetingTime) ? 'text-[#363636]' : 'text-[#B8B8B8] line-through'}`}
+                          >
+                            {item.meetingTime} {item.childName} 학부모
+                          </div>
+                        ))}
+                        <hr></hr>
+                      </div>
+                    }
+                    {scheduleItems.length !== 0 && <div className="font-bold text-[18px] m-1">개인일정</div>}
+                    {scheduleItems.map(({ id, content, confirmationStatus }, index) => (
+                      <ScheduleItem
+                        key={id}
+                        id={id}
+                        content={content}
+                        confirmationStatus={confirmationStatus}
+                        index={index}
+                        moveItem={moveItem}
+                        deleteItem={deleteItem}
+                        toggleComplete={toggleComplete}
+                      />
+                    ))}
+                  </>
                 )}
               </div>
             </div>
@@ -213,5 +269,4 @@ export default function TeacherSchedule() {
       </div>
     </DndProvider>
   );
-};
-
+}
