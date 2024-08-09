@@ -142,7 +142,7 @@ export default function TeacherVideo() {
     if (!isRecording) return;
 
     setIsRecording(false);
-
+    console.log(currentRecordingId)
     // 메인 녹화를 중지하는 로직
     await stopMainRecording(currentRecordingId);
 
