@@ -28,6 +28,7 @@ export default function TeacherMeetingConfirm() {
     const teacherName = useTeacherInfoStore(state => state.teacherInfo.username);
     const [groupedMeetings, setGroupedMeetings] = useState<GroupedMeetings>({});
     const [selectedTimes, setSelectedTimes] = useState<{ [parentId: number]: string }>({});
+
     const navigate = useNavigate();
 
     const fetchSelectedMeeting = async () => {
@@ -75,47 +76,55 @@ export default function TeacherMeetingConfirm() {
         fetchSelectedMeeting();
     }, []);
 
-    const handleConfirmMeetingClick = async () => {
-        try {
-            await confirmMeeting();
-            showToastSuccess(
-                <div>
-                    상담일자가 확정되었습니다!<br />상담목록으로 이동합니다.
-                </div>
-            );
 
-            setTimeout(() => {
-                navigate('/meeting/scheduled');
-            }, 3000);
-        } catch (error) {
-            showToastError(<div>상담일자 확정 중 오류가 발생했습니다.</div>);
-            console.error('상담일자 확정 중 오류 발생:', error);
-        }
+    const handleTimeSlotClick = (parentId: number, timeSlot: string) => {
+        setSelectedTimes(prevSelectedTimes => {
+            if (prevSelectedTimes[parentId] === timeSlot) {
+                const { [parentId]: removed, ...rest } = prevSelectedTimes; 
+                return rest;
+            }
+
+            return {
+                ...prevSelectedTimes,
+                [parentId]: timeSlot
+            };
+        });
     };
+
+    const createTransformedData = (
+        groupedMeetings: GroupedMeetings,
+        selectedTimes: { [parentId: number]: string },
+        teacherName: string
+    ) => {
+        return Object.entries(groupedMeetings).flatMap(([parentId, { childName, times }]) => {
+            const selectedTime = selectedTimes[parentId];
+            if (selectedTime) {
+                const [date, time] = selectedTime.split(' ');
+                return [{
+                    parentId: Number(parentId),
+                    childName: childName,
+                    date: date,
+                    time: time,
+                    teacherName: teacherName
+                }];
+            } else {
+                return times.map(timeSlot => ({
+                    parentId: Number(parentId),
+                    childName: childName,
+                    date: timeSlot.date,
+                    time: timeSlot.time,
+                    teacherName: teacherName
+                }));
+            }
+        });
+    };
+    
+    
+    
     const handleClassifyMeetingClick = async () => {
         
         try {
-            const transformedData = Object.entries(groupedMeetings).flatMap(([parentId, { childName, times }]) => {
-                const selectedTime = selectedTimes[parentId];
-                if (selectedTime) {
-                    const [date, time] = selectedTime.split(' ');
-                    return [{
-                        parentId: parentId,
-                        childName: childName,
-                        date: date,
-                        time: time,
-                        teacherName: teacherName
-                    }];
-                } else {
-                    return times.map(timeSlot => ({
-                        parentId: parentId,
-                        childName: childName,
-                        date: timeSlot.date,
-                        time: timeSlot.time,
-                        teacherName: teacherName
-                    }));
-                }
-            });
+            const transformedData = createTransformedData(groupedMeetings, selectedTimes, teacherName);
 
             const response = await classifyMeeting(transformedData);
         if (response.status === "success") {
@@ -144,19 +153,34 @@ export default function TeacherMeetingConfirm() {
             console.error('상담일자 분류 중 오류 발생:', error);
         }
     };
-    const handleTimeSlotClick = (parentId: number, timeSlot: string) => {
-        setSelectedTimes(prevSelectedTimes => {
-            if (prevSelectedTimes[parentId] === timeSlot) {
-                const { [parentId]: removed, ...rest } = prevSelectedTimes; 
-                return rest;
-            }
 
-            return {
-                ...prevSelectedTimes,
-                [parentId]: timeSlot
-            };
-        });
+    const handleConfirmMeetingClick = async () => {
+        try {
+            // createTransformedData 함수를 사용하여 선택된 시간대만 변환
+            const transformedData = createTransformedData(groupedMeetings, selectedTimes, teacherName);
+    
+            if (transformedData.length > 0) {
+                await confirmMeeting(transformedData);
+                showToastSuccess(
+                    <div>
+                        상담일자가 확정되었습니다!<br />상담목록으로 이동합니다.
+                    </div>
+                );
+    
+                setTimeout(() => {
+                    navigate('/meeting/scheduled');
+                }, 3000);
+            } else {
+                showToastError(<div>선택된 상담일자가 없습니다.</div>);
+            }
+        } catch (error) {
+            showToastError(<div>상담일자 확정 중 오류가 발생했습니다.</div>);
+            console.error('상담일자 확정 중 오류 발생:', error);
+        }
     };
+    
+    
+    
 
     return (
         <>
@@ -195,7 +219,7 @@ export default function TeacherMeetingConfirm() {
                                 return (
                                     <li 
                                         key={index}
-                                        className={`bg-white p-4 mb-2 border border-gray-300 rounded-md ${isSelected ? 'bg-blue-100' : ''}`}
+                                        className={`p-4 mb-2 border border-gray-300 rounded-md ${isSelected ? 'bg-blue-100' : 'bg-white'}`}
                                         onClick={() => handleTimeSlotClick(Number(parentId), slot)}
                                     >
                                         {slot}
