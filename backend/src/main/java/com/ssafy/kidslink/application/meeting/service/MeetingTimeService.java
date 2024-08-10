@@ -158,31 +158,30 @@ public class MeetingTimeService {
         return meetingSchedules;
     }
 
-//    public List<MeetingRoomDTO> confirmMeeting(String teacherUsername) {
-//        Teacher teacher = teacherRepository.findByTeacherUsername(teacherUsername);
-//        List<SelectedMeeting> meetings = selectedMeetingRepository.findByTeacher(teacher);
-//        List<MeetingSchedule> meetingSchedules = allocateMeetings(meetings, teacher);
-//        List<MeetingRoomDTO> confirmMeetings = new ArrayList<>();
-//
-//        for (MeetingSchedule meetingSchedule : meetingSchedules) {
-//            meetingScheduleRepository.save(meetingSchedule);
-//            confirmMeetings.add(meetingScheduleMapper.toMeetingRoomDTO(meetingSchedule));
-//        }
-//
-//        // TODO #1 부모한테 예약 확정 알림 보내기 -> 부모 한명에게만 보내기
-//        for (Parent parent : parentRepository.findByKindergartenClassId(teacher.getKindergartenClass().getKindergartenClassId())) {
-//            ParentNotification parentNotification = new ParentNotification();
-//
-//            parentNotification.setCode(NotificationCode.MEETING);
-//            parentNotification.setParent(parent);
-//            parentNotification.setParentNotificationDate(LocalDate.now());
-//            parentNotification.setParentNotificationText("상담 예약이 확정되었습니다.");
-//
-//            parentNotificationRepository.save(parentNotification);
-//        }
-//
-//        return confirmMeetings;
-//    }
+    public List<MeetingRoomDTO> confirmMeeting(List<SelectedMeetingDTO> selectedMeetingDTOs) {
+        Teacher teacher = teacherRepository.findByTeacherUsername(selectedMeetingDTOs.get(0).getTeacherName());
+        List<MeetingRoomDTO> confirmMeetings = new ArrayList<>();
+        for (SelectedMeetingDTO selectedMeetingDTO : selectedMeetingDTOs) {
+            Parent parent = parentRepository.findById(selectedMeetingDTO.getParentId()).orElseThrow();
+            MeetingSchedule meetingSchedule = meetingScheduleMapper.toEntity(selectedMeetingDTO, teacher,parent);
+            meetingScheduleRepository.save(meetingSchedule);
+            confirmMeetings.add(meetingScheduleMapper.toMeetingRoomDTO(meetingSchedule));
+        }
+
+        // TODO #1 부모한테 예약 확정 알림 보내기 -> 부모 한명에게만 보내기
+        for (Parent parent : parentRepository.findByKindergartenClassId(teacher.getKindergartenClass().getKindergartenClassId())) {
+            ParentNotification parentNotification = new ParentNotification();
+
+            parentNotification.setCode(NotificationCode.MEETING);
+            parentNotification.setParent(parent);
+            parentNotification.setParentNotificationDate(LocalDate.now());
+            parentNotification.setParentNotificationText("상담 예약이 확정되었습니다.");
+
+            parentNotificationRepository.save(parentNotification);
+        }
+
+        return confirmMeetings;
+    }
 
     private List<SelectedMeetingDTO> allocateMeetings(List<SelectedMeetingDTO> selectedMeetingDTOs) {
         // 학부모별로 가능한 시간대를 그룹화
