@@ -159,7 +159,8 @@ export default function TeacherReservation() {
   };
 
   const TooltipContent = (
-    <div className="mt-2">
+    <div className="w-[270px]">
+      <div className="text-start mb-3 leading-relaxed">학부모 상담이 가능한 시간을 선택해주세요. 해당 시간에 학부모가 상담 신청을 할 수 있어요.</div>
       <div>
         <div className="flex flex-row mb-2 items-center">
           <div className="bg-[#BFDC60] w-6 h-6 rounded-[4px] mr-2"></div>
@@ -169,7 +170,7 @@ export default function TeacherReservation() {
           <div className="bg-[#fff] border-[2px] border-[#8CAD1E] w-6 h-6 rounded-[4px] mr-2"></div>
           <div className="w-[160px] text-start text-[#818181]">선택한 시간</div>
         </div>
-        <div className="flex flex-row mb-2 items-center">
+        <div className="flex flex-row items-center">
           <div className="bg-[#f4f4f4] w-6 h-6 rounded-[4px] mr-2"></div>
           <div className="w-[160px] text-start text-[#818181]">선택불가 (주말, 지난 시간)</div>
         </div>
@@ -180,7 +181,7 @@ export default function TeacherReservation() {
   return (
     <>
       <TeacherHeader />
-      <div className="lg:mt-[85px] mt-[120px] lg:px-[150px] px-[20px]">
+      <div className="lg:mt-[100px] mt-[120px] lg:px-[150px] px-[20px]">
         <NavigateBack backPage="화상상담" backLink='/meeting' />
         <div className="flex items-center">
           <Title title="상담가능시간 open" tooltipContent={TooltipContent} />
@@ -196,7 +197,7 @@ export default function TeacherReservation() {
             tileDisabled={({ date, view }) => view === 'month' && isPastDate(date)}
           />
 
-          <div className="w-[665px]">
+          <div className="w-[640px] ml-[23px]">
             <div className="flex flex-row justify-between mr-[20px]">
               <div className="text-[22px] flex flex-row items-center h-[22px] font-bold text-[#8CAD1E] my-5">
                 <FaRegCalendar className="mr-3"/>

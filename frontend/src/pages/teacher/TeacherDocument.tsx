@@ -14,8 +14,9 @@ export default function TeacherDocument() {
   const [documents, setDocuments] = useState([]);
   const [filteredDocuments, setFilteredDocuments] = useState([]);
   const [displayedDocuments, setDisplayedDocuments] = useState([]);
-  const [selectedDocumentType, setSelectedDocumentType] = useState("");
+  const [selectedDocumentType, setSelectedDocumentType] = useState<string>("전체");
   const [selectedDocumentId, setSelectedDocumentId] = useState<number | null>(null);
+  const [selectedDocumentRealType, setSelectedDocumentRealType] = useState<string | null>(null);
   const [childImages, setChildImages] = useState<{ [key: number]: string }>({});
   const [loading, setLoading] = useState(false);
   const observer = useRef<IntersectionObserver>();
@@ -28,16 +29,19 @@ export default function TeacherDocument() {
 
         const reversedDocuments = fetchedDocuments.reverse();
         setDocuments(reversedDocuments);
-        setFilteredDocuments(reversedDocuments);
+
+        // 초기 로드 시 전체 문서를 필터링하고 표시
+        filterAndSetDocuments(reversedDocuments, "전체");
 
         if (reversedDocuments.length > 0) {
           const lastDocument = reversedDocuments[0];
-          setSelectedDocumentType(lastDocument.type);
 
           if (lastDocument.type === "Absent") {
             setSelectedDocumentId(lastDocument.details.absentId);
+            setSelectedDocumentRealType("Absent");
           } else {
             setSelectedDocumentId(lastDocument.details.dosageId);
+            setSelectedDocumentRealType("Dosage");
           }
         }
 
@@ -55,13 +59,27 @@ export default function TeacherDocument() {
     fetchDocuments();
   }, []);
 
-  useEffect(() => {
-    setFilteredDocuments(
-      documents.filter(document =>
+  // 필터링 및 표시 설정 함수
+  const filterAndSetDocuments = (docs, type) => {
+    let filtered = docs;
+
+    if (type !== "전체") {
+      filtered = docs.filter(document => document.type === type);
+    }
+
+    if (searchTerm) {
+      filtered = filtered.filter(document =>
         document.details.childName.includes(searchTerm)
-      )
-    );
-  }, [searchTerm, documents]);
+      );
+    }
+
+    setFilteredDocuments(filtered);
+    setDisplayedDocuments(filtered.slice(0, itemsPerPage));
+  };
+
+  useEffect(() => {
+    filterAndSetDocuments(documents, selectedDocumentType);
+  }, [searchTerm, documents, selectedDocumentType]);
 
   useEffect(() => {
     const loadMoreDocuments = () => {
@@ -89,7 +107,7 @@ export default function TeacherDocument() {
 
   const handleDocumentClick = (type, id) => {
     setSelectedDocumentId(id);
-    setSelectedDocumentType(type);
+    setSelectedDocumentRealType(type);
   };
 
   const findChildImg = async (childId: number): Promise<string> => {
@@ -112,8 +130,12 @@ export default function TeacherDocument() {
     const fetchedDocuments = await getClassAllDocuments();
     const reversedDocuments = fetchedDocuments.reverse();
     setDocuments(reversedDocuments);
-    setFilteredDocuments(reversedDocuments);
-    setDisplayedDocuments([]);
+    filterAndSetDocuments(reversedDocuments, selectedDocumentType);
+  };
+
+  const handleFilterClick = (type) => {
+    setSelectedDocumentType(type);
+    filterAndSetDocuments(documents, type); // 필터가 변경될 때 문서 목록을 필터링하고 초기화합니다.
   };
 
   return (
@@ -123,18 +145,23 @@ export default function TeacherDocument() {
         <NavigateBack backPage="홈" backLink='/' />
         <Title title="문서관리" />
         <div className="flex flex-col lg:flex-row justify-between">
-          <div className="rounded-[20px] bg-[#f4f4f4] lg:w-[380px] w-full lg:h-[520px] h-[320px] p-[10px] mb-3 lg:mb-0">
-            <div className="flex flex-wrap">
-              {/* 결석 버튼 */}
+          <div className="rounded-[20px] bg-[#f4f4f4] lg:w-[380px] w-full lg:h-[550px] h-[320px] p-[10px] mb-3 lg:mb-0">
+            <div className="flex space-x-2 ml-3 my-4">
               <button
-                className={`m-[10px] mb-[15px] w-full lg:w-[320px] lg:h-[100px] h-[80px] rounded-[15px] border-[3px] border-[#B2D170] cursor-pointer`}
+                className={`rounded-[10px] ${selectedDocumentType === "전체" ? 'bg-[#D9D9D9] border-[2px] border-[#A0A0A0]' : 'bg-[#f4f4f4] border-[2px] border-[#d3d3d3]'} flex items-center justify-center w-[55px] h-[30px] font-bold text-[15px] cursor-pointer`}
+                onClick={() => handleFilterClick("전체")}
+              >
+                전체
+              </button>
+              <button
+                className={`rounded-[10px] ${selectedDocumentType === "Absent" ? 'bg-[#FFDFDF] border-[2px] border-[#FF5A5A]' : 'bg-[#f4f4f4] border-[2px] border-[#d3d3d3]'} flex items-center justify-center w-[55px] h-[30px] font-bold text-[15px] cursor-pointer`}
+                onClick={() => handleFilterClick("Absent")}
               >
                 결석
               </button>
-
-              {/* 투약 버튼 */}
               <button
-                className={`m-[10px] mb-[15px] w-full lg:w-[320px] lg:h-[100px] h-[80px] rounded-[15px] border-[3px] border-[#B2D170] cursor-pointer`}
+                className={`rounded-[10px] ${selectedDocumentType === "Dosage" ? 'bg-[#E7DFFF] border-[2px] border-[#A085FF]' : 'bg-[#f4f4f4] border-[2px] border-[#d3d3d3]'} flex items-center justify-center w-[55px] h-[30px] font-bold text-[15px] cursor-pointer`}
+                onClick={() => handleFilterClick("Dosage")}
               >
                 투약
               </button>
@@ -150,14 +177,17 @@ export default function TeacherDocument() {
                 onChange={e => setSearchTerm(e.target.value)}
               />
             </div>
-            <div className="bg-[#f4f4f4] lg:w-[360px] w-full lg:h-[420px] h-[230px] overflow-y-auto custom-scrollbar">
+            <div className="bg-[#f4f4f4] lg:w-[360px] w-full lg:h-[400px] h-[230px] overflow-y-auto custom-scrollbar">
               {displayedDocuments.map((document, index) => (
                 <div
                   key={index}
-                  className={`${document.type === "Absent"
-                    ? (document.details.absentId === selectedDocumentId && document.type === selectedDocumentType ? 'border-[3px]' : 'border-none')
-                    : (document.details.dosageId === selectedDocumentId && document.type === selectedDocumentType ? 'border-[3px]' : 'border-none')}
-                  m-[10px] mb-[15px] w-full lg:w-[320px] lg:h-[100px] h-[80px] rounded-[15px] border-[#B2D170] cursor-pointer`}
+                  className={`m-[10px] mb-[15px] w-full lg:w-[320px] lg:h-[100px] h-[80px] rounded-[15px] border-[3px] ${
+                    document.details.absentId === selectedDocumentId || document.details.dosageId === selectedDocumentId
+                      ? document.type === "Absent"
+                        ? 'border-[#B2D170]'
+                        : 'border-[#B2D170]'
+                      : 'border-none'
+                  } cursor-pointer`}
                   onClick={() => handleDocumentClick(document.type, document.type === "Absent" ? document.details.absentId : document.details.dosageId)}
                 >
                   <DocumentChild
@@ -173,11 +203,12 @@ export default function TeacherDocument() {
             </div>
           </div>
           <div className='border-[#B2D170] border-[3px] rounded-[20px] lg:w-[calc(100%-400px)] w-full'>
-            {selectedDocumentType === "Absent" ? 
-            (selectedDocumentId !== null && <AbsentDocument absentId={selectedDocumentId} onUpdate={handleDocumentUpdate} isOurClass={false} />) : 
-            (selectedDocumentId !== null && <DosageDocument dosageId={selectedDocumentId} onUpdate={handleDocumentUpdate} isOurClass={false}/>)
-          }
-
+            {selectedDocumentId !== null && selectedDocumentRealType === "Absent" && (
+              <AbsentDocument absentId={selectedDocumentId} onUpdate={handleDocumentUpdate} isOurClass={false} />
+            )}
+            {selectedDocumentId !== null && selectedDocumentRealType === "Dosage" && (
+              <DosageDocument dosageId={selectedDocumentId} onUpdate={handleDocumentUpdate} isOurClass={false} />
+            )}
           </div>
         </div>
       </div>
