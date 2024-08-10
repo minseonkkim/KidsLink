@@ -203,11 +203,18 @@ public class MeetingTimeController {
     @PostMapping("/classify")
     public ResponseEntity<APIResponse<List<SelectedMeetingDTO>>> classifySchedule(@AuthenticationPrincipal Object principal,@RequestBody List<SelectedMeetingDTO> selectedMeetingDTOS){
         if(principal instanceof CustomUserDetails){
-            CustomUserDetails userDetails = (CustomUserDetails) principal;
-
             List<SelectedMeetingDTO> meetings = meetingTimeService.classifySchedule(selectedMeetingDTOS);
-            meetingTimeService.deleteMeeting(userDetails.getUsername());
-            meetingTimeService.deleteMeetingTime(userDetails.getUsername());
+
+            if (meetings.isEmpty()) {
+                APIResponse<List<SelectedMeetingDTO>> responseData = new APIResponse<>(
+                        "fail",
+                        null,
+                        "모든 일정을 분류할 수 없습니다.",
+                        null
+                );
+                return new ResponseEntity<>(responseData, HttpStatus.OK);
+            }
+
             APIResponse<List<SelectedMeetingDTO>> responseData = new APIResponse<>(
                     "success",
                     meetings,
