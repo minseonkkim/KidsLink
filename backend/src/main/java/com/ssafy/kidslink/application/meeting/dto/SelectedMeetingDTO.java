@@ -15,5 +15,6 @@ public class SelectedMeetingDTO {
     private int teacherId;
     private String teacherName;
     private String parentUsername;
+    private int parentId;
     private String childName;
 }

@@ -144,6 +144,7 @@ public class MeetingTimeService {
             meeting.setTeacherName(teacher.getTeacherName());
             Parent parent = selectedMeeting.getParent();
             meeting.setParentUsername(parent.getParentUsername());
+            meeting.setParentId(parent.getParentId());
             meeting.setChildName(parent.getChildren().iterator().next().getChildName());
             meetings.add(meeting);
         }
@@ -152,6 +153,7 @@ public class MeetingTimeService {
     }
 
     public List<SelectedMeetingDTO> classifySchedule(List<SelectedMeetingDTO> selectedMeetingDTOs){
+        flag = false;
         List<SelectedMeetingDTO> meetingSchedules = allocateMeetings(selectedMeetingDTOs);
         return meetingSchedules;
     }
@@ -184,71 +186,48 @@ public class MeetingTimeService {
 
     private List<SelectedMeetingDTO> allocateMeetings(List<SelectedMeetingDTO> selectedMeetingDTOs) {
         // 학부모별로 가능한 시간대를 그룹화
-        Map<String, List<SelectedMeetingDTO>> parentMeetingMap = new HashMap<>();
+        Map<Integer, List<SelectedMeetingDTO>> parentMeetingMap = new HashMap<>();
 
         for (SelectedMeetingDTO dto : selectedMeetingDTOs) {
-            String parentUsername = dto.getParentUsername();
+            int parentId = dto.getParentId();
 
             // parentName에 해당하는 리스트가 이미 존재하는지 확인
-            if (!parentMeetingMap.containsKey(parentUsername)) {
-                parentMeetingMap.put(parentUsername, new ArrayList<>());
+            if (!parentMeetingMap.containsKey(parentId)) {
+                parentMeetingMap.put(parentId, new ArrayList<>());
             }
 
             // parentName에 해당하는 리스트에 dto 추가
-            parentMeetingMap.get(parentUsername).add(dto);
+            parentMeetingMap.get(parentId).add(dto);
         }
 
-        // 모든 학부모가 무조건 하나의 시간대를 가지도록 선택
         List<SelectedMeetingDTO> result = new ArrayList<>();
-        List<String> parents = new ArrayList<>(parentMeetingMap.keySet());
-        System.out.println(parents);
-        SelectedMeetingDTO[] resultArr = new SelectedMeetingDTO[100];
-        backtrack(parents,parentMeetingMap, resultArr,result, 0);
+        List<Integer> parentIds = new ArrayList<>(parentMeetingMap.keySet());
+        SelectedMeetingDTO[] resultArr = new SelectedMeetingDTO[parentIds.size()];
+        backtrack(parentIds, parentMeetingMap, resultArr, result, 0, new HashSet<>());
 
         return result;
     }
-    private void backtrack( List<String> parents, Map<String, List<SelectedMeetingDTO>> parentMeetingMap,
-                           SelectedMeetingDTO[] resultArr,List<SelectedMeetingDTO> result, int index) {
-        if (flag){
-            System.out.println("flag");
-            return;
-        }
-        // 모든 학부모에 대해 시간대 선택이 완료되었을 경우
-        if (index == parents.size()) {
-            HashSet <String> slotSet = new HashSet<>();
-
-            for (int i = 0; i < parents.size(); i++) {
-                String slot = resultArr[i].getDate() + " " + resultArr[i].getTime();
-                if(slotSet.contains(slot)) {
-                    return;
-                }
-                slotSet.add(slot);
-            }
-
-            for (int i = 0; i < 100; i++) {
-                if(resultArr[i]==null){
-                    break;
-                }
-                result.add(resultArr[i]);
-            }
+    private void backtrack(List<Integer> parentIds, Map<Integer, List<SelectedMeetingDTO>> parentMeetingMap,
+                           SelectedMeetingDTO[] resultArr, List<SelectedMeetingDTO> result, int index, Set<String> usedSlots) {
+        if (flag) return;
+        if (index == parentIds.size()) {
             flag = true;
-            System.out.println(Arrays.toString(resultArr));
+            result.addAll(Arrays.asList(resultArr).subList(0, index));
             return;
         }
 
-        String parentName = parents.get(index);
-        List<SelectedMeetingDTO> meetings = parentMeetingMap.get(parentName);
+        int parentId = parentIds.get(index);
+        List<SelectedMeetingDTO> meetings = parentMeetingMap.get(parentId);
 
-        for (int i = 0; i<meetings.size();i++) {
-            SelectedMeetingDTO meeting = meetings.get(i);
+        for (SelectedMeetingDTO meeting : meetings) {
+            String slot = meeting.getDate() + " " + meeting.getTime();
 
-            // 현재 선택한 결과를 배열에 저장
+            if (usedSlots.contains(slot)) continue;
+
             resultArr[index] = meeting;
-
-            // 다음 학부모에 대해 백트래킹
-            backtrack(parents, parentMeetingMap, resultArr, result,index + 1);
-
-            // 선택을 취소 (백트래킹)
+            usedSlots.add(slot);
+            backtrack(parentIds, parentMeetingMap, resultArr, result, index + 1, usedSlots);
+            usedSlots.remove(slot);
             resultArr[index] = null;
         }
     }
