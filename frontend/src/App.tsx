@@ -42,6 +42,7 @@ import TeacherVideo from "./pages/teacher/TeacherVideo";
 import TeacherMeetingMain from "./pages/teacher/TeacherMeetingMain";
 import TeacherMeetingConfirm from "./pages/teacher/TeacherMeetingConfirm";
 import TeacherMeetingRecordingList from "./pages/teacher/TeacherMeetingRecordingList";
+import TeacherAlbumHistory from "./pages/teacher/TeacherAlbumHistory";
 
 export default function App() {
   const userType = useAppStore((state: AppState) => state.userType);
@@ -84,6 +85,7 @@ export default function App() {
           <Route path="/notice" element={<TeacherNotice />} />
           <Route path="/album" element={<TeacherAlbum />} />
           <Route path="/album/classify_finish" element={<TeacherAlbumFinish />} />
+          <Route path="/album/history" element={<TeacherAlbumHistory/>} />
           <Route path="/growth" element={<TeacherGrowth />} />
           <Route path="/meeting/scheduled" element={<TeacherMeeting />} />
           <Route path="/meeting/reservation" element={<TeacherReservation />} />

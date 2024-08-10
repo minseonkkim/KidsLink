@@ -21,6 +21,10 @@ body {
     @apply font-KoPubDotum;
   }
 
+a{
+  padding: 0;
+}
+
 
   @keyframes grow {
     from {

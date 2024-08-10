@@ -4,6 +4,7 @@ import NavigateBack from "../../components/teacher/common/NavigateBack";
 import { fetchRecordingsList } from "../../utils/openvidu";
 import { Recording } from "../../types/openvidu";
 import { handleDownload } from "../../api/openvidu";
+import Title from "../../components/teacher/common/Title";
 
 
 // 페이지 디자인용으로 진행하고, 나중에는 삭제해야합니다!
@@ -45,10 +46,10 @@ const TeacherMeetingRecordingList: React.FC = () => {
 
   return (
     <>
-      {/* <TeacherHeader /> 헤더를 같이 넣으면 밀리는 문제가 있어서 일단 이렇게 둡니다*/}
-      <div className="recordings-list mt-4 p-4 bg-white rounded-lg shadow-md">
-        <NavigateBack backPage="홈" backLink="/" />
-        <h2 className="text-2xl font-bold mb-4">녹화 파일 목록</h2>
+      <TeacherHeader /> 
+      <div className="mt-[130px] px-[20px] lg:px-[150px]">
+        <NavigateBack backPage="화상상담" backLink="/meeting" />
+        <Title title="녹화된 상담"/>
         {noRecordings ? (
           <p className="text-gray-600">저장된 녹화본이 없습니다.</p>
         ) : (
@@ -58,10 +59,10 @@ const TeacherMeetingRecordingList: React.FC = () => {
                 <span>{recording.name}</span>
                 <div>
                   <button onClick={() => handleDownload(recording.url)} className="mr-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">
-                    Download
+                    다운로드
                   </button>
                   <button onClick={() => handleDelete(recording.id)} className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-700">
-                    Delete
+                    삭제
                   </button>
                 </div>
               </li>
