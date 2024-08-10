@@ -72,9 +72,9 @@ export async function postTeacherReservations(
 }
 
 //상담일자 확정하기
-export async function confirmMeeting() {
+export async function confirmMeeting(selectedMeetings) {
   try {
-    const response = await axiosInstance.post("meeting/confirm");
+    const response = await axiosInstance.post("meeting/confirm",selectedMeetings);
     if (response.data.status === "success") {
       return response.data.data;
     } else {
