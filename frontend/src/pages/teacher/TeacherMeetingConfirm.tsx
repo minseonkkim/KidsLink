@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
+import { useTeacherInfoStore } from "../../stores/useTeacherInfoStore"
 import { useNavigate } from "react-router-dom";
 import NavigateBack from "../../components/teacher/common/NavigateBack";
 import TeacherHeader from "../../components/teacher/common/TeacherHeader";
 import Title from "../../components/teacher/common/Title";
-import { confirmMeeting, getParentSelectedTime } from "../../api/meeting";
+import { confirmMeeting, getParentSelectedTime,classifyMeeting } from "../../api/meeting";
 import { showToastError, showToastSuccess } from "../../components/teacher/common/ToastNotification";
 import ToastNotification from "../../components/teacher/common/ToastNotification";
 
@@ -24,7 +25,9 @@ interface GroupedMeetings {
 }
 
 export default function TeacherMeetingConfirm() {
+    const teacherName = useTeacherInfoStore(state => state.teacherInfo.username);
     const [groupedMeetings, setGroupedMeetings] = useState<GroupedMeetings>({});
+    const [selectedTimes, setSelectedTimes] = useState<{ [parentId: number]: string }>({});
     const navigate = useNavigate();
 
     const fetchSelectedMeeting = async () => {
@@ -72,6 +75,35 @@ export default function TeacherMeetingConfirm() {
         fetchSelectedMeeting();
     }, []);
 
+    const createTransformedData = (
+        groupedMeetings: GroupedMeetings,
+        selectedTimes: { [parentId: number]: string },
+        teacherName: string
+    ) => {
+        return Object.entries(groupedMeetings).flatMap(([parentId, meeting]) => {
+            const selectedTime = selectedTimes[Number(parentId)];
+            if (selectedTime) {
+                const [date, time] = selectedTime.split(' ');
+                return [{
+                    parentId: Number(parentId),
+                    childName: meeting.childName,
+                    date: date,
+                    time: time,
+                    teacherName: teacherName
+                }];
+            } else {
+                return meeting.times.map(timeSlot => ({
+                    parentId: Number(parentId),
+                    childName: meeting.childName,
+                    date: timeSlot.date,
+                    time: timeSlot.time,
+                    teacherName: teacherName
+                }));
+            }
+        });
+    };
+    
+    
     const handleConfirmMeetingClick = async () => {
         try {
             await confirmMeeting();
@@ -89,6 +121,51 @@ export default function TeacherMeetingConfirm() {
             console.error('상담일자 확정 중 오류 발생:', error);
         }
     };
+    const handleClassifyMeetingClick = async () => {
+        
+        try {
+            const transformedData = createTransformedData(groupedMeetings, selectedTimes, teacherName);
+
+            const response = await classifyMeeting(transformedData);
+        if (response.status === "success") {
+            showToastSuccess(
+                <div>
+                    상담일자가 분류되었습니다!
+                </div>
+            );
+            const newSelectedTimes = {};
+            response.data.forEach(meeting => {
+                const slot = `${meeting.date} ${meeting.time}`;
+                newSelectedTimes[meeting.parentId] = slot;
+            });
+
+            setSelectedTimes(newSelectedTimes);
+        } else {
+            showToastError(
+                <div>
+                    모든 일정을 분류할 수 없습니다.
+                </div>
+            );
+        }
+
+        } catch (error) {
+            showToastError(<div>상담일자 분류 중 오류가 발생했습니다.</div>);
+            console.error('상담일자 분류 중 오류 발생:', error);
+        }
+    };
+    const handleTimeSlotClick = (parentId: number, timeSlot: string) => {
+        setSelectedTimes(prevSelectedTimes => {
+            if (prevSelectedTimes[parentId] === timeSlot) {
+                const { [parentId]: removed, ...rest } = prevSelectedTimes; 
+                return rest;
+            }
+
+            return {
+                ...prevSelectedTimes,
+                [parentId]: timeSlot
+            };
+        });
+    };
 
     return (
         <>
@@ -102,7 +179,16 @@ export default function TeacherMeetingConfirm() {
                     onClick={handleConfirmMeetingClick}
                 >
                     확정하기
-                </button> }
+                </button>
+                 }
+                 {Object.keys(groupedMeetings).length !== 0 && 
+                <button 
+                    className="absolute top-[125px] right-[240px] mt-2 h-[40px] border-2 border-[#7C7C7C] bg-[#E3EEFF] px-3 py-1 font-bold rounded-[10px] hover:bg-[#D4DDEA]"
+                    onClick={handleClassifyMeetingClick}
+                >
+                    일정조율하기
+                </button>
+                 }
                 {Object.keys(groupedMeetings).length !== 0 && 
                  <div className="text-center text-[17px]">학부모님들께서 선택하신 희망 날짜 및 시간입니다.<br />예약을 확정하시려면 확정하기 버튼을 눌러주세요.</div>
                 }
@@ -112,11 +198,19 @@ export default function TeacherMeetingConfirm() {
                         <div key={parentId} className="bg-gray-100 p-6 mb-6 rounded-lg shadow-md w-[1200px]">
                             <h3 className="text-xl font-bold mb-4 text-[23px]">{`${childName} 학부모님`}</h3>
                             <ul className="list-none p-0">
-                                {times.map((timeSlot, index) => (
-                                    <li key={index} className="bg-white p-4 mb-2 border border-gray-300 rounded-md">
-                                        {`${timeSlot.date} ${timeSlot.time}`}
+                            {times.map((timeSlot, index) => {
+                                const slot = `${timeSlot.date} ${timeSlot.time}`;
+                                const isSelected = selectedTimes[parentId]?.includes(slot);
+                                return (
+                                    <li 
+                                        key={index}
+                                        className={`bg-white p-4 mb-2 border border-gray-300 rounded-md ${isSelected ? 'bg-blue-100' : ''}`}
+                                        onClick={() => handleTimeSlotClick(Number(parentId), slot)}
+                                    >
+                                        {slot}
                                     </li>
-                                ))}
+                                );
+                            })}
                             </ul>
                         </div>
                     ))}
