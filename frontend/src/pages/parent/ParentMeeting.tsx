@@ -6,6 +6,7 @@ import meetingTimeIcon from "../../assets/parent/meeting.png"
 import { getConfirmedMeeting } from "../../api/meeting"
 import { useNavigate } from "react-router-dom"
 import { ParentTeacherMeeting } from "../../types/meeting"
+import cryingDaramgi from '../../assets/parent/crying-daramgi.png'
 
 export default function ParentMeeting() {
   const navigate = useNavigate()
@@ -56,7 +57,12 @@ export default function ParentMeeting() {
 
       <div className="flex flex-col flex-grow overflow-hidden rounded-tl-[20px] rounded-tr-[20px] bg-white shadow-top px-12 pt-12 pb-4 animate-slideUp">
         {meetings.length === 0 ? (
-          <p className="text-center text-gray-500">예약된 상담이 없습니다.</p>
+        <div className="col-span-4 flex flex-col items-center justify-center">
+          <img src={cryingDaramgi} alt="Crying Daramgi" className="w-20 mt-12 mb-4" />
+          <p className="text-center text-gray-500">
+            예정된 상담이 없습니다.
+          </p>
+        </div>
         ) : (
           <MeetingList meetings={meetings} isMeetingActive={isMeetingActive} />
         )}

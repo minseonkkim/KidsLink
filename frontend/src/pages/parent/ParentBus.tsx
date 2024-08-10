@@ -9,6 +9,7 @@ import { Toggle } from '../../components/parent/bus/Toggle';
 import { FaBus } from 'react-icons/fa';
 import { MdGpsFixed } from 'react-icons/md';
 import { useParentInfoStore } from '../../stores/useParentInfoStore';
+import LoadingSpinner from '../../components/parent/common/LoadingSpinner'
 
 declare global {
   interface Window {
@@ -256,7 +257,9 @@ export default function ParentBus() {
   };
 
   const handleToggleChange = async () => {
-    if (loading) return;
+    if (loading) return (
+      <LoadingSpinner/>
+    );
     const newStatus = !isBoarding;
     setIsBoarding(newStatus);
     await handleBoardingStatus();

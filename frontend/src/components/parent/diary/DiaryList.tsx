@@ -1,5 +1,6 @@
 import DiaryItem from "./DiaryItem"
 import { Diary } from "../../../api/growthdiary"
+import daramgi from '../../../assets/parent/crying-daramgi.png'
 
 interface DiaryListProps {
   filteredDiarys: Diary[];
@@ -14,9 +15,12 @@ export default function DiaryList({ filteredDiarys, handleBoxClick }: DiaryListP
           <DiaryItem key={diary.diaryId} diary={diary} handleBoxClick={handleBoxClick} />
         ))
       ) : (
-        <p className="text-center text-gray-500 col-span-4">
-          성장일지가 없습니다.
-        </p>
+        <div className="col-span-4 flex flex-col items-center justify-center">
+          <img src={daramgi} alt="Crying Daramgi" className="w-20 mt-12 mb-4" />
+          <p className="text-center text-gray-500">
+            성장일지가 없습니다.
+          </p>
+        </div>
       )}
     </div>
   )
