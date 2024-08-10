@@ -116,6 +116,7 @@ export default function ParentBus() {
     parentMarkerRef.current = parentMarkerInstance;
     updateParentLocation(parentMarkerRef);
   };
+  
 
   const initializeWebSocket = async () => {
     if (isWebSocketInitialized.current) {
