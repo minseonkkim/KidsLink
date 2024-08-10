@@ -85,6 +85,19 @@ export async function confirmMeeting() {
     throw error;
   }
 }
+export async function classifyMeeting(selectedMeetings) {
+  try {
+    const response = await axiosInstance.post("meeting/classify",selectedMeetings);
+    if (response.data.status === "success"||response.data.status === "fail") {
+      return response.data;
+    } else {
+      throw new Error("Failed to confirmMeeting");
+    }
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
 
 // 예약된 전체 상담 리스트 조회
 export async function getConfirmedMeeting(): Promise<ParentTeacherMeeting[]> {
