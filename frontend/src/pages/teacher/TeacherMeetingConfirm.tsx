@@ -75,35 +75,6 @@ export default function TeacherMeetingConfirm() {
         fetchSelectedMeeting();
     }, []);
 
-    const createTransformedData = (
-        groupedMeetings: GroupedMeetings,
-        selectedTimes: { [parentId: number]: string },
-        teacherName: string
-    ) => {
-        return Object.entries(groupedMeetings).flatMap(([parentId, meeting]) => {
-            const selectedTime = selectedTimes[Number(parentId)];
-            if (selectedTime) {
-                const [date, time] = selectedTime.split(' ');
-                return [{
-                    parentId: Number(parentId),
-                    childName: meeting.childName,
-                    date: date,
-                    time: time,
-                    teacherName: teacherName
-                }];
-            } else {
-                return meeting.times.map(timeSlot => ({
-                    parentId: Number(parentId),
-                    childName: meeting.childName,
-                    date: timeSlot.date,
-                    time: timeSlot.time,
-                    teacherName: teacherName
-                }));
-            }
-        });
-    };
-    
-    
     const handleConfirmMeetingClick = async () => {
         try {
             await confirmMeeting();
@@ -124,7 +95,27 @@ export default function TeacherMeetingConfirm() {
     const handleClassifyMeetingClick = async () => {
         
         try {
-            const transformedData = createTransformedData(groupedMeetings, selectedTimes, teacherName);
+            const transformedData = Object.entries(groupedMeetings).flatMap(([parentId, { childName, times }]) => {
+                const selectedTime = selectedTimes[parentId];
+                if (selectedTime) {
+                    const [date, time] = selectedTime.split(' ');
+                    return [{
+                        parentId: parentId,
+                        childName: childName,
+                        date: date,
+                        time: time,
+                        teacherName: teacherName
+                    }];
+                } else {
+                    return times.map(timeSlot => ({
+                        parentId: parentId,
+                        childName: childName,
+                        date: timeSlot.date,
+                        time: timeSlot.time,
+                        teacherName: teacherName
+                    }));
+                }
+            });
 
             const response = await classifyMeeting(transformedData);
         if (response.status === "success") {
