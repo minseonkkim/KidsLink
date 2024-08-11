@@ -1,8 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { getAbsentDocument, getDosageDocument } from '../../api/document'
-import daramgi from '../../assets/parent/crying-daramgi.png'
-import LoadingSpinner from '../../components/parent/common/LoadingSpinner'
 
 interface DosageDocument {
   startDate: string;
@@ -52,18 +50,11 @@ export default function DocumentDetail() {
   }, [docType, docId])
 
   if (loading) {
-    return <LoadingSpinner/>
+    return <div>Loading...</div>
   }
 
   if (!document) {
-    return (
-      <div className="col-span-4 flex flex-col items-center justify-center">
-        <img src={daramgi} alt="Crying Daramgi" className="w-20 mt-12 mb-4" />
-        <p className="text-center text-gray-500">
-          해당 문서를 찾을 수 없습니다.
-        </p>
-      </div>
-    )
+    return <p>해당 문서를 찾을 수 없습니다.</p>
   }
 
   const formatDate = (dateString: string) => {

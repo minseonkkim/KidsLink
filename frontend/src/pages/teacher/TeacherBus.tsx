@@ -1,7 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import BusChild from "../../components/teacher/bus/BusChild";
-import NavigateBack from "../../components/teacher/common/NavigateBack";
-import TeacherHeader from "../../components/teacher/common/TeacherHeader";
 import Title from "../../components/teacher/common/Title";
 import { MdNavigateBefore, MdNavigateNext } from "react-icons/md";
 import { startWebSocket, stopWebSocket } from '../../api/webSocket';
@@ -9,7 +7,9 @@ import { getAllBusStops, postBusStart } from '../../api/bus';
 import { getTeacherInfo } from '../../api/Info';
 import { useBusStore } from '../../stores/useBusStore';
 import { useTeacherInfoStore } from '../../stores/useTeacherInfoStore';
-import useModal from "../../hooks/teacher/useModal.tsx";
+import useModal from "../../hooks/teacher/useModal";
+import TeacherLayout from "../../layouts/TeacherLayout";
+import daramgi from "../../assets/teacher/bus-daramgi.png"
 
 const WEBSOCKET_URL = import.meta.env.VITE_WEBSOCKET_URL;
 
@@ -32,7 +32,7 @@ export default function TeacherBus() {
     const fetchBusStops = async () => {
       try {
         let kindergartenId;
-  
+
         if (teacherInfo) {
           kindergartenId = teacherInfo.kindergartenId;
         } else {
@@ -40,28 +40,20 @@ export default function TeacherBus() {
           setTeacherInfo(fetchedTeacherInfo);
           kindergartenId = fetchedTeacherInfo.kindergartenId;
         }
-  
-        let stops = await getAllBusStops(kindergartenId);
-        console.log("stops: ", stops);
-  
-        setBusStops(stops.map(stop => {
-          const existingStop = busStops.find(prevStop => prevStop.busStopId === stop.busStopId);
-          return {
-            ...stop,
-            children: stop.children.map(child => {
-              const existingChild = existingStop?.children.find(prevChild => prevChild.child.childId === child.child.childId);
-              return {
-                ...child,
-                checked: existingChild ? existingChild.checked : false, // 기존의 checked 값 유지
-              };
-            }),
-          };
-        }));
-  
-        console.log("스토어에서 가져온 busStops: ", busStops);
-  
+
+        const stops = await getAllBusStops(kindergartenId);
+
+        // 상태 초기화
+        setBusStops(stops.map(stop => ({
+          ...stop,
+          children: stop.children.map(child => ({
+            ...child,
+            checked: false // 초기 상태를 모두 false로 설정
+          }))
+        })));
+
         setBusId(stops[0]?.busId || null);
-  
+
         if (stops.length > 0) {
           setCurrentStopId(stops[0].busStopId);
         }
@@ -69,36 +61,26 @@ export default function TeacherBus() {
         console.error(error);
       }
     };
-  
+
     fetchBusStops();
-  
+
     const handleUnload = () => {
       localStorage.removeItem('isWebSocketActive');
     };
-  
+
     window.addEventListener('beforeunload', handleUnload);
     window.addEventListener('unload', handleUnload);
     return () => {
       window.removeEventListener('beforeunload', handleUnload);
       window.removeEventListener('unload', handleUnload);
     };
-  }, [teacherInfo, setTeacherInfo]);
-  
-  
-  
+  }, [teacherInfo, setTeacherInfo, setBusStops]);
 
   useEffect(() => {
     if (!isWebSocketActive) {
       setAllChecked(false);
     }
   }, [isWebSocketActive, setAllChecked]);
-
-  useEffect(() => {
-    // busStops 상태가 변경될 때마다 현재 정류장을 다시 설정
-    if (busStops.length > 0 && !currentStopId) {
-      setCurrentStopId(busStops[0].busStopId);
-    }
-  }, [busStops]);
 
   const handleOptionChange = (option: string) => {
     setSelectedOption(option);
@@ -138,7 +120,6 @@ export default function TeacherBus() {
   }
 
   const currentStop = busStops.find(stop => stop.busStopId === currentStopId);
-  console.log("currentStop",currentStop)
 
   if (!currentStop) {
     return <div>Invalid bus stop selected.</div>;
@@ -163,6 +144,20 @@ export default function TeacherBus() {
         >
           전송
         </button>
+        {/* <button
+          onClick={() => {
+            if (action === '출발') {
+              postBusStart(busId);
+              startWebSocketConnection();
+            } else {
+              stopWebSocketConnection();
+            }
+            closeModal();
+          }}
+          className="px-4 py-2 border-[2px] border-[#7C7C7C] bg-[#E3EEFF] font-bold rounded-[10px] shadow-md hover:bg-[#D4DDEA] transition duration-300 ease-in-out"
+        >
+          전송
+        </button> */}
         <button
           onClick={closeModal}
           className="px-4 py-2 bg-neutral-300 border-[2px] border-[#7C7C7C] text-black font-semibold rounded-lg shadow-md hover:bg-neutral-400 transition duration-300 ease-in-out"
@@ -208,14 +203,21 @@ export default function TeacherBus() {
   };
 
   return (
-    <>
-      <TeacherHeader />
-      <div className="mt-[120px] px-[10px] lg:px-[150px]">
-        <NavigateBack backPage="홈" backLink='/' />
-        <Title title="등하원관리" />
-        <button onClick={handleButtonClick} className="absolute top-[125px] right-[30px] lg:right-[150px] border-[2px] border-[#7C7C7C] bg-[#E3EEFF] px-3 py-1 font-bold rounded-[10px] hover:bg-[#D4DDEA] flex flex-row items-center">
-          {isWebSocketActive ? '버스 도착' : '버스 출발'}
-        </button>
+    <TeacherLayout
+      activeMenu="bus"
+      setActiveMenu={() => {}}
+      titleComponent={<Title title="등하원 관리" />}
+      imageSrc={daramgi} 
+    >
+      <div className="relative w-full my-10 mb-32 px-4 lg:px-12">
+        <div className="flex justify-end my-4">
+          <button 
+            onClick={handleButtonClick} 
+            className="border-[2px] border-[#7C7C7C] bg-[#E3EEFF] px-3 py-1 font-bold rounded-[10px] hover:bg-[#D4DDEA] flex flex-row items-center"
+          >
+            {isWebSocketActive ? '버스 도착' : '버스 출발'}
+          </button>
+        </div>
 
         <div 
           className="flex flex-col lg:flex-row items-center justify-between lg:space-x-4 lg:mt-0 mt-[70px]" 
@@ -236,7 +238,7 @@ export default function TeacherBus() {
               </div>
               <div className="relative w-[310px] lg:w-[360px] h-[370px] overflow-auto custom-scrollbar">
                 {currentStop.children.length > 0 ? (
-                  currentStop.children.map((({ child, parentTel, status, checked }, idx) => (
+                  currentStop.children.map(({ child, parentTel, status, checked }, idx) => (
                     <BusChild
                       key={idx}
                       busStopId={currentStop.busStopId}
@@ -247,7 +249,7 @@ export default function TeacherBus() {
                       checked={checked}
                       profile={child.profile}
                     />
-                  )))
+                  ))
                 ) : (
                   <div className="absolute top-[30%] left-0 right-0 text-center">
                     <p className="text-[20px] text-gray-500">탑승 인원이 없습니다</p>
@@ -263,6 +265,6 @@ export default function TeacherBus() {
         </div>
       </div>
       <Modal />
-    </>
+    </TeacherLayout>
   );
 }

@@ -24,27 +24,26 @@ export default function ChildCard({ name, gender, age, absent, dosage, profileIm
         openModal(
             <div className="relative" style={{ width: window.innerWidth < 1024 ? '330px' : 'auto' }}>
                 <AbsentDocument absentId={absentId[index]} onUpdate={() => {}} isOurClass={true}/>
-                <div className="w-full h-[40px]">
-                    {absentId.length > 1 && (
-                    <div className="flex justify-between">
-                        <span
-                            onClick={previousAbsent}
-                            className={`cursor-pointer text-2xl ml-8 ${index === 0 ? 'invisible' : ''}`}
-                            style={{ position: 'absolute', left: 0 }}
-                        >
-                            &#9664; {/* Left arrow icon */}
-                        </span>
-                        <span
-                            onClick={nextAbsent}
-                            className={`cursor-pointer text-2xl mr-8 ${index === absentId.length - 1 ? 'invisible' : ''}`}
-                            style={{ position: 'absolute', right: 0 }}
-                        >
-                            &#9654; {/* Right arrow icon */}
-                        </span>
+                {absentId.length > 1 && (
+                    <div className="w-full h-[40px]">
+                        <div className="flex justify-between">
+                            <span
+                                onClick={previousAbsent}
+                                className={`cursor-pointer text-2xl ml-8 ${index === 0 ? 'invisible' : ''}`}
+                                style={{ position: 'absolute', left: 0 }}
+                            >
+                                &#9664; {/* Left arrow icon */}
+                            </span>
+                            <span
+                                onClick={nextAbsent}
+                                className={`cursor-pointer text-2xl mr-8 ${index === absentId.length - 1 ? 'invisible' : ''}`}
+                                style={{ position: 'absolute', right: 0 }}
+                            >
+                                &#9654; {/* Right arrow icon */}
+                            </span>
+                        </div>
                     </div>
                 )}
-                </div>
-                
             </div>
         );
     };
@@ -54,8 +53,8 @@ export default function ChildCard({ name, gender, age, absent, dosage, profileIm
         openModal(
             <div className="relative" style={{ width: window.innerWidth < 1024 ? '330px' : 'auto' }}>
                 <DosageDocument dosageId={dosageId[index]} onUpdate={() => {}} isOurClass={true}/>
-                <div className="w-full h-[40px]">
-                    {dosageId.length > 1 && (
+                {dosageId.length > 1 && (
+                    <div className="w-full h-[40px]">
                         <div className="flex justify-between mt-4">
                             <span
                                 onClick={previousDosage}
@@ -72,8 +71,8 @@ export default function ChildCard({ name, gender, age, absent, dosage, profileIm
                                 &#9654; {/* Right arrow icon */}
                             </span>
                         </div>
-                    )}
-                </div>
+                    </div>
+                )}
             </div>
         );
     };
@@ -104,7 +103,6 @@ export default function ChildCard({ name, gender, age, absent, dosage, profileIm
 
     return (
         <div className="w-[152px] lg:w-[180px] h-[220px] lg:h-[250px] lg:mx-[20px] mx-[18px] my-4 relative drop-shadow-md rounded-[10px] bg-[#fff9d7]">
-            {/* <div className="w-[180px] h-[250px] absolute inset-0 rounded-[10px] bg-[#fff9d7]" /> */}
             <p className="w-[90px] absolute lg:left-[45px] lg:top-[170px] left-[33px] top-[160px] text-xl font-bold text-center text-[#363636]">
                 {name}
             </p>

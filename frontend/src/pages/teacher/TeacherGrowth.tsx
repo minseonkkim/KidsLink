@@ -1,18 +1,18 @@
-import React, { useState, useEffect } from "react";
-import NavigateBack from "../../components/teacher/common/NavigateBack.tsx";
-import TeacherHeader from "../../components/teacher/common/TeacherHeader.tsx";
-import Title from "../../components/teacher/common/Title.tsx";
-import { IoSearch, IoCameraOutline } from "react-icons/io5";
-import GrowthChild from "../../components/teacher/growth/GrowthChild.tsx";
-import GrowthDiaryItem from "../../components/teacher/growth/GrowthDiaryItem.tsx";
+import { useState, useEffect } from "react";
+import Title from "../../components/teacher/common/Title";
+import { IoSearch } from "react-icons/io5";
+import GrowthChild from "../../components/teacher/growth/GrowthChild";
+import GrowthDiaryItem from "../../components/teacher/growth/GrowthDiaryItem";
 import { FiPlusCircle } from "react-icons/fi";
-import useModal from "../../hooks/teacher/useModal.tsx";
-import ToastNotification, { showToast, showToastError } from "../../components/teacher/common/ToastNotification.tsx";
-import { useTeacherInfoStore } from "../../stores/useTeacherInfoStore.ts";
-import { getClassChilds } from "../../api/kindergarten.ts";
-import { getKidAllGrowthDiarys } from "../../api/growthdiary.ts";
-import GrowthDiaryForm from "../../components/teacher/growth/GrowthDiaryForm.tsx";
-import { getTeacherInfo } from "../../api/Info.ts";
+import useModal from "../../hooks/teacher/useModal";
+import ToastNotification, { showToast, showToastError } from "../../components/teacher/common/ToastNotification";
+import { useTeacherInfoStore } from "../../stores/useTeacherInfoStore";
+import { getClassChilds } from "../../api/kindergarten";
+import { getKidAllGrowthDiarys } from "../../api/growthdiary";
+import GrowthDiaryForm from "../../components/teacher/growth/GrowthDiaryForm";
+import { getTeacherInfo } from "../../api/Info";
+import TeacherLayout from "../../layouts/TeacherLayout";
+import daramgi from "../../assets/teacher/growth-daramgi.png"
 
 export default function TeacherGrowth() {
   const { openModal, Modal, isModalOpen, closeModal } = useModal();
@@ -150,69 +150,69 @@ export default function TeacherGrowth() {
   };
 
   return (
-    <>
-      <TeacherHeader />
-      <div className="mt-[120px] px-[20px] lg:px-[150px]">
-        <NavigateBack backPage="홈" backLink="/" />
-        <Title title="성장일지" />
-        <div className="flex flex-col lg:flex-row justify-between">
-          <div className="rounded-[10px] bg-[#f4f4f4] w-full lg:w-[380px] h-[325px] lg:h-[520px] p-[10px] mb-4 lg:mb-0">
-            <div className="bg-[#fff] lg:h-[53px] h-[46px] rounded-[10px] flex items-center p-3 mx-2 mt-2 mb-4">
-              <IoSearch className="text-[25px] mr-3" />
-              <input
-                type="text"
-                className="focus:outline-none text-[18px]"
-                value={searchChild}
-                onChange={handleSearchChange}
-                placeholder="이름으로 검색하세요"
-              />
-            </div>
-            <div className="flex flex-wrap w-full lg:w-[360px] h-[230px] lg:h-[420px] overflow-y-auto custom-scrollbar">
-              {filteredChildren.map((child) => (
-                <div
-                  key={child.childId}
-                  className={`border-[3px] rounded-[10px] h-[181px] m-1 ${
-                    child.childId === currentChildId
-                      ? "border-[#B2D170]"
-                      : "border-transparent"
-                  }`}
-                >
-                  <GrowthChild
-                    key={child.childId}
-                    name={child.name}
-                    profileImgPath={child.profile}
-                    completed={child.completed}
-                    onClick={() => handleChildClick(child.childId)}
-                  />
-                </div>
-              ))}
-            </div>
+    <TeacherLayout
+        activeMenu="growth"
+        setActiveMenu={() => {}}
+        titleComponent={<Title title="성장일지" />}
+        imageSrc={daramgi} 
+    >
+      <div className="relative w-full gap-8 lg:my-8 mt-16 px-4 lg:px-24 flex flex-col lg:flex-row justify-between">
+        <div className="rounded-[10px] bg-[#f4f4f4] w-full lg:w-[360px] h-[320px] lg:h-[500px] p-[10px] mb-4 lg:mb-0">
+          <div className="bg-[#fff] lg:h-[50px] h-[44px] rounded-[10px] flex items-center p-3 mx-2 mt-2 mb-4">
+            <IoSearch className="text-[24px] mr-3" />
+            <input
+              type="text"
+              className="focus:outline-none text-[18px] w-full"
+              value={searchChild}
+              onChange={handleSearchChange}
+              placeholder="이름으로 검색하세요"
+            />
           </div>
-          <div className="rounded-[10px] bg-[#f4f4f4] w-full lg:w-[720px] lg:h-[520px] h-[380px] p-[10px]">
-            <div className="flex flex-wrap content-start w-full lg:w-[700px] lg:h-[500px] h-[360px] rounded-[20px] bg-[#f4f4f4] overflow-auto custom-scrollbar p-1">
+          <div className="flex flex-wrap w-full lg:w-[360px] h-[230px] lg:h-[410px] overflow-y-auto custom-scrollbar">
+            {filteredChildren.map((child) => (
               <div
-                onClick={openCreateModal}
-                className="bg-[#fff] rounded-[10px] w-[133px] h-[133px] lg:m-[17px] m-[15px] flex items-center justify-center font-bold text-[18px]"
+                key={child.childId}
+                className={`border-[3px] rounded-[10px] h-[180px] m-1 ${
+                  child.childId === currentChildId
+                    ? "border-[#B2D170]"
+                    : "border-transparent"
+                } cursor-pointer`}
               >
-                <FiPlusCircle className="text-[30px]" />
-              </div>
-              {growthDiaryData.map((diary) => (
-                <GrowthDiaryItem
-                  key={diary.diaryId}
-                  diaryId={diary.diaryId}
-                  createDate={diary.createDate}
-                  content={diary.content}
-                  thumbnail={diary.thumbnail}
-                  images={diary.images}
-                  onClick={() => handleDiaryItemClick(diary.diaryId)}
+                <GrowthChild
+                  key={child.childId}
+                  name={child.name}
+                  profileImgPath={child.profile}
+                  completed={child.completed}
+                  onClick={() => handleChildClick(child.childId)}
                 />
-              ))}
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="rounded-[10px] bg-[#f4f4f4] w-full lg:w-[700px] lg:h-[500px] h-[370px] p-[10px]">
+          <div className="flex flex-wrap content-start w-full lg:w-[680px] lg:h-[480px] h-[350px] rounded-[10px] bg-[#f4f4f4] overflow-auto custom-scrollbar p-2">
+            <div
+              onClick={openCreateModal}
+              className="bg-[#fff] rounded-[10px] w-[130px] h-[130px] lg:m-[16px] m-[14px] flex items-center justify-center font-bold text-[18px] cursor-pointer"
+            >
+              <FiPlusCircle className="text-[28px]" />
             </div>
+            {growthDiaryData.map((diary) => (
+              <GrowthDiaryItem
+                key={diary.diaryId}
+                diaryId={diary.diaryId}
+                createDate={diary.createDate}
+                content={diary.content}
+                thumbnail={diary.thumbnail}
+                images={diary.images}
+                onClick={() => handleDiaryItemClick(diary.diaryId)}
+              />
+            ))}
           </div>
         </div>
       </div>
       <Modal />
       <ToastNotification />
-    </>
+    </TeacherLayout>
   );
 }

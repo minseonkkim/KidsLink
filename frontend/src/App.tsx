@@ -30,7 +30,6 @@ import TeacherAlbum from "./pages/teacher/TeacherAlbum";
 import TeacherGrowth from "./pages/teacher/TeacherGrowth";
 import TeacherMeeting from "./pages/teacher/TeacherMeeting";
 import TeacherBus from "./pages/teacher/TeacherBus";
-import TeacherHome from "./pages/teacher/TeacherHome";
 import TeacherReservation from "./pages/teacher/TeacherMeetingReservation";
 import TeacherOurClass from "./pages/teacher/TeacherOurClass";
 import TeacherSchedule from "./pages/teacher/TeacherSchedule";
@@ -80,7 +79,7 @@ export default function App() {
       ) : userType === "ROLE_TEACHER" ? (
         <>
           {/* 교사 사용자의 라우트 */}
-          <Route path="/" element={<TeacherHome />} />
+          <Route path="/" element={<TeacherOurClass />} />
           <Route path="/document" element={<TeacherDocument />} />
           <Route path="/notice" element={<TeacherNotice />} />
           <Route path="/album" element={<TeacherAlbum />} />
@@ -90,7 +89,6 @@ export default function App() {
           <Route path="/meeting/scheduled" element={<TeacherMeeting />} />
           <Route path="/meeting/reservation" element={<TeacherReservation />} />
           <Route path="/bus" element={<TeacherBus />} />
-          <Route path="/ourclass" element={<TeacherOurClass />} />
           <Route path="/schedule" element={<TeacherSchedule />} />
           <Route path="/mypage" element={<TeacherMyPage />} />
           <Route path="/album/send_finish" element={<TeacherAlbumSendFinish />} />

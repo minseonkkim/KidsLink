@@ -4,6 +4,22 @@ import { useLocation } from "react-router-dom";
 
 ReactModal.setAppElement('#root');
 
+// 기본 스타일 설정
+ReactModal.defaultStyles.overlay = {
+  backgroundColor: 'rgba(0, 0, 0, 0.75)',
+  zIndex: '1000',
+};
+
+ReactModal.defaultStyles.content = {
+  top: '50%',
+  left: '50%',
+  right: 'auto',
+  bottom: 'auto',
+  marginRight: '-50%',
+  transform: 'translate(-50%, -50%)',
+  overflow: 'visible',
+};
+
 type UseModalReturn = {
   openModal: (content: ReactNode) => void;
   closeModal: () => void;
@@ -19,17 +35,26 @@ export default function useModal(): UseModalReturn {
   const openModal = (content: ReactNode) => {
     setModalContent(content);
     setIsModalOpen(true);
+    document.body.style.overflow = 'hidden';  // 모달이 열리면 스크롤 잠금
   };
 
   const closeModal = () => {
     setModalContent(null);
     setIsModalOpen(false);
+    document.body.style.overflow = '';  // 모달이 닫히면 스크롤 복원
   };
 
-  // Close the modal when the route changes
+  // 경로가 변경될 때 모달을 자동으로 닫기
   useEffect(() => {
     closeModal();
   }, [location]);
+
+  // 모달이 닫힐 때 스크롤을 복원 (중복된 로직 제거)
+  useEffect(() => {
+    if (!isModalOpen) {
+      document.body.style.overflow = '';
+    }
+  }, [isModalOpen]);
 
   const Modal = () => (
     <ReactModal
@@ -68,6 +93,8 @@ export default function useModal(): UseModalReturn {
       display: "flex",
       justifyContent: "center",
       overflow: "auto",
+      maxHeight: "90vh",  // 최대 높이 설정
+      maxWidth: "90vw",   // 최대 너비 설정
     },
   };
 
