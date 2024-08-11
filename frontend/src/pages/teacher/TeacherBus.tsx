@@ -26,6 +26,9 @@ export default function TeacherBus() {
   const setBusStops = useBusStore((state) => state.setBusStops);
   const setAllChecked = useBusStore((state) => state.setAllChecked);
   const { teacherInfo, setTeacherInfo } = useTeacherInfoStore();
+  
+  const [isPageVisible, setIsPageVisible] = useState(false);
+  const [direction, setDirection] = useState('slide-left');
 
   const containerRef = useRef<HTMLDivElement & { touchStartX?: number }>(null);
 
@@ -41,23 +44,33 @@ export default function TeacherBus() {
           setTeacherInfo(fetchedTeacherInfo);
           kindergartenId = fetchedTeacherInfo.kindergartenId;
         }
-
-        const stops = await getAllBusStops(kindergartenId);
-
-        // 상태 초기화
-        setBusStops(stops.map(stop => ({
-          ...stop,
-          children: stop.children.map(child => ({
-            ...child,
-            checked: false // 초기 상태를 모두 false로 설정
-          }))
-        })));
-
+  
+        let stops = await getAllBusStops(kindergartenId);
+  
+        setBusStops(stops.map(stop => {
+          const existingStop = busStops.find(prevStop => prevStop.busStopId === stop.busStopId);
+          return {
+            ...stop,
+            children: stop.children.map(child => {
+              const existingChild = existingStop?.children.find(prevChild => prevChild.child.childId === child.child.childId);
+              return {
+                ...child,
+                checked: existingChild ? existingChild.checked : false, // 기존의 checked 값 유지
+              };
+            }),
+          };
+        }));
+  
         setBusId(stops[0]?.busId || null);
 
         if (stops.length > 0) {
           setCurrentStopId(stops[0].busStopId);
         }
+  
+        // 상태를 업데이트하고 나서 useEffect에서 로그를 출력하게끔 설정
+        setTimeout(() => {
+          setIsPageVisible(true);
+        }, 100);
       } catch (error) {
         console.error(error);
       }
@@ -71,6 +84,7 @@ export default function TeacherBus() {
 
     window.addEventListener('beforeunload', handleUnload);
     window.addEventListener('unload', handleUnload);
+  
     return () => {
       window.removeEventListener('beforeunload', handleUnload);
       window.removeEventListener('unload', handleUnload);
@@ -92,6 +106,7 @@ export default function TeacherBus() {
     if (currentStopId === null) return;
     const currentIndex = busStops.findIndex(stop => stop.busStopId === currentStopId);
     if (currentIndex > 0) {
+      setDirection('slide-right'); // 슬라이드 방향 설정
       setCurrentStopId(busStops[currentIndex - 1].busStopId);
     }
   };
@@ -100,6 +115,7 @@ export default function TeacherBus() {
     if (currentStopId === null) return;
     const currentIndex = busStops.findIndex(stop => stop.busStopId === currentStopId);
     if (currentIndex < busStops.length - 1) {
+      setDirection('slide-left'); // 슬라이드 방향 설정
       setCurrentStopId(busStops[currentIndex + 1].busStopId);
     }
   };
