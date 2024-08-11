@@ -30,13 +30,22 @@ export default function TeacherLayout({
   const [alertNum, setAlertNum] = useState(0);
 
   const fetchAlarmList = async () => {
-    const fetchedAlarmList = await getAllAlarms();
-    const sortedAlarmList = fetchedAlarmList.sort((a, b) => b.id - a.id);
-    setAlertList(sortedAlarmList);
+    try {
+      const fetchedAlarmList = await getAllAlarms();
+      const sortedAlarmList = fetchedAlarmList.sort((a, b) => b.id - a.id);
+      setAlertList(sortedAlarmList);
+    } catch (error) {
+      console.error("Failed to fetch alarms:", error);
+    }
   };
-
+  
   const fetchAlarmCount = async () => {
-    setAlertNum(await getAlarmCount());
+    try {
+      const count = await getAlarmCount();
+      setAlertNum(count);
+    } catch (error) {
+      console.error("Failed to fetch alarm count:", error);
+    }
   };
 
   useEffect(() => {
