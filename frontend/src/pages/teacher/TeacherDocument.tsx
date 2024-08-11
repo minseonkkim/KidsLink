@@ -217,13 +217,16 @@ export default function TeacherDocument() {
             {loading && <p>Loading more documents...</p>}
           </div>
         </div>
-        <div className='border-[#B2D170] border-[3px] rounded-[20px] w-full lg:w-[700px] h-[370px] lg:h-[550px] p-[15px] overflow-y-auto custom-scrollbar'>
-          {selectedDocumentId !== null && selectedDocumentRealType === "Absent" && (
-            <AbsentDocument absentId={selectedDocumentId} onUpdate={handleDocumentUpdate} isOurClass={false} />
-          )}
-          {selectedDocumentId !== null && selectedDocumentRealType === "Dosage" && (
-            <DosageDocument dosageId={selectedDocumentId} onUpdate={handleDocumentUpdate} isOurClass={false} />
-          )}
+        <div className='border-[#B2D170] border-[3px] rounded-[20px] w-full lg:w-[700px] h-[340px] lg:h-[550px] p-[15px] px-[7px]'>
+          <div className='custom-scrollbar overflow-y-auto h-full w-full'>
+            {selectedDocumentId !== null && selectedDocumentRealType === "Absent" && (
+              <AbsentDocument absentId={selectedDocumentId} onUpdate={handleDocumentUpdate} isOurClass={false} />
+            )}
+            {selectedDocumentId !== null && selectedDocumentRealType === "Dosage" && (
+              <DosageDocument dosageId={selectedDocumentId} onUpdate={handleDocumentUpdate} isOurClass={false} />
+            )}
+          </div>
+          
         </div>
       </div>
     </TeacherLayout>
