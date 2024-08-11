@@ -13,7 +13,7 @@ export default function AlbumFolder({title, coverImg}: AlbumFolderProps) {
             <div className="absolute top-4 left-0 w-full h-28 bg-[#D5E4B4] rounded-md"></div>
             
             {/* 폴더의 안쪽 음영 부분 */}
-            <div className="text-[17px] absolute top-4 left-0 w-full h-24 bg-[#FFF9D7] rounded-md flex items-center justify-center font-bold p-8"
+            <div className="text-[17px] absolute top-4 left-0 w-full h-24 bg-[#FFF9D7] rounded-md flex items-center justify-center font-bold p-7"
             style={{
                 backgroundImage: `url(${coverImg})`,
                 backgroundSize: "cover",

@@ -23,7 +23,9 @@ interface Alarm {
 }
 
 export default function TeacherLayout({ children, activeMenu, setActiveMenu, titleComponent, imageSrc }: any) {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // LG 이하에서 기본적으로 숨김
+    const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
+            return window.innerWidth >= 1024;
+    });
   const { openModal, closeModal, Modal, isModalOpen } = useModal();
   const [alertList, setAlertList] = useState<Alarm[]>([]);
   const [alertNum, setAlertNum] = useState(0);
@@ -194,19 +196,28 @@ export default function TeacherLayout({ children, activeMenu, setActiveMenu, tit
     }
   };
 
+  const handleLinkClick = () => {
+    if (window.innerWidth < 1024) {
+      setIsSidebarOpen(false);
+    }
+  };
+
   return (
     <>
       <div className="flex min-h-screen overflow-hidden">
         {/* LG 이하일 때 사이드바 */}
-        <aside className={`fixed lg:hidden transition-transform duration-300 bg-white w-full py-6 ${isSidebarOpen ? "translate-y-0" : "-translate-y-full"} top-0 z-50`}>
-          <Link to="/" className="flex items-center mb-8 pl-8">
-            <p className="text-[36px] font-bold text-left font-Cafe24Ssurround gradient-text cursor-pointer">키즈링크</p>
+        <aside className={`fixed lg:hidden transition-transform duration-300 bg-white w-full ${isSidebarOpen ? "h-full" : "h-[80px]"} py-4 top-0 z-50`}>
+          {/* '키즈링크'는 항상 상단에 위치 */}
+          <Link to="/" className="flex items-center pl-8">
+            <p className="text-[36px] font-bold text-left font-Cafe24Ssurround gradient-text cursor-pointer whitespace-nowrap">키즈링크</p>
           </Link>
-          <div className="flex flex-col space-y-4">
+
+          {/* 사이드바 메뉴 아이템들 */}
+          <div className={`flex flex-col space-y-4 ${isSidebarOpen ? "block" : "hidden"}`}>
             <Link
               to="/"
-              className={`flex items-center py-3 pl-8 transition-colors duration-300 bg-left bg-no-repeat bg-[length:200%_100%] ${activeMenu === 'ourclass' ? 'bg-[#FFF9D7] border-r-8 border-[#FFEC8A]' : 'hover:bg-[#FFF9D7] hover:bg-right hover:bg-[length:100%_100%]'}`}
-              onClick={() => setActiveMenu('ourclass')}
+              className={`mt-10 flex items-center py-3 pl-8 transition-colors duration-300 bg-left bg-no-repeat bg-[length:200%_100%] ${activeMenu === 'ourclass' ? 'bg-[#FFF9D7] border-r-8 border-[#FFEC8A]' : 'hover:bg-[#FFF9D7] hover:bg-right hover:bg-[length:100%_100%]'}`}
+              onClick={() => { setActiveMenu('ourclass'); handleLinkClick(); }}
             >
               <img src={ourClassIcon} alt="우리반보기" className="w-8 h-8 mr-5" />
               <span className={`text-[17px] ${activeMenu === 'ourclass' ? 'font-bold text-gray-800' : 'text-gray-700'}`}>우리반보기</span>
@@ -215,7 +226,7 @@ export default function TeacherLayout({ children, activeMenu, setActiveMenu, tit
             <Link
               to="/schedule"
               className={`flex items-center py-3 pl-8 transition-colors duration-300 bg-left bg-no-repeat bg-[length:200%_100%] ${activeMenu === 'schedule' ? 'bg-[#FFF9D7] border-r-8 border-[#FFEC8A]' : 'hover:bg-[#FFF9D7] hover:bg-right hover:bg-[length:100%_100%]'}`}
-              onClick={() => setActiveMenu('schedule')}
+              onClick={() => { setActiveMenu('schedule'); handleLinkClick(); }}
             >
               <img src={scheduleIcon} alt="일정관리" className="w-8 h-8 mr-5" />
               <span className={`text-[17px] ${activeMenu === 'schedule' ? 'font-bold text-gray-800' : 'text-gray-700'}`}>일정관리</span>
@@ -224,7 +235,7 @@ export default function TeacherLayout({ children, activeMenu, setActiveMenu, tit
             <Link
               to="/album"
               className={`flex items-center py-3 pl-8 transition-colors duration-300 bg-left bg-no-repeat bg-[length:200%_100%] ${activeMenu === 'album' ? 'bg-[#FFF9D7] border-r-8 border-[#FFEC8A]' : 'hover:bg-[#FFF9D7] hover:bg-right hover:bg-[length:100%_100%]'}`}
-              onClick={() => setActiveMenu('album')}
+              onClick={() => { setActiveMenu('album'); handleLinkClick(); }}
             >
               <img src={albumIcon} alt="사진분류" className="w-8 h-8 mr-5" />
               <span className={`text-[17px] ${activeMenu === 'album' ? 'font-bold text-gray-800' : 'text-gray-700'}`}>사진분류</span>
@@ -233,7 +244,7 @@ export default function TeacherLayout({ children, activeMenu, setActiveMenu, tit
             <Link
               to="/bus"
               className={`flex items-center py-3 pl-8 transition-colors duration-300 bg-left bg-no-repeat bg-[length:200%_100%] ${activeMenu === 'bus' ? 'bg-[#FFF9D7] border-r-8 border-[#FFEC8A]' : 'hover:bg-[#FFF9D7] hover:bg-right hover:bg-[length:100%_100%]'}`}
-              onClick={() => setActiveMenu('bus')}
+              onClick={() => { setActiveMenu('bus'); handleLinkClick(); }}
             >
               <img src={busIcon} alt="등하원관리" className="w-8 h-8 mr-5" />
               <span className={`text-[17px] ${activeMenu === 'bus' ? 'font-bold text-gray-800' : 'text-gray-700'}`}>등하원관리</span>
@@ -242,7 +253,7 @@ export default function TeacherLayout({ children, activeMenu, setActiveMenu, tit
             <Link
               to="/meeting"
               className={`flex items-center py-3 pl-8 transition-colors duration-300 bg-left bg-no-repeat bg-[length:200%_100%] ${activeMenu === 'meeting' ? 'bg-[#FFF9D7] border-r-8 border-[#FFEC8A]' : 'hover:bg-[#FFF9D7] hover:bg-right hover:bg-[length:100%_100%]'}`}
-              onClick={() => setActiveMenu('meeting')}
+              onClick={() => { setActiveMenu('meeting'); handleLinkClick(); }}
             >
               <img src={consultingIcon} alt="화상상담" className="w-8 h-8 mr-5" />
               <span className={`text-[17px] ${activeMenu === 'meeting' ? 'font-bold text-gray-800' : 'text-gray-700'}`}>화상상담</span>
@@ -251,7 +262,7 @@ export default function TeacherLayout({ children, activeMenu, setActiveMenu, tit
             <Link
               to="/notice"
               className={`flex items-center py-3 pl-8 transition-colors duration-300 bg-left bg-no-repeat bg-[length:200%_100%] ${activeMenu === 'notice' ? 'bg-[#FFF9D7] border-r-8 border-[#FFEC8A]' : 'hover:bg-[#FFF9D7] hover:bg-right hover:bg-[length:100%_100%]'}`}
-              onClick={() => setActiveMenu('notice')}
+              onClick={() => { setActiveMenu('notice'); handleLinkClick(); }}
             >
               <img src={noticeIcon} alt="알림장" className="w-8 h-8 mr-5" />
               <span className={`text-[17px] ${activeMenu === 'notice' ? 'font-bold text-gray-800' : 'text-gray-700'}`}>알림장</span>
@@ -260,7 +271,7 @@ export default function TeacherLayout({ children, activeMenu, setActiveMenu, tit
             <Link
               to="/growth"
               className={`flex items-center py-3 pl-8 transition-colors duration-300 bg-left bg-no-repeat bg-[length:200%_100%] ${activeMenu === 'growth' ? 'bg-[#FFF9D7] border-r-8 border-[#FFEC8A]' : 'hover:bg-[#FFF9D7] hover:bg-right hover:bg-[length:100%_100%]'}`}
-              onClick={() => setActiveMenu('growth')}
+              onClick={() => { setActiveMenu('growth'); handleLinkClick(); }}
             >
               <img src={growthdiaryIcon} alt="성장일지" className="w-8 h-8 mr-5" />
               <span className={`text-[17px] ${activeMenu === 'growth' ? 'font-bold text-gray-800' : 'text-gray-700'}`}>성장일지</span>
@@ -269,7 +280,7 @@ export default function TeacherLayout({ children, activeMenu, setActiveMenu, tit
             <Link
               to="/document"
               className={`flex items-center py-3 pl-8 transition-colors duration-300 bg-left bg-no-repeat bg-[length:200%_100%] ${activeMenu === 'document' ? 'bg-[#FFF9D7] border-r-8 border-[#FFEC8A]' : 'hover:bg-[#FFF9D7] hover:bg-right hover:bg-[length:100%_100%]'}`}
-              onClick={() => setActiveMenu('document')}
+              onClick={() => { setActiveMenu('document'); handleLinkClick(); }}
             >
               <img src={documentIcon} alt="문서관리" className="w-8 h-8 mr-5" />
               <span className={`text-[17px] ${activeMenu === 'document' ? 'font-bold text-gray-800' : 'text-gray-700'}`}>문서관리</span>
@@ -277,26 +288,32 @@ export default function TeacherLayout({ children, activeMenu, setActiveMenu, tit
           </div>
         </aside>
 
-        {/* lg 이하일 때 사이드바 토글 버튼 */}
-        <div className="fixed lg:hidden top-4 left-4 z-50">
-          <button
-            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            className="p-2 text-gray-700 bg-white border border-gray-300 shadow-lg rounded-full transition-shadow duration-300 hover:shadow-xl hover:border-gray-500"
-          >
-            {isSidebarOpen ? <AiOutlineMenuFold size={24} /> : <AiOutlineMenuUnfold size={24} />}
-          </button>
-        </div>
+        {/* 사이드바 토글 버튼 */}
+        <div
+            className="
+                fixed
+                bottom-4 left-4
+                z-50
+            "
+            >
+            <button
+                onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                className="p-2 text-gray-700 bg-white border border-gray-300 shadow-lg rounded-full transition-shadow duration-300 hover:shadow-xl hover:border-gray-500"
+            >
+                {isSidebarOpen ? <AiOutlineMenuFold size={24} /> : <AiOutlineMenuUnfold size={24} />}
+            </button>
+            </div>
 
         {/* lg 이상일 때 사이드바 */}
-        <aside className={`hidden lg:block fixed h-full shadow-lg w-60 bg-white py-6`}>
-          <Link to="/" className="flex items-center mb-8 pl-8">
+        <aside className={`hidden lg:block fixed h-full shadow-lg bg-white py-6 transition-transform duration-300 ${isSidebarOpen ? 'translate-x-0 w-60' : 'translate-x-0 w-0'}`}>
+          <Link to="/" className={`flex items-center mb-8 pl-8 transition-opacity duration-300 ${isSidebarOpen ? 'block' : 'hidden'}`}>
             <p className="text-[36px] font-bold text-left font-Cafe24Ssurround gradient-text cursor-pointer">키즈링크</p>
           </Link>
-          <div className="flex flex-col space-y-4">
+          <div className={`flex flex-col space-y-4 ${isSidebarOpen ? 'block' : 'hidden'}`}>
             <Link
               to="/"
               className={`flex items-center py-3 pl-8 transition-colors duration-300 bg-left bg-no-repeat bg-[length:200%_100%] ${activeMenu === 'ourclass' ? 'bg-[#FFF9D7] border-r-8 border-[#FFEC8A]' : 'hover:bg-[#FFF9D7] hover:bg-right hover:bg-[length:100%_100%]'}`}
-              onClick={() => setActiveMenu('ourclass')}
+              onClick={() => { setActiveMenu('ourclass'); handleLinkClick(); }}
             >
               <img src={ourClassIcon} alt="우리반보기" className="w-8 h-8 mr-5" />
               <span className={`text-[17px] ${activeMenu === 'ourclass' ? 'font-bold text-gray-800' : 'text-gray-700'}`}>우리반보기</span>
@@ -305,7 +322,7 @@ export default function TeacherLayout({ children, activeMenu, setActiveMenu, tit
             <Link
               to="/schedule"
               className={`flex items-center py-3 pl-8 transition-colors duration-300 bg-left bg-no-repeat bg-[length:200%_100%] ${activeMenu === 'schedule' ? 'bg-[#FFF9D7] border-r-8 border-[#FFEC8A]' : 'hover:bg-[#FFF9D7] hover:bg-right hover:bg-[length:100%_100%]'}`}
-              onClick={() => setActiveMenu('schedule')}
+              onClick={() => { setActiveMenu('schedule'); handleLinkClick(); }}
             >
               <img src={scheduleIcon} alt="일정관리" className="w-8 h-8 mr-5" />
               <span className={`text-[17px] ${activeMenu === 'schedule' ? 'font-bold text-gray-800' : 'text-gray-700'}`}>일정관리</span>
@@ -314,7 +331,7 @@ export default function TeacherLayout({ children, activeMenu, setActiveMenu, tit
             <Link
               to="/album"
               className={`flex items-center py-3 pl-8 transition-colors duration-300 bg-left bg-no-repeat bg-[length:200%_100%] ${activeMenu === 'album' ? 'bg-[#FFF9D7] border-r-8 border-[#FFEC8A]' : 'hover:bg-[#FFF9D7] hover:bg-right hover:bg-[length:100%_100%]'}`}
-              onClick={() => setActiveMenu('album')}
+              onClick={() => { setActiveMenu('album'); handleLinkClick(); }}
             >
               <img src={albumIcon} alt="사진분류" className="w-8 h-8 mr-5" />
               <span className={`text-[17px] ${activeMenu === 'album' ? 'font-bold text-gray-800' : 'text-gray-700'}`}>사진분류</span>
@@ -323,7 +340,7 @@ export default function TeacherLayout({ children, activeMenu, setActiveMenu, tit
             <Link
               to="/bus"
               className={`flex items-center py-3 pl-8 transition-colors duration-300 bg-left bg-no-repeat bg-[length:200%_100%] ${activeMenu === 'bus' ? 'bg-[#FFF9D7] border-r-8 border-[#FFEC8A]' : 'hover:bg-[#FFF9D7] hover:bg-right hover:bg-[length:100%_100%]'}`}
-              onClick={() => setActiveMenu('bus')}
+              onClick={() => { setActiveMenu('bus'); handleLinkClick(); }}
             >
               <img src={busIcon} alt="등하원관리" className="w-8 h-8 mr-5" />
               <span className={`text-[17px] ${activeMenu === 'bus' ? 'font-bold text-gray-800' : 'text-gray-700'}`}>등하원관리</span>
@@ -332,7 +349,7 @@ export default function TeacherLayout({ children, activeMenu, setActiveMenu, tit
             <Link
               to="/meeting"
               className={`flex items-center py-3 pl-8 transition-colors duration-300 bg-left bg-no-repeat bg-[length:200%_100%] ${activeMenu === 'meeting' ? 'bg-[#FFF9D7] border-r-8 border-[#FFEC8A]' : 'hover:bg-[#FFF9D7] hover:bg-right hover:bg-[length:100%_100%]'}`}
-              onClick={() => setActiveMenu('meeting')}
+              onClick={() => { setActiveMenu('meeting'); handleLinkClick(); }}
             >
               <img src={consultingIcon} alt="화상상담" className="w-8 h-8 mr-5" />
               <span className={`text-[17px] ${activeMenu === 'meeting' ? 'font-bold text-gray-800' : 'text-gray-700'}`}>화상상담</span>
@@ -341,7 +358,7 @@ export default function TeacherLayout({ children, activeMenu, setActiveMenu, tit
             <Link
               to="/notice"
               className={`flex items-center py-3 pl-8 transition-colors duration-300 bg-left bg-no-repeat bg-[length:200%_100%] ${activeMenu === 'notice' ? 'bg-[#FFF9D7] border-r-8 border-[#FFEC8A]' : 'hover:bg-[#FFF9D7] hover:bg-right hover:bg-[length:100%_100%]'}`}
-              onClick={() => setActiveMenu('notice')}
+              onClick={() => { setActiveMenu('notice'); handleLinkClick(); }}
             >
               <img src={noticeIcon} alt="알림장" className="w-8 h-8 mr-5" />
               <span className={`text-[17px] ${activeMenu === 'notice' ? 'font-bold text-gray-800' : 'text-gray-700'}`}>알림장</span>
@@ -350,7 +367,7 @@ export default function TeacherLayout({ children, activeMenu, setActiveMenu, tit
             <Link
               to="/growth"
               className={`flex items-center py-3 pl-8 transition-colors duration-300 bg-left bg-no-repeat bg-[length:200%_100%] ${activeMenu === 'growth' ? 'bg-[#FFF9D7] border-r-8 border-[#FFEC8A]' : 'hover:bg-[#FFF9D7] hover:bg-right hover:bg-[length:100%_100%]'}`}
-              onClick={() => setActiveMenu('growth')}
+              onClick={() => { setActiveMenu('growth'); handleLinkClick(); }}
             >
               <img src={growthdiaryIcon} alt="성장일지" className="w-8 h-8 mr-5" />
               <span className={`text-[17px] ${activeMenu === 'growth' ? 'font-bold text-gray-800' : 'text-gray-700'}`}>성장일지</span>
@@ -359,7 +376,7 @@ export default function TeacherLayout({ children, activeMenu, setActiveMenu, tit
             <Link
               to="/document"
               className={`flex items-center py-3 pl-8 transition-colors duration-300 bg-left bg-no-repeat bg-[length:200%_100%] ${activeMenu === 'document' ? 'bg-[#FFF9D7] border-r-8 border-[#FFEC8A]' : 'hover:bg-[#FFF9D7] hover:bg-right hover:bg-[length:100%_100%]'}`}
-              onClick={() => setActiveMenu('document')}
+              onClick={() => { setActiveMenu('document'); handleLinkClick(); }}
             >
               <img src={documentIcon} alt="문서관리" className="w-8 h-8 mr-5" />
               <span className={`text-[17px] ${activeMenu === 'document' ? 'font-bold text-gray-800' : 'text-gray-700'}`}>문서관리</span>
@@ -367,18 +384,10 @@ export default function TeacherLayout({ children, activeMenu, setActiveMenu, tit
           </div>
         </aside>
 
-        {/* lg 이상일 때 사이드바 토글 버튼 */}
-        <div className="fixed bottom-4 left-4 lg:block hidden">
-          <button
-            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            className="p-2 text-gray-700 bg-white border border-gray-300 shadow-lg rounded-full transition-shadow duration-300 hover:shadow-xl hover:border-gray-500"
-          >
-            {isSidebarOpen ? <AiOutlineMenuFold size={24} /> : <AiOutlineMenuUnfold size={24} />}
-          </button>
-        </div>
-
         {/* 메인 콘텐츠 영역 */}
-        <main className={`flex-1 p-8 min-h-screen max-h-screen bg-[#F5F5F5] overflow-hidden lg:ml-60`}>
+        <main className={`flex-1 p-8 min-h-screen max-h-screen bg-[#F5F5F5] overflow-hidden transition-all duration-300 ${isSidebarOpen ? 'lg:ml-60' : 'lg:ml-0'}`}>
+          {!isSidebarOpen && <div className="h-[80px] lg:h-0"></div>}
+          
           {/* 헤더와 페이지 타이틀 영역 */}
           <div className="flex justify-between items-center mb-1">
             <h1 className="text-[20px] font-semibold text-[#363636]">{getMenuTitle()}</h1>
