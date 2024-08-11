@@ -10,6 +10,7 @@ import { useTeacherInfoStore } from '../../stores/useTeacherInfoStore';
 import useModal from "../../hooks/teacher/useModal";
 import TeacherLayout from "../../layouts/TeacherLayout";
 import daramgi from "../../assets/teacher/bus-daramgi.png"
+import LoadingSpinner from '../../components/common/LoadingSpinner';
 
 const WEBSOCKET_URL = import.meta.env.VITE_WEBSOCKET_URL;
 
@@ -116,7 +117,7 @@ export default function TeacherBus() {
   };
 
   if (busStops.length === 0 || currentStopId === null) {
-    return <div>Loading...</div>;
+    return <LoadingSpinner/>
   }
 
   const currentStop = busStops.find(stop => stop.busStopId === currentStopId);
