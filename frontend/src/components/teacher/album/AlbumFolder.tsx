@@ -5,7 +5,7 @@ interface AlbumFolderProps{
 
 export default function AlbumFolder({title, coverImg}: AlbumFolderProps) {
     return (
-        <div className="relative w-40 h-32 mx-[11px] my-5 cursor-pointer">
+        <div className="relative w-[157px] h-32 mx-[8px] my-5 cursor-pointer">
             {/* 폴더의 탭 부분 */}
             <div className="absolute top-0 left-0 w-[70px] h-6 bg-[#D0E3A7] rounded-t-md"></div>
             

@@ -156,8 +156,8 @@ export default function TeacherGrowth() {
         titleComponent={<Title title="성장일지" />}
         imageSrc={daramgi} 
     >
-      <div className="relative w-full gap-8 lg:my-8 mt-16 px-4 lg:px-24 flex flex-col lg:flex-row justify-between">
-        <div className="rounded-[10px] bg-[#f4f4f4] w-full lg:w-[360px] h-[320px] lg:h-[500px] p-[10px] mb-4 lg:mb-0">
+      <div className="relative w-full gap-8 lg:my-8 mt-20 px-4 flex flex-col lg:flex-row justify-between">
+        <div className="rounded-[10px] bg-[#f4f4f4] w-full h-[320px] lg:h-[540px] p-[10px] mb-4 lg:mb-0">
           <div className="bg-[#fff] lg:h-[50px] h-[44px] rounded-[10px] flex items-center p-3 mx-2 mt-2 mb-4">
             <IoSearch className="text-[24px] mr-3" />
             <input
@@ -168,7 +168,7 @@ export default function TeacherGrowth() {
               placeholder="이름으로 검색하세요"
             />
           </div>
-          <div className="flex flex-wrap w-full lg:w-[360px] h-[230px] lg:h-[410px] overflow-y-auto custom-scrollbar">
+          <div className="flex flex-wrap w-full lg:w-[360px] h-[230px] lg:h-[445px] overflow-y-auto custom-scrollbar">
             {filteredChildren.map((child) => (
               <div
                 key={child.childId}
@@ -189,7 +189,7 @@ export default function TeacherGrowth() {
             ))}
           </div>
         </div>
-        <div className="rounded-[10px] bg-[#f4f4f4] w-full lg:w-[700px] lg:h-[500px] h-[370px] p-[10px]">
+        <div className="rounded-[10px] bg-[#f4f4f4] w-full lg:w-[700px] lg:h-[540px] h-[370px] p-[10px]">
           <div className="flex flex-wrap content-start w-full lg:w-[680px] lg:h-[480px] h-[350px] rounded-[10px] bg-[#f4f4f4] overflow-auto custom-scrollbar p-2">
             <div
               onClick={openCreateModal}

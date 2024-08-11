@@ -191,7 +191,7 @@ return (
         titleComponent={<Title title="상담가능시간 open" tooltipContent={TooltipContent} tabs={tabs} />}
         imageSrc={daramgi} 
     >
-      <div className="px-4 lg:px-8 py-6 lg:py-8">
+      <div className="px-5 py-6 lg:py-8">
         <div className="flex items-center">  
         </div>
         <div className="w-full mt-10 mb-32 flex flex-col lg:flex-row lg:justify-between">
@@ -206,7 +206,7 @@ return (
             />
           </div>
 
-          <div className="w-full lg:w-[640px] ml-[23px] lg:ml-4">
+          <div className="w-full ml-[23px]">
             <div className="flex flex-row justify-between items-center mb-4">
               <div className="text-[22px] flex flex-row items-center font-bold text-[#8CAD1E]">
                 <FaRegCalendar className="mr-3" />
