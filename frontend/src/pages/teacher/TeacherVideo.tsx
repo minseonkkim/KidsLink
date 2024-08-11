@@ -10,7 +10,7 @@ import {
   stopMainRecording,
   mergeSegments, // 메인 녹화 관련 함수 추가
 } from "../../api/openvidu";
-import TeacherHeader from "../../components/teacher/common/TeacherHeader";
+// import TeacherHeader from "../../components/teacher/common/TeacherHeader";
 import MeetingBackground from "../../assets/teacher/meeting_background.png";
 import { useTeacherInfoStore } from "../../stores/useTeacherInfoStore";
 import { getTeacherInfo } from "../../api/Info";
@@ -187,7 +187,7 @@ const handleStartMainRecording = async () => {
     <div className="relative flex flex-col justify-center items-center w-screen h-screen min-w-[1000px] overflow-hidden">
       <img src={MeetingBackground} className="absolute top-0 left-0 w-full h-full object-cover" />
       <div className="relative z-10 w-full h-full flex flex-col items-center">
-        <TeacherHeader />
+        {/* <TeacherHeader /> */}
         <div className="relative w-full h-full flex">
           {openvidu.session && (
             <div className="absolute top-[150px] left-[100px] font-bold text-[20px] flex flex-row items-center">

@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import daramgisad from '../../assets/common/daramgisad.png'
-import TeacherHeader from '../../components/teacher/common/TeacherHeader'
+// import TeacherHeader from '../../components/teacher/common/TeacherHeader'
 
 export default function TeacherErrorPage() {
     const navigate = useNavigate();
@@ -15,7 +15,7 @@ export default function TeacherErrorPage() {
     
     return(
         <>
-            <TeacherHeader />
+            {/* <TeacherHeader /> */}
             <div className="flex h-screen">
                 <div className="m-auto text-center">
                     <img src={daramgisad} alt="daramgisad" />
