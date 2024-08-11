@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { CSSTransition } from 'react-transition-group'; 
 import BusChild from "../../components/teacher/bus/BusChild";
 import NavigateBack from "../../components/teacher/common/NavigateBack";
@@ -10,10 +10,11 @@ import { getAllBusStops, postBusStart } from '../../api/bus';
 import { getTeacherInfo } from '../../api/Info';
 import { useBusStore } from '../../stores/useBusStore';
 import { useTeacherInfoStore } from '../../stores/useTeacherInfoStore';
-import useModal from "../../hooks/teacher/useModal.tsx";
-import TeacherLayout from '../../layouts/TeacherLayout.tsx';
+import useModal from "../../hooks/teacher/useModal";
+import TeacherLayout from "../../layouts/TeacherLayout";
+import LoadingSpinner from '../../components/common/LoadingSpinner';
 import daramgi from '../../assets/teacher/daramgi.png';
-import '../../index.css';
+
 
 const WEBSOCKET_URL = import.meta.env.VITE_WEBSOCKET_URL;
 
@@ -141,7 +142,7 @@ export default function TeacherBus() {
   };
 
   if (busStops.length === 0 || currentStopId === null) {
-    return <div>Loading...</div>;
+    return <LoadingSpinner/>
   }
 
   const currentStop = busStops.find(stop => stop.busStopId === currentStopId);

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { getAbsentDocument, getDosageDocument } from '../../api/document'
+import LoadingSpinner from '../../components/common/LoadingSpinner'
 
 interface DosageDocument {
   startDate: string;
@@ -50,7 +51,7 @@ export default function DocumentDetail() {
   }, [docType, docId])
 
   if (loading) {
-    return <div>Loading...</div>
+    return <LoadingSpinner/>
   }
 
   if (!document) {

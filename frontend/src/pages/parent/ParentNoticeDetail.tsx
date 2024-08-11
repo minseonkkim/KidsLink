@@ -4,6 +4,7 @@ import profileImg from "../../assets/parent/notice-daramgi.png"
 import { getNoticeDetail } from "../../api/notice"
 import { NoticeDetail } from "../../api/notice"
 import TeacherProfile from "../../components/parent/common/TeacherProfile"
+import LoadingSpinner from "../../components/common/LoadingSpinner"
 
 export default function ParentNoticeDetail() {
   const { noticeId } = useParams<{ noticeId: string }>()
@@ -28,7 +29,7 @@ export default function ParentNoticeDetail() {
   }, [noticeId])
 
   if (loading) {
-    return <div>Loading...</div>
+    return <LoadingSpinner/>
   }
 
   if (!notice) {
