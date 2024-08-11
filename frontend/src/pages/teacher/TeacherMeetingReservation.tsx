@@ -191,7 +191,7 @@ return (
         titleComponent={<Title title="상담가능시간 open" tooltipContent={TooltipContent} tabs={tabs} />}
         imageSrc={daramgi} 
     >
-      <div className="px-5 py-6 lg:py-8">
+      <div className="px-5 py-1 lg:py-8">
         <div className="flex items-center">  
         </div>
         <div className="w-full mt-10 mb-32 flex flex-col lg:flex-row lg:justify-between">
@@ -206,27 +206,30 @@ return (
             />
           </div>
 
-          <div className="w-full ml-[23px]">
+          <div className="w-full ml-[23px] lg:my-0 my-7">
             <div className="flex flex-row justify-between items-center mb-4">
-              <div className="text-[22px] flex flex-row items-center font-bold text-[#8CAD1E]">
-                <FaRegCalendar className="mr-3" />
+              <div className="lg:text-[22px] text-[20px] flex flex-row items-center font-bold text-[#8CAD1E]">
+                <FaRegCalendar className="lg:mr-3 mr-1" />
                 {formatDate(date)}
               </div>
               <button 
-                className="mt-2 h-[40px] border-2 border-[#7C7C7C] bg-[#E3EEFF] px-3 py-1 font-bold rounded-[10px] hover:bg-[#D4DDEA] flex items-center"
+                className="mr-[24px] mt-2 h-[40px] border-2 border-[#7C7C7C] bg-[#E3EEFF] px-3 py-1 font-bold rounded-[10px] hover:bg-[#D4DDEA] flex items-center"
                 onClick={handleSubmitClick}
               >
                 <span>OPEN</span>
               </button>
             </div>
             {!allFetched && (
-              <div className="flex items-center mb-4">
-                <label htmlFor="chk" className="flex items-center">
-                  <input type="checkbox" id="chk" checked={selectAll} onChange={handleSelectAllClick} />
-                  <span className="ml-2">{selectAll ? "전체 해제" : "전체 선택"}</span>
-                </label>
+              <div className="flex justify-between mr-[20px]">
+                  <div></div>
+                  <label htmlFor="chk">
+                    <input type="checkbox" id="chk" checked={selectAll} onChange={handleSelectAllClick}/>
+                    <i className="circle mr-2"></i>
+                    <span className="text">{selectAll ? "전체 해제" : "전체 선택"}</span>
+                  </label>
               </div>
             )}
+
             <p className="mb-3 font-bold text-[18px]">오전</p>
             <div className="flex flex-wrap">
               {allTimes.slice(0, 6).map((time) => {
