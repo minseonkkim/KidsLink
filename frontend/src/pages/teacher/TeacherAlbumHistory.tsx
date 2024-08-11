@@ -69,7 +69,7 @@ export default function TeacherAlbumHistory() {
             titleComponent={<Title title="사진전송내역" tabs={tabs} />}
             imageSrc={daramgi} 
         >
-            <div className="w-full my-10 mb-32 px-[150px]">
+            <div className="w-full my-10 mb-32 px-[15px]">
                 {loading ? (
                     <p>로딩 중...</p>
                 ) : (

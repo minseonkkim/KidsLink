@@ -46,7 +46,7 @@ export default function TeacherAlbum() {
         />}
         imageSrc={daramgi} 
     >
-      <div className="relative w-full my-10 mb-32 px-4 lg:px-[150px] flex flex-col items-center">
+      <div className="relative w-full my-10 mb-32 px-7 flex flex-col items-center">
         <div className={`h-[470px] flex flex-row gap-12 items-center ${images.length === 0 || loading ? 'justify-center' : 'justify-between'} w-full`}>
           {!loading && (
             <div className={`flex flex-col items-center ${images.length === 0 ? 'mx-auto' : ''}`}>
