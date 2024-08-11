@@ -133,11 +133,7 @@ export default function TeacherBus() {
   };
 
   if (busStops.length === 0 || currentStopId === null) {
-    return (
-      <div className='w-full h-full flex items-center justify-center'>
-        <LoadingSpinner/>
-      </div>
-  )
+    return <LoadingSpinner/>
   }
 
   const currentStop = busStops.find(stop => stop.busStopId === currentStopId);
