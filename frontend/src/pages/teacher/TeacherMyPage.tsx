@@ -8,6 +8,7 @@ import DefaultProfile from "../../assets/teacher/default_profile.png";
 import { getTeacherInfo } from "../../api/Info";
 import TeacherLayout from '../../layouts/TeacherLayout';
 import daramgi from "../../assets/teacher/playing-daramgi.png"
+import LoadingSpinner from "../../components/common/LoadingSpinner";
 
 export default function TeacherMyPage() {
   const navigate = useNavigate();
@@ -49,7 +50,7 @@ export default function TeacherMyPage() {
     return (
       <TeacherLayout>
         <div className="flex justify-center items-center h-screen">
-          <p className="text-gray-500 text-lg">Loading...</p>
+          <LoadingSpinner/>
         </div>
       </TeacherLayout>
     );
