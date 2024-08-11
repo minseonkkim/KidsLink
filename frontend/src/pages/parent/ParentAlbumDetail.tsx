@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { getKidAlbum } from '../../api/album'
+import { formatDate } from '../../utils/parent/dateUtils'
 import AlbumContent from '../../components/parent/album/AlbumContent'
-import LoadingSpinner from '../../components/parent/common/LoadingSpinner'
 
 export default function AlbumDetail() {
   const { albumId } = useParams()
@@ -30,7 +30,7 @@ export default function AlbumDetail() {
   if (loading) {
     return (
       <div className="min-h-screen flex flex-col justify-center items-center bg-white">
-        <LoadingSpinner/>
+        <p>Loading...</p>
       </div>
     )
   }

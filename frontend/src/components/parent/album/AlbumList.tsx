@@ -1,5 +1,4 @@
 import { Album } from "../../../api/album"
-import daramgi from '../../../assets/parent/crying-daramgi.png'
 
 interface AlbumListProps {
   albums: Album[];
@@ -16,7 +15,7 @@ export default function AlbumList({ albums, handleAlbumClick }: AlbumListProps) 
             className="relative w-full group rounded-[20px] overflow-hidden transition-transform duration-200 ease-in-out transform hover:scale-105"
             onClick={() => handleAlbumClick(album.albumId)}
             style={{
-              paddingBottom: '100%', 
+              paddingBottom: '100%', // Square aspect ratio
             }}
           >
             <img
@@ -33,12 +32,9 @@ export default function AlbumList({ albums, handleAlbumClick }: AlbumListProps) 
           </div>
         ))
       ) : (
-        <div className="col-span-4 flex flex-col items-center justify-center">
-          <img src={daramgi} alt="Crying Daramgi" className="w-20 mt-12 mb-4" />
-          <p className="text-center text-gray-500">
-            앨범이 없습니다.
-          </p>
-        </div>
+        <p className="text-center text-gray-500 col-span-4">
+          앨범이 없습니다.
+        </p>
       )}
     </div>
   )

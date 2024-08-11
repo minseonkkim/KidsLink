@@ -1,13 +1,12 @@
-import NavigateBack from "../../components/teacher/common/NavigateBack";
-import TeacherHeader from "../../components/teacher/common/TeacherHeader";
+import React, { useEffect, useState } from "react";
 import Title from "../../components/teacher/common/Title";
 import { logout } from "../../api/member";
 import { useNavigate } from "react-router-dom";
 import { useTeacherInfoStore } from "../../stores/useTeacherInfoStore";
 import useAppStore from "../../stores/store";
-import { useEffect, useState } from "react";
 import DefaultProfile from "../../assets/teacher/default_profile.png";
 import { getTeacherInfo } from "../../api/Info";
+import TeacherLayout from '../../layouts/TeacherLayout';
 
 export default function TeacherMyPage() {
   const navigate = useNavigate();
@@ -46,36 +45,42 @@ export default function TeacherMyPage() {
   };
 
   if (isLoading) {
-    return <div>Loading...</div>; // 데이터가 로드될 때까지 로딩 상태를 표시
+    return (
+      <TeacherLayout>
+        <div className="flex justify-center items-center h-screen">
+          <p className="text-gray-500 text-lg">Loading...</p>
+        </div>
+      </TeacherLayout>
+    );
   }
+
   return (
-    <>
-      <TeacherHeader />
-      <div className="mt-[120px] px-[130px]">
-        <NavigateBack backPage="홈" backLink="/" />
+    <TeacherLayout>
+      <div className="px-4 lg:px-8 py-6 lg:py-8 mt-24">
         <Title title="마이페이지" />
-        <div className="flex justify-center">
-          <div className="w-[323px] lg:w-[340px] h-auto lg:h-[500px] h-[200px] rounded-[20px] bg-[#f4f4f4] flex flex-col lg:flex-col items-center py-7 drop-shadow-md mb-5 lg:mb-0 mt-7 lg:mt-0">
-            <div className="flex flex-row lg:flex-col items-center lg:items-center lg:mb-0 mb-2">
-              <div className="w-[80px] h-[80px] lg:w-[170px] lg:h-[170px]">
+        <div className="flex justify-center mt-8">
+          <div className="w-full max-w-md bg-[#f4f4f4] rounded-lg shadow-md overflow-hidden flex flex-col items-center py-6">
+            <div className="flex flex-col items-center mb-4">
+              <div className="w-[120px] h-[120px] lg:w-[150px] lg:h-[150px] mb-4">
                 <img
                   src={teacherInfo.profile ? teacherInfo.profile : DefaultProfile}
+                  alt="Profile"
                   className="w-full h-full rounded-full object-cover"
                 />
               </div>
-              <div className="flex flex-col items-center items-start mt-0 lg:mt-3 text-left lg:text-center ml-4 lg:ml-0 lg:mb-2">
-                <p className="text-[20px] lg:text-[30px] font-bold text-[#8cad1e]">
-                  {teacherInfo.kindergartenClassName + " 선생님"}
+              <div className="text-center">
+                <p className="text-xl lg:text-2xl font-bold text-[#8cad1e]">
+                  {teacherInfo.kindergartenClassName} 선생님
                 </p>
-                <p className="text-[22px] lg:text-[20px] font-bold text-[#363636]">
+                <p className="text-lg lg:text-xl font-bold text-[#363636]">
                   {teacherInfo.name}
                 </p>
               </div>
             </div>
-            <div className="flex justify-center items-center mt-4">
+            <div className="flex justify-center w-full">
               <button
                 onClick={handleLogout}
-                className="bg-[#8cad1e] text-white px-4 py-2 rounded-[20px] text-[13px] hover:bg-[#76a118] transition-colors duration-200"
+                className="bg-[#8cad1e] text-white px-6 py-2 rounded-full text-sm lg:text-base hover:bg-[#76a118] transition-colors duration-200"
               >
                 로그아웃
               </button>
@@ -83,6 +88,6 @@ export default function TeacherMyPage() {
           </div>
         </div>
       </div>
-    </>
+    </TeacherLayout>
   );
 }

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import DocumentItem from "./DocumentItem";
 import { checkDosageDocument, getDosageDocument } from "../../../api/document";
 import { formatDate } from "../../../utils/teacher/formatDate";
@@ -12,7 +12,7 @@ interface DosageDocumentProps {
 }
 
 export default function DosageDocument({ dosageId, onUpdate, isOurClass }: DosageDocumentProps) {
-    const [dosageDocument, setDosageDocument] = useState<any>(null); // Ensure any type to access all properties
+    const [dosageDocument, setDosageDocument] = useState<any>(null);
 
     useEffect(() => {
         const fetchDosageDocument = async () => {
@@ -48,7 +48,7 @@ export default function DosageDocument({ dosageId, onUpdate, isOurClass }: Dosag
     }
 
     return (
-        <div className="font-KoPubDotum w-full lg:w-[720px] h-auto lg:h-[520px] rounded-[20px] bg-[#ffffff] p-4 lg:p-8">
+        <div className="font-KoPubDotum w-full h-auto lg:h-[480px] rounded-[20px] bg-[#ffffff] p-4 lg:p-8">
             <div className="flex flex-col lg:flex-row justify-between mb-4 lg:mb-0">
                 <span className="rounded-[10px] bg-[#E7DFFF] flex items-center justify-center w-[75px] h-[40px] font-bold text-[20px] mb-4 lg:mb-0">투약</span>
                 {isOurClass === false &&
@@ -65,7 +65,7 @@ export default function DosageDocument({ dosageId, onUpdate, isOurClass }: Dosag
                 </div>
                 }
             </div>
-            <div className="text-[16px] lg:text-[20px] my-4 lg:my-8 lg:h-[370px] overflow-y-auto custom-scrollbar">
+            <div className="text-[16px] lg:text-[20px] my-4 lg:my-8 h-auto lg:h-[370px] overflow-y-auto custom-scrollbar">
                 <DocumentItem title="기간" content={`${formatDate(dosageDocument.startDate)} ~ ${formatDate(dosageDocument.endDate)}`} />
                 <DocumentItem title="약의 종류" content={dosageDocument.name} />
                 <DocumentItem title="투약 용량" content={dosageDocument.volume} />
@@ -74,9 +74,9 @@ export default function DosageDocument({ dosageId, onUpdate, isOurClass }: Dosag
                 <DocumentItem title="보관 방법" content={dosageDocument.storageInfo} />
                 <DocumentItem 
                     title="특이사항" 
-                    content={dosageDocument.details.split('\n').map((line, index) => (
+                    content={dosageDocument.details ? dosageDocument.details.split('\n').map((line, index) => (
                         <p key={index} className="mb-2">{line}</p>
-                    ))} 
+                    )) : ""} 
                 />
             </div>
             <ToastNotification />

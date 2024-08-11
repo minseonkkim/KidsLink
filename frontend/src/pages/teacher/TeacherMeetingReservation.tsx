@@ -2,8 +2,6 @@ import { useState, useEffect } from "react";
 import moment from "moment";
 import { FaRegCalendar } from "react-icons/fa6";
 import { FaInfoCircle } from "react-icons/fa";
-import NavigateBack from "../../components/teacher/common/NavigateBack";
-import TeacherHeader from "../../components/teacher/common/TeacherHeader";
 import Title from "../../components/teacher/common/Title";
 import ReservationTime from "../../components/teacher/consulting/ReservationTime";
 import { useNavigate } from 'react-router-dom';
@@ -12,6 +10,8 @@ import { getAllPossibleReservations, postTeacherReservations } from "../../api/m
 import { TeacherMeetingReservation } from "../../types/meeting.ts";
 import { formatDate, isPastDate, ValuePiece } from "../../utils/meeting.ts";
 import StyledCalendar from "../../components/teacher/common/StyledCalendar";
+import TeacherLayout from '../../layouts/TeacherLayout';
+import daramgi from "../../assets/teacher/meeting-daramgi.png"
 
 export default function TeacherReservation() {
   const [date, setDate] = useState<ValuePiece>(new Date());
@@ -106,7 +106,6 @@ export default function TeacherReservation() {
     setAllFetched(allTimesFetchedOrPast || isWeekend); 
     setSelectAll(!allTimesFetchedOrPast && selectedTimes.length === times.length && !isWeekend); 
   };
-  
 
   const handleSelectAllClick = () => {
     if (selectedTimes.length === allTimes.length) {
@@ -178,50 +177,58 @@ export default function TeacherReservation() {
     </div>
   );
 
-  return (
-    <>
-      <TeacherHeader />
-      <div className="lg:mt-[100px] mt-[120px] lg:px-[150px] px-[20px]">
-        <NavigateBack backPage="화상상담" backLink='/meeting' />
-        <div className="flex items-center">
-          <Title title="상담가능시간 open" tooltipContent={TooltipContent} />
+  const tabs = [
+    { label: "상담가능시간 open", link: "/meeting/reservation" },
+    { label: "상담시간 확정", link: "/meeting/confirm" },
+    { label: "예약된 화상상담", link: "/meeting/scheduled" },
+    { label: "녹화된 상담", link: "/meeting/recordings" },
+];
+
+return (
+    <TeacherLayout
+        activeMenu="meeting"
+        setActiveMenu={() => {}}
+        titleComponent={<Title title="상담가능시간 open" tooltipContent={TooltipContent} tabs={tabs} />}
+        imageSrc={daramgi} 
+    >
+      <div className="px-4 lg:px-8 py-6 lg:py-8">
+        <div className="flex items-center">  
         </div>
+        <div className="w-full mt-10 mb-32 flex flex-col lg:flex-row lg:justify-between">
+          <div className="w-full lg:w-[665px] lg:mr-4">
+            <StyledCalendar
+              value={date}
+              onChange={(value) => handleDateChange(value as Date)}
+              formatDay={(locale: string, date: Date) => date.toLocaleString("en", { day: "numeric" })}
+              next2Label={null}
+              prev2Label={null}
+              tileDisabled={({ date, view }) => view === 'month' && isPastDate(date)}
+            />
+          </div>
 
-        <div className="flex flex-row justify-between mt-10">
-          <StyledCalendar
-            value={date}
-            onChange={(value) => handleDateChange(value as Date)}
-            formatDay={(locale: string, date: Date) => date.toLocaleString("en", {day: "numeric"})}
-            next2Label={null}
-            prev2Label={null}
-            tileDisabled={({ date, view }) => view === 'month' && isPastDate(date)}
-          />
-
-          <div className="w-[640px] ml-[23px]">
-            <div className="flex flex-row justify-between mr-[20px]">
-              <div className="text-[22px] flex flex-row items-center h-[22px] font-bold text-[#8CAD1E] my-5">
-                <FaRegCalendar className="mr-3"/>
+          <div className="w-full lg:w-[640px] ml-[23px] lg:ml-4">
+            <div className="flex flex-row justify-between items-center mb-4">
+              <div className="text-[22px] flex flex-row items-center font-bold text-[#8CAD1E]">
+                <FaRegCalendar className="mr-3" />
                 {formatDate(date)}
               </div>
               <button 
-                  className="mt-2 h-[40px] border-2 border-[#7C7C7C] bg-[#E3EEFF] px-3 py-1 font-bold rounded-[10px] hover:bg-[#D4DDEA] flex items-center"
-                  onClick={handleSubmitClick}
-                >
-                  <span>OPEN</span>
+                className="mt-2 h-[40px] border-2 border-[#7C7C7C] bg-[#E3EEFF] px-3 py-1 font-bold rounded-[10px] hover:bg-[#D4DDEA] flex items-center"
+                onClick={handleSubmitClick}
+              >
+                <span>OPEN</span>
               </button>
             </div>
             {!allFetched && (
-              <div className="flex justify-between mr-[20px]">
-                  <div></div>
-                  <label htmlFor="chk">
-                    <input type="checkbox" id="chk" checked={selectAll} onChange={handleSelectAllClick}/>
-                    <i className="circle mr-2"></i>
-                    <span className="text">{selectAll ? "전체 해제" : "전체 선택"}</span>
-                  </label>
+              <div className="flex items-center mb-4">
+                <label htmlFor="chk" className="flex items-center">
+                  <input type="checkbox" id="chk" checked={selectAll} onChange={handleSelectAllClick} />
+                  <span className="ml-2">{selectAll ? "전체 해제" : "전체 선택"}</span>
+                </label>
               </div>
             )}
             <p className="mb-3 font-bold text-[18px]">오전</p>
-            <div className="flex flex-row flex-wrap">
+            <div className="flex flex-wrap">
               {allTimes.slice(0, 6).map((time) => {
                 const formattedDate = date && moment(date).format("YYYY-MM-DD");
                 const isFetched = fetchedReservations[formattedDate]?.includes(time) || false;
@@ -240,7 +247,7 @@ export default function TeacherReservation() {
               })}
             </div>
             <p className="mt-5 mb-3 font-bold text-[18px]">오후</p>
-            <div className="flex flex-row flex-wrap">
+            <div className="flex flex-wrap">
               {allTimes.slice(6).map((time) => {
                 const formattedDate = date && moment(date).format("YYYY-MM-DD");
                 const isFetched = fetchedReservations[formattedDate]?.includes(time) || false;
@@ -262,6 +269,6 @@ export default function TeacherReservation() {
         </div>
       </div>
       <ToastNotification />
-    </>
+    </TeacherLayout>
   );
 }
