@@ -1,8 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { CSSTransition } from 'react-transition-group'; 
 import BusChild from "../../components/teacher/bus/BusChild";
-import NavigateBack from "../../components/teacher/common/NavigateBack";
-import TeacherHeader from "../../components/teacher/common/TeacherHeader";
 import Title from "../../components/teacher/common/Title";
 import { MdNavigateBefore, MdNavigateNext } from "react-icons/md";
 import { startWebSocket, stopWebSocket } from '../../api/webSocket';
