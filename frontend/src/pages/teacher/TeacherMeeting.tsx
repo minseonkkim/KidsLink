@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import NavigateBack from "../../components/teacher/common/NavigateBack";
-import TeacherHeader from "../../components/teacher/common/TeacherHeader";
 import Title from "../../components/teacher/common/Title";
 import ProfileImg from '../../assets/teacher/profile_img.jpg';
 import { getOneParentInfo } from "../../api/Info";
@@ -9,6 +7,8 @@ import TeacherMeetingSchedule from "../../components/teacher/consulting/TeacherM
 import { isMeetingActive, isMeetingVisible } from "../../utils/meeting";
 import { ParentTeacherMeeting } from "../../types/meeting";
 import { getConfirmedMeeting } from "../../api/meeting";
+import TeacherLayout from '../../layouts/TeacherLayout';
+import daramgi from "../../assets/teacher/meeting-daramgi.png";
 
 export default function TeacherMeeting() {
   const [meetings, setMeetings] = useState<ParentTeacherMeeting[]>([]);
@@ -59,14 +59,27 @@ export default function TeacherMeeting() {
     fetchMeetings();
   }, []);
 
-  return (
-    <>
-      <TeacherHeader />
-      <div className="mt-[130px] px-[130px]">
-        <NavigateBack backPage="화상상담" backLink='/meeting' />
-        <Title title="예약된 화상상담" tooltipContent={<div className="w-[260px] leading-relaxed">화상상담 10분 전부터 방에 입장할 수 있어요.</div>} />
+  const tabs = [
+    { label: "상담가능시간 open", link: "/meeting/reservation" },
+    { label: "상담시간 확정", link: "/meeting/confirm" },
+    { label: "예약된 화상상담", link: "/meeting/scheduled" },
+    { label: "녹화된 상담", link: "/meeting/recordings" },
+];
+
+return (
+    <TeacherLayout
+        activeMenu="meeting"
+        setActiveMenu={() => {}}
+        titleComponent={<Title
+          title="예약된 화상상담"
+          tooltipContent={<div className="w-[260px] leading-relaxed">화상상담 10분 전부터 방에 입장할 수 있어요.</div>}
+          tabs={tabs}
+        />}
+        imageSrc={daramgi} 
+    >
+      <div className="w-full mt-10 mb-32 px-4 lg:px-8 py-6 lg:py-8">
         <div className="flex justify-center items-center">
-          <div className="flex flex-row flex-wrap items-start content-start">
+          <div className="flex flex-row flex-wrap items-start content-start gap-4">
             {meetings.length === 0 ? (
               <div className="flex items-center justify-center w-full h-[400px] text-[18px]">
                 예정된 상담 일정이 없어요.
@@ -91,6 +104,6 @@ export default function TeacherMeeting() {
           </div>
         </div>
       </div>
-    </>
+    </TeacherLayout>
   );
 }

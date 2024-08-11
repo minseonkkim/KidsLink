@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import NavigateBack from "../../components/teacher/common/NavigateBack";
-import TeacherHeader from "../../components/teacher/common/TeacherHeader";
+import { useState, useEffect } from 'react';
 import Title from "../../components/teacher/common/Title";
-import { LuPencilLine } from "react-icons/lu";
 import NoticeItem from "../../components/teacher/notice/NoticeItem";
 import { MdOutlineNavigateBefore, MdOutlineNavigateNext } from "react-icons/md";
-import useModal from "../../hooks/teacher/useModal.tsx";
-import { getAllNotices, createNotice } from '../../api/notice.ts';
-import { showToastError } from '../../components/teacher/common/ToastNotification.tsx';
-import ToastNotification from '../../components/teacher/common/ToastNotification.tsx';
+import useModal from "../../hooks/teacher/useModal";
+import { getAllNotices, createNotice } from '../../api/notice';
+import { showToastError } from '../../components/teacher/common/ToastNotification';
+import ToastNotification from '../../components/teacher/common/ToastNotification';
+import TeacherLayout from "../../layouts/TeacherLayout";
+import { LuPencilLine } from "react-icons/lu";
+import daramgi from "../../assets/teacher/notice-daramgi.png"
 
 export default function TeacherNotice() {
     const { openModal, closeModal, Modal } = useModal();
@@ -85,12 +85,14 @@ export default function TeacherNotice() {
     };
 
     return (
-        <>
-            <TeacherHeader />
-            <div className="lg:mt-[85px] mt-[120px] lg:px-[150px] flex flex-col items-center px-4">
-                <NavigateBack backPage="홈" backLink='/' />
-                <Title title="알림장" />
-                <button onClick={openCreateModal} className="absolute top-[175px] lg:top-[125px] lg:right-[150px] right-[130px] border-[2px] border-[#7C7C7C] bg-[#E3EEFF] px-3 py-1 font-bold rounded-[10px] hover:bg-[#D4DDEA] flex flex-row items-center">
+        <TeacherLayout
+            activeMenu="notice"
+            setActiveMenu={() => {}}
+            titleComponent={<Title title="알림장" />}
+            imageSrc={daramgi} 
+        >
+            <div className="relative w-full mt-10 mb-32 px-4 lg:px-36 flex flex-col items-center">
+                <button onClick={openCreateModal} className="absolute lg:right-[35px] right-[130px] border-[2px] border-[#7C7C7C] bg-[#E3EEFF] px-3 py-1 font-bold rounded-[10px] hover:bg-[#D4DDEA] flex flex-row items-center">
                     <LuPencilLine className="mr-2" />알림장 작성하기
                 </button>
                 <div className="flex justify-center w-full lg:mt-[5px] mt-[50px]">
@@ -170,7 +172,7 @@ export default function TeacherNotice() {
             </div>
             <Modal />
             <ToastNotification />
-        </>
+        </TeacherLayout>
     );
 }
 

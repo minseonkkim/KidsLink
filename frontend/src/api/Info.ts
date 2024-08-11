@@ -39,6 +39,7 @@ export interface TeacherInfo {
   nickname: string;
   tel: string | null;
   kindergartenId: number;
+  kindergartenName: string;
   kindergartenClassId: number;
   kindergartenClassName: string | null;
   profile: string | null;

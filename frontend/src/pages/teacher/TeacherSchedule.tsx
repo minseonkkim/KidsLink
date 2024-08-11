@@ -1,30 +1,24 @@
-import React, { useState, useCallback, useRef, useEffect } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { DndProvider, useDrag, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import NavigateBack from "../../components/teacher/common/NavigateBack";
-import TeacherHeader from "../../components/teacher/common/TeacherHeader";
-import Title from "../../components/teacher/common/Title";
-import { formatDate, formatSendDate } from "../../utils/teacher/formatDate";
 import { FaRegCalendar, FaXmark } from "react-icons/fa6";
+import Title from "../../components/teacher/common/Title";
+import TeacherLayout from "../../layouts/TeacherLayout";
+import { formatDate, formatSendDate } from "../../utils/teacher/formatDate";
 import { createTeacherSchedule, createTeacherScheduleCheck, deleteTeacherSchedule, getTeacherSchedules } from "../../api/schedule";
 import StyledCalendar from "../../components/teacher/common/StyledCalendar";
 import { getOneParentInfo } from "../../api/Info";
+import daramgi from "../../assets/teacher/daramgi.png"
 
-interface KindergartenItemType {
-  id: number;
-  content: string;
-  date: string;
-}
+const ItemType = {
+  SCHEDULE_ITEM: 'scheduleItem',
+};
 
 interface ScheduleItemType {
   id: number;
   content: string;
   confirmationStatus: string;
 }
-
-const ItemType = {
-  SCHEDULE_ITEM: 'scheduleItem',
-};
 
 interface ScheduleItemProps {
   id: number;
@@ -43,6 +37,12 @@ interface MeetingItemProps {
   parentId: number;
   teacherId: number;
   childName?: string;
+}
+
+interface KindergartenItemType {
+  id: number;
+  content: string;
+  date: string;
 }
 
 const ScheduleItem: React.FC<ScheduleItemProps> = ({ id, content, confirmationStatus, index, moveItem, deleteItem, toggleComplete }) => {
@@ -64,8 +64,6 @@ const ScheduleItem: React.FC<ScheduleItemProps> = ({ id, content, confirmationSt
       isDragging: monitor.isDragging(),
     }),
   });
-
-  // drag(drop(ref)); // 주석 해제하면 드래그앤드롭 할수있음
 
   return (
     <div
@@ -115,7 +113,7 @@ export default function TeacherSchedule() {
     } catch (error) {
       console.error("Failed to fetch schedules:", error);
     }
-  }
+  };
 
   const fetchMeetingSchedules = async () => {
     try {
@@ -143,7 +141,7 @@ export default function TeacherSchedule() {
       console.error("Failed to fetch meeting schedules:", error);
     }
   };
-  
+
   const fetchKindergartenSchedules = async () => {
     try{
       const fetchedKindergartenSchedules: KindergartenItemType[] = (await getTeacherSchedules(formatSendDate(date))).kindergartenSchedules;
@@ -151,15 +149,13 @@ export default function TeacherSchedule() {
     } catch(error){
       console.error("Failed to fetch kindergarten schedules:", error);
     }
-  }
-  
-  
+  };
 
   useEffect(() => {
     fetchTeacherSchedules();
     fetchMeetingSchedules();
     fetchKindergartenSchedules();
-  }, [date])
+  }, [date]);
 
   const deleteItem = async (id: number) => {
     await deleteTeacherSchedule(id);
@@ -201,105 +197,109 @@ export default function TeacherSchedule() {
   };
 
   return (
-    <DndProvider backend={HTML5Backend}>
-      <TeacherHeader />
-      <div className="flex flex-col lg:mt-[85px] mt-[120px] px-4 lg:px-[150px]">
-        <NavigateBack backPage="홈" backLink='/' />
-        <Title title="일정" />
-        <div className="mt-5 flex flex-col lg:flex-row justify-between items-center mt-10 space-y-4 lg:space-y-0 lg:space-x-4">
-          <StyledCalendar
-            onChange={setDate}
-            value={date}
-            formatDay={(locale: string, date: Date) => date.toLocaleString("en", { day: "numeric" })}
-            next2Label={null}
-            prev2Label={null}
-          />
-          <div className="w-[390px] lg:w-[637px]">
-            <div className="flex flex-row justify-between mb-2">
-              <div className="text-[22px] flex flex-row items-center h-[22px] font-bold text-[#8CAD1E] my-2">
-                <FaRegCalendar className="mr-3" />
-                {formatDate(date)}
+    <TeacherLayout
+        activeMenu="schedule"
+        setActiveMenu={() => {}}
+        titleComponent={<Title title="일정" />}
+        imageSrc={daramgi} 
+    >
+      <DndProvider backend={HTML5Backend}>
+        <div className="flex flex-col w-full lg:mt-8 mt-16 px-4 lg:px-24">
+          <div className="mt-5 flex flex-col lg:flex-row justify-between items-center mt-10 space-y-4 lg:space-y-0 lg:space-x-16">
+            <StyledCalendar
+              onChange={setDate}
+              value={date}
+              formatDay={(locale: string, date: Date) => date.toLocaleString("en", { day: "numeric" })}
+              next2Label={null}
+              prev2Label={null}
+            />
+            <div className="w-full lg:w-[637px]">
+              <div className="flex flex-row justify-between mb-2">
+                <div className="text-[22px] flex flex-row items-center h-[22px] font-bold text-[#8CAD1E] my-2">
+                  <FaRegCalendar className="mr-3" />
+                  {formatDate(date)}
+                </div>
               </div>
-            </div>
-            <div className="border-[2px] border-[#8CAD1E] rounded-[10px] h-[270px] lg:h-[330px]">
-              <div className="overflow-y-auto custom-scrollbar h-[310px] m-[10px]">
-                {scheduleItems.length === 0 && meetingItems.length === 0 && kindergartenScheduleItems.length === 0? (
-                  <div className="flex justify-center items-center lg:h-[310px] h-[250px]">
-                    일정이 없어요.
-                  </div>
-                ) : (
-                  <>
-                    {kindergartenScheduleItems.length !== 0 &&
-                      <div className="mb-3">
-                        <div className="font-bold text-[18px] m-1">학사일정</div>
-                        {kindergartenScheduleItems.map((item, index) => (
-                          <div 
-                            key={item.id}
-                            className={'mx-1 my-3 text-[18px]'}
-                          >
-                            {item.content}
-                          </div>
-                        ))}
-                        {meetingItems.length !== 0 || scheduleItems.length !== 0 && <hr/>}
-                      </div>
-                    }
-                    {meetingItems.length !== 0 &&
-                      <div className="mb-3">
-                        <div className="font-bold text-[18px] m-1">화상상담</div>
-                        {meetingItems.map((item, index) => (
-                          <div 
-                            key={item.meetingId}
-                            className={`mx-1 my-3 text-[18px] ${isFutureMeeting(item.meetingDate, item.meetingTime) ? 'text-[#363636]' : 'text-[#B8B8B8] line-through'}`}
-                          >
-                            {item.meetingTime} {item.childName} 학부모
-                          </div>
-                        ))}
-                        {scheduleItems.length !== 0 && <hr/>}
-                      </div>
-                    }
-                    {scheduleItems.length !== 0 && 
-                    <div>
-                      <div className="font-bold text-[18px] m-1">개인일정</div>
-                      {scheduleItems.map(({ id, content, confirmationStatus }, index) => (
-                        <ScheduleItem
-                          key={id}
-                          id={id}
-                          content={content}
-                          confirmationStatus={confirmationStatus}
-                          index={index}
-                          moveItem={moveItem}
-                          deleteItem={deleteItem}
-                          toggleComplete={toggleComplete}
-                        />
-                      ))}</div>
-                    }
-                  </>
-                )}
+              <div className="border-[2px] border-[#8CAD1E] rounded-[10px] h-[270px] lg:h-[330px]">
+                <div className="overflow-y-auto custom-scrollbar h-[310px] m-[10px]">
+                  {scheduleItems.length === 0 && meetingItems.length === 0 && kindergartenScheduleItems.length === 0 ? (
+                    <div className="flex justify-center items-center lg:h-[310px] h-[250px]">
+                      일정이 없어요.
+                    </div>
+                  ) : (
+                    <>
+                      {kindergartenScheduleItems.length !== 0 &&
+                        <div className="mb-3">
+                          <div className="font-bold text-[18px] m-1">학사일정</div>
+                          {kindergartenScheduleItems.map((item, index) => (
+                            <div 
+                              key={item.id}
+                              className={'mx-1 my-3 text-[18px]'}
+                            >
+                              {item.content}
+                            </div>
+                          ))}
+                          {meetingItems.length !== 0 || scheduleItems.length !== 0 && <hr/>}
+                        </div>
+                      }
+                      {meetingItems.length !== 0 &&
+                        <div className="mb-3">
+                          <div className="font-bold text-[18px] m-1">화상상담</div>
+                          {meetingItems.map((item, index) => (
+                            <div 
+                              key={item.meetingId}
+                              className={`mx-1 my-3 text-[18px] ${isFutureMeeting(item.meetingDate, item.meetingTime) ? 'text-[#363636]' : 'text-[#B8B8B8] line-through'}`}
+                            >
+                              {item.meetingTime} {item.childName} 학부모
+                            </div>
+                          ))}
+                          {scheduleItems.length !== 0 && <hr/>}
+                        </div>
+                      }
+                      {scheduleItems.length !== 0 && 
+                      <div>
+                        <div className="font-bold text-[18px] m-1">개인일정</div>
+                        {scheduleItems.map(({ id, content, confirmationStatus }, index) => (
+                          <ScheduleItem
+                            key={id}
+                            id={id}
+                            content={content}
+                            confirmationStatus={confirmationStatus}
+                            index={index}
+                            moveItem={moveItem}
+                            deleteItem={deleteItem}
+                            toggleComplete={toggleComplete}
+                          />
+                        ))}</div>
+                      }
+                    </>
+                  )}
+                </div>
               </div>
-            </div>
-            <div className="flex flex-row justify-between items-center mt-3">
-              <input
-                className="border lg:w-[90px] w-[123px] h-[40px] border-[2px] border-[#B8B8B8] mr-1 rounded-[10px] p-1"
-                type="time"
-                value={time}
-                onChange={(e) => setTime(e.target.value)}
-              />
-              <input
-                className="border flex-grow h-[40px] bg-[#F8F8F8] border-[2px] rounded-[10px] border-[#B8B8B8] mr-1 p-1"
-                type="text"
-                value={todo}
-                onChange={(e) => setTodo(e.target.value)}
-              />
-              <button
-                className="font-bold border-[2px] border-[#B8B8B8] text-[#B8B8B8] w-[65px] h-[40px] rounded-[10px] hover:bg-[#F3F3F3]"
-                onClick={handleAddScheduleItem}
-              >
-                추가
-              </button>
+              <div className="flex flex-row justify-between items-center mt-3">
+                <input
+                  className="border lg:w-[90px] w-[123px] h-[40px] border-[2px] border-[#B8B8B8] mr-1 rounded-[10px] p-1"
+                  type="time"
+                  value={time}
+                  onChange={(e) => setTime(e.target.value)}
+                />
+                <input
+                  className="border flex-grow h-[40px] bg-[#F8F8F8] border-[2px] rounded-[10px] border-[#B8B8B8] mr-1 p-1"
+                  type="text"
+                  value={todo}
+                  onChange={(e) => setTodo(e.target.value)}
+                />
+                <button
+                  className="font-bold border-[2px] border-[#B8B8B8] text-[#B8B8B8] w-[65px] h-[40px] rounded-[10px] hover:bg-[#F3F3F3]"
+                  onClick={handleAddScheduleItem}
+                >
+                  추가
+                </button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </DndProvider>
+        </DndProvider>
+      </TeacherLayout>
   );
 }

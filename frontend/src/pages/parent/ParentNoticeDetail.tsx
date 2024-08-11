@@ -4,8 +4,6 @@ import profileImg from "../../assets/parent/notice-daramgi.png"
 import { getNoticeDetail } from "../../api/notice"
 import { NoticeDetail } from "../../api/notice"
 import TeacherProfile from "../../components/parent/common/TeacherProfile"
-import daramgi from '../../assets/parent/crying-daramgi.png'
-import LoadingSpinner from '../../components/parent/common/LoadingSpinner'
 
 export default function ParentNoticeDetail() {
   const { noticeId } = useParams<{ noticeId: string }>()
@@ -30,18 +28,11 @@ export default function ParentNoticeDetail() {
   }, [noticeId])
 
   if (loading) {
-    return <LoadingSpinner />
+    return <div>Loading...</div>
   }
 
   if (!notice) {
-    return (
-      <div className="col-span-4 flex flex-col items-center justify-center">
-        <img src={daramgi} alt="Crying Daramgi" className="w-20 mt-12 mb-4" />
-        <p className="text-center text-gray-500">
-          해당 알림장을 찾을 수 없습니다.
-        </p>
-      </div>
-    )
+    return <p>해당 알림장을 찾을 수 없습니다.</p>
   }
 
   const formatDate = (dateString: string) => {
