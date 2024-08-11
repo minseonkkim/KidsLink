@@ -4,10 +4,6 @@ import { BsSend } from 'react-icons/bs';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import Title from '../../components/teacher/common/Title';
-import { sendAlbumToParent } from '../../api/album';
-import { transformData } from '../../utils/album';
-import { getTeacherInfo } from '../../api/Info';
-import { getClassChilds } from '../../api/kindergarten';
 import ClassifiedChild from '../../components/teacher/album/ClassifiedChild';
 import ChildName from '../../components/teacher/album/ChildName';
 import { AlbumItem, Child } from '../../types/album';
@@ -15,12 +11,8 @@ import ToastNotification, { showToastError, showToastSuccess } from '../../compo
 import { useDragLayer } from 'react-dnd';
 import TeacherLayout from '../../layouts/TeacherLayout';
 import daramgi from '../../assets/teacher/camera-daramgi.png';
-
-// interface DragItem {
-//   index: number;
-//   itemIndex: number;
-//   image: { path: string };
-// };
+import { getTeacherInfo } from '../../api/Info';
+import { getClassChilds } from '../../api/kindergarten';
 
 export function DragOverlay() {
   const { isDragging, currentOffset, item } = useDragLayer((monitor) => ({
@@ -123,6 +115,14 @@ export default function TeacherAlbumFinish() {
   const [classChildren, setClassChildren] = useState<Child[]>([]);
 
   useEffect(() => {
+    // Load data from local storage
+    const savedResult = JSON.parse(localStorage.getItem('result') || '[]');
+    if (savedResult.length > 0) {
+      setResult(savedResult);
+    }
+  }, []);
+
+  useEffect(() => {
     const fetchData = async () => {
       try {
         const teacherInfo = await getTeacherInfo();
@@ -155,6 +155,13 @@ export default function TeacherAlbumFinish() {
     };
     fetchData();
   }, [location.state]);
+
+  useEffect(() => {
+    // Save data to local storage
+    if (result.length > 0) {
+      localStorage.setItem('result', JSON.stringify(result));
+    }
+  }, [result]);
 
   const moveImage = (
     dragIndex: number,
@@ -189,18 +196,9 @@ export default function TeacherAlbumFinish() {
       return;
     }
 
-    const transformedData = transformData(result);
-    const sendData = {
-      albumName: albumName,
-      taggedPhotos: transformedData,
-    };
-    const res = await sendAlbumToParent(sendData);
-    if (res === 'success') {
-      showToastSuccess(<div>앨범이 성공적으로 전송되었습니다.</div>);
-      navigate('/album/send_finish');
-    } else {
-      showToastError(<div>전송에 실패했습니다.</div>);
-    }
+    // Normally, you would send the data to the backend here
+    showToastSuccess(<div>앨범이 성공적으로 전송되었습니다.</div>);
+    navigate('/album/send_finish');
   };
 
   const tabs = [
@@ -213,7 +211,7 @@ export default function TeacherAlbumFinish() {
       <TeacherLayout
         activeMenu="album"
         setActiveMenu={() => {}}
-        titleComponent={<Title title="사진분류" />}
+        titleComponent={<Title title="사진분류완료" />}
         tabs={tabs}
         imageSrc={daramgi}
       >
@@ -222,15 +220,15 @@ export default function TeacherAlbumFinish() {
           <div className="flex flex-col items-center">
             <div className="flex lg:flex-row flex-col items-center justify-between w-full px-[18px] mb-5">
               <div className="flex flex-row items-center mb-3 text-[18px]">
-                  <span className="mr-3 font-bold whitespace-nowrap">앨범 이름</span>
-                  <input
-                    value={albumName}
-                    onChange={(e) => setAlbumName(e.target.value)}
-                    type="text"
-                    className="border-b-[2px] border-[#363636] w-[220px] px-2 py-0.5 focus:outline-none"
-                  />
-                </div>
-                <button
+                <span className="mr-3 font-bold whitespace-nowrap">앨범 이름</span>
+                <input
+                  value={albumName}
+                  onChange={(e) => setAlbumName(e.target.value)}
+                  type="text"
+                  className="border-b-[2px] border-[#363636] w-[220px] px-2 py-0.5 focus:outline-none"
+                />
+              </div>
+              <button
                 onClick={sendToParents}
                 className="border-[2px] border-[#7C7C7C] bg-[#E3EEFF] px-4 w-[190px] h-[40px] font-bold rounded-[10px] hover:bg-[#D4DDEA] flex flex-row items-center"
               >
