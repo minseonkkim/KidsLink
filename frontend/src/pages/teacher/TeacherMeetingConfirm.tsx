@@ -25,7 +25,8 @@ interface GroupedMeetings {
 }
 
 export default function TeacherMeetingConfirm() {
-    const teacherName = useTeacherInfoStore(state => state.teacherInfo.username);
+    const teacherInfo = useTeacherInfoStore(state => state.teacherInfo);
+    const teacherName = teacherInfo?.username || "Unknown Teacher"; // 기본값 제공
     const [groupedMeetings, setGroupedMeetings] = useState<GroupedMeetings>({});
     const [selectedTimes, setSelectedTimes] = useState<{ [parentId: number]: string }>({});
 
@@ -192,9 +193,17 @@ export default function TeacherMeetingConfirm() {
             />}
             imageSrc={daramgi} 
         >
-            <div className="w-full mt-10 mb-32 px-4 lg:px-8 py-6 lg:py-8">
+            <div className="w-full mb-32 px-5 lg:px-8 py-3 lg:py-10">
+                
                 {Object.keys(groupedMeetings).length !== 0 && (
-                    <div className="flex justify-end mb-4">
+                    <div className="text-center text-[17px] mb-3">
+                        학부모님들께서 선택하신 희망 날짜 및 시간입니다.<br />일정 조율하기 버튼을 누르면 선택하지 않은 일정을 자동으로 조율합니다.
+                        <br />예약을 확정하시려면 확정하기 버튼을 눌러주세요.
+                    </div>
+                )}
+
+                {Object.keys(groupedMeetings).length !== 0 && (
+                    <div className="flex justify-center mb-4">
                         <button 
                             className="mr-2 h-[40px] border-2 border-[#7C7C7C] bg-[#E3EEFF] px-4 py-2 font-bold rounded-md hover:bg-[#D4DDEA]"
                             onClick={handleClassifyMeetingClick}
@@ -207,12 +216,6 @@ export default function TeacherMeetingConfirm() {
                         >
                             확정하기
                         </button>
-                    </div>
-                )}
-                {Object.keys(groupedMeetings).length !== 0 && (
-                    <div className="text-center text-[17px] mt-4 lg:mt-8">
-                        학부모님들께서 선택하신 희망 날짜 및 시간입니다.<br />일정 조율하기 버튼을 누르면 선택하지 않은 일정을 자동으로 조율합니다.
-                        <br />예약을 확정하시려면 확정하기 버튼을 눌러주세요.
                     </div>
                 )}
                 {Object.keys(groupedMeetings).length !== 0 ? (
@@ -239,7 +242,7 @@ export default function TeacherMeetingConfirm() {
                         ))}
                     </div>
                 ) : (
-                    <div className="flex items-center justify-center h-[400px] text-center">
+                    <div className="flex items-center justify-center h-[400px] text-center text-[18px]">
                         학부모님들께서 선택하신 희망 날짜 및 시간이 없어요.
                     </div>
                 )}
