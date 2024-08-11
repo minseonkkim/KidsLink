@@ -17,6 +17,9 @@ import growthdiaryIcon from "../../../assets/teacher/growthdiary_btn_img.png";
 import documentIcon from "../../../assets/teacher/document_btn_img.png";
 import useModal from "../../../hooks/teacher/useModal";
 import AlertModalContent from "./Header";
+import { FiLogOut } from "react-icons/fi";
+import { logout } from "../../../api/member";
+import useAppStore from "../../../stores/store";
 
 interface Alarm {
   id: number;
@@ -95,6 +98,19 @@ export const Sidebar: React.FC<SidebarProps> = ({
     };
   }, [alertList, isModalOpen, fetchAlarmCount]);
 
+  const setUserType = useAppStore((state) => state.setUserType);
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      console.error("Logout failed", error);
+    } finally {
+      setUserType("");
+      navigate("/");
+    }
+  };
+
   return (
     <>
       <aside
@@ -108,17 +124,17 @@ export const Sidebar: React.FC<SidebarProps> = ({
             키즈링크
           </p>
         </Link>
-        <div className="flex items-center pr-8 space-x-4">
+        <div className="flex flex-row items-center pr-8 space-x-4">
           <div className="relative" onClick={openAlarmModal}>
             <BiBell className="w-[32px] h-[32px] cursor-pointer text-gray-700" />
             <span className="absolute top-0 right-0 w-4 h-4 bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center">
               {alertNum}
             </span>
           </div>
-          
-          <Link to="/mypage">
+          <FiLogOut onClick={handleLogout} className="w-[29px] h-[29px] mr-10 cursor-pointer text-gray-700"/>
+          {/* <Link to="/mypage">
             <CgProfile className="w-[30px] h-[30px] cursor-pointer text-gray-700" />
-          </Link>
+          </Link> */}
         </div>
         </div>
         <div
