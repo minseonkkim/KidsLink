@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import daramgisad from '../../assets/common/daramgisad.png'
+import daramgisad from '../../assets/common/crying-daramgi.png'
 
 
 export default function ParentErrorPage() {
