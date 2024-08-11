@@ -7,6 +7,7 @@ import useAppStore from "../../stores/store";
 import DefaultProfile from "../../assets/teacher/default_profile.png";
 import { getTeacherInfo } from "../../api/Info";
 import TeacherLayout from '../../layouts/TeacherLayout';
+import daramgi from "../../assets/teacher/playing-daramgi.png"
 
 export default function TeacherMyPage() {
   const navigate = useNavigate();
@@ -55,9 +56,14 @@ export default function TeacherMyPage() {
   }
 
   return (
-    <TeacherLayout>
+    <TeacherLayout
+        activeMenu="meeting"
+        setActiveMenu={() => {}}
+        titleComponent={<Title title="마이페이지" />}
+        imageSrc={daramgi} 
+    >
       <div className="px-4 lg:px-8 py-6 lg:py-8 mt-24">
-        <Title title="마이페이지" />
+        
         <div className="flex justify-center mt-8">
           <div className="w-full max-w-md bg-[#f4f4f4] rounded-lg shadow-md overflow-hidden flex flex-col items-center py-6">
             <div className="flex flex-col items-center mb-4">

@@ -118,56 +118,63 @@ const TeacherLayout = ({ children, activeMenu, setActiveMenu, titleComponent, im
       if (activeMenu === 'ourclass') {
           return (
               <div className="flex items-center space-x-2">
-                  {imageSrc && <img src={imageSrc} alt="이미지" className="ml-4 w-12 h-16 lg:w-16 lg:h-24 mr-1" />}
+                  {imageSrc && <img src={imageSrc} alt="다람쥐" className="ml-4 w-12 h-16 lg:w-16 lg:h-24 mr-1" />}
                   {titleComponent}
               </div>
           );
       } else if (activeMenu === 'schedule') {
           return (
               <div className="flex items-center space-x-2">
-                  {imageSrc && <img src={imageSrc} alt="이미지" className="ml-4 w-12 h-16 lg:w-16 lg:h-24 mr-1" />}
+                  {imageSrc && <img src={imageSrc} alt="다람쥐" className="ml-4 w-12 h-16 lg:w-16 lg:h-24 mr-1" />}
                   {titleComponent}
               </div>
           );
       } else if (activeMenu === 'album') {
           return (
               <div className="flex items-center space-x-2">
-                  {imageSrc && <img src={imageSrc} alt="이미지" className="ml-4 w-12 h-16 lg:w-16 lg:h-24 mr-1" />}
+                  {imageSrc && <img src={imageSrc} alt="다람쥐" className="ml-4 w-12 h-16 lg:w-16 lg:h-24 mr-1" />}
                   {titleComponent}
               </div>
           );
       } else if (activeMenu === 'meeting') {
           return (
               <div className="flex items-center space-x-2">
-                  {imageSrc && <img src={imageSrc} alt="이미지" className="ml-4 w-12 h-16 lg:w-16 lg:h-24 mr-1" />}
+                  {imageSrc && <img src={imageSrc} alt="다람쥐" className="ml-4 w-12 h-16 lg:w-16 lg:h-24 mr-1" />}
                   {titleComponent}
               </div>
           );
       } else if (activeMenu === 'notice') {
           return (
               <div className="flex items-center space-x-2">
-                  {imageSrc && <img src={imageSrc} alt="이미지" className="ml-4 w-12 h-16 lg:w-16 lg:h-24 mr-1" />}
+                  {imageSrc && <img src={imageSrc} alt="다람쥐" className="ml-4 w-12 h-16 lg:w-16 lg:h-24 mr-1" />}
                   {titleComponent}
               </div>
           );
       } else if (activeMenu === 'growth') {
           return (
               <div className="flex items-center space-x-2">
-                  {imageSrc && <img src={imageSrc} alt="이미지" className="ml-4 w-12 h-16 lg:w-16 lg:h-24 mr-1" />}
+                  {imageSrc && <img src={imageSrc} alt="다람쥐" className="ml-4 w-12 h-16 lg:w-16 lg:h-24 mr-1" />}
                   {titleComponent}
               </div>
           );
       } else if (activeMenu === 'document') {
           return (
               <div className="flex items-center space-x-2">
-                  {imageSrc && <img src={imageSrc} alt="이미지" className="ml-4 w-12 h-16 lg:w-16 lg:h-24 mr-1" />}
+                  {imageSrc && <img src={imageSrc} alt="다람쥐" className="ml-4 w-12 h-16 lg:w-16 lg:h-24 mr-1" />}
                   {titleComponent}
               </div>
           );
       } else if (activeMenu === 'bus') {
           return (
               <div className="flex items-center space-x-2">
-                  {imageSrc && <img src={imageSrc} alt="이미지" className="ml-4 w-12 h-16 lg:w-16 lg:h-24 mr-1" />}
+                  {imageSrc && <img src={imageSrc} alt="다람쥐" className="ml-4 w-12 h-16 lg:w-16 lg:h-24 mr-1" />}
+                  {titleComponent}
+              </div>
+          );
+      } else if (activeMenu === 'mypage') {
+          return (
+              <div className="flex items-center space-x-2">
+                  {imageSrc && <img src={imageSrc} alt="다람쥐" className="ml-4 w-12 h-16 lg:w-16 lg:h-24 mr-1" />}
                   {titleComponent}
               </div>
           );
