@@ -5,8 +5,6 @@ import { FaMinusCircle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import PulseLoader from "react-spinners/PulseLoader";
 import { handleClassify, handleDeleteImage, handleImageUpload } from "../../utils/album";
-// import { BiCategory } from "react-icons/bi";
-// import { Link } from "react-router-dom";
 import TeacherLayout from "../../layouts/TeacherLayout";
 import daramgi from "../../assets/teacher/camera-daramgi.png";
 
