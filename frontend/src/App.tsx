@@ -49,6 +49,7 @@ const TeacherMeetingMain = lazy(() => import("./pages/teacher/TeacherMeetingMain
 const TeacherMeetingConfirm = lazy(() => import("./pages/teacher/TeacherMeetingConfirm"));
 const TeacherMeetingRecordingList = lazy(() => import("./pages/teacher/TeacherMeetingRecordingList"));
 const TeacherAlbumHistory = lazy(() => import("./pages/teacher/TeacherAlbumHistory"));
+const TeacherSupport = lazy(() => import("./pages/teacher/TeacherSupport"));
 const TeacherErrorPage = lazy(() => import("./pages/teacher/TeacherErrorPage"));
 
 const CommonUserError = lazy(() => import("./pages/common/CommonUserError"));
@@ -112,6 +113,7 @@ export default function App() {
                 <Route path="/meeting" element={<TeacherMeetingMain />} />
                 <Route path="/meeting/confirm" element={<TeacherMeetingConfirm />} />
                 <Route path="/meeting/recordings" element={<TeacherMeetingRecordingList />} />
+                <Route path="/support" element={<TeacherSupport />} />
                 {/* Teacher User Error Page */}
                 <Route path="/error" element={<TeacherErrorPage />} />
                 <Route
