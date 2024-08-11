@@ -23,10 +23,10 @@ export default function TeacherMeetingMain() {
             titleComponent={<Title title="화상상담" tabs={tabs} />}
             imageSrc={daramgi} 
         >
-            <div className="relative w-full mt-10 mb-32 px-6 flex flex-col items-center">
+            <div className="relative w-full lg:mt-[150px] mt-0 mb-32 px-6 flex flex-col items-center">
 
                 <div className="w-full flex justify-center items-center">
-                    <div className="flex flex-row flex-wrap w-full items-center justify-between mt-10 lg:mt-[50px]">
+                    <div className="flex flex-row flex-wrap w-full items-center justify-between">
                         <MeetingMainButton 
                             title="상담가능시간 open" 
                             description="학부모 상담이 가능한 시간을 선택해주세요. 해당 시간에 학부모가 상담 신청을 할 수 있어요." 
@@ -34,9 +34,9 @@ export default function TeacherMeetingMain() {
                             image={CalendarImg} 
                             imgWidth={1000} 
                             imgTopLg={65}
-                            imgTopSm={-26}
-                            imgLeftLg={58}
-                            imgLeftSm={85}
+                            imgTopSm={-58}
+                            imgLeftLg={62}
+                            imgLeftSm={90}
                         />
                         <MeetingMainButton 
                             title="상담시간 확정" 
@@ -45,9 +45,9 @@ export default function TeacherMeetingMain() {
                             image={CheckImg} 
                             imgWidth={182} 
                             imgTopLg={90}
-                            imgTopSm={36}
+                            imgTopSm={-5}
                             imgLeftLg={85}
-                            imgLeftSm={160}
+                            imgLeftSm={130}
                         />
                         <MeetingMainButton 
                             title="예약된 화상상담" 
@@ -56,9 +56,9 @@ export default function TeacherMeetingMain() {
                             image={VideoConsultingImg} 
                             imgWidth={680} 
                             imgTopLg={88}
-                            imgTopSm={0}
+                            imgTopSm={-30}
                             imgLeftLg={37}
-                            imgLeftSm={60}
+                            imgLeftSm={80}
                         />
                         <MeetingMainButton 
                             title="녹화된 상담" 
@@ -67,9 +67,9 @@ export default function TeacherMeetingMain() {
                             image={RecordImg} 
                             imgWidth={130} 
                             imgTopLg={115}
-                            imgTopSm={0}
+                            imgTopSm={20}
                             imgLeftLg={115}
-                            imgLeftSm={60}
+                            imgLeftSm={160}
                         />
                     </div>
                 </div>

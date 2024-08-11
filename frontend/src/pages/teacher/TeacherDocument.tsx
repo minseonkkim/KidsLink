@@ -155,8 +155,8 @@ export default function TeacherDocument() {
         titleComponent={<Title title="문서관리" />}
         imageSrc={daramgi} 
     >
-      <div className="relative w-full lg:my-8 mt-20 px-[15px] flex flex-col lg:flex-row justify-between">
-        <div className="rounded-[20px] bg-[#f4f4f4] w-full lg:w-[360px] lg:h-[540px] h-[300px] p-[15px] mb-5 lg:mb-0">
+      <div className="relative w-full lg:my-8 mt-5 px-[15px] flex flex-col lg:flex-row justify-between">
+        <div className="rounded-[20px] bg-[#f4f4f4] w-full lg:w-[360px] lg:h-[540px] h-[340px] p-[15px] mb-5 lg:mb-0">
           <div className="flex space-x-2 ml-2 mb-4">
             <button
               className={`rounded-[10px] ${selectedDocumentType === "전체" ? 'bg-[#D9D9D9] border-[2px] border-[#A0A0A0]' : 'bg-[#f4f4f4] border-[2px] border-[#d3d3d3]'} flex items-center justify-center w-[60px] h-[35px] font-bold text-[15px] cursor-pointer`}
@@ -190,13 +190,13 @@ export default function TeacherDocument() {
           </div>
           <div
             ref={containerRef}
-            className="bg-[#f4f4f4] w-full lg:w-[340px] h-[230px] lg:h-[395px] overflow-y-auto custom-scrollbar"
+            className="bg-[#f4f4f4] w-full lg:w-[340px] h-[200px] lg:h-[395px] overflow-y-auto custom-scrollbar"
           >
             {displayedDocuments.map((document, index) => (
               <div
                 key={index}
                 ref={el => (documentRefs.current[document.details.absentId || document.details.dosageId] = el)}
-                className={`m-[10px] mb-[15px] w-[295px] h-[80px] lg:h-[100px] rounded-[15px] border-[3px] ${
+                className={`lg:m-[10px] m-0 mb-[15px] lg:w-[295px] w-[255px] h-[80px] lg:h-[100px] rounded-[15px] border-[3px] ${
                   document.details.absentId === selectedDocumentId || document.details.dosageId === selectedDocumentId
                     ? document.type === "Absent"
                       ? 'border-[#B2D170]'
@@ -217,7 +217,7 @@ export default function TeacherDocument() {
             {loading && <p>Loading more documents...</p>}
           </div>
         </div>
-        <div className='border-[#B2D170] border-[3px] rounded-[20px] w-[700px] h-[540px] p-[15px] overflow-y-auto custom-scrollbar'>
+        <div className='border-[#B2D170] border-[3px] rounded-[20px] w-full lg:w-[700px] h-[370px] lg:h-[550px] p-[15px] overflow-y-auto custom-scrollbar'>
           {selectedDocumentId !== null && selectedDocumentRealType === "Absent" && (
             <AbsentDocument absentId={selectedDocumentId} onUpdate={handleDocumentUpdate} isOurClass={false} />
           )}

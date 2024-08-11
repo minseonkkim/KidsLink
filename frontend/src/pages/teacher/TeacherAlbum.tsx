@@ -46,11 +46,11 @@ export default function TeacherAlbum() {
         />}
         imageSrc={daramgi} 
     >
-      <div className="relative w-full my-10 mb-32 px-7 flex flex-col items-center">
-        <div className={`h-[470px] flex flex-row gap-12 items-center ${images.length === 0 || loading ? 'justify-center' : 'justify-between'} w-full`}>
+      <div className="relative w-full lg:my-10 my-5 mb-32 px-7 flex flex-col items-center">
+        <div className={`h-[470px] flex lg:flex-row flex-col items-center ${images.length === 0 || loading ? 'justify-center' : 'justify-between'} w-full`}>
           {!loading && (
             <div className={`flex flex-col items-center ${images.length === 0 ? 'mx-auto' : ''}`}>
-              <label className="flex flex-col items-center justify-center bg-[#FFF9D7] border-[#FFE96F] border-[2px] w-[300px] h-[300px] rounded-[360px] p-6 cursor-pointer">
+              <label className="flex flex-col items-center justify-center bg-[#FFF9D7] border-[#FFE96F] border-[2px] lg:w-[300px] lg:h-[300px] w-[250px] h-[250px] rounded-[360px] p-6 cursor-pointer">
                 <FiUpload className="text-[70px] mb-5" />
                 <span className="text-[20px] font-bold">사진업로드</span>
                 <input 
@@ -63,8 +63,8 @@ export default function TeacherAlbum() {
             </div>
           )}
           {images.length > 0 && (
-            <div className="flex flex-col justify-center items-center mt-8 relative w-full lg:w-auto">
-              <div className={`grid grid-cols-2 lg:grid-cols-5 gap-4 overflow-y-auto h-[442px] border-[#B2D170] border-[1px] mt-10 rounded-[10px] content-start p-3 ${loading ? 'bg-[#f4f4f4] opacity-50' : ''}`}>
+            <div className="flex flex-col justify-center items-center lg:mt-8 mt-0 relative w-full lg:w-auto">
+              <div className={`grid grid-cols-2 lg:grid-cols-5 gap-4 overflow-y-auto lg:h-[442px] h-[330px] border-[#B2D170] border-[1px] mt-10 rounded-[10px] content-start p-3 ${loading ? 'bg-[#f4f4f4] opacity-50' : ''}`}>
                 {images.map((file, index) => (
                   <div key={index} className="relative w-32 h-32 loading-container">
                     <img 

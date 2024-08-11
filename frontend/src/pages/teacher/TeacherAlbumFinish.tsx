@@ -220,25 +220,25 @@ export default function TeacherAlbumFinish() {
         <DragOverlay />
         <div className="px-[15px] mb-[130px] mt-10">
           <div className="flex flex-col items-center">
-            <div className="flex flex-row justify-between w-full px-[18px] mb-5">
-              <div className="flex flex-row items-center mb-8 text-[18px]">
-                  <span className="mr-3 font-bold">앨범 이름</span>
+            <div className="flex lg:flex-row flex-col items-center justify-between w-full px-[18px] mb-5">
+              <div className="flex flex-row items-center mb-3 text-[18px]">
+                  <span className="mr-3 font-bold whitespace-nowrap">앨범 이름</span>
                   <input
                     value={albumName}
                     onChange={(e) => setAlbumName(e.target.value)}
                     type="text"
-                    className="border-b-[2px] border-[#363636] w-[260px] px-2 py-0.5 focus:outline-none"
+                    className="border-b-[2px] border-[#363636] w-[220px] px-2 py-0.5 focus:outline-none"
                   />
                 </div>
                 <button
                 onClick={sendToParents}
-                className="border-[2px] border-[#7C7C7C] bg-[#E3EEFF] px-4 h-[40px] font-bold rounded-[10px] hover:bg-[#D4DDEA] flex flex-row items-center"
+                className="border-[2px] border-[#7C7C7C] bg-[#E3EEFF] px-4 w-[190px] h-[40px] font-bold rounded-[10px] hover:bg-[#D4DDEA] flex flex-row items-center"
               >
                 <BsSend className="mr-2" />
                 학부모에게 전송하기
               </button>
             </div>
-            <div className="mb-5 text-[17px]">잘못된 분류가 있나요? 드래그로 수정해보세요</div>
+            <div className="mb-5 lg:text-[17px] text-[16px]">잘못된 분류가 있나요? 드래그로 수정해보세요</div>
             <ChildNameContainer classChildren={classChildren} moveImage={moveImage} />
 
             {result.map((item, index) => (

@@ -128,11 +128,18 @@ export default function TeacherOurClass() {
     <TeacherLayout
         activeMenu="ourclass"
         setActiveMenu={() => {}}
-        titleComponent={<Title title={teacherInfo ? `${teacherInfo.kindergartenName} ${'\u00A0'} ${teacherInfo.kindergartenClassName}` : ""} />}
+        titleComponent={<Title title="우리반보기" />}
         imageSrc={daramgi} 
     >
-      <div className="relative w-full my-6 mb-32 px-[15px] flex flex-col items-center">
-        <div className="flex justify-end w-full lg:w-[1200px] mr-16 text-lg lg:text-xl font-bold items-center">
+      
+      <div className="relative w-full mt-7 mb-8 px-[15px] flex flex-col items-center">
+      <div className="flex lg:flex-row flex-col justify-between items-center w-full">
+        <div className="lg:w-[250px] w-0"></div>
+        <div className="text-[24px] ml-[20px] font-bold whitespace-nowrap mb-5 lg:mb-0">
+          {teacherInfo ? `${teacherInfo.kindergartenName} ${teacherInfo.kindergartenClassName}` : ""}
+        </div>
+        
+        <div className="flex flex-row text-lg lg:text-xl font-bold items-center whitespace-nowrap">
           <div className="bg-[#ffdfdf] px-3 py-1.5 lg:px-5 font-bold rounded-[10px] flex flex-row items-center mr-3">
             결석
           </div>
@@ -142,7 +149,8 @@ export default function TeacherOurClass() {
           </div>
           <div className="mr-5">{dosageCount}명</div>
         </div>
-        <div className="flex flex-row flex-wrap w-full mt-4 justify-around">
+      </div>
+        <div className="flex flex-row flex-wrap w-full mt-3 justify-around">
           {childs.map((child, index) => (
             <ChildCard
               key={index}

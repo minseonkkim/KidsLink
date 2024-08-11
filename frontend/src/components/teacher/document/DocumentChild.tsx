@@ -11,7 +11,7 @@ interface DocumentChildProps {
 
 export default function DocumentChild({type, name, profileImgPath, finish}: DocumentChildProps){
     return (
-        <div className="flex flex-row items-center bg-[#ffffff] p-4 w-[290px] h-full rounded-[15px]">
+        <div className="flex flex-row items-center bg-[#ffffff] p-4 w-[250px] lg:w-[290px] h-full rounded-[15px]">
             {type === "" ? (
                 <Skeleton circle width={70} height={38} />
             ) : (
