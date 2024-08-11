@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Title from "../../components/teacher/common/Title";
-import ProfileImg from '../../assets/teacher/profile_img.jpg';
 import { getOneParentInfo } from "../../api/Info";
 import TeacherMeetingSchedule from "../../components/teacher/consulting/TeacherMeetingSchedule";
 import { isMeetingActive, isMeetingVisible } from "../../utils/meeting";
@@ -9,6 +8,7 @@ import { ParentTeacherMeeting } from "../../types/meeting";
 import { getConfirmedMeeting } from "../../api/meeting";
 import TeacherLayout from '../../layouts/TeacherLayout';
 import daramgi from "../../assets/teacher/meeting-daramgi.png";
+import DefaultImg from "../../assets/teacher/default_profile.png";
 
 export default function TeacherMeeting() {
   const [meetings, setMeetings] = useState<ParentTeacherMeeting[]>([]);
@@ -25,14 +25,14 @@ export default function TeacherMeeting() {
               return { 
                 ...meeting, 
                 childName: parentInfo.child.name,
-                parentProfile: parentInfo.profile || ProfileImg // Use default profile image if not available
+                parentProfile: parentInfo.profile || DefaultImg // Use default profile image if not available
               };
             } catch (error) {
               console.error(`Error fetching parent info for ID ${meeting.parentId}:`, error);
               return { 
                 ...meeting, 
                 childName: "알 수 없음",
-                parentProfile: ProfileImg // Use default profile image if error occurs
+                parentProfile: DefaultImg // Use default profile image if error occurs
               };
             }
           })
