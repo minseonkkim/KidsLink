@@ -204,7 +204,7 @@ export default function TeacherSchedule() {
         imageSrc={daramgi} 
     >
       <DndProvider backend={HTML5Backend}>
-        <div className="flex flex-col w-full lg:mt-8 mt-16 px-4 lg:px-24">
+        <div className="flex flex-col w-full mt-[70px] px-5">
           <div className="mt-5 flex flex-col lg:flex-row justify-between items-center mt-10 space-y-4 lg:space-y-0 lg:space-x-16">
             <StyledCalendar
               onChange={setDate}
@@ -278,7 +278,7 @@ export default function TeacherSchedule() {
               </div>
               <div className="flex flex-row justify-between items-center mt-3">
                 <input
-                  className="border lg:w-[90px] w-[123px] h-[40px] border-[2px] border-[#B8B8B8] mr-1 rounded-[10px] p-1"
+                  className="border w-[120px] h-[40px] border-[2px] border-[#B8B8B8] mr-1 rounded-[10px] p-1"
                   type="time"
                   value={time}
                   onChange={(e) => setTime(e.target.value)}
