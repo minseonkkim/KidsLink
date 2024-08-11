@@ -1,4 +1,3 @@
-// Title.tsx
 import { useState } from "react";
 import { FaInfoCircle } from "react-icons/fa";
 import { Link, useLocation } from "react-router-dom";
