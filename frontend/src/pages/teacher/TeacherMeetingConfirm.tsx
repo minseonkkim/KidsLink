@@ -211,7 +211,8 @@ export default function TeacherMeetingConfirm() {
                 )}
                 {Object.keys(groupedMeetings).length !== 0 && (
                     <div className="text-center text-[17px] mt-4 lg:mt-8">
-                        학부모님들께서 선택하신 희망 날짜 및 시간입니다.<br />예약을 확정하시려면 확정하기 버튼을 눌러주세요.
+                        학부모님들께서 선택하신 희망 날짜 및 시간입니다.<br />일정 조율하기 버튼을 누르면 선택하지 않은 일정을 자동으로 조율합니다.
+                        <br />예약을 확정하시려면 확정하기 버튼을 눌러주세요.
                     </div>
                 )}
                 {Object.keys(groupedMeetings).length !== 0 ? (
