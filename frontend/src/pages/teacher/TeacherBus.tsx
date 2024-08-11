@@ -32,11 +32,11 @@ export default function TeacherBus() {
   const { teacherInfo, setTeacherInfo } = useTeacherInfoStore();
   
   const [isPageVisible, setIsPageVisible] = useState(false);
+  const [direction, setDirection] = useState('slide-left');
 
   const containerRef = useRef<HTMLDivElement & { touchStartX?: number }>(null);
 
   useEffect(() => {
-    console.log("isPageVisible: ",isPageVisible)
     const fetchBusStops = async () => {
       try {
         let kindergartenId;
@@ -50,7 +50,6 @@ export default function TeacherBus() {
         }
   
         let stops = await getAllBusStops(kindergartenId);
-        // console.log("stops: ", stops);
   
         setBusStops(stops.map(stop => {
           const existingStop = busStops.find(prevStop => prevStop.busStopId === stop.busStopId);
@@ -66,15 +65,16 @@ export default function TeacherBus() {
           };
         }));
   
-        console.log("스토어에서 가져온 busStops: ", busStops);
-        setIsPageVisible(true)
-        console.log("가져온 후 isPageVisible: ",isPageVisible)
-  
         setBusId(stops[0]?.busId || null);
   
         if (stops.length > 0) {
           setCurrentStopId(stops[0].busStopId);
         }
+  
+        // 상태를 업데이트하고 나서 useEffect에서 로그를 출력하게끔 설정
+        setTimeout(() => {
+          setIsPageVisible(true);
+        }, 100);
       } catch (error) {
         console.error(error);
       }
@@ -88,7 +88,7 @@ export default function TeacherBus() {
   
     window.addEventListener('beforeunload', handleUnload);
     window.addEventListener('unload', handleUnload);
-
+  
     return () => {
       window.removeEventListener('beforeunload', handleUnload);
       window.removeEventListener('unload', handleUnload);
@@ -117,6 +117,7 @@ export default function TeacherBus() {
     if (currentStopId === null) return;
     const currentIndex = busStops.findIndex(stop => stop.busStopId === currentStopId);
     if (currentIndex > 0) {
+      setDirection('slide-right'); // 슬라이드 방향 설정
       setCurrentStopId(busStops[currentIndex - 1].busStopId);
     }
   };
@@ -125,6 +126,7 @@ export default function TeacherBus() {
     if (currentStopId === null) return;
     const currentIndex = busStops.findIndex(stop => stop.busStopId === currentStopId);
     if (currentIndex < busStops.length - 1) {
+      setDirection('slide-left'); // 슬라이드 방향 설정
       setCurrentStopId(busStops[currentIndex + 1].busStopId);
     }
   };
