@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import DocumentItem from "./DocumentItem";
 import { checkAbsentDocument, getAbsentDocument } from "../../../api/document";
 import { formatDate } from "../../../utils/teacher/formatDate";
@@ -28,7 +28,7 @@ export default function AbsentDocument({ absentId, onUpdate, isOurClass }: Absen
   }, [absentId]);
 
   const handleCheckboxClick = async () => {
-    if (absentDocument.confirmationStatus === "F") {
+    if (absentDocument?.confirmationStatus === "F") {
       try {
         await checkAbsentDocument(absentId);
         setAbsentDocument({ ...absentDocument, confirmationStatus: "T" });
@@ -47,8 +47,13 @@ export default function AbsentDocument({ absentId, onUpdate, isOurClass }: Absen
     return <div>Loading...</div>;
   }
 
+  // Safely handling the details content, checking if it's null or undefined
+  const detailsContent = absentDocument.details ? absentDocument.details.split('\n').map((line, index) => (
+    <p key={index} className="mb-2">{line}</p>
+  )) : "";
+
   return (
-    <div className="font-KoPubDotum w-full lg:w-[720px] h-auto lg:h-[520px] rounded-[20px] bg-[#ffffff] p-4 lg:p-8">
+    <div className="font-KoPubDotum w-full h-auto lg:h-[480px] rounded-[20px] bg-[#ffffff] p-4 lg:p-8">
       <div className="flex flex-col lg:flex-row justify-between mb-4 lg:mb-0">
         <span className="rounded-[10px] bg-[#FFDFDF] flex items-center justify-center w-[75px] h-[40px] font-bold text-[20px] mb-4 lg:mb-0">결석</span>
         {isOurClass === false &&
@@ -65,14 +70,12 @@ export default function AbsentDocument({ absentId, onUpdate, isOurClass }: Absen
           </div>
         }
       </div>
-      <div className="text-[16px] lg:text-[20px] my-4 lg:my-8 lg:h-[370px] overflow-y-auto custom-scrollbar">
+      <div className="text-[16px] lg:text-[20px] my-4 lg:my-8 h-auto lg:h-[370px] overflow-y-auto custom-scrollbar">
         <DocumentItem title="기간" content={`${formatDate(absentDocument.startDate)} ~ ${formatDate(absentDocument.endDate)}`} />
         <DocumentItem title="사유" content={absentDocument.reason} />
         <DocumentItem 
           title="기타사항" 
-          content={(absentDocument.details || '').split('\n').map((line: string, index: number) => (
-            <p key={index} className="mb-2">{line}</p>
-          ))} 
+          content={detailsContent} 
         />
       </div>
       <ToastNotification />

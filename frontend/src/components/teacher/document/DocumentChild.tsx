@@ -10,27 +10,26 @@ interface DocumentChildProps {
 }
 
 export default function DocumentChild({type, name, profileImgPath, finish}: DocumentChildProps){
-    const currentChild = true;
     return (
-        <div className={`flex flex-row items-center bg-[#ffffff] px-5 py-2 w-full h-full rounded-[15px]`}>
-            {type==="" ? (
+        <div className="flex flex-row items-center bg-[#ffffff] p-4 w-[290px] h-full rounded-[15px]">
+            {type === "" ? (
                 <Skeleton circle width={70} height={38} />
             ) : (
-                <span className={`rounded-[10px] ${type==='Dosage' ? 'bg-[#E7DFFF]' : 'bg-[#FFDFDF]'} flex items-center justify-center w-[70px] h-[38px] font-bold text-[18px]`}>
+                <span className={`rounded-[10px] ${type === 'Dosage' ? 'bg-[#E7DFFF]' : 'bg-[#FFDFDF]'} flex items-center justify-center w-[70px] h-[38px] font-bold text-[18px]`}>
                     {type === "Absent" ? "결석" : "투약"}
                 </span>
             )}
-            <div className="w-[47px] h-[47px] ml-5">
-                {profileImgPath==="" ? (
+            <div className="ml-5 w-[47px] h-[47px]">
+                {profileImgPath === "" ? (
                     <Skeleton circle width={47} height={47} />
                 ) : (
-                    <img src={profileImgPath} className="w-full h-full rounded-full object-cover"  />
+                    <img src={profileImgPath} className="w-full h-full rounded-full object-cover" alt={`${name} profile`} />
                 )}
             </div>
-            <div className="font-bold mx-3 text-[21px] w-[74px]">
-                {name==="" ? <Skeleton width={100} /> : name}
+            <div className="flex-1 mx-3 font-bold text-[18px] lg:text-[21px] truncate">
+                {name === "" ? <Skeleton width={100} /> : name}
             </div>
-            {finish === "T" && <ImCheckboxChecked className="mx-[10px] w-[20px] h-[20px]"/>}
+            {finish === "T" && <ImCheckboxChecked className="ml-[10px] w-[20px] h-[20px]"/>}
         </div>
     );
 }
