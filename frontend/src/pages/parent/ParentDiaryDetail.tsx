@@ -5,6 +5,7 @@ import { getGrowthDiary, DiaryDetail } from "../../api/growthdiary"
 import TeacherProfile from "../../components/parent/common/TeacherProfile"
 import DiaryContent from "../../components/parent/diary/DiaryContent"
 import LoadingSpinner from "../../components/common/LoadingSpinner"
+import cryingDaramgi from "../../assets/common/crying-daramgi.png"
 
 export default function ParentDiaryDetail() {
   const { diaryId } = useParams<{ diaryId: string }>()
@@ -32,7 +33,12 @@ export default function ParentDiaryDetail() {
   }
 
   if (!diary) {
-    return <p>해당 성장 기록을 찾을 수 없습니다.</p>
+    <div className="col-span-4 flex flex-col items-center justify-center">
+      <img src={cryingDaramgi} alt="Crying Daramgi" className="w-16 mt-12 mb-4" />
+      <p className="text-center text-gray-500">
+        해당 성장 기록을 찾을 수 없습니다.
+      </p>
+    </div>
   }
 
   return (
