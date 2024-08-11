@@ -26,18 +26,18 @@ a{
 }
 
 
-  @keyframes grow {
+@keyframes grow {
     from {
       transform: scale(0.7);
     }
     to {
       transform: scale(1);
     }
-  }
+}
 
-  .grow-animation {
+.grow-animation {
     animation: grow 4s forwards;
-  }
+}
 
 .rotate {
     transform: rotate(7deg);
