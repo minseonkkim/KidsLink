@@ -156,7 +156,7 @@ export default function TeacherGrowth() {
         titleComponent={<Title title="성장일지" />}
         imageSrc={daramgi} 
     >
-      <div className="relative w-full gap-8 lg:my-8 mt-20 px-4 flex flex-col lg:flex-row justify-between">
+      <div className="relative w-full gap-8 lg:my-8 mt-5 px-4 flex flex-col lg:flex-row justify-between">
         <div className="rounded-[10px] bg-[#f4f4f4] w-full h-[320px] lg:h-[540px] p-[10px] mb-4 lg:mb-0">
           <div className="bg-[#fff] lg:h-[50px] h-[44px] rounded-[10px] flex items-center p-3 mx-2 mt-2 mb-4">
             <IoSearch className="text-[24px] mr-3" />
@@ -172,7 +172,7 @@ export default function TeacherGrowth() {
             {filteredChildren.map((child) => (
               <div
                 key={child.childId}
-                className={`border-[3px] rounded-[10px] h-[180px] m-1 ${
+                className={`border-[3px] rounded-[10px] lg:h-[178px] h-[155px] m-1 ${
                   child.childId === currentChildId
                     ? "border-[#B2D170]"
                     : "border-transparent"
@@ -193,7 +193,7 @@ export default function TeacherGrowth() {
           <div className="flex flex-wrap content-start w-full lg:w-[680px] lg:h-[480px] h-[350px] rounded-[10px] bg-[#f4f4f4] overflow-auto custom-scrollbar p-2">
             <div
               onClick={openCreateModal}
-              className="bg-[#fff] rounded-[10px] w-[130px] h-[130px] lg:m-[16px] m-[14px] flex items-center justify-center font-bold text-[18px] cursor-pointer"
+              className="bg-[#fff] rounded-[10px] w-[100px] h-[100px] lg:w-[130px] lg:h-[130px] lg:m-[17px] m-[14px] flex items-center justify-center font-bold text-[18px] cursor-pointer"
             >
               <FiPlusCircle className="text-[28px]" />
             </div>

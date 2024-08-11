@@ -200,11 +200,11 @@ export default function TeacherSchedule() {
     <TeacherLayout
         activeMenu="schedule"
         setActiveMenu={() => {}}
-        titleComponent={<Title title="일정" />}
+        titleComponent={<Title title="일정관리" />}
         imageSrc={daramgi} 
     >
       <DndProvider backend={HTML5Backend}>
-        <div className="flex flex-col w-full mt-[70px] px-5">
+        <div className="flex flex-col w-full lg:mt-[70px] mt-5 px-5">
           <div className="mt-5 flex flex-col lg:flex-row justify-between items-center mt-10 space-y-4 lg:space-y-0 lg:space-x-16">
             <StyledCalendar
               onChange={setDate}
@@ -284,7 +284,7 @@ export default function TeacherSchedule() {
                   onChange={(e) => setTime(e.target.value)}
                 />
                 <input
-                  className="border flex-grow h-[40px] bg-[#F8F8F8] border-[2px] rounded-[10px] border-[#B8B8B8] mr-1 p-1"
+                  className="border flex-grow h-[40px] w-[100px] lg:w-full bg-[#F8F8F8] border-[2px] rounded-[10px] border-[#B8B8B8] mr-1 p-1"
                   type="text"
                   value={todo}
                   onChange={(e) => setTodo(e.target.value)}

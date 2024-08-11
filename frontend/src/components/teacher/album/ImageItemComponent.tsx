@@ -22,7 +22,7 @@ export default function ImageItemComponent({
 }: ImageItemComponentProps) {
   const [{ isDragging }, drag] = useDrag({
     type: 'image',
-    item: { index, itemIndex, image }, // Include full image object
+    item: { index, itemIndex, image },
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
     }),
@@ -43,6 +43,7 @@ export default function ImageItemComponent({
     <div
       ref={(node) => drag(drop(node))}
       className={`relative w-full h-32 ${isDragging ? 'opacity-50' : 'opacity-100'}`}
+      style={{ minHeight: '8rem' }} // minHeight을 추가하여 드롭 가능 영역을 확대합니다.
     >
       {image?.path ? (
         <img

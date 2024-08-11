@@ -10,10 +10,10 @@ export default function GrowthChild({ name, profileImgPath, completed, onClick }
   return (
     <div 
       onClick={onClick} 
-      className="flex flex-col justify-around items-center w-[133px] lg:w-[137px] h-[168px] rounded-[10px] p-1 m-2 font-bold text-[20px] cursor-pointer"
+      className="flex flex-col justify-around items-center w-[98px] lg:w-[137px] lg:h-[168px] h-[120px] rounded-[10px] p-1 m-2 font-bold text-[20px] cursor-pointer"
     >
       {!completed ? (
-        <div className="w-[120px] h-[120px]">
+        <div className="lg:w-[120px] lg:h-[120px] w-[93px] h-[93px]">
           <img src={profileImgPath} className="w-full h-full rounded-full object-cover" />
         </div>
       ) : (
