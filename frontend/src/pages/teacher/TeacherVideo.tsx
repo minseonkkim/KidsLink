@@ -94,6 +94,15 @@ export default function TeacherVideo() {
   }, [teacherInfo, setTeacherInfo]);
 
   useEffect(() => {
+    return () => {
+      if (isRecording) {
+        handleStopRecording(); // 녹화 중지
+      }
+      leaveSession(openvidu, setOpenvidu, setIsSessionJoined, navigate);
+    };
+  }, [isRecording, openvidu, navigate]);
+
+  useEffect(() => {
     console.log("Fetching recordings...");
     fetchRecordingsList(setRecordings);
   }, []);
