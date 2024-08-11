@@ -85,6 +85,12 @@ export default function ParentVideo() {
     }
   }, [parentInfo, setParentInfo]);
 
+  useEffect(() => {
+    return () => {
+      leaveSession(openvidu, setOpenvidu, setIsSessionJoined, navigate);
+    };
+  }, [openvidu, navigate]);
+
   // control 상태가 변경될 때마다 publisher의 오디오와 비디오 상태를 업데이트
   useEffect(() => {
     if (openvidu.publisher) {
