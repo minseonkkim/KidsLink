@@ -155,8 +155,8 @@ export default function TeacherDocument() {
         titleComponent={<Title title="문서관리" />}
         imageSrc={daramgi} 
     >
-      <div className="relative w-full gap-8 lg:my-8 mt-16 px-4 lg:px-24 flex flex-col lg:flex-row justify-between">
-        <div className="rounded-[20px] bg-[#f4f4f4] w-full lg:w-[360px] lg:h-[500px] h-[300px] p-[15px] mb-5 lg:mb-0">
+      <div className="relative w-full lg:my-8 mt-20 px-[15px] flex flex-col lg:flex-row justify-between">
+        <div className="rounded-[20px] bg-[#f4f4f4] w-full lg:w-[360px] lg:h-[540px] h-[300px] p-[15px] mb-5 lg:mb-0">
           <div className="flex space-x-2 ml-2 mb-4">
             <button
               className={`rounded-[10px] ${selectedDocumentType === "전체" ? 'bg-[#D9D9D9] border-[2px] border-[#A0A0A0]' : 'bg-[#f4f4f4] border-[2px] border-[#d3d3d3]'} flex items-center justify-center w-[60px] h-[35px] font-bold text-[15px] cursor-pointer`}
@@ -190,7 +190,7 @@ export default function TeacherDocument() {
           </div>
           <div
             ref={containerRef}
-            className="bg-[#f4f4f4] w-full lg:w-[340px] h-[230px] lg:h-[350px] overflow-y-auto custom-scrollbar"
+            className="bg-[#f4f4f4] w-full lg:w-[340px] h-[230px] lg:h-[395px] overflow-y-auto custom-scrollbar"
           >
             {displayedDocuments.map((document, index) => (
               <div
@@ -217,7 +217,7 @@ export default function TeacherDocument() {
             {loading && <p>Loading more documents...</p>}
           </div>
         </div>
-        <div className='border-[#B2D170] border-[3px] rounded-[20px] w-[700px] h-[500px] p-[15px] overflow-y-auto custom-scrollbar'>
+        <div className='border-[#B2D170] border-[3px] rounded-[20px] w-[700px] h-[540px] p-[15px] overflow-y-auto custom-scrollbar'>
           {selectedDocumentId !== null && selectedDocumentRealType === "Absent" && (
             <AbsentDocument absentId={selectedDocumentId} onUpdate={handleDocumentUpdate} isOurClass={false} />
           )}

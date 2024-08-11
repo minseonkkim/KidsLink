@@ -12,8 +12,8 @@ import albumIcon from "../assets/teacher/album_btn_img.png";
 import documentIcon from "../assets/teacher/document_btn_img.png";
 import busIcon from "../assets/teacher/bus_btn_img.png";
 import consultingIcon from "../assets/teacher/consulting_btn_img.png";
-import ourClassIcon from "../assets/teacher/document_btn_img.png";
-import scheduleIcon from "../assets/teacher/document_btn_img.png";
+import ourClassIcon from "../assets/teacher/ourclass_btn_img.png";
+import scheduleIcon from "../assets/teacher/calendar_btn_img.png";
 
 interface Alarm {
   id: number;
@@ -183,36 +183,36 @@ const TeacherLayout = ({ children, activeMenu, setActiveMenu, titleComponent, im
                     </Link>
                     <div className="flex flex-col space-y-4">
                         <Link to="/" className={`flex items-center py-3 pl-8 transition-colors duration-300 bg-left bg-no-repeat bg-[length:200%_100%] ${activeMenu === 'ourclass' ? 'bg-[#FFF9D7] border-r-8 border-[#FFEC8A]' : 'hover:bg-[#FFF9D7] hover:bg-right hover:bg-[length:100%_100%]'}`} onClick={() => setActiveMenu('ourclass')}>
-                            <img src={ourClassIcon} alt="우리반 보기" className="w-6 h-6 mr-3" />
-                            <span className="text-gray-700 font-medium">우리반 보기</span>
+                            <img src={ourClassIcon} alt="우리반 보기" className="w-8 h-8 mr-5" />
+                            <span className="text-gray-700 text-[17px]">우리반 보기</span>
                         </Link>
                         <Link to="/schedule" className={`flex items-center py-3 pl-8 transition-colors duration-300 bg-left bg-no-repeat bg-[length:200%_100%] ${activeMenu === 'schedule' ? 'bg-[#FFF9D7] border-r-8 border-[#FFEC8A]' : 'hover:bg-[#FFF9D7] hover:bg-right hover:bg-[length:100%_100%]'}`} onClick={() => setActiveMenu('schedule')}>
-                            <img src={scheduleIcon} alt="일정 관리" className="w-6 h-6 mr-3" />
-                            <span className="text-gray-700 font-medium">일정관리</span>
+                            <img src={scheduleIcon} alt="일정 관리" className="w-8 h-8 mr-5" />
+                            <span className="text-gray-700 text-[17px]">일정관리</span>
                         </Link>
                         <Link to="/album" className={`flex items-center py-3 pl-8 transition-colors duration-300 bg-left bg-no-repeat bg-[length:200%_100%] ${activeMenu === 'album' ? 'bg-[#FFF9D7] border-r-8 border-[#FFEC8A]' : 'hover:bg-[#FFF9D7] hover:bg-right hover:bg-[length:100%_100%]'}`} onClick={() => setActiveMenu('album')}>
-                            <img src={albumIcon} alt="사진분류" className="w-6 h-6 mr-3" />
-                            <span className="text-gray-700 font-medium">사진분류</span>
+                            <img src={albumIcon} alt="사진분류" className="w-8 h-8 mr-5" />
+                            <span className="text-gray-700 text-[17px]">사진분류</span>
                         </Link>
                         <Link to="/bus" className={`flex items-center py-3 pl-8 transition-colors duration-300 bg-left bg-no-repeat bg-[length:200%_100%] ${activeMenu === 'bus' ? 'bg-[#FFF9D7] border-r-8 border-[#FFEC8A]' : 'hover:bg-[#FFF9D7] hover:bg-right hover:bg-[length:100%_100%]'}`} onClick={() => setActiveMenu('bus')}>
-                            <img src={busIcon} alt="등하원 관리" className="w-6 h-6 mr-3" />
-                            <span className="text-gray-700 font-medium">등하원 관리</span>
+                            <img src={busIcon} alt="등하원 관리" className="w-8 h-8 mr-5" />
+                            <span className="text-gray-700 text-[17px]">등하원 관리</span>
                         </Link>
                         <Link to="/meeting" className={`flex items-center py-3 pl-8 transition-colors duration-300 bg-left bg-no-repeat bg-[length:200%_100%] ${activeMenu === 'meeting' ? 'bg-[#FFF9D7] border-r-8 border-[#FFEC8A]' : 'hover:bg-[#FFF9D7] hover:bg-right hover:bg-[length:100%_100%]'}`} onClick={() => setActiveMenu('meeting')}>
-                            <img src={consultingIcon} alt="화상 상담" className="w-6 h-6 mr-3" />
-                            <span className="text-gray-700 font-medium">화상 상담</span>
+                            <img src={consultingIcon} alt="화상 상담" className="w-8 h-8 mr-5" />
+                            <span className="text-gray-700 text-[17px]">화상 상담</span>
                         </Link>
                         <Link to="/notice" className={`flex items-center py-3 pl-8 transition-colors duration-300 bg-left bg-no-repeat bg-[length:200%_100%] ${activeMenu === 'notice' ? 'bg-[#FFF9D7] border-r-8 border-[#FFEC8A]' : 'hover:bg-[#FFF9D7] hover:bg-right hover:bg-[length:100%_100%]'}`} onClick={() => setActiveMenu('notice')}>
-                            <img src={noticeIcon} alt="알림장" className="w-6 h-6 mr-3" />
-                            <span className="text-gray-700 font-medium">알림장</span>
+                            <img src={noticeIcon} alt="알림장" className="w-8 h-8 mr-5" />
+                            <span className="text-gray-700 text-[17px]">알림장</span>
                         </Link>
                         <Link to="/growth" className={`flex items-center py-3 pl-8 transition-colors duration-300 bg-left bg-no-repeat bg-[length:200%_100%] ${activeMenu === 'growth' ? 'bg-[#FFF9D7] border-r-8 border-[#FFEC8A]' : 'hover:bg-[#FFF9D7] hover:bg-right hover:bg-[length:100%_100%]'}`} onClick={() => setActiveMenu('growth')}>
-                            <img src={growthdiaryIcon} alt="성장일지" className="w-6 h-6 mr-3" />
-                            <span className="text-gray-700 font-medium">성장일지</span>
+                            <img src={growthdiaryIcon} alt="성장일지" className="w-8 h-8 mr-5" />
+                            <span className="text-gray-700 text-[17px]">성장일지</span>
                         </Link>
                         <Link to="/document" className={`flex items-center py-3 pl-8 transition-colors duration-300 bg-left bg-no-repeat bg-[length:200%_100%] ${activeMenu === 'document' ? 'bg-[#FFF9D7] border-r-8 border-[#FFEC8A]' : 'hover:bg-[#FFF9D7] hover:bg-right hover:bg-[length:100%_100%]'}`} onClick={() => setActiveMenu('document')}>
-                            <img src={documentIcon} alt="문서관리" className="w-6 h-6 mr-3" />
-                            <span className="text-gray-700 font-medium">문서관리</span>
+                            <img src={documentIcon} alt="문서관리" className="w-8 h-8 mr-5" />
+                            <span className="text-gray-700 text-[17px]">문서관리</span>
                         </Link>
                     </div>
                 </aside>

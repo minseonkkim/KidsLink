@@ -131,16 +131,18 @@ export default function TeacherOurClass() {
         titleComponent={<Title title={teacherInfo ? `${teacherInfo.kindergartenName} ${'\u00A0'} ${teacherInfo.kindergartenClassName}` : ""} />}
         imageSrc={daramgi} 
     >
-      <div className="relative w-full my-10 mb-32 px-4 lg:px-36 flex flex-col items-center">
-        <div className="flex justify-end w-full lg:w-[1200px] space-x-4 mr-16">
-          <div className="bg-[#ffdfdf] px-3 py-1 lg:px-5 lg:py-2 font-bold rounded-[10px] flex flex-row items-center text-lg lg:text-xl font-bold">
-            결석: {absentCount}명
+      <div className="relative w-full my-6 mb-32 px-[15px] flex flex-col items-center">
+        <div className="flex justify-end w-full lg:w-[1200px] mr-16 text-lg lg:text-xl font-bold items-center">
+          <div className="bg-[#ffdfdf] px-3 py-1.5 lg:px-5 font-bold rounded-[10px] flex flex-row items-center mr-3">
+            결석
           </div>
-          <div className="bg-[#e7dfff] px-3 py-1 lg:px-5 lg:py-2 font-bold rounded-[10px] flex flex-row items-center text-lg lg:text-xl font-bold">
-            투약: {dosageCount}명
+          <div className="mr-5">{absentCount}명</div>
+          <div className="bg-[#e7dfff] px-3 py-1.5 lg:px-5 font-bold rounded-[10px] flex flex-row items-center mr-3">
+            투약
           </div>
+          <div className="mr-5">{dosageCount}명</div>
         </div>
-        <div className="flex flex-row flex-wrap w-full lg:w-[1200px] mt-4 justify-around">
+        <div className="flex flex-row flex-wrap w-full mt-4 justify-around">
           {childs.map((child, index) => (
             <ChildCard
               key={index}

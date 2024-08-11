@@ -91,7 +91,7 @@ export default function TeacherNotice() {
             titleComponent={<Title title="알림장" />}
             imageSrc={daramgi} 
         >
-            <div className="relative w-full mt-10 mb-32 px-4 lg:px-36 flex flex-col items-center">
+            <div className="relative w-full mt-10 mb-32 px-[15px] flex flex-col items-center">
                 <button onClick={openCreateModal} className="absolute lg:right-[35px] right-[130px] border-[2px] border-[#7C7C7C] bg-[#E3EEFF] px-3 py-1 font-bold rounded-[10px] hover:bg-[#D4DDEA] flex flex-row items-center">
                     <LuPencilLine className="mr-2" />알림장 작성하기
                 </button>
@@ -100,7 +100,7 @@ export default function TeacherNotice() {
                         <select
                             value={searchType}
                             onChange={handleSearchTypeChange}
-                            className="lg:w-1/4 w:1/3 border-2 border-[#f4f4f4] focus:outline-none text-lg rounded-[8px] px-2 py-1"
+                            className="w:1/3 border-2 border-[#f4f4f4] focus:outline-none text-lg rounded-[8px] px-2 py-1"
                         >
                             <option value="title">제목 검색</option>
                             <option value="date">날짜 검색</option>

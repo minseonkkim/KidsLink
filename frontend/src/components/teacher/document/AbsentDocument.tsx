@@ -47,7 +47,6 @@ export default function AbsentDocument({ absentId, onUpdate, isOurClass }: Absen
     return <div>Loading...</div>;
   }
 
-  // Safely handling the details content, checking if it's null or undefined
   const detailsContent = absentDocument.details ? absentDocument.details.split('\n').map((line, index) => (
     <p key={index} className="mb-2">{line}</p>
   )) : "";
