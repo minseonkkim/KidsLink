@@ -4,6 +4,7 @@ import { checkAbsentDocument, getAbsentDocument } from "../../../api/document";
 import { formatDate } from "../../../utils/teacher/formatDate";
 import { showToastSuccess } from "../../../components/teacher/common/ToastNotification";
 import ToastNotification from "../../../components/teacher/common/ToastNotification";
+import LoadingSpinner from "../../common/LoadingSpinner";
 
 interface AbsentDocumentProps {
   absentId: number;
@@ -44,7 +45,7 @@ export default function AbsentDocument({ absentId, onUpdate, isOurClass }: Absen
   const handleCheckboxChange = () => {};
 
   if (!absentDocument) {
-    return <div>Loading...</div>;
+    return <LoadingSpinner/>
   }
 
   const detailsContent = absentDocument.details ? absentDocument.details.split('\n').map((line, index) => (

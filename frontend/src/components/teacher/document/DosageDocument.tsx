@@ -4,6 +4,7 @@ import { checkDosageDocument, getDosageDocument } from "../../../api/document";
 import { formatDate } from "../../../utils/teacher/formatDate";
 import { showToastSuccess } from "../../../components/teacher/common/ToastNotification";
 import ToastNotification from "../../../components/teacher/common/ToastNotification";
+import LoadingSpinner from "../../common/LoadingSpinner";
 
 interface DosageDocumentProps {
     dosageId: number;
@@ -44,7 +45,7 @@ export default function DosageDocument({ dosageId, onUpdate, isOurClass }: Dosag
     const handleCheckboxChange = () => {};
 
     if (!dosageDocument) {
-        return <div>Loading...</div>;
+        return <LoadingSpinner/>
     }
 
     return (

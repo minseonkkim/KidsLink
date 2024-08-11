@@ -4,6 +4,7 @@ import profileImg from "../../assets/parent/notice-daramgi.png"
 import { getGrowthDiary, DiaryDetail } from "../../api/growthdiary"
 import TeacherProfile from "../../components/parent/common/TeacherProfile"
 import DiaryContent from "../../components/parent/diary/DiaryContent"
+import LoadingSpinner from "../../components/common/LoadingSpinner"
 
 export default function ParentDiaryDetail() {
   const { diaryId } = useParams<{ diaryId: string }>()
@@ -27,7 +28,7 @@ export default function ParentDiaryDetail() {
   }, [diaryId])
 
   if (loading) {
-    return <div>Loading...</div>
+    return <LoadingSpinner/>
   }
 
   if (!diary) {

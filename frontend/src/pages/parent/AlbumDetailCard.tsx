@@ -4,6 +4,7 @@ import Slider from 'react-slick'
 import { getKidAlbum } from '../../api/album'
 import "slick-carousel/slick/slick.css"
 import "slick-carousel/slick/slick-theme.css"
+import LoadingSpinner from '../../components/common/LoadingSpinner'
 
 export default function AlbumDetailCard() {
   const { albumId, imageId } = useParams()
@@ -38,11 +39,7 @@ export default function AlbumDetailCard() {
   }, [albumId, imageId])
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex flex-col justify-center items-center bg-white">
-        <p>Loading...</p>
-      </div>
-    )
+    return <LoadingSpinner/>
   }
 
   if (!album) {
