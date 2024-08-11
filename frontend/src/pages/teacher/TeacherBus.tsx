@@ -144,8 +144,14 @@ export default function TeacherBus() {
 
   const renderModalContent = (action: '출발' | '도착') => (
     <div className="w-full max-w-md py-3 px-3 bg-white">
-      <h2 className="text-2xl font-semibold mb-4">알림</h2>
-      <p className="text-gray-700 mb-6">학부모에게 버스 {action} 알림을 전송하시겠습니까?</p>
+      <h2 className="text-2xl font-semibold mb-4">
+        {action === '출발' ? '알림' : ''}
+      </h2>
+      {action === '출발' ? (
+        <p className="text-gray-700 mb-6">학부모에게 버스 {action} 알림을 전송하시겠습니까?</p>
+      ) : (
+        <p className="text-gray-700 mb-6">아이들의 등하원 체크가 모두 완료되었습니까?</p>
+      )}
       <div className="flex justify-end space-x-3">
         <button
           onClick={() => {
@@ -159,22 +165,9 @@ export default function TeacherBus() {
           }}
           className="px-4 py-2 border-[2px] border-[#7C7C7C] bg-[#E3EEFF] font-bold rounded-[10px] shadow-md hover:bg-[#D4DDEA] transition duration-300 ease-in-out"
         >
-          전송
+          {action === '출발' ? '전송' : '확인'}
         </button>
-        {/* <button
-          onClick={() => {
-            if (action === '출발') {
-              postBusStart(busId);
-              startWebSocketConnection();
-            } else {
-              stopWebSocketConnection();
-            }
-            closeModal();
-          }}
-          className="px-4 py-2 border-[2px] border-[#7C7C7C] bg-[#E3EEFF] font-bold rounded-[10px] shadow-md hover:bg-[#D4DDEA] transition duration-300 ease-in-out"
-        >
-          전송
-        </button> */}
+        
         <button
           onClick={closeModal}
           className="px-4 py-2 bg-neutral-300 border-[2px] border-[#7C7C7C] text-black font-semibold rounded-lg shadow-md hover:bg-neutral-400 transition duration-300 ease-in-out"
@@ -184,7 +177,7 @@ export default function TeacherBus() {
       </div>
     </div>
   );
-
+  
   const openCreateModal = (action: '출발' | '도착') => {
     openModal(renderModalContent(action));
   };
