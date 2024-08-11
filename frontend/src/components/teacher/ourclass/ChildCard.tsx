@@ -102,11 +102,11 @@ export default function ChildCard({ name, gender, age, absent, dosage, profileIm
     };
 
     return (
-        <div className="w-[125px] lg:w-[180px] h-[190px] lg:h-[250px] lg:mx-[20px] mx-1 my-4 relative drop-shadow-md rounded-[10px] bg-[#fff9d7]">
-            <p className="w-[90px] absolute lg:left-[45px] lg:top-[170px] left-[19px] top-[128px] text-xl font-bold text-center text-[#363636]">
+        <div className="w-[125px] lg:w-[170px] h-[190px] lg:h-[235px] lg:mx-[20px] mx-1 my-4 relative drop-shadow-md rounded-[10px] bg-[#fff9d7]">
+            <p className="w-[90px] absolute lg:left-[45px] lg:top-[165px] left-[19px] top-[128px] text-xl font-bold text-center text-[#363636]">
                 {name}
             </p>
-            <p className="w-[100px] absolute lg:left-[40px] lg:top-[190px] left-[10px] top-[146px] text-l mt-3 font-medium text-center text-[#363636]">
+            <p className="w-[100px] absolute lg:left-[40px] lg:top-[185px] left-[10px] top-[146px] text-l mt-3 font-medium text-center text-[#363636]">
                 {gender === "M" ? "남자" : "여자"} / 만 {age}세
             </p>
             {absent && (
