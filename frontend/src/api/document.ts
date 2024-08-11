@@ -73,7 +73,6 @@ export async function getClassAllDocuments(){
           details: item.type === 'Absent' ? item.absent : item.dosage,
         };
       });
-      console.log(documents)
       return documents;
     } else {
       throw new Error('Failed to get documents');
@@ -203,7 +202,6 @@ export async function getDocumentsByDate(childId: number, date: string){
   try{
     const response = await axiosInstance.get(`child/${childId}/document/check?date=${date}`)
     if(response.data.status === 'success'){
-      console.log("날짜별 아이 문서 조회: ", response.data.data)
       return response.data.data
     }
   }catch (error) {
