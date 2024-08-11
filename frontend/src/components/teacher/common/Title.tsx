@@ -46,7 +46,7 @@ export default function Title({ title, tooltipContent, tabs }: TitleProps) {
                             <Link
                                 key={index}
                                 to={tab.link}
-                                className={`mx-2 px-5 py-1 rounded-full ${
+                                className={`mx-2 px-5 py-1.5 rounded-full ${
                                     isActive ? 'bg-[#8CAD1E] text-white' : 'bg-gray-200 text-gray-700'
                                 } hover:bg-[#8CAD1E] hover:text-white transition duration-300 text-[17px]`}
                             >

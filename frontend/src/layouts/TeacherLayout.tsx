@@ -22,7 +22,7 @@ interface Alarm {
   code: string;
 }
 
-const TeacherLayout = ({ children, activeMenu, setActiveMenu, titleComponent, imageSrc }: any) => {
+export default function TeacherLayout ({ children, activeMenu, setActiveMenu, titleComponent, imageSrc }: any) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const { openModal, closeModal, Modal, isModalOpen } = useModal();
   const [alertList, setAlertList] = useState<Alarm[]>([]);
@@ -118,63 +118,63 @@ const TeacherLayout = ({ children, activeMenu, setActiveMenu, titleComponent, im
       if (activeMenu === 'ourclass') {
           return (
               <div className="flex items-center space-x-2">
-                  {imageSrc && <img src={imageSrc} alt="다람쥐" className="ml-4 w-12 h-16 lg:w-16 lg:h-24 mr-1" />}
+                  {imageSrc && <img src={imageSrc} alt="다람쥐" className="ml-4 w-12 h-16 lg:w-16 lg:h-24 mr-2 object-contain" />}
                   {titleComponent}
               </div>
           );
       } else if (activeMenu === 'schedule') {
           return (
               <div className="flex items-center space-x-2">
-                  {imageSrc && <img src={imageSrc} alt="다람쥐" className="ml-4 w-12 h-16 lg:w-16 lg:h-24 mr-1" />}
+                  {imageSrc && <img src={imageSrc} alt="다람쥐" className="ml-4 w-12 h-16 lg:w-16 lg:h-24 mr-2 object-contain" />}
                   {titleComponent}
               </div>
           );
       } else if (activeMenu === 'album') {
           return (
               <div className="flex items-center space-x-2">
-                  {imageSrc && <img src={imageSrc} alt="다람쥐" className="ml-4 w-12 h-16 lg:w-16 lg:h-24 mr-1" />}
+                  {imageSrc && <img src={imageSrc} alt="다람쥐" className="ml-4 w-12 h-16 lg:w-16 lg:h-24 mr-1 object-contain" />}
                   {titleComponent}
               </div>
           );
       } else if (activeMenu === 'meeting') {
           return (
               <div className="flex items-center space-x-2">
-                  {imageSrc && <img src={imageSrc} alt="다람쥐" className="ml-4 w-12 h-16 lg:w-16 lg:h-24 mr-1" />}
+                  {imageSrc && <img src={imageSrc} alt="다람쥐" className="ml-4 w-12 h-16 lg:w-16 lg:h-24 mr-2 object-contain" />}
                   {titleComponent}
               </div>
           );
       } else if (activeMenu === 'notice') {
           return (
               <div className="flex items-center space-x-2">
-                  {imageSrc && <img src={imageSrc} alt="다람쥐" className="ml-4 w-12 h-16 lg:w-16 lg:h-24 mr-1" />}
+                  {imageSrc && <img src={imageSrc} alt="다람쥐" className="ml-4 w-12 h-16 lg:w-16 lg:h-24 mr-2 object-contain" />}
                   {titleComponent}
               </div>
           );
       } else if (activeMenu === 'growth') {
           return (
               <div className="flex items-center space-x-2">
-                  {imageSrc && <img src={imageSrc} alt="다람쥐" className="ml-4 w-12 h-16 lg:w-16 lg:h-24 mr-1" />}
+                  {imageSrc && <img src={imageSrc} alt="다람쥐" className="ml-4 w-12 h-16 lg:w-16 lg:h-24 mr-2 object-contain" />}
                   {titleComponent}
               </div>
           );
       } else if (activeMenu === 'document') {
           return (
               <div className="flex items-center space-x-2">
-                  {imageSrc && <img src={imageSrc} alt="다람쥐" className="ml-4 w-12 h-16 lg:w-16 lg:h-24 mr-1" />}
+                  {imageSrc && <img src={imageSrc} alt="다람쥐" className="ml-4 w-12 h-16 lg:w-16 lg:h-24 mr-2 object-contain" />}
                   {titleComponent}
               </div>
           );
       } else if (activeMenu === 'bus') {
           return (
               <div className="flex items-center space-x-2">
-                  {imageSrc && <img src={imageSrc} alt="다람쥐" className="ml-4 w-12 h-16 lg:w-16 lg:h-24 mr-1" />}
+                  {imageSrc && <img src={imageSrc} alt="다람쥐" className="ml-4 w-12 h-16 lg:w-16 lg:h-24 mr-2 object-contain" />}
                   {titleComponent}
               </div>
           );
       } else if (activeMenu === 'mypage') {
           return (
               <div className="flex items-center space-x-2">
-                  {imageSrc && <img src={imageSrc} alt="다람쥐" className="ml-4 w-12 h-16 lg:w-16 lg:h-24 mr-1" />}
+                  {imageSrc && <img src={imageSrc} alt="다람쥐" className="ml-4 w-12 h-16 lg:w-16 lg:h-24 mr-2 object-contain" />}
                   {titleComponent}
               </div>
           );
@@ -189,38 +189,78 @@ const TeacherLayout = ({ children, activeMenu, setActiveMenu, titleComponent, im
                         <p className="text-[36px] font-bold text-left font-Cafe24Ssurround gradient-text cursor-pointer">키즈링크</p>
                     </Link>
                     <div className="flex flex-col space-y-4">
-                        <Link to="/" className={`flex items-center py-3 pl-8 transition-colors duration-300 bg-left bg-no-repeat bg-[length:200%_100%] ${activeMenu === 'ourclass' ? 'bg-[#FFF9D7] border-r-8 border-[#FFEC8A]' : 'hover:bg-[#FFF9D7] hover:bg-right hover:bg-[length:100%_100%]'}`} onClick={() => setActiveMenu('ourclass')}>
-                            <img src={ourClassIcon} alt="우리반 보기" className="w-8 h-8 mr-5" />
-                            <span className="text-gray-700 text-[17px]">우리반 보기</span>
-                        </Link>
-                        <Link to="/schedule" className={`flex items-center py-3 pl-8 transition-colors duration-300 bg-left bg-no-repeat bg-[length:200%_100%] ${activeMenu === 'schedule' ? 'bg-[#FFF9D7] border-r-8 border-[#FFEC8A]' : 'hover:bg-[#FFF9D7] hover:bg-right hover:bg-[length:100%_100%]'}`} onClick={() => setActiveMenu('schedule')}>
-                            <img src={scheduleIcon} alt="일정 관리" className="w-8 h-8 mr-5" />
-                            <span className="text-gray-700 text-[17px]">일정관리</span>
-                        </Link>
-                        <Link to="/album" className={`flex items-center py-3 pl-8 transition-colors duration-300 bg-left bg-no-repeat bg-[length:200%_100%] ${activeMenu === 'album' ? 'bg-[#FFF9D7] border-r-8 border-[#FFEC8A]' : 'hover:bg-[#FFF9D7] hover:bg-right hover:bg-[length:100%_100%]'}`} onClick={() => setActiveMenu('album')}>
-                            <img src={albumIcon} alt="사진분류" className="w-8 h-8 mr-5" />
-                            <span className="text-gray-700 text-[17px]">사진분류</span>
-                        </Link>
-                        <Link to="/bus" className={`flex items-center py-3 pl-8 transition-colors duration-300 bg-left bg-no-repeat bg-[length:200%_100%] ${activeMenu === 'bus' ? 'bg-[#FFF9D7] border-r-8 border-[#FFEC8A]' : 'hover:bg-[#FFF9D7] hover:bg-right hover:bg-[length:100%_100%]'}`} onClick={() => setActiveMenu('bus')}>
-                            <img src={busIcon} alt="등하원 관리" className="w-8 h-8 mr-5" />
-                            <span className="text-gray-700 text-[17px]">등하원 관리</span>
-                        </Link>
-                        <Link to="/meeting" className={`flex items-center py-3 pl-8 transition-colors duration-300 bg-left bg-no-repeat bg-[length:200%_100%] ${activeMenu === 'meeting' ? 'bg-[#FFF9D7] border-r-8 border-[#FFEC8A]' : 'hover:bg-[#FFF9D7] hover:bg-right hover:bg-[length:100%_100%]'}`} onClick={() => setActiveMenu('meeting')}>
-                            <img src={consultingIcon} alt="화상 상담" className="w-8 h-8 mr-5" />
-                            <span className="text-gray-700 text-[17px]">화상 상담</span>
-                        </Link>
-                        <Link to="/notice" className={`flex items-center py-3 pl-8 transition-colors duration-300 bg-left bg-no-repeat bg-[length:200%_100%] ${activeMenu === 'notice' ? 'bg-[#FFF9D7] border-r-8 border-[#FFEC8A]' : 'hover:bg-[#FFF9D7] hover:bg-right hover:bg-[length:100%_100%]'}`} onClick={() => setActiveMenu('notice')}>
-                            <img src={noticeIcon} alt="알림장" className="w-8 h-8 mr-5" />
-                            <span className="text-gray-700 text-[17px]">알림장</span>
-                        </Link>
-                        <Link to="/growth" className={`flex items-center py-3 pl-8 transition-colors duration-300 bg-left bg-no-repeat bg-[length:200%_100%] ${activeMenu === 'growth' ? 'bg-[#FFF9D7] border-r-8 border-[#FFEC8A]' : 'hover:bg-[#FFF9D7] hover:bg-right hover:bg-[length:100%_100%]'}`} onClick={() => setActiveMenu('growth')}>
-                            <img src={growthdiaryIcon} alt="성장일지" className="w-8 h-8 mr-5" />
-                            <span className="text-gray-700 text-[17px]">성장일지</span>
-                        </Link>
-                        <Link to="/document" className={`flex items-center py-3 pl-8 transition-colors duration-300 bg-left bg-no-repeat bg-[length:200%_100%] ${activeMenu === 'document' ? 'bg-[#FFF9D7] border-r-8 border-[#FFEC8A]' : 'hover:bg-[#FFF9D7] hover:bg-right hover:bg-[length:100%_100%]'}`} onClick={() => setActiveMenu('document')}>
-                            <img src={documentIcon} alt="문서관리" className="w-8 h-8 mr-5" />
-                            <span className="text-gray-700 text-[17px]">문서관리</span>
-                        </Link>
+                    <Link
+    to="/"
+    className={`flex items-center py-3 pl-8 transition-colors duration-300 bg-left bg-no-repeat bg-[length:200%_100%] ${activeMenu === 'ourclass' ? 'bg-[#FFF9D7] border-r-8 border-[#FFEC8A]' : 'hover:bg-[#FFF9D7] hover:bg-right hover:bg-[length:100%_100%]'}`}
+    onClick={() => setActiveMenu('ourclass')}
+>
+    <img src={ourClassIcon} alt="우리반 보기" className="w-8 h-8 mr-5" />
+    <span className={`text-[17px] ${activeMenu === 'ourclass' ? 'font-bold text-gray-800' : 'text-gray-700'}`}>우리반 보기</span>
+</Link>
+
+<Link
+    to="/schedule"
+    className={`flex items-center py-3 pl-8 transition-colors duration-300 bg-left bg-no-repeat bg-[length:200%_100%] ${activeMenu === 'schedule' ? 'bg-[#FFF9D7] border-r-8 border-[#FFEC8A]' : 'hover:bg-[#FFF9D7] hover:bg-right hover:bg-[length:100%_100%]'}`}
+    onClick={() => setActiveMenu('schedule')}
+>
+    <img src={scheduleIcon} alt="일정 관리" className="w-8 h-8 mr-5" />
+    <span className={`text-[17px] ${activeMenu === 'schedule' ? 'font-bold text-gray-800' : 'text-gray-700'}`}>일정관리</span>
+</Link>
+
+<Link
+    to="/album"
+    className={`flex items-center py-3 pl-8 transition-colors duration-300 bg-left bg-no-repeat bg-[length:200%_100%] ${activeMenu === 'album' ? 'bg-[#FFF9D7] border-r-8 border-[#FFEC8A]' : 'hover:bg-[#FFF9D7] hover:bg-right hover:bg-[length:100%_100%]'}`}
+    onClick={() => setActiveMenu('album')}
+>
+    <img src={albumIcon} alt="사진분류" className="w-8 h-8 mr-5" />
+    <span className={`text-[17px] ${activeMenu === 'album' ? 'font-bold text-gray-800' : 'text-gray-700'}`}>사진분류</span>
+</Link>
+
+<Link
+    to="/bus"
+    className={`flex items-center py-3 pl-8 transition-colors duration-300 bg-left bg-no-repeat bg-[length:200%_100%] ${activeMenu === 'bus' ? 'bg-[#FFF9D7] border-r-8 border-[#FFEC8A]' : 'hover:bg-[#FFF9D7] hover:bg-right hover:bg-[length:100%_100%]'}`}
+    onClick={() => setActiveMenu('bus')}
+>
+    <img src={busIcon} alt="등하원 관리" className="w-8 h-8 mr-5" />
+    <span className={`text-[17px] ${activeMenu === 'bus' ? 'font-bold text-gray-800' : 'text-gray-700'}`}>등하원 관리</span>
+</Link>
+
+<Link
+    to="/meeting"
+    className={`flex items-center py-3 pl-8 transition-colors duration-300 bg-left bg-no-repeat bg-[length:200%_100%] ${activeMenu === 'meeting' ? 'bg-[#FFF9D7] border-r-8 border-[#FFEC8A]' : 'hover:bg-[#FFF9D7] hover:bg-right hover:bg-[length:100%_100%]'}`}
+    onClick={() => setActiveMenu('meeting')}
+>
+    <img src={consultingIcon} alt="화상 상담" className="w-8 h-8 mr-5" />
+    <span className={`text-[17px] ${activeMenu === 'meeting' ? 'font-bold text-gray-800' : 'text-gray-700'}`}>화상 상담</span>
+</Link>
+
+<Link
+    to="/notice"
+    className={`flex items-center py-3 pl-8 transition-colors duration-300 bg-left bg-no-repeat bg-[length:200%_100%] ${activeMenu === 'notice' ? 'bg-[#FFF9D7] border-r-8 border-[#FFEC8A]' : 'hover:bg-[#FFF9D7] hover:bg-right hover:bg-[length:100%_100%]'}`}
+    onClick={() => setActiveMenu('notice')}
+>
+    <img src={noticeIcon} alt="알림장" className="w-8 h-8 mr-5" />
+    <span className={`text-[17px] ${activeMenu === 'notice' ? 'font-bold text-gray-800' : 'text-gray-700'}`}>알림장</span>
+</Link>
+
+<Link
+    to="/growth"
+    className={`flex items-center py-3 pl-8 transition-colors duration-300 bg-left bg-no-repeat bg-[length:200%_100%] ${activeMenu === 'growth' ? 'bg-[#FFF9D7] border-r-8 border-[#FFEC8A]' : 'hover:bg-[#FFF9D7] hover:bg-right hover:bg-[length:100%_100%]'}`}
+    onClick={() => setActiveMenu('growth')}
+>
+    <img src={growthdiaryIcon} alt="성장일지" className="w-8 h-8 mr-5" />
+    <span className={`text-[17px] ${activeMenu === 'growth' ? 'font-bold text-gray-800' : 'text-gray-700'}`}>성장일지</span>
+</Link>
+
+<Link
+    to="/document"
+    className={`flex items-center py-3 pl-8 transition-colors duration-300 bg-left bg-no-repeat bg-[length:200%_100%] ${activeMenu === 'document' ? 'bg-[#FFF9D7] border-r-8 border-[#FFEC8A]' : 'hover:bg-[#FFF9D7] hover:bg-right hover:bg-[length:100%_100%]'}`}
+    onClick={() => setActiveMenu('document')}
+>
+    <img src={documentIcon} alt="문서관리" className="w-8 h-8 mr-5" />
+    <span className={`text-[17px] ${activeMenu === 'document' ? 'font-bold text-gray-800' : 'text-gray-700'}`}>문서관리</span>
+</Link>
+
                     </div>
                 </aside>
 
@@ -238,7 +278,7 @@ const TeacherLayout = ({ children, activeMenu, setActiveMenu, titleComponent, im
           <main className={`flex-1 transition-all duration-300 ${isSidebarOpen ? 'ml-60' : 'ml-0'} p-8 min-h-screen max-h-screen bg-[#F5F5F5] overflow-hidden`}>
                     {/* 헤더와 페이지 타이틀 영역 */}
                     <div className="flex justify-between items-center mb-4">
-                        <h1 className="text-2xl font-semibold text-gray-800">{getMenuTitle()}</h1>
+                        <h1 className="text-[22px] font-semibold text-gray-800">{getMenuTitle()}</h1>
                         <div className="fixed top-4 right-8 flex items-center space-x-4">
                             <div className="relative mt-4 mr-1" onClick={() => openAlarmModal()}>
                                 <BiBell className="w-[32px] h-[32px] cursor-pointer text-gray-700" />
@@ -262,5 +302,3 @@ const TeacherLayout = ({ children, activeMenu, setActiveMenu, titleComponent, im
         </>
     );
 };
-
-export default TeacherLayout;
