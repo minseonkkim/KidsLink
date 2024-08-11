@@ -3,7 +3,7 @@ import InfoSection from "../../components/parent/common/InfoSection";
 import daramgi from "../../assets/parent/bus-daramgi.png";
 import busIcon from '../../assets/parent/bus-driving.gif';
 import { receiveBusLocation } from '../../api/webSocket';
-import { postKidBoardingStatus, getKidBoardingStatus } from '../../api/bus';
+import { postKidBoardingStatus, getKidBoardingStatus, getAllBusStops } from '../../api/bus';
 import { getParentInfo } from '../../api/Info';
 import { Toggle } from '../../components/parent/bus/Toggle';
 import { FaBus } from 'react-icons/fa';
@@ -26,6 +26,7 @@ export default function ParentBus() {
   const [busOption, setBusOption] = useState('등원'); // 새로운 상태 추가
   const [childId, setChildId] = useState<number | null>(null);
   const [kindergartenId, setKindergartenId] = useState(null);
+  const [busStops, setBusStops] = useState([]);
   const mapRef = useRef<any>(null);
   const busMarkerRef = useRef<any>(null);
   const parentMarkerRef = useRef<any>(null);
@@ -44,11 +45,13 @@ export default function ParentBus() {
           const fetchedParentInfo = await getParentInfo();
           setParentInfo(fetchedParentInfo);
           currentKindergartenId = fetchedParentInfo.child.kindergartenClass.kindergartenClassId;
-        }
-
-        if (currentKindergartenId) {
           setKindergartenId(currentKindergartenId);
-          console.log("유치원 ID : ", kindergartenId);
+          const fetchedAllBusStopsInfo = await getAllBusStops(currentKindergartenId);
+          setBusStops(fetchedAllBusStopsInfo);
+        } else {
+          setKindergartenId(currentKindergartenId);
+          const fetchedAllBusStopsInfo = await getAllBusStops(kindergartenId);
+          setBusStops(fetchedAllBusStopsInfo);
         }
       } catch (error) {
         console.log("유치원 ID 조회 실패", error);
@@ -56,6 +59,42 @@ export default function ParentBus() {
     }
     fetchParentInfo();
   }, [kindergartenId, setParentInfo]);
+
+
+  useEffect(() => {
+    if (mapRef.current && busStops.length > 0) {
+
+      const infowindow = new window.kakao.maps.InfoWindow({
+        content: '',
+      });
+
+      console.log(busStops)
+  
+      busStops.forEach((busStop) => {
+        const busStopPosition = new window.kakao.maps.LatLng(busStop.latitude, busStop.longitude);
+  
+        // 마커 생성
+        const busStopMarker = new window.kakao.maps.Marker({
+          map: mapRef.current,
+          position: busStopPosition,
+          title: busStop.busStopName,
+        });
+  
+        // 마커 클릭 이벤트 등록
+        window.kakao.maps.event.addListener(busStopMarker, 'click', function () {
+          infowindow.setContent(`<div style="padding:5px;">${busStop.busStopName}</div>
+            `);
+          infowindow.open(mapRef.current, busStopMarker);
+        });
+      });
+  
+      // 지도 클릭 시 정보창 닫기
+      window.kakao.maps.event.addListener(mapRef.current, 'click', function () {
+        infowindow.close();
+      });
+    }
+  }, [mapRef.current, busStops]);
+
 
   const initializeMap = () => {
     if (mapRef.current || !mapContainer.current) {
