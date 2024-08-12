@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -87,14 +88,14 @@ public class VideoController {
     }
 
 
-
     /**
      * Start recording a session
+     *
      * @param sessionId The Session ID
      * @return The Recording ID
      */
     @PostMapping("/sessions/{sessionId}/recordings/start")
-    public ResponseEntity<String> startRecording(@PathVariable("sessionId") String sessionId) throws OpenViduJavaClientException, OpenViduHttpException {
+    public ResponseEntity<Map<String, Object>> startRecording(@PathVariable("sessionId") String sessionId) throws OpenViduJavaClientException, OpenViduHttpException {
         System.out.println("녹화시작");
         // 현재 날짜를 "yyyyMMdd" 형식으로 포맷팅
         String currentDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
@@ -109,8 +110,17 @@ public class VideoController {
                 .hasVideo(true)
                 .build();
 
+
+        // TODO 녹화 방지 잠시 주석
         Recording recording = this.openvidu.startRecording(sessionId, properties);
-        return new ResponseEntity<>(recording.getId(), HttpStatus.OK);
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("segmentId", recording.getId());
+        map.put("recording", recording);
+        map.put("recordingPath", recordingPath);
+        map.put("recordingName", recordingName);
+
+        return new ResponseEntity<>(map, HttpStatus.OK);
     }
 
     /**
@@ -119,11 +129,15 @@ public class VideoController {
      * @return The stopped Recording
      */
     @PostMapping("/recordings/stop/{recordingId}")
-    public ResponseEntity<Recording> stopRecording(@PathVariable("recordingId") String recordingId)
+    public ResponseEntity<Map<String, Object>> stopRecording(@PathVariable("recordingId") String recordingId)
             throws OpenViduJavaClientException, OpenViduHttpException {
         System.out.println("녹화중지");
         Recording recording = openvidu.stopRecording(recordingId);
-        return new ResponseEntity<>(recording, HttpStatus.OK);
+        Map<String, Object> map = new HashMap<>();
+        map.put("status", "OK");
+        map.put("recordingId", recordingId);
+        map.put("recording", recording);
+        return new ResponseEntity<>(map, HttpStatus.OK);
     }
 
     @PostMapping("/recordings/save")
