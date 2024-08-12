@@ -155,8 +155,8 @@ export default function TeacherSupport() {
               {getStepComponent()}
             </div>
             {step < 6 && (
-              <div className="fixed top-56 w-[520px] left-1/2 transform -translate-x-1/2 p-4 z-50">
-                <div className="rounded-3xl bg-[#FAF3E0] text-[#1F1F1F] bg-opacity-85 backdrop-blur-lg border border-white border-opacity-20 p-6 shadow-lg">
+              <div className="fixed top-60 w-[520px] left-1/2 transform -translate-x-1/2 p-4 z-50">
+                <div className="rounded-3xl bg-[#FAF3E0] text-[#1F1F1F] backdrop-blur-lg border border-white border-opacity-20 p-6 shadow-lg">
                   {getStepMessage()}
                   <div className="flex justify-between mt-8">
                     <button
@@ -178,7 +178,7 @@ export default function TeacherSupport() {
           </>
         )}
 
-        <div className={`fixed ${step === 1 || step === 6 ? 'bottom-36' : 'top-60 right-60'} z-30`}>
+        <div className={`fixed ${step === 1 || step === 6 ? 'bottom-36' : 'top-44 right-60'} z-30`}>
           <ThreeModel mousePosition={mousePosition} />
         </div>
       </div>
