@@ -1,5 +1,5 @@
 import { OpenVidu, StreamEvent, StreamPropertyChangedEvent } from "openvidu-browser";
-import { fetchRecordings, getToken } from "../api/openvidu";
+import { fetchRecordings, getToken, handleSpeechRecognitionSignalByParent } from "../api/openvidu";
 import { OpenViduState, Recording, User } from "../types/openvidu";
 import { getParentInfo } from "../api/Info";
 
