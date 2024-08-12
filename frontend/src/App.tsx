@@ -2,6 +2,7 @@ import { Suspense, lazy } from "react";
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import useAppStore, { AppState } from "./stores/store";
 import LoadingSpinner from "./components/common/LoadingSpinner";
+import LoginCenterPage from "./pages/common/LoginCenterPage";
 
 // Lazy loading of components and pages
 const Join = lazy(() => import("./pages/common/Join"));
@@ -118,6 +119,7 @@ export default function App() {
               <>
                 {/* Default User Routes */}
                 <Route path="/" element={<Login />} />
+                <Route path="/login" element={<LoginCenterPage/>}/>
                 <Route path="/join" element={<Join />} />
                 <Route path="/social/join" element={<SocialJoinRedirect />} />
                 <Route path="/social/login" element={<SocialLoginRedirect />} />

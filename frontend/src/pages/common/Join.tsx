@@ -39,14 +39,14 @@ export default function Join() {
   return (
     <div className="min-h-screen flex flex-col items-center">
       <JoinHeader />
-      <div className="w-full flex flex-col items-center my-16 flex-grow">
-        <p className="w-[412px] text-[35px] font-bold text-center text-[#363636] my-10">
+      <div className="w-full flex flex-col items-center flex-grow">
+        <p className="w-[412px] text-[35px] font-bold text-center text-[#363636] mb-3 mt-[120px]">
           회원가입
         </p>
-        <p className="text-[20px] font-medium text-center text-[#363636] mb-4">
+        <p className="text-[20px] font-medium text-center text-[#363636]">
           본인의 역할을 정확하게 선택해 주세요.
         </p>
-        <div className="flex flex-col items-center text-[35px] font-bold text-center text-[#363636] mb-5 mt-10">
+        <div className="flex flex-col items-center text-[35px] font-bold text-center text-[#363636] mb-5 mt-8">
           {members.map((item, index) => (
             <div key={index} className="w-[300px] mb-8">
               <MemberCard
