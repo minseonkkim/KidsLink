@@ -1,5 +1,6 @@
 package com.ssafy.kidslink.common.controller;
 
+import com.ssafy.kidslink.common.service.VideoService;
 import io.openvidu.java.client.*;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -40,7 +41,7 @@ public class VideoController {
 
     private OpenVidu openvidu;
 
-    private List<String> segmentList = new ArrayList<>();
+    private final VideoService videoService;
 
     @PostConstruct
     public void init() {
@@ -54,15 +55,8 @@ public class VideoController {
     @PostMapping("/sessions")
     public ResponseEntity<String> initializeSession(@RequestBody(required = false) Map<String, Object> params)
             throws OpenViduJavaClientException, OpenViduHttpException {
-
-        // 파라미터 수정
-        if (params != null && "MEDIA_SERVER_PREFERRED".equals(params.get("forcedVideoCodec"))) {
-            params.put("forcedVideoCodec", "VP8"); // 올바른 값으로 변경
-        }
-
-        SessionProperties properties = SessionProperties.fromJson(params).build();
-        Session session = openvidu.createSession(properties);
-        return new ResponseEntity<>(session.getSessionId(), HttpStatus.OK);
+        String sessionId = videoService.createSession(params);
+        return new ResponseEntity<>(sessionId, HttpStatus.OK);
     }
 
     /**
@@ -74,17 +68,8 @@ public class VideoController {
     public ResponseEntity<String> createConnection(@PathVariable("sessionId") String sessionId,
                                                    @RequestBody(required = false) Map<String, Object> params)
             throws OpenViduJavaClientException, OpenViduHttpException {
-        Session session = openvidu.getActiveSession(sessionId);
-        if (session == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-
-        log.info("Modified params: {}", params);
-        ConnectionProperties properties = ConnectionProperties.fromJson(params).build();
-        log.info("OPENVIDU_URL: {}", OPENVIDU_URL);
-        Connection connection = session.createConnection(properties);
-        log.info("connection: {}", connection);
-        return new ResponseEntity<>(connection.getToken(), HttpStatus.OK);
+        String token = videoService.createConnection(sessionId, params);
+        return new ResponseEntity<>(token, HttpStatus.OK);
     }
 
 
@@ -95,32 +80,10 @@ public class VideoController {
      * @return The Recording ID
      */
     @PostMapping("/sessions/{sessionId}/recordings/start")
-    public ResponseEntity<Map<String, Object>> startRecording(@PathVariable("sessionId") String sessionId) throws OpenViduJavaClientException, OpenViduHttpException {
-        System.out.println("녹화시작");
-        // 현재 날짜를 "yyyyMMdd" 형식으로 포맷팅
-        String currentDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-
-        // 세션 ID와 날짜를 사용하여 녹화 파일명 생성
-        String recordingName = sessionId + "_" + currentDate;
-
-        RecordingProperties properties = new RecordingProperties.Builder()
-                .name(recordingName)
-                .outputMode(Recording.OutputMode.COMPOSED)
-                .hasAudio(true)
-                .hasVideo(true)
-                .build();
-
-
-        // TODO 녹화 방지 잠시 주석
-        Recording recording = this.openvidu.startRecording(sessionId, properties);
-
-        Map<String, Object> map = new HashMap<>();
-        map.put("segmentId", recording.getId());
-        map.put("recording", recording);
-        map.put("recordingPath", recordingPath);
-        map.put("recordingName", recordingName);
-
-        return new ResponseEntity<>(map, HttpStatus.OK);
+    public ResponseEntity<Map<String, Object>> startRecording(@PathVariable("sessionId") String sessionId)
+            throws OpenViduJavaClientException, OpenViduHttpException {
+        Map<String, Object> response = videoService.startRecording(sessionId);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     /**
@@ -129,68 +92,24 @@ public class VideoController {
      * @return The stopped Recording
      */
     @PostMapping("/recordings/stop/{recordingId}")
-    public ResponseEntity<Map<String, Object>> stopRecording(@PathVariable("recordingId") String recordingId)
+    public ResponseEntity<Map<String, Object>> stopRecording(@PathVariable("recordingId") String recordingId,
+                                                             @RequestBody Map<String, Long> body)
             throws OpenViduJavaClientException, OpenViduHttpException {
-        System.out.println("녹화중지");
-        Recording recording = openvidu.stopRecording(recordingId);
-        Map<String, Object> map = new HashMap<>();
-        map.put("status", "OK");
-        map.put("recordingId", recordingId);
-        map.put("recording", recording);
-        return new ResponseEntity<>(map, HttpStatus.OK);
+        Long startTime = body.get("startTime");
+        Map<String, Object> response = videoService.stopRecording(recordingId, startTime);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PostMapping("/recordings/save")
-    public ResponseEntity<String> saveSegments(@RequestBody List<String> segmentList) {
-        try {
-            // 예시로 첫 번째 세그먼트에서 sessionId와 세그먼트 번호를 추출
-            String sessionId = segmentList.get(0).split("_")[0];
-            String segmentDirectoryPath = recordingPath + "/" + sessionId;
 
-            // 병합된 파일의 경로 설정
-            String mergedFilePath = segmentDirectoryPath + "/merged_output.mp4";
-
-            // 세그먼트 병합 로직 호출
-            mergeSegmentsToMP4(segmentList, segmentDirectoryPath, mergedFilePath);
-
-            // 병합된 파일의 경로 반환
-            return new ResponseEntity<>(mergedFilePath, HttpStatus.OK);
-        } catch (IOException | InterruptedException e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    private void mergeSegmentsToMP4(List<String> segmentList, String segmentDirectoryPath, String mergedFilePath) throws IOException, InterruptedException {
-        // segments.txt 파일 생성
-        String fileListPath = createFileList(segmentList, segmentDirectoryPath);
-
-        // FFmpeg 명령어 실행
-        ProcessBuilder pb = new ProcessBuilder("ffmpeg", "-f", "concat", "-safe", "0", "-i", fileListPath, "-c", "copy", mergedFilePath);
-        pb.redirectErrorStream(true);
-        Process process = pb.start();
-        process.waitFor();
-    }
-
-    private String createFileList(List<String> segmentList, String segmentDirectoryPath) throws IOException {
-        String fileListPath = segmentDirectoryPath + "/segments.txt";
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileListPath))) {
-            for (String segment : segmentList) {
-                // 각 세그먼트의 디렉터리 경로와 파일명을 조합하여 파일 목록 생성
-                String segmentPath = segmentDirectoryPath + "/" + segment + "/recordingName.mp4";
-                writer.write("file '" + segmentPath + "'\n");
-            }
-        }
-        return fileListPath;
-    }
 
     /**
      * Get a list of all recordings
      * @return The list of recordings
      */
     @GetMapping("/recordings")
-    public ResponseEntity<List<Recording>> listRecordings() throws OpenViduJavaClientException, OpenViduHttpException {
-        List<Recording> recordings = openvidu.listRecordings();
-        log.info("Recordings: {}", recordings);
+    public ResponseEntity<List<Recording>> listRecordings()
+            throws OpenViduJavaClientException, OpenViduHttpException {
+        List<Recording> recordings = videoService.listRecordings();
         return new ResponseEntity<>(recordings, HttpStatus.OK);
     }
 
@@ -202,7 +121,7 @@ public class VideoController {
     @GetMapping("/recordings/{recordingId}")
     public ResponseEntity<Recording> getRecording(@PathVariable("recordingId") String recordingId)
             throws OpenViduJavaClientException, OpenViduHttpException {
-        Recording recording = openvidu.getRecording(recordingId);
+        Recording recording = videoService.getRecording(recordingId);
         return new ResponseEntity<>(recording, HttpStatus.OK);
     }
 
@@ -213,9 +132,9 @@ public class VideoController {
      * @return The Recording file
      */
     @GetMapping("/recordings/download/{sessionId}/recording/{recordingName}")
-    public ResponseEntity<FileSystemResource> downloadRecording(@PathVariable("sessionId") String sessionId, @PathVariable("recordingName") String recordingName) {
-        // TODO #1 아래 코드 참고해서 recordingId가 정확하게 경로를 가리키는지 확인해보기
-        File file = new File(recordingPath + "/" + sessionId + "/" + recordingName + ".mp4");
+    public ResponseEntity<FileSystemResource> downloadRecording(@PathVariable("sessionId") String sessionId,
+                                                                @PathVariable("recordingName") String recordingName) {
+        File file = videoService.getRecordingFile(sessionId, recordingName);
         if (!file.exists()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
