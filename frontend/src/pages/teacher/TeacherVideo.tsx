@@ -148,7 +148,7 @@ export default function TeacherVideo() {
       recordingStartTimeRef.current = Date.now();
 
       // 녹화가 시작된 후 STT 기능을 호출
-      startSTT();
+      // startSTT();
     } catch (error) {
       console.error("Failed to start recording:", error);
     }
@@ -162,6 +162,8 @@ export default function TeacherVideo() {
       // 예를 들어, 감지된 시점에 대한 정보를 저장하거나 UI를 업데이트하는 등의 작업을 할 수 있습니다.
       if (recordingStartTimeRef.current) {
         // STT 감지 시점에서 20초 전 시간을 계산
+        console.log(detectedTime - 20000)
+        console.log(recordingStartTimeRef.current);
         const adjustedStartTime = Math.max(recordingStartTimeRef.current, detectedTime - 20000);
         setRecordStartTime(adjustedStartTime); // 이 시간을 저장하여 종료 시 사용
         console.log("Adjusted recording start time:", adjustedStartTime);
