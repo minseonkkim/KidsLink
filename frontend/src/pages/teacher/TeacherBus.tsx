@@ -219,8 +219,8 @@ export default function TeacherBus() {
         titleComponent={<Title title="등하원 관리" />}
         imageSrc={daramgi} 
       >
-        <div className="relative w-full my-10 mb-32 px-4 lg:px-12">
-          <div className="flex justify-end my-4">
+        <div className="relative w-full px-4 mt-10 lg:px-12">
+          <div className="flex justify-end mt-2">
             <button 
               onClick={handleButtonClick} 
               className="border-[2px] border-[#7C7C7C] bg-[#E3EEFF] px-3 py-1 font-bold rounded-[10px] hover:bg-[#D4DDEA] flex flex-row items-center"
@@ -230,17 +230,17 @@ export default function TeacherBus() {
           </div>
 
           <div 
-            className="flex flex-col lg:flex-row items-center justify-between lg:space-x-4 lg:mt-0 mt-[70px]" 
+            className="flex flex-col lg:flex-row items-center justify-between lg:space-x-4 lg:mt-0 mt-[18px]" 
             ref={containerRef}
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
           >
-            <div className={`hidden lg:flex w-[210px] h-[330px] ${currentStopId !== busStops[0].busStopId ? 'bg-[#F4F8ED]' : 'bg-transparent'} rounded-[20px] items-center justify-center font-bold text-[24px]`}>
+            <div className={`hidden lg:flex w-[210px] h-[330px] ${currentStopId !== busStops[0].busStopId ? 'bg-[#F4F8ED]' : 'bg-transparent'} rounded-[20px] items-center justify-center font-bold text-[22px]`}>
               {currentStopId !== busStops[0].busStopId ? busStops[busStops.findIndex(stop => stop.busStopId === currentStopId) - 1].busStopName : ''}
             </div>
             <MdNavigateBefore className={`hidden lg:block ${currentStopId === busStops[0].busStopId && 'invisible'} text-[50px] text-[#8CAD1E] cursor-pointer`} onClick={handlePrevStop} />
-              <div className="bg-[#D5E4B4] rounded-[20px] w-[360px] lg:w-[420px] h-[510px] p-[20px] m-4">
-                <p className="font-bold text-[24px] text-center mb-3">{currentStop.busStopName}</p>
+              <div className="bg-[#D5E4B4] rounded-[20px] w-[360px] lg:w-[420px] h-[500px] p-[20px] m-4">
+                <p className="font-bold text-[24px] text-center whitespace-nowrap mb-2">{currentStop.busStopName}</p>
                 <div className="bg-[#fff] rounded-[10px] w-[320px] lg:w-[380px] h-[420px] m-1 p-1 lg:p-3">
                   <div className="flex flex-row my-1">
                     <div className="flex items-center justify-center font-bold lg:w-[280px] w-[240px]">탑승자</div>
@@ -269,7 +269,7 @@ export default function TeacherBus() {
                 </div>
               </div>
             <MdNavigateNext className={`hidden lg:block ${currentStopId === busStops[busStops.length - 1].busStopId && 'invisible'} text-[50px] text-[#8CAD1E] cursor-pointer`} onClick={handleNextStop} />
-            <div className={`hidden lg:flex w-[210px] h-[330px] ${currentStopId !== busStops[busStops.length - 1].busStopId ? 'bg-[#F4F8ED]' : 'bg-transparent'} rounded-[20px] items-center justify-center font-bold text-[24px]`}>
+            <div className={`hidden lg:flex w-[210px] h-[330px] ${currentStopId !== busStops[busStops.length - 1].busStopId ? 'bg-[#F4F8ED]' : 'bg-transparent'} rounded-[20px] items-center justify-center font-bold text-[22px]`}>
               {currentStopId !== busStops[busStops.length - 1].busStopId ? busStops[busStops.findIndex(stop => stop.busStopId === currentStopId) + 1].busStopName : ''}
             </div>
           </div>
