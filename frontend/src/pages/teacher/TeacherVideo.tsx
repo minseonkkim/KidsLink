@@ -100,7 +100,7 @@ export default function TeacherVideo() {
       }
       leaveSession(openvidu, setOpenvidu, setIsSessionJoined, navigate);
     };
-  }, [isRecording, openvidu, navigate]);
+  }, [isRecording, navigate]);
 
   useEffect(() => {
     console.log("Fetching recordings...");

@@ -14,6 +14,7 @@ import {
 import { getMeetingInfo } from "../../api/meeting";
 import { FaHandsHelping, FaUserSecret, FaBan } from 'react-icons/fa';
 
+
 export default function ParentVideo() {
   const navigate = useNavigate();
   const { meetingId } = useParams<{ meetingId: string }>();
@@ -50,6 +51,7 @@ export default function ParentVideo() {
     const fetchMeetingInfo = async () => {
       try {
         const res = await getMeetingInfo(parseInt(meetingId));
+        console.log("상담 조회하면서 parentInfo: ", parentInfo)
         setTeacherName(res.teacherName);
 
         // 상담 날짜 설정 (이거 utils에 저장된 날짜 함수 확인해보고 쓸지말지 수정하기)
@@ -83,13 +85,14 @@ export default function ParentVideo() {
     } else {
       setUser((prevUser) => ({ ...prevUser, username: parentInfo.child.name }));
     }
+    console.log("parentInfo: ",parentInfo)
   }, [parentInfo, setParentInfo]);
 
   useEffect(() => {
     return () => {
       leaveSession(openvidu, setOpenvidu, setIsSessionJoined, navigate);
     };
-  }, [openvidu, navigate]);
+  }, [navigate]);
 
   // control 상태가 변경될 때마다 publisher의 오디오와 비디오 상태를 업데이트
   useEffect(() => {
@@ -105,6 +108,7 @@ export default function ParentVideo() {
   // 나가기 버튼 클릭
   const handleOutClick = () => {
     leaveSession(openvidu, setOpenvidu, setIsSessionJoined, navigate);
+    navigate('/meeting')
   };
 
   const handleLeaveSession = () => {

@@ -1,10 +1,7 @@
 import { Suspense, lazy } from "react";
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import useAppStore, { AppState } from "./stores/store";
-import { CSSTransition, TransitionGroup } from "react-transition-group";
 import LoadingSpinner from "./components/common/LoadingSpinner";
-
-import "./index.css"; // CSS for animations
 
 // Lazy loading of components and pages
 const Join = lazy(() => import("./pages/common/Join"));
@@ -59,8 +56,6 @@ export default function App() {
   const userType = useAppStore((state: AppState) => state.userType);
 
   return (
-    <TransitionGroup>
-      <CSSTransition key={location.key} classNames="page" timeout={300}>
         <Suspense fallback={<LoadingSpinner/>}>
           <Routes location={location}>
             {userType === "ROLE_PARENT" ? (
@@ -133,7 +128,5 @@ export default function App() {
             )}
           </Routes>
         </Suspense>
-      </CSSTransition>
-    </TransitionGroup>
   );
 }
