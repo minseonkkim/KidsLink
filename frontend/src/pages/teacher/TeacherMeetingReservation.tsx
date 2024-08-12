@@ -5,7 +5,7 @@ import { FaInfoCircle } from "react-icons/fa";
 import Title from "../../components/teacher/common/Title";
 import ReservationTime from "../../components/teacher/consulting/ReservationTime";
 import { useNavigate } from 'react-router-dom';
-import ToastNotification, { showToastSuccess } from "../../components/teacher/common/ToastNotification.tsx";
+import ToastNotification, { showToastError, showToastSuccess } from "../../components/teacher/common/ToastNotification.tsx";
 import { getAllPossibleReservations, postTeacherReservations } from "../../api/meeting.ts";
 import { TeacherMeetingReservation } from "../../types/meeting.ts";
 import { formatDate, isPastDate, ValuePiece } from "../../utils/meeting.ts";
@@ -128,6 +128,18 @@ export default function TeacherReservation() {
       const nonEmptyTempSelectedTimes = Object.fromEntries(
         Object.entries(tempSelectedTimes).filter(([key, value]) => value.length > 0)
       );
+  
+      // 선택된 시간이 없는 경우 에러 토스트 메시지 표시
+      if (Object.keys(nonEmptyTempSelectedTimes).length === 0) {
+        showToastError(
+          <div>
+            선택된 시간이 없습니다.<br />
+            상담 가능 시간을 선택해주세요.
+          </div>
+        );
+        return; // 함수를 종료하여 더 이상 진행하지 않도록 합니다.
+      }
+  
       const sortedTempSelectedTimes = Object.entries(nonEmptyTempSelectedTimes).reduce((acc, [date, times]) => {
         acc[date] = (times as string[]).sort((a, b) => {
           const timeA = moment(a, 'HH:mm');
@@ -136,20 +148,20 @@ export default function TeacherReservation() {
         });
         return acc;
       }, {} as { [key: string]: string[] });
-
+  
       const requestData: TeacherMeetingReservation[] = Object.entries(sortedTempSelectedTimes).map(
         ([date, times]) => ({ date, times })
       );
       await postTeacherReservations(requestData);
-
+  
       showToastSuccess(
         <div>
           상담가능시간을 오픈했습니다!<br />
         </div>
       );
-
+  
       await fetchData();
-
+  
       setTempSelectedTimes({});
       setSelectedTimes([]);
     } catch (error) {
