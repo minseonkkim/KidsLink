@@ -11,7 +11,6 @@ export default function TeacherMeetingFooter({
   close,
   isRecording,
 }: TeacherMeetingFooterProps) {
-  console.log("TeacherMeetingFooter 렌더링, isRecording 상태:", isRecording);
   const isMuted = control.muted || control.volume === 0;
 
   return (
