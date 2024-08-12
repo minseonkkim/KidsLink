@@ -29,7 +29,11 @@ export default function TeacherLayout({
   const [alertList, setAlertList] = useState<Alarm[]>([]);
   const [alertNum, setAlertNum] = useState(0);
 
+  const checkIsLoggedIn = () => !!localStorage.getItem("accessToken"); // 로그인 상태 확인 함수
+
   const fetchAlarmList = async () => {
+    if (!checkIsLoggedIn()) return; // 로그아웃 상태이면 함수 실행 중지
+    console.log("전체 알람 가져오려고 시도 중");
     try {
       const fetchedAlarmList = await getAllAlarms();
       const sortedAlarmList = fetchedAlarmList.sort((a, b) => b.id - a.id);
@@ -38,8 +42,10 @@ export default function TeacherLayout({
       console.error("Failed to fetch alarms:", error);
     }
   };
-  
+
   const fetchAlarmCount = async () => {
+    if (!checkIsLoggedIn()) return; // 로그아웃 상태이면 함수 실행 중지
+    console.log("알람 개수 가져오려고 시도 중");
     try {
       const count = await getAlarmCount();
       setAlertNum(count);
@@ -49,11 +55,14 @@ export default function TeacherLayout({
   };
 
   useEffect(() => {
-    fetchAlarmList();
-    fetchAlarmCount();
+    if (checkIsLoggedIn()) { // 로그인이 되어 있을 때만 실행
+      fetchAlarmList();
+      fetchAlarmCount();
+    }
   }, []);
 
   const deleteItem = async (id: number) => {
+    if (!checkIsLoggedIn()) return; // 로그아웃 상태이면 함수 실행 중지
     try {
       await deleteAlarm(id);
       // 삭제 후 알람 목록과 개수를 업데이트
@@ -65,6 +74,7 @@ export default function TeacherLayout({
   };
 
   const deleteAllItems = async () => {
+    if (!checkIsLoggedIn()) return; // 로그아웃 상태이면 함수 실행 중지
     try {
       await deleteAllAlarms();
       // 삭제 후 알람 목록과 개수를 업데이트
