@@ -81,9 +81,7 @@ public class VideoService {
     }
 
     public Map<String, Object> stopRecording(String recordingId, Long startTime) throws OpenViduJavaClientException, OpenViduHttpException {
-        log.info("녹화중지");
-        // TODO: FFmpeg 등을 사용하여 startTime부터 끝까지 자르기 처리 로직 추가
-        // 예: trimRecording(recording.getId(), startTime);
+        log.info("녹화 중지 시작 - 녹화 ID: " + recordingId);
 
         // 녹화를 중지하여 영상을 저장합니다.
         Recording recording = openvidu.stopRecording(recordingId);
@@ -91,18 +89,35 @@ public class VideoService {
         // 영상을 자르기 위해 FFmpeg를 사용합니다.
         String inputFilePath = recordingPath + "/" + recording.getName() + ".mp4";
         String outputFilePath = recordingPath + "/" + recording.getName() + "_trimmed.mp4";
+
+        log.info("녹화된 파일 경로: " + inputFilePath);
+        log.info("잘라낸 파일 경로: " + outputFilePath);
+
+        // FFmpeg를 사용하여 영상 트리밍
         trimRecording(inputFilePath, outputFilePath, startTime);
 
         Map<String, Object> response = new HashMap<>();
         response.put("status", "OK");
         response.put("recordingId", recordingId);
+        response.put("recordingName", recording.getName());
+        response.put("inputFilePath", inputFilePath);
         response.put("outputFilePath", outputFilePath);
         response.put("recording", recording);
         return response;
     }
 
     private void trimRecording(String inputFilePath, String outputFilePath, Long startTime) {
-        String startTimeFormatted = String.format("%02d:%02d:%02d", startTime / 3600, (startTime % 3600) / 60, startTime % 60);
+        // startTime을 밀리초 단위에서 초 단위로 변환
+        long startTimeInSeconds = startTime / 1000;
+
+        // HH:mm:ss 형식으로 포맷팅
+        String startTimeFormatted = String.format("%02d:%02d:%02d",
+                startTimeInSeconds / 3600,
+                (startTimeInSeconds % 3600) / 60,
+                startTimeInSeconds % 60
+        );
+
+        // FFmpeg 명령어 구성
         ProcessBuilder pb = new ProcessBuilder("ffmpeg", "-i", inputFilePath, "-ss", startTimeFormatted, "-c", "copy", outputFilePath);
         pb.redirectErrorStream(true);
 
