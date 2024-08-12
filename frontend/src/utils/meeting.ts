@@ -25,19 +25,28 @@ export const isMeetingActive = (meetingDate: string, meetingTime: string): boole
 
 
 // 진행, 예정인 상담내역만 보이게 판별해주는 함수
-export   const isMeetingVisible = (meetingDate: string, meetingTime: string): boolean => {
+export const isMeetingVisible = (meetingDate: string, meetingTime: string): boolean => {
   const currentTimeString = getCurrentTimeString();
   const meetingDateTimeString = `${meetingDate} ${meetingTime}`;
 
+  // 현재 시간을 Date 객체로 변환
+  const currentDateTime = new Date(currentTimeString);
+  
+  // 상담 시간을 Date 객체로 변환
+  const meetingDateTime = new Date(meetingDateTimeString);
+  
+  // 상담 시간에 30분을 더한 시간을 계산
+  const meetingEndTime = new Date(meetingDateTime.getTime() + 30 * 60000);
+
   // 날짜가 지난 상담은 보이지 않게 설정
-  if (meetingDateTimeString < currentTimeString) {
-    // false로 바꿔줘야함
+  if (meetingDateTime < currentDateTime) {
     return false;
   }
 
   // 날짜가 같은 경우, 상담 시간이 지난 것만 보이지 않게 설정
   if (meetingDate === currentTimeString.split(' ')[0]) {
-    return meetingDateTimeString >= currentTimeString;
+    // 상담 시간이 30분 지난 경우 보이지 않게 설정
+    return currentDateTime <= meetingEndTime;
   }
 
   // 날짜가 지나지 않은 경우 모두 보이게 설정

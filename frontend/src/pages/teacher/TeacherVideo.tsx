@@ -102,7 +102,7 @@ export default function TeacherVideo() {
       }
       leaveSession(openvidu, setOpenvidu, setIsSessionJoined, navigate);
     };
-  }, [isRecording, openvidu, navigate]);
+  }, [isRecording, navigate]);
 
   useEffect(() => {
     if (openvidu.publisher) {
