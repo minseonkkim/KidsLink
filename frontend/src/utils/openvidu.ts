@@ -104,24 +104,34 @@ export const joinSession = async (
     });
 };
 
-export const leaveSession = (
+export const leaveSession = async (
   openvidu: OpenViduState,
   setOpenvidu: React.Dispatch<React.SetStateAction<OpenViduState>>,
   setIsSessionJoined: React.Dispatch<React.SetStateAction<boolean>>,
-  navigate: (path: string) => void // navigate 함수 추가
+  navigate: (path: string) => void
 ) => {
   if (openvidu.session) {
-    openvidu.session.disconnect();
-    // stopSpeechRecognition();
-    setOpenvidu((prevOpenvidu) => ({
-      ...prevOpenvidu,
-      session: undefined,
-      mainStreamManager: undefined,
-      publisher: undefined,
-      subscribers: [],
-    }));
-    setIsSessionJoined(false);
-    navigate('/meeting'); // /meeting 페이지로 이동
+    try {
+      // 세션을 안전하게 종료
+      openvidu.session.disconnect();
+    } catch (error) {
+      console.error("Error during session disconnect:", error);
+    } finally {
+      // 상태를 초기화하고, 세션 종료 플래그를 false로 설정
+      setOpenvidu({
+        session: undefined,
+        mainStreamManager: undefined,
+        publisher: undefined,
+        subscribers: [],
+      });
+      setIsSessionJoined(false);
+
+      // 페이지 이동
+      navigate('/meeting');
+    }
+  } else {
+    console.warn("No active session to leave.");
+    navigate('/meeting');
   }
 };
 
