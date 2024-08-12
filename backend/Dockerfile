@@ -1,4 +1,4 @@
-FROM openjdk:17-jdk
+FROM openjdk:17-jdk-buster
 # ffmpeg 설치
 RUN apt-get update && apt-get install -y ffmpeg
 ARG JAR_FILE=build/libs/*.jar
