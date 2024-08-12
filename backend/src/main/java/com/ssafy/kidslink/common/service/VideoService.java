@@ -89,8 +89,8 @@ public class VideoService {
         Recording recording = openvidu.stopRecording(recordingId);
 
         // 영상을 자르기 위해 FFmpeg를 사용합니다.
-        String inputFilePath = recordingPath + "/" + recording.getName() + ".mp4";
-        String outputFilePath = recordingPath + "/" + recording.getName() + "_trimmed.mp4";
+        String inputFilePath = recordingPath + "/" + recordingId + "/" + recording.getName() + ".mp4";
+        String outputFilePath = recordingPath + "/" + recordingId + "/" + recording.getName() + "_trimmed.mp4";
 
         log.info("녹화된 파일 경로: " + inputFilePath);
         log.info("잘라낸 파일 경로: " + outputFilePath);
