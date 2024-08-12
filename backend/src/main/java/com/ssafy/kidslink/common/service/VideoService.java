@@ -111,12 +111,14 @@ public class VideoService {
     private void trimRecording(String inputFilePath, String outputFilePath, Long startTime) {
         long startTimeInSeconds = startTime / 1000;
 
+        log.info("startTimeInSeconds - {}", startTimeInSeconds);
+
         String startTimeFormatted = String.format("%02d:%02d:%02d",
                 startTimeInSeconds / 3600,
                 (startTimeInSeconds % 3600) / 60,
                 startTimeInSeconds % 60
         );
-
+        log.info("startTimeFormatted - {}", startTimeFormatted);
         ProcessBuilder pb = new ProcessBuilder("ffmpeg", "-i", inputFilePath, "-ss", startTimeFormatted, "-c", "copy", outputFilePath);
         pb.redirectErrorStream(true);
 

@@ -86,6 +86,22 @@ export default function TeacherVideo() {
     }
   }, [teacherInfo, setTeacherInfo]);
 
+  useEffect(() => {
+    if (openvidu.session) {
+      openvidu.session.on("signal:profanityDetected", (event) => {
+        console.log("학부모 욕설 감지:", event);
+
+        if (recordingStartTimeRef.current) {
+          // STT 감지 시점에서 20초 전 시간으로 기록 시작 시간 조정
+          const detectedTime = Date.now();
+          const adjustedStartTime = Math.max(recordingStartTimeRef.current, detectedTime - 20000);
+          setRecordStartTime(adjustedStartTime);
+          console.log("Adjusted recording start time:", adjustedStartTime);
+        }
+      });
+    }
+  }, [openvidu.session]);
+
   // useEffect(() => {
   //   console.log("useEffect쪽, isRecording", isRecording)
   //   return () => {
@@ -158,7 +174,10 @@ export default function TeacherVideo() {
 
     try {
       setIsRecording(false);
-      const startTime = recordStartTime || recordingStartTimeRef.current!;
+      // const startTime = recordStartTime || recordingStartTimeRef.current!;
+      const startTime = recordStartTime || 60000;
+      console.log(recordStartTime)
+      console.log(startTime)
       await stopMainRecording(currentRecordingId, startTime);
 
       console.log("Recording stopped.");
