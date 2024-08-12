@@ -9,8 +9,6 @@ export default function TeacherMeetingFooter({
   control,
   handleControl,
   close,
-  startRecording,
-  stopRecording,
   isRecording,
 }: TeacherMeetingFooterProps) {
   console.log("TeacherMeetingFooter 렌더링, isRecording 상태:", isRecording);
@@ -106,13 +104,10 @@ export default function TeacherMeetingFooter({
       </div>
       <div className="flex items-center gap-4">
         {isRecording && <div className="text-red-600 font-bold">REC</div>}
-        <button
-          className={`text-2xl ${isRecording ? "text-red-600" : "text-black"}`}
-          onClick={isRecording ? stopRecording : startRecording} // 상태에 따라 적절한 함수 호출
-        >
-          {isRecording ? "녹화 중지" : "녹화 시작"}
-        </button>
-        <RxCrossCircled className="ml-3 text-3xl cursor-pointer text-red-600" onClick={close} />
+        <RxCrossCircled
+          className="ml-3 text-3xl cursor-pointer text-red-600"
+          onClick={close} // 세션 종료 및 녹화 종료 로직을 close 함수에 통합하여 호출
+        />
       </div>
     </div>
   );
