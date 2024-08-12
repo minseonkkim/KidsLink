@@ -27,14 +27,14 @@ export default function TeacherMeeting() {
               return { 
                 ...meeting, 
                 childName: parentInfo.child.name,
-                parentProfile: parentInfo.profile || DefaultImg // Use default profile image if not available
+                childProfile: parentInfo.child.profile || DefaultImg 
               };
             } catch (error) {
               console.error(`Error fetching parent info for ID ${meeting.parentId}:`, error);
               return { 
                 ...meeting, 
                 childName: "알 수 없음",
-                parentProfile: DefaultImg
+                childProfile: DefaultImg
               };
             }
           })
@@ -95,7 +95,7 @@ return (
         date={meeting.meetingDate}
         time={meeting.meetingTime}
         name={meeting.childName}
-        profileImgPath={meeting.parentProfile}
+        profileImgPath={meeting.childProfile}
         isActivate={isActive}
       />
     </Link>
@@ -105,7 +105,7 @@ return (
         date={meeting.meetingDate}
         time={meeting.meetingTime}
         name={meeting.childName}
-        profileImgPath={meeting.parentProfile}
+        profileImgPath={meeting.childProfile}
         isActivate={isActive}
       />
     </div>

@@ -97,6 +97,7 @@ export async function getConfirmedMeeting(): Promise<ParentTeacherMeeting[]> {
   try {
     const response = await axiosInstance.get("/meeting/reservation");
     if (response.data.status === "success") {
+      console.log("교사 상담룸 정보: ", response.data.data)
       return response.data.data as ParentTeacherMeeting[];
     } else {
       throw new Error("Failed to get confirmed meetings");
