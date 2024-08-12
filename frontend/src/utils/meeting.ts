@@ -20,7 +20,9 @@ export const isMeetingActive = (meetingDate: string, meetingTime: string): boole
   const timeDiff = meetingDateTime.getTime() - currentTime.getTime();
 
   // 상담 시간 30분 전후로 활성화 상태로 설정
-  return timeDiff > -10 * 60 * 1000 && timeDiff < 30 * 60 * 1000;
+  // TODO 
+  // return timeDiff > -10 * 60 * 1000 && timeDiff < 30 * 60 * 1000;
+  return true;
 };
 
 
