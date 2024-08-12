@@ -1,6 +1,7 @@
 package com.ssafy.kidslink.common.service;
 
 import io.openvidu.java.client.*;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,8 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +27,13 @@ public class VideoService {
     @Value("${openvidu.recording.path}")
     private String recordingPath;
 
-    private final OpenVidu openvidu;
+    private OpenVidu openvidu;
+
+    @PostConstruct
+    public void init() {
+        this.openvidu = new OpenVidu(OPENVIDU_URL, OPENVIDU_SECRET);
+    }
+
 
     public String createSession(Map<String, Object> params) throws OpenViduJavaClientException, OpenViduHttpException {
         // 파라미터 수정
