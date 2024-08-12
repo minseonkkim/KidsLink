@@ -86,14 +86,23 @@ export default function TeacherVideo() {
   }, [teacherInfo, setTeacherInfo]);
 
   useEffect(() => {
+    console.log("useEffect쪽, isRecording", isRecording)
     return () => {
+      // 컴포넌트가 언마운트될 때만 실행되도록 조건 추가
       if (isRecording) {
-        handleStopRecording(); // 녹화 중지
+        handleStopRecording().then(() => {
+          leaveSession(openvidu, setOpenvidu, setIsSessionJoined, navigate);
+        }).catch((error) => {
+          console.error("Failed to stop recording before leaving session:", error);
+          leaveSession(openvidu, setOpenvidu, setIsSessionJoined, navigate);
+        });
+      } else {
+        leaveSession(openvidu, setOpenvidu, setIsSessionJoined, navigate);
       }
-      leaveSession(openvidu, setOpenvidu, setIsSessionJoined, navigate);
     };
-  }, [isRecording, navigate]);
+  }, [navigate]); // isRecording을 의존성에서 제거
 
+  
   useEffect(() => {
     if (openvidu.publisher) {
       console.log("Publishing audio:", control.mic);
