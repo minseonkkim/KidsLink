@@ -100,6 +100,7 @@ public class ParentService {
     }
 
     public ParentDTO getDetailByUsername(String username) {
+
         return parentMapper.toDTO(parentRepository.findByParentUsername(username));
     }
 
