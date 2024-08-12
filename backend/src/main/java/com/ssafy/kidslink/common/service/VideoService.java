@@ -9,8 +9,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -107,22 +109,28 @@ public class VideoService {
     }
 
     private void trimRecording(String inputFilePath, String outputFilePath, Long startTime) {
-        // startTime을 밀리초 단위에서 초 단위로 변환
         long startTimeInSeconds = startTime / 1000;
 
-        // HH:mm:ss 형식으로 포맷팅
         String startTimeFormatted = String.format("%02d:%02d:%02d",
                 startTimeInSeconds / 3600,
                 (startTimeInSeconds % 3600) / 60,
                 startTimeInSeconds % 60
         );
 
-        // FFmpeg 명령어 구성
         ProcessBuilder pb = new ProcessBuilder("ffmpeg", "-i", inputFilePath, "-ss", startTimeFormatted, "-c", "copy", outputFilePath);
         pb.redirectErrorStream(true);
 
         try {
             Process process = pb.start();
+
+            // 프로세스의 출력을 읽기 위한 BufferedReader 추가
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    log.info(line); // FFmpeg 명령어 출력을 로그에 기록
+                }
+            }
+
             int exitCode = process.waitFor();
             if (exitCode != 0) {
                 log.error("FFmpeg process failed with exit code: " + exitCode);
