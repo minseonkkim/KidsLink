@@ -14,17 +14,22 @@ export default function LoginHeader(){
 
 
 const DesktopComponent = () => {
-    return <>
-        <div className="fixed flex items-center justify-between h-[85px] bg-[#fff9d7] relative shadow-md z-10">
+    return (
+        <div className="fixed top-0 left-0 right-0 flex items-center justify-between h-[85px] bg-[#fff9d7] shadow-md z-50">
             <p className="ml-[150px] text-[40px] font-bold text-left font-Cafe24Ssurround gradient-text cursor-pointer">키즈링크</p>
+            <div className="mr-[150px] text-[18px]">
+                <button className="mr-5">로그인</button>
+                <button>회원가입</button>
+            </div>
         </div>
-    </>
-}
+    );
+};
 
 const TabletOrMobileComponent = () => {
-    return <>
-         <div className="fixed w-full h-[67px] border-b border-gray-300 p-4 shadow-md flex items-center justify-between bg-[#fff9d7]">
+    return (
+        <div className="fixed top-0 left-0 right-0 w-full h-[67px] border-b border-gray-300 p-4 shadow-md flex items-center justify-between bg-[#fff9d7] z-50">
             <p className="text-[30px] font-bold text-left font-Cafe24Ssurround gradient-text cursor-pointer">키즈링크</p>
         </div>
-    </>
-}
+    );
+};
+
