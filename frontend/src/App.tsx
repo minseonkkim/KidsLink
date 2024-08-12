@@ -2,7 +2,7 @@ import { Suspense, lazy } from "react";
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import useAppStore, { AppState } from "./stores/store";
 import LoadingSpinner from "./components/common/LoadingSpinner";
-import { MeetingGuard } from "./components/meeting/MeetingGuard";
+import { ParentMeetingGuard, TeacherMeetingGuard } from "./components/meeting/MeetingGuard";
 import LoginCenterPage from "./pages/common/LoginCenterPage";
 
 // Lazy loading of components and pages
@@ -82,9 +82,9 @@ export default function App() {
                   <Route
                     path="/meeting/:meetingId"
                     element={
-                      <MeetingGuard>
+                      <ParentMeetingGuard>
                         <ParentVideo />
-                      </MeetingGuard>
+                      </ParentMeetingGuard>
                     }
                   />
                   <Route path="/schedule" element={<ParentSchedule />} />
@@ -113,7 +113,14 @@ export default function App() {
                 <Route path="/schedule" element={<TeacherSchedule />} />
                 <Route path="/mypage" element={<TeacherMyPage />} />
                 <Route path="/album/send_finish" element={<TeacherAlbumSendFinish />} />
-                <Route path="/meeting/:meetingId" element={<TeacherVideo />} />
+                <Route
+                    path="/meeting/:meetingId"
+                    element={
+                      <TeacherMeetingGuard>
+                        <TeacherVideo />
+                      </TeacherMeetingGuard>
+                    }
+                  />
                 <Route path="/meeting" element={<TeacherMeetingMain />} />
                 <Route path="/meeting/confirm" element={<TeacherMeetingConfirm />} />
                 <Route path="/meeting/recordings" element={<TeacherMeetingRecordingList />} />
