@@ -285,20 +285,20 @@ export const Sidebar: React.FC<SidebarProps> = ({
             handleLinkClick={handleLinkClick}
           />
           <SidebarLink
-            to="/bus"
-            icon={busIcon}
-            label="등하원관리"
-            activeMenu={activeMenu}
-            menuKey="bus"
-            setActiveMenu={setActiveMenu}
-            handleLinkClick={handleLinkClick}
-          />
-          <SidebarLink
             to="/meeting"
             icon={consultingIcon}
             label="화상상담"
             activeMenu={activeMenu}
             menuKey="meeting"
+            setActiveMenu={setActiveMenu}
+            handleLinkClick={handleLinkClick}
+          />
+          <SidebarLink
+            to="/bus"
+            icon={busIcon}
+            label="등하원관리"
+            activeMenu={activeMenu}
+            menuKey="bus"
             setActiveMenu={setActiveMenu}
             handleLinkClick={handleLinkClick}
           />

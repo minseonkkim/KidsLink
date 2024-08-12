@@ -2,7 +2,13 @@ import { Suspense, lazy } from "react";
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import useAppStore, { AppState } from "./stores/store";
 import LoadingSpinner from "./components/common/LoadingSpinner";
+<<<<<<< HEAD
+
+import "./index.css"; // CSS for animations
+import { MeetingGuard } from "./components/meeting/MeetingGuard";
+=======
 import LoginCenterPage from "./pages/common/LoginCenterPage";
+>>>>>>> 7f7cdc70cde744ffd6fc38fe28611dd68129af9e
 
 // Lazy loading of components and pages
 const Join = lazy(() => import("./pages/common/Join"));
@@ -47,6 +53,7 @@ const TeacherMeetingMain = lazy(() => import("./pages/teacher/TeacherMeetingMain
 const TeacherMeetingConfirm = lazy(() => import("./pages/teacher/TeacherMeetingConfirm"));
 const TeacherMeetingRecordingList = lazy(() => import("./pages/teacher/TeacherMeetingRecordingList"));
 const TeacherAlbumHistory = lazy(() => import("./pages/teacher/TeacherAlbumHistory"));
+const TeacherSupport = lazy(() => import("./pages/teacher/TeacherSupport"));
 const TeacherErrorPage = lazy(() => import("./pages/teacher/TeacherErrorPage"));
 
 const CommonUserError = lazy(() => import("./pages/common/CommonUserError"));
@@ -77,7 +84,14 @@ export default function App() {
                   <Route path="/bus" element={<ParentBus />} />
                   <Route path="/meeting" element={<ParentMeeting />} />
                   <Route path="/meeting/submit" element={<ParentMeetingSubmit />} />
-                  <Route path="/meeting/:meetingId" element={<ParentVideo />} />
+                  <Route
+                    path="/meeting/:meetingId"
+                    element={
+                      <MeetingGuard>
+                        <ParentVideo />
+                      </MeetingGuard>
+                    }
+                  />
                   <Route path="/schedule" element={<ParentSchedule />} />
                   <Route path="/mypage" element={<ParentMyPage />} />
                   {/* Parent User Error Page */}
@@ -108,6 +122,7 @@ export default function App() {
                 <Route path="/meeting" element={<TeacherMeetingMain />} />
                 <Route path="/meeting/confirm" element={<TeacherMeetingConfirm />} />
                 <Route path="/meeting/recordings" element={<TeacherMeetingRecordingList />} />
+                <Route path="/support" element={<TeacherSupport />} />
                 {/* Teacher User Error Page */}
                 <Route path="/error" element={<TeacherErrorPage />} />
                 <Route

@@ -1,5 +1,4 @@
-// Title.tsx
-import { useState } from "react";
+import React, { useState } from "react";
 import { FaInfoCircle } from "react-icons/fa";
 import { Link, useLocation } from "react-router-dom";
 
@@ -10,12 +9,19 @@ interface Tab {
 
 interface TitleProps {
     title: string;
-    tooltipContent?: JSX.Element;
-    tabs?: Tab[]; // Adding the optional tabs prop
+    tooltipContent?: JSX.Element; 
+    tabs?: Tab[];
+    customIcon?: JSX.Element; 
+    onIconClick?: () => void; 
 }
 
-export default function Title({ title, tooltipContent, tabs }: TitleProps) {
-    const [showTooltip, setShowTooltip] = useState<boolean>(false);
+export default function Title({
+    title,
+    tooltipContent,
+    tabs,
+    customIcon,
+    onIconClick
+}: TitleProps) {
     const [isHovered, setIsHovered] = useState<boolean>(false);
     const location = useLocation();
 
@@ -24,18 +30,30 @@ export default function Title({ title, tooltipContent, tabs }: TitleProps) {
             <div className="flex items-center">
                 <div className="text-[28px] lg:text-[36px] font-bold text-center text-[#363636] flex flex-row justify-center items-center">
                     {title}
-                    <div 
-                        className={`relative ml-3 cursor-pointer ${!tooltipContent && 'hidden'}`}
-                        onMouseEnter={() => { setShowTooltip(true); setIsHovered(true); }}
-                        onMouseLeave={() => { setShowTooltip(false); setIsHovered(false); }}
-                    >
-                        <FaInfoCircle size={30} color={isHovered ? "#8CAD1E" : "#C0D290"}/>
-                        {showTooltip && (
-                          <div className="absolute top-full left-0 mt-2 p-3 bg-white border border-gray-300 rounded shadow-lg z-10 text-sm">
-                              {tooltipContent}
-                          </div>
-                        )}
-                    </div>
+                    {customIcon && (
+                        <div
+                            className="ml-3 cursor-pointer"
+                            onClick={onIconClick}
+                        >
+                            {React.cloneElement(customIcon, {
+                                className: "ml-2 w-[85px] h-[28px] px-2 py-1 text-[14px] font-semibold rounded bg-[#C0D290] text-white hover:bg-[#8CAD1E] transition duration-300",
+                            })}
+                        </div>
+                    )}
+                    {tooltipContent && (
+                        <div
+                            className="relative ml-3 cursor-pointer"
+                            onMouseEnter={() => setIsHovered(true)}
+                            onMouseLeave={() => setIsHovered(false)}
+                        >
+                            <FaInfoCircle size={30} color={isHovered ? "#8CAD1E" : "#C0D290"} />
+                            {isHovered && (
+                                <div className="absolute top-full left-0 mt-2 p-3 bg-white border border-gray-300 rounded shadow-lg z-10 text-sm">
+                                    {tooltipContent}
+                                </div>
+                            )}
+                        </div>
+                    )}
                 </div>
             </div>
             {tabs && tabs.length > 0 && (
@@ -57,5 +75,5 @@ export default function Title({ title, tooltipContent, tabs }: TitleProps) {
                 </div>
             )}
         </div>
-    );
+    )
 }

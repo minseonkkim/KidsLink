@@ -1,14 +1,16 @@
-// TeacherMeetingMain.tsx
 import MeetingMainButton from "../../components/parent/meeting/MeetingMainButton";
-import Title from "../../components/teacher/common/Title";
 import CalendarImg from "../../assets/teacher/calendar_img.png";
 import CheckImg from "../../assets/teacher/check_img.png";
 import VideoConsultingImg from "../../assets/teacher/video_consulting_img.png";
 import RecordImg from "../../assets/teacher/record_img.png";
 import TeacherLayout from "../../layouts/TeacherLayout";
-import daramgi from "../../assets/teacher/meeting-daramgi.png"
+import daramgi from "../../assets/teacher/meeting-daramgi.png";
+import { useNavigate } from "react-router-dom";
+import Title from "../../components/teacher/common/Title";
 
 export default function TeacherMeetingMain() {
+    const navigate = useNavigate();
+
     const tabs = [
         { label: "상담가능시간 open", link: "/meeting/reservation" },
         { label: "상담시간 확정", link: "/meeting/confirm" },
@@ -16,15 +18,28 @@ export default function TeacherMeetingMain() {
         { label: "녹화된 상담", link: "/meeting/recordings" },
     ];
 
+    const handleHelpIconClick = () => {
+        navigate("/support");
+    };
+
     return (
         <TeacherLayout
             activeMenu="meeting"
             setActiveMenu={() => {}}
-            titleComponent={<Title title="화상상담" tabs={tabs} />}
-            imageSrc={daramgi} 
+            titleComponent={
+                <Title
+                    title="화상상담"
+                    customIcon={(
+                        <div>
+                            튜토리얼
+                        </div>
+                    )}
+                    onIconClick={handleHelpIconClick} // Handle icon click
+                />
+            }
+            imageSrc={daramgi}
         >
             <div className="relative w-full lg:mt-[150px] mt-0 mb-32 px-6 flex flex-col items-center">
-
                 <div className="w-full flex justify-center items-center">
                     <div className="flex flex-row flex-wrap w-full items-center justify-between">
                         <MeetingMainButton 
