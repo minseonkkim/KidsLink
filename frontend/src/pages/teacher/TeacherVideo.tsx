@@ -8,7 +8,9 @@ import {
   stopSegmentRecording,
   startMainRecording, // 메인 녹화 관련 함수 추가
   stopMainRecording,
-  mergeSegments, // 메인 녹화 관련 함수 추가
+  mergeSegments,
+  startSegmentRecordingInterval,
+  stopSegmentRecordingInterval, // 메인 녹화 관련 함수 추가
 } from "../../api/openvidu";
 // import TeacherHeader from "../../components/teacher/common/TeacherHeader";
 import MeetingBackground from "../../assets/teacher/meeting_background.png";
@@ -103,11 +105,6 @@ export default function TeacherVideo() {
   }, [isRecording, openvidu, navigate]);
 
   useEffect(() => {
-    console.log("Fetching recordings...");
-    fetchRecordingsList(setRecordings);
-  }, []);
-
-  useEffect(() => {
     if (openvidu.publisher) {
       console.log("Publishing audio:", control.mic);
       openvidu.publisher.publishAudio(control.mic);
@@ -119,12 +116,18 @@ export default function TeacherVideo() {
   useEffect(() => {
     if (isSessionJoined && !isRecording) {
       handleSpeechRecognition(
-        user.sessionId,
-        setCurrentRecordingId,
-        segmentList,
+        user.sessionId, // meetingId
+        setCurrentRecordingId, // recordingId 세팅하기
+        segmentList,  // 
         intervalIdRef,
         handleStartMainRecording
       );
+      startSegmentRecordingInterval(
+        user.sessionId,
+        setCurrentRecordingId,
+        segmentList,
+        intervalIdRef
+      )
     }
   }, [isSessionJoined, isRecording]);
 
@@ -160,17 +163,29 @@ const handleStartMainRecording = async () => {
 
     setIsRecording(false);
     console.log(currentRecordingId)
+    
+    segmentList.current = []; // 세그먼트 리스트 초기화
+    stopSegmentRecordingInterval(intervalIdRef); // 세그먼트 녹화 Interval 해제
+
     // 메인 녹화를 중지하는 로직
     await stopMainRecording(currentRecordingId);
 
+
     // 녹화 중지 후 다시 세그먼트 녹화 시작
-    handleSpeechRecognition(
-      user.sessionId,
-      setCurrentRecordingId,
-      segmentList,
-      intervalIdRef,
-      handleStartMainRecording
-    );
+    // handleSpeechRecognition(
+    //   user.sessionId,
+    //   setCurrentRecordingId,
+    //   segmentList,
+    //   intervalIdRef,
+    //   handleStartMainRecording
+    // );
+
+    // startSegmentRecordingInterval(
+    //   user.sessionId,
+    //   setCurrentRecordingId,
+    //   segmentList,
+    //   intervalIdRef,
+    // )
   };
 
   const handleLeaveSession = () => {
