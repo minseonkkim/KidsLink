@@ -1,12 +1,8 @@
 import React, { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import {
-  AiOutlineMenuFold,
-  AiOutlineMenuUnfold,
-} from "react-icons/ai";
+import { AiOutlineMenuFold, AiOutlineMenuUnfold } from "react-icons/ai";
 import { BiBell } from "react-icons/bi";
 import { CgProfile } from "react-icons/cg";
-import { FaRegTrashAlt } from "react-icons/fa";
 import ourClassIcon from "../../../assets/teacher/ourclass_btn_img.png";
 import scheduleIcon from "../../../assets/teacher/calendar_btn_img.png";
 import albumIcon from "../../../assets/teacher/album_btn_img.png";
@@ -20,6 +16,7 @@ import AlertModalContent from "./Header";
 import { FiLogOut } from "react-icons/fi";
 import { logout } from "../../../api/member";
 import useAppStore from "../../../stores/store";
+import { TeacherInfoCard } from "./TeacherInfoCard";  // Import the new component
 
 interface Alarm {
   id: number;
@@ -119,26 +116,29 @@ export const Sidebar: React.FC<SidebarProps> = ({
         } py-4 top-0 z-50`}
       >
         <div className="flex flex-row justify-between items-center">
-        <Link to="/" className="flex items-center pl-8">
-          <p className="text-[36px] font-bold text-left font-Cafe24Ssurround gradient-text cursor-pointer whitespace-nowrap">
-            키즈링크
-          </p>
-        </Link>
-        <div className="flex flex-row items-center pr-8 space-x-4">
-          <div className="relative" onClick={openAlarmModal}>
-            <BiBell className="w-[32px] h-[32px] cursor-pointer text-gray-700" />
-            <span className="absolute top-0 right-0 w-4 h-4 bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center">
-              {alertNum}
-            </span>
+          <Link to="/" className="flex items-center pl-8">
+            <p className="text-[36px] font-bold text-left font-Cafe24Ssurround gradient-text cursor-pointer whitespace-nowrap">
+              키즈링크
+            </p>
+          </Link>
+          <div className="flex flex-row items-center pr-8 space-x-4">
+            <div className="relative" onClick={openAlarmModal}>
+              <BiBell className="w-[32px] h-[32px] cursor-pointer text-gray-700" />
+              <span className="absolute top-0 right-0 w-4 h-4 bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center">
+                {alertNum}
+              </span>
+            </div>
+            <FiLogOut
+              onClick={handleLogout}
+              className="w-[29px] h-[29px] mr-10 cursor-pointer text-gray-700"
+            />
+            {/* <Link to="/mypage">
+              <CgProfile className="w-[30px] h-[30px] cursor-pointer text-gray-700" />
+            </Link> */}
           </div>
-          <FiLogOut onClick={handleLogout} className="w-[29px] h-[29px] mr-10 cursor-pointer text-gray-700"/>
-          {/* <Link to="/mypage">
-            <CgProfile className="w-[30px] h-[30px] cursor-pointer text-gray-700" />
-          </Link> */}
-        </div>
         </div>
         <div
-          className={`flex flex-col space-y-4 mt-4 ${
+          className={`flex flex-col space-y-2 mt-4 ${
             isSidebarOpen ? "block" : "hidden"
           }`}
         >
@@ -153,15 +153,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
             handleLinkClick={handleLinkClick}
           />
           <SidebarLink
-            to="/schedule"
-            icon={scheduleIcon}
-            label="일정관리"
-            activeMenu={activeMenu}
-            menuKey="schedule"
-            setActiveMenu={setActiveMenu}
-            handleLinkClick={handleLinkClick}
-          />
-          <SidebarLink
             to="/album"
             icon={albumIcon}
             label="사진분류"
@@ -212,6 +203,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
             label="문서관리"
             activeMenu={activeMenu}
             menuKey="document"
+            setActiveMenu={setActiveMenu}
+            handleLinkClick={handleLinkClick}
+          />
+          <SidebarLink
+            to="/schedule"
+            icon={scheduleIcon}
+            label="일정관리"
+            activeMenu={activeMenu}
+            menuKey="schedule"
             setActiveMenu={setActiveMenu}
             handleLinkClick={handleLinkClick}
           />
@@ -223,7 +223,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
           onClick={toggleSidebar}
           className="p-2 text-gray-700 bg-white border border-gray-300 shadow-lg rounded-full transition-shadow duration-300 hover:shadow-xl hover:border-gray-500"
         >
-          {isSidebarOpen ? <AiOutlineMenuFold size={24} /> : <AiOutlineMenuUnfold size={24} />}
+          {isSidebarOpen ? (
+            <AiOutlineMenuFold size={24} />
+          ) : (
+            <AiOutlineMenuUnfold size={24} />
+          )}
         </button>
       </div>
 
@@ -232,30 +236,27 @@ export const Sidebar: React.FC<SidebarProps> = ({
           isSidebarOpen ? "translate-x-0 w-60" : "translate-x-0 w-0"
         }`}
       >
-        <div className="flex flex-row justify-between items-center">
-          <div
-            className={`flex items-center mb-8 pl-8 transition-opacity duration-300 ${
-              isSidebarOpen ? "block" : "hidden"
-            }`}
-            onClick={() => navigate("/")}
-          >
-            <p className="text-[36px] font-bold text-left font-Cafe24Ssurround gradient-text cursor-pointer">
-              키즈링크
-            </p>
-          </div>
-          <div className="flex items-center mt-4 pl-8 lg:hidden">
-            <div className="relative" onClick={openAlarmModal}>
-              <BiBell className="w-[32px] h-[32px] cursor-pointer text-gray-700" />
-              <span className="absolute top-0 right-0 w-4 h-4 bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center">
-                {alertNum}
-              </span>
-            </div>
-            <div onClick={() => navigate("/mypage")}>
-              <CgProfile className="w-[30px] h-[30px] cursor-pointer text-gray-700" />
-            </div>
-          </div>
+        <div className="flex flex-col mx-6 mb-4 transition-opacity duration-300">
+          {isSidebarOpen && (
+            <>
+              <p
+                className="text-[36px] font-bold text-left font-Cafe24Ssurround gradient-text cursor-pointer"
+                onClick={() => navigate("/")}
+              >
+                키즈링크
+              </p>
+              <div className="mt-4">
+                <TeacherInfoCard /> {/* Teacher info card under the logo */}
+              </div>
+            </>
+          )}
         </div>
-        <div className={`flex flex-col space-y-4 ${isSidebarOpen ? "block" : "hidden"}`}>
+
+        <div
+          className={`flex flex-col space-y-2 ${
+            isSidebarOpen ? "block" : "hidden"
+          }`}
+        >
           {/* 메뉴 아이템들 */}
           <SidebarLink
             to="/"
@@ -263,15 +264,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
             label="우리반보기"
             activeMenu={activeMenu}
             menuKey="ourclass"
-            setActiveMenu={setActiveMenu}
-            handleLinkClick={handleLinkClick}
-          />
-          <SidebarLink
-            to="/schedule"
-            icon={scheduleIcon}
-            label="일정관리"
-            activeMenu={activeMenu}
-            menuKey="schedule"
             setActiveMenu={setActiveMenu}
             handleLinkClick={handleLinkClick}
           />
@@ -326,6 +318,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
             label="문서관리"
             activeMenu={activeMenu}
             menuKey="document"
+            setActiveMenu={setActiveMenu}
+            handleLinkClick={handleLinkClick}
+          />
+          <SidebarLink
+            to="/schedule"
+            icon={scheduleIcon}
+            label="일정관리"
+            activeMenu={activeMenu}
+            menuKey="schedule"
             setActiveMenu={setActiveMenu}
             handleLinkClick={handleLinkClick}
           />
@@ -370,7 +371,13 @@ const SidebarLink: React.FC<SidebarLinkProps> = ({
       }}
     >
       <img src={icon} alt={label} className="w-8 h-8 mr-5" />
-      <span className={`text-[17px] ${activeMenu === menuKey ? "font-bold text-gray-800" : "text-gray-700"}`}>
+      <span
+        className={`text-[17px] ${
+          activeMenu === menuKey
+            ? "font-bold text-gray-800"
+            : "text-gray-700"
+        }`}
+      >
         {label}
       </span>
     </Link>
