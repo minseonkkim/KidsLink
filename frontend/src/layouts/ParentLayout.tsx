@@ -7,7 +7,7 @@ export default function ParentLayout() {
   const location = useLocation()
   const params = useParams()
 
-  const noHeaderAndNavbarPaths = [`/meeting/${params.meetingId}`]
+  const noHeaderAndNavbarPaths = [`/meeting/${params.meetingId}`,'/error']
   const mainHeaderPaths = ['/', '/schedule', '/mypage']
   const useMainHeader = mainHeaderPaths.includes(location.pathname)
 
