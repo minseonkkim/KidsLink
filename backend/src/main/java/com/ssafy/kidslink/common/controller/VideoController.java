@@ -84,8 +84,6 @@ public class VideoController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-
-
     /**
      * Get a list of all recordings
      * @return The list of recordings

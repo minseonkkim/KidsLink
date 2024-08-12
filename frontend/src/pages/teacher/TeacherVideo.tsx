@@ -41,15 +41,16 @@ export default function TeacherVideo() {
     video: false,
     mic: false,
     muted: false,
-    volume: 0.2,
+    volume: 0.4,
   });
-  const [isSessionJoined, setIsSessionJoined] = useState(false);
   const [myStreamId, setMyStreamId] = useState<string | undefined>(undefined);
   const [otherVideoActive, setOtherVideoActive] = useState(false);
   const [otherOpacity, setOtherOpacity] = useState(false);
 
+  const [isSessionJoined, setIsSessionJoined] = useState(false);
   const [isRecording, setIsRecording] = useState(false); // 녹화 상태 관리
   const [currentRecordingId, setCurrentRecordingId] = useState<string | null>(null);
+
   const [recordStartTime, setRecordStartTime] = useState<number | null>(null);
   const recordingStartTimeRef = useRef<number | null>(null); // 키워드 감지 시점 전의 녹화 시작 시간
 
@@ -85,24 +86,23 @@ export default function TeacherVideo() {
     }
   }, [teacherInfo, setTeacherInfo]);
 
-  useEffect(() => {
-    console.log("useEffect쪽, isRecording", isRecording)
-    return () => {
-      // 컴포넌트가 언마운트될 때만 실행되도록 조건 추가
-      if (isRecording) {
-        handleStopRecording().then(() => {
-          leaveSession(openvidu, setOpenvidu, setIsSessionJoined, navigate);
-        }).catch((error) => {
-          console.error("Failed to stop recording before leaving session:", error);
-          leaveSession(openvidu, setOpenvidu, setIsSessionJoined, navigate);
-        });
-      } else {
-        leaveSession(openvidu, setOpenvidu, setIsSessionJoined, navigate);
-      }
-    };
-  }, [navigate]); // isRecording을 의존성에서 제거
+  // useEffect(() => {
+  //   console.log("useEffect쪽, isRecording", isRecording)
+  //   return () => {
+  //     // 컴포넌트가 언마운트될 때만 실행되도록 조건 추가
+  //     if (isRecording) {
+  //       handleStopRecording().then(() => {
+  //         leaveSession(openvidu, setOpenvidu, setIsSessionJoined, navigate);
+  //       }).catch((error) => {
+  //         console.error("Failed to stop recording before leaving session:", error);
+  //         leaveSession(openvidu, setOpenvidu, setIsSessionJoined, navigate);
+  //       });
+  //     } else {
+  //       leaveSession(openvidu, setOpenvidu, setIsSessionJoined, navigate);
+  //     }
+  //   };
+  // }, [navigate]); // isRecording을 의존성에서 제거
 
-  
   useEffect(() => {
     if (openvidu.publisher) {
       console.log("Publishing audio:", control.mic);
@@ -118,32 +118,39 @@ export default function TeacherVideo() {
     if (isSessionJoined && !isRecording) {
       handleStartRecording();
     }
-  }, [isSessionJoined, isRecording]);
+  }, [isSessionJoined]);
 
   const handleStartRecording = async () => {
-    if (isRecording) return;
-
     try {
       const recordingId = await startMainRecording(user.sessionId);
+      console.log("handleStopRecording recordingId", recordingId);
       setCurrentRecordingId(recordingId);
-      recordingStartTimeRef.current = Date.now();
       setIsRecording(true);
+      console.log("Recording started", isRecording);
 
-      console.log("Recording started with ID:", recordingId);
+      // 녹화 시작 시점 기록
+      recordingStartTimeRef.current = Date.now();
 
-      handleSpeechRecognition(user.sessionId, (detectedTime) => {
-        if (recordingStartTimeRef.current) {
-          const adjustedStartTime = detectedTime - 30000; // 30초 전으로 시간 조정
-          const validStartTime = Math.max(adjustedStartTime, recordingStartTimeRef.current);
-          setRecordStartTime(validStartTime); // 녹화 시작 시간을 설정
-          console.log("Adjusted start time for recording:", validStartTime);
-        } else {
-          console.error("Recording start time reference is null.");
-        }
-      });
+      // 녹화가 시작된 후 STT 기능을 호출
+      startSTT();
     } catch (error) {
       console.error("Failed to start recording:", error);
     }
+  };
+
+  const startSTT = () => {
+    handleSpeechRecognition(user.sessionId, (detectedTime) => {
+      console.log("Profanity detected at time:", detectedTime);
+
+      // 여기에서 필요한 추가 동작을 수행할 수 있습니다.
+      // 예를 들어, 감지된 시점에 대한 정보를 저장하거나 UI를 업데이트하는 등의 작업을 할 수 있습니다.
+      if (recordingStartTimeRef.current) {
+        // STT 감지 시점에서 20초 전 시간을 계산
+        const adjustedStartTime = Math.max(recordingStartTimeRef.current, detectedTime - 20000);
+        setRecordStartTime(adjustedStartTime); // 이 시간을 저장하여 종료 시 사용
+        console.log("Adjusted recording start time:", adjustedStartTime);
+      }
+    });
   };
 
   const handleStopRecording = async () => {
@@ -154,9 +161,8 @@ export default function TeacherVideo() {
       const startTime = recordStartTime || recordingStartTimeRef.current!;
       await stopMainRecording(currentRecordingId, startTime);
 
-      console.log("Recording stopped and saved from start time:", startTime);
+      console.log("Recording stopped.");
 
-      // 상태 초기화
       setCurrentRecordingId(null);
       recordingStartTimeRef.current = null;
       setRecordStartTime(null);
@@ -170,13 +176,14 @@ export default function TeacherVideo() {
 
     if (isRecording) {
       try {
-        await handleStopRecording(); // 녹화가 진행 중이면 녹화 중지
-        console.log("Recording stopped. Now leaving the session...");
+        await handleStopRecording();
+        console.log("handleStopRecording 동작 끝");
       } catch (error) {
         console.error("Failed to stop recording before leaving session:", error);
       }
     }
 
+    console.log("leaveSession 동작 시작");
     leaveSession(openvidu, setOpenvidu, setIsSessionJoined, navigate);
   };
 
