@@ -58,7 +58,9 @@ export const startSegmentRecording = async (sessionId: string): Promise<string> 
       { headers: { "Content-Type": "application/json" } }
     );
 
-    return response.data;
+    console.log("startSegmentRecording response : ", response)
+
+    return response.data.segmentId;
   } catch (error) {
     console.error("Error starting segment recording:", error);
     throw error;
@@ -68,9 +70,11 @@ export const startSegmentRecording = async (sessionId: string): Promise<string> 
 // 세그먼트 녹화 중지
 export const stopSegmentRecording = async (recordingId: string): Promise<void> => {
   const url = `${APPLICATION_SERVER_URL}/recordings/stop/${recordingId}`;
+  console.log("stopSegmentRecording recordingId:", recordingId)
 
   try {
-    await axios.post(url, {}, { headers: { "Content-Type": "application/json" } });
+    const response = await axios.post(url, {}, { headers: { "Content-Type": "application/json" } });
+    console.log("stopSegmentRecording response : ", response)
   } catch (error) {
     console.error("Error stopping segment recording:", error);
     throw error;
@@ -153,19 +157,44 @@ export const handleSpeechRecognition = async (
   };
 
   recognition.start();
+};
+
+// 세그먼트 녹화 관리 함수
+export const startSegmentRecordingInterval = (
+  sessionId: string,
+  setRecordingId: React.Dispatch<React.SetStateAction<string | null>>,
+  segmentList: React.MutableRefObject<string[]>,
+  intervalIdRef: React.MutableRefObject<number | null>
+) => {
+  if (intervalIdRef.current !== null) {
+    console.log("Interval is already set. No need to set again.");
+    return; // 이미 interval이 설정된 경우 중복 설정 방지
+  }
 
   intervalIdRef.current = window.setInterval(async () => {
     if (segmentList.current.length > 0) {
       const lastSegmentId = segmentList.current[segmentList.current.length - 1];
-      console.log("Stopping last segment recording, ID:", lastSegmentId);
+      console.log("마지막 녹화 세그먼트 ID:", lastSegmentId);
       await stopSegmentRecording(lastSegmentId);
     }
-
+    
     const newSegmentId = await startSegmentRecording(sessionId);
-    console.log("Started new segment recording, ID:", newSegmentId, " for session:", sessionId);
+    console.log("새 녹화 세그먼트 ID:", newSegmentId, " for session:", sessionId);
     segmentList.current.push(newSegmentId);
+    console.log("세그먼트 리스트:", segmentList.current);
     setRecordingId(newSegmentId);
-  }, 15000);
+  }, 30000);
+};
+
+// 기존 기능은 그대로 유지
+export const stopSegmentRecordingInterval = (
+  intervalIdRef: React.MutableRefObject<number | null>
+) => {
+  if (intervalIdRef.current !== null) {
+    clearInterval(intervalIdRef.current);
+    intervalIdRef.current = null; // interval 해제 후 초기화
+    console.log("Interval cleared.");
+  }
 };
 
 // 메인 녹화 시작
