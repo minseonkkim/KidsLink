@@ -6,14 +6,10 @@ import ParentMeetingFooter from "../../components/openvidu/ParentMeetingFooter";
 import { useParams, useNavigate } from "react-router-dom";
 import { useParentInfoStore } from "../../stores/useParentInfoStore";
 import { ControlState, OpenViduState, User } from "../../types/openvidu";
-import {
-  fetchParentInfo,
-  joinSession,
-  leaveSession,
-} from "../../utils/openvidu";
+import { fetchParentInfo, joinSession, leaveSession } from "../../utils/openvidu";
+import { handleSpeechRecognitionSignalByParent } from "../../api/openvidu";
 import { getMeetingInfo } from "../../api/meeting";
-import { FaHandsHelping, FaUserSecret, FaBan } from 'react-icons/fa';
-
+import { FaHandsHelping, FaUserSecret, FaBan } from "react-icons/fa";
 
 export default function ParentVideo() {
   const navigate = useNavigate();
@@ -24,8 +20,8 @@ export default function ParentVideo() {
   const [user, setUser] = useState<User>({
     sessionId: meetingId,
     username: parentInfo?.child?.name || "",
-    classname: "",  // 빌드에러로 인해 기본값 ""으로 수정하였음
-    profile: ""
+    classname: "", // 빌드에러로 인해 기본값 ""으로 수정하였음
+    profile: "",
   });
   const [openvidu, setOpenvidu] = useState<OpenViduState>({
     session: undefined,
@@ -51,14 +47,12 @@ export default function ParentVideo() {
     const fetchMeetingInfo = async () => {
       try {
         const res = await getMeetingInfo(parseInt(meetingId));
-        console.log("상담 조회하면서 parentInfo: ", parentInfo)
+        console.log("상담 조회하면서 parentInfo: ", parentInfo);
         setTeacherName(res.teacherName);
 
         // 상담 날짜 설정 (이거 utils에 저장된 날짜 함수 확인해보고 쓸지말지 수정하기)
         const date = new Date(res.date);
-        setMeetingDate(
-          `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일`
-        );
+        setMeetingDate(`${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일`);
 
         // 상담 시간 설정
         setMeetingTime(res.time);
@@ -85,7 +79,7 @@ export default function ParentVideo() {
     } else {
       setUser((prevUser) => ({ ...prevUser, username: parentInfo.child.name }));
     }
-    console.log("parentInfo: ",parentInfo)
+    console.log("parentInfo: ", parentInfo);
   }, [parentInfo, setParentInfo]);
 
   useEffect(() => {
@@ -93,6 +87,13 @@ export default function ParentVideo() {
       leaveSession(openvidu, setOpenvidu, setIsSessionJoined, navigate);
     };
   }, [navigate]);
+
+  useEffect(() => {
+    if (isSessionJoined && openvidu.session) {
+      // 학부모 측에서 STT 감지를 시작
+      handleSpeechRecognitionSignalByParent(openvidu.session);
+    }
+  }, [isSessionJoined, openvidu.session]);
 
   // control 상태가 변경될 때마다 publisher의 오디오와 비디오 상태를 업데이트
   useEffect(() => {
@@ -108,7 +109,7 @@ export default function ParentVideo() {
   // 나가기 버튼 클릭
   const handleOutClick = () => {
     leaveSession(openvidu, setOpenvidu, setIsSessionJoined, navigate);
-    navigate('/meeting')
+    navigate("/meeting");
   };
 
   const handleLeaveSession = () => {
@@ -116,57 +117,33 @@ export default function ParentVideo() {
   };
 
   return (
-    <div
-      className="relative min-h-screen bg-cover bg-center bg-no-repeat px-4 pt-4 flex items-center justify-center"
-      style={{ backgroundImage: `url(${bgImg})` }}
-    >
+    <div className="relative min-h-screen bg-cover bg-center bg-no-repeat px-4 pt-4 flex items-center justify-center" style={{ backgroundImage: `url(${bgImg})` }}>
       {/* 반투명 검정 배경 */}
       <div className="absolute inset-0 bg-black bg-opacity-50"></div>
       {openvidu.session ? (
         <div className="absolute w-full h-full flex flex-col items-center justify-center">
           <Draggable>
             {/* 수정 필요한 부분 */}
-            <div
-              className="absolute top-[100px] right-[30px] w-[120px] h-[150px] rounded-lg border border-white z-50 bg-black cursor-move flex items-center justify-center"
-              style={{ opacity: parentVideoOpacity, backgroundColor: "white" }}
-            >
+            <div className="absolute top-[100px] right-[30px] w-[120px] h-[150px] rounded-lg border border-white z-50 bg-black cursor-move flex items-center justify-center" style={{ opacity: parentVideoOpacity, backgroundColor: "white" }}>
               {/* 부모 비디오가 꺼져있을 때 표시 */}
-              {!control.video && (
-                <div className="absolute z-50 text-white text-opacity-100">
-                  학부모
-                </div>
-              )}
-              <div className="h-full w-full flex items-center justify-center">
-                {openvidu.mainStreamManager && (
-                  <OpenViduVideoComponent
-                    streamManager={openvidu.mainStreamManager}
-                  />
-                )}
-              </div>
+              {!control.video && <div className="absolute z-50 text-white text-opacity-100">학부모</div>}
+              <div className="h-full w-full flex items-center justify-center">{openvidu.mainStreamManager && <OpenViduVideoComponent streamManager={openvidu.mainStreamManager} />}</div>
             </div>
           </Draggable>
           {/* 수정 필요한 부분 */}
-          <div
-            className="absolute top-20 bg-white w-[90%] h-[calc(70vh)] rounded-lg z-40 flex items-center justify-center"
-            style={{ opacity: 1, backgroundColor: "white" }}
-          >
+          <div className="absolute top-20 bg-white w-[90%] h-[calc(70vh)] rounded-lg z-40 flex items-center justify-center" style={{ opacity: 1, backgroundColor: "white" }}>
             {/* 상대방 비디오가 꺼져있을 때 표시 */}
             {/* 구독자 비디오 컴포넌트 표시 */}
             {openvidu.subscribers.map((sub, i) => (
               <div key={i} className="h-full w-full z-80">
-                <OpenViduVideoComponent
-                  streamManager={sub}
-                  muted={control.muted}
-                  volume={control.volume}
-                />
+                <OpenViduVideoComponent streamManager={sub} muted={control.muted} volume={control.volume} />
               </div>
             ))}
           </div>
         </div>
-      ) :
- (
+      ) : (
         <div className="absolute flex flex-col justify-center items-center w-full h-full px-4 mb-8">
-          <div className="relative bg-[#fff9d7] rounded-[20px] p-6 shadow-lg border-2 border-[#ffec8a] bg-notebook-pattern">            
+          <div className="relative bg-[#fff9d7] rounded-[20px] p-6 shadow-lg border-2 border-[#ffec8a] bg-notebook-pattern">
             {/* 상담 안내문 */}
             <p className="text-base font-bold text-[#212121] mb-4">
               {meetingDate} {meetingTime} ~ {meetingEndTime}
@@ -204,10 +181,7 @@ export default function ParentVideo() {
               >
                 입장하기
               </button>
-              <button
-                onClick={handleOutClick}
-                className="w-20 h-8 bg-[#ffec8a] rounded-full flex items-center justify-center text-sm font-medium text-[#212121] hover:bg-[#fdda6e] transition-colors"
-              >
+              <button onClick={handleOutClick} className="w-20 h-8 bg-[#ffec8a] rounded-full flex items-center justify-center text-sm font-medium text-[#212121] hover:bg-[#fdda6e] transition-colors">
                 나가기
               </button>
             </div>
