@@ -99,15 +99,13 @@ export const handleSpeechRecognition = async (
 
 // 메인 녹화 시작
 export const startMainRecording = async (sessionId: string): Promise<string> => {
-  const url = `${APPLICATION_SERVER_URL}/sessions/${sessionId}/recordings/start`;
-
   try {
     const response = await axios.post(
-      url,
+      `${APPLICATION_SERVER_URL}/sessions/${sessionId}/recordings/start`,
       {
         outputMode: "COMPOSED",
         recordingMode: "ALWAYS",
-        name: `main-${Date.now()}`,
+        name: "recording-name",
         hasAudio: true,
         hasVideo: true,
       },
@@ -128,18 +126,21 @@ export const startMainRecording = async (sessionId: string): Promise<string> => 
 
 // 메인 녹화 중지
 export const stopMainRecording = async (recordingId: string, startTime: number): Promise<void> => {
-  const url = `${APPLICATION_SERVER_URL}/recordings/stop/${recordingId}`;
-
   try {
-    await axios.post(
-      url,
-      {
-        startTime, // 시작 시간을 백엔드로 전송
-      },
+    console.log("stopMainRecording : ",
+      `${APPLICATION_SERVER_URL}/recordings/stop/${recordingId}`,
+      { startTime },
       { headers: { "Content-Type": "application/json" } }
     );
+
+    const response = await axios.post(
+      `${APPLICATION_SERVER_URL}/recordings/stop/${recordingId}`,
+      { startTime },
+      { headers: { "Content-Type": "application/json" } }
+    );
+    return response.data;
   } catch (error) {
-    console.error("Error stopping main recording:", error);
+    console.error("Error stopping recording:", error);
     throw error;
   }
 };
