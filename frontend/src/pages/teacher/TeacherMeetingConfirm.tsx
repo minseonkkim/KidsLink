@@ -178,7 +178,7 @@ export default function TeacherMeetingConfirm() {
                 }else{
                     showToastError(
                         <div>
-                            모든 일정을 분류할 수 없습니다.
+                            모든 상담 일정을 선택해주세요.
                         </div>
                     );
                 }
