@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Sidebar } from "../components/teacher/common/Sidebar";
 import { Header } from "../components/teacher/common/Header";
 import {

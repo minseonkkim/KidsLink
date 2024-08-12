@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, useGLTF, Environment } from '@react-three/drei';
 import { MeshStandardMaterial, Group, Vector2 } from 'three';
@@ -27,11 +27,8 @@ function Model(props: JSX.IntrinsicElements['group'] & { mousePosition: Vector2 
   useFrame(({ clock }) => {
     if (groupRef.current) {
       const x = props.mousePosition.x * Math.PI;
-
       groupRef.current.rotation.y = Math.max(0, Math.min(Math.PI / 4.5, x * 0.1)); // 좌우 회전 각도 제한
-
-      // 몸을 좌우로 흔들리는 애니메이션 추가
-      groupRef.current.rotation.z = Math.sin(clock.getElapsedTime()) * 0.05;
+      groupRef.current.rotation.z = Math.sin(clock.getElapsedTime()) * 0.05; // 몸을 좌우로 흔들리는 애니메이션 추가
     }
   });
 
@@ -57,25 +54,11 @@ function Model(props: JSX.IntrinsicElements['group'] & { mousePosition: Vector2 
 
 useGLTF.preload('/3d-daramgi.glb');
 
-export default function ThreeModel() {
+export default function ThreeModel({ mousePosition }: { mousePosition: Vector2 }) {
   const controlsRef = useRef<OrbitControlsImpl>(null);
-  const [mousePosition, setMousePosition] = useState(new Vector2(0, 0));
-
-  useEffect(() => {
-    const handleMouseMove = (event: MouseEvent) => {
-      const x = (event.clientX / window.innerWidth) * 2 - 1;
-      const y = -(event.clientY / window.innerHeight) * 2 + 1;
-      setMousePosition(new Vector2(x, y));
-    };
-
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-    };
-  }, []);
 
   return (
-    <Canvas style={{ height: '400px', width: '180px' }} camera={{ position: [0.3, 1, 5], fov: 50 }}>
+    <Canvas style={{ height: '400px', width: '300px' }} camera={{ position: [0.3, 1, 5], fov: 50 }}>
       <ambientLight intensity={1.0} />
       <directionalLight position={[10, 10, 10]} intensity={1.0} />
       <Model mousePosition={mousePosition} />
@@ -90,4 +73,4 @@ export default function ThreeModel() {
       <Environment preset="sunset" />
     </Canvas>
   );
-};
+}
