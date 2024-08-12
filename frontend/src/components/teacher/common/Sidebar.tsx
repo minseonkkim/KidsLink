@@ -1,9 +1,12 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import {
   AiOutlineMenuFold,
   AiOutlineMenuUnfold,
 } from "react-icons/ai";
+import { BiBell } from "react-icons/bi";
+import { CgProfile } from "react-icons/cg";
+import { FaRegTrashAlt } from "react-icons/fa";
 import ourClassIcon from "../../../assets/teacher/ourclass_btn_img.png";
 import scheduleIcon from "../../../assets/teacher/calendar_btn_img.png";
 import albumIcon from "../../../assets/teacher/album_btn_img.png";
@@ -12,6 +15,18 @@ import consultingIcon from "../../../assets/teacher/consulting_btn_img.png";
 import noticeIcon from "../../../assets/teacher/notice_btn_img.png";
 import growthdiaryIcon from "../../../assets/teacher/growthdiary_btn_img.png";
 import documentIcon from "../../../assets/teacher/document_btn_img.png";
+import useModal from "../../../hooks/teacher/useModal";
+import AlertModalContent from "./Header";
+import { FiLogOut } from "react-icons/fi";
+import { logout } from "../../../api/member";
+import useAppStore from "../../../stores/store";
+
+interface Alarm {
+  id: number;
+  contents: string;
+  date: string;
+  code: string;
+}
 
 interface SidebarProps {
   isSidebarOpen: boolean;
@@ -19,6 +34,12 @@ interface SidebarProps {
   setActiveMenu: (menu: string) => void;
   handleLinkClick: () => void;
   toggleSidebar: () => void;
+  alertNum: number;
+  alertList: Alarm[];
+  fetchAlarmList: () => Promise<void>;
+  fetchAlarmCount: () => Promise<void>;
+  deleteItem: (id: number) => Promise<void>;
+  deleteAllItems: () => Promise<void>;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -27,7 +48,69 @@ export const Sidebar: React.FC<SidebarProps> = ({
   setActiveMenu,
   handleLinkClick,
   toggleSidebar,
+  alertNum,
+  alertList,
+  fetchAlarmList,
+  fetchAlarmCount,
+  deleteItem,
+  deleteAllItems,
 }) => {
+  const { openModal, Modal, isModalOpen, closeModal } = useModal();
+  const navigate = useNavigate();
+
+  const handleAlertClick = async (alert: Alarm) => {
+    closeModal();
+
+    if (alert.code === "MEETING") {
+      navigate("/meeting/confirm");
+    } else if (alert.code === "DOCUMENT") {
+      navigate("/document");
+    }
+
+    await fetchAlarmCount();
+  };
+
+  const renderModalContent = () => (
+    <AlertModalContent
+      alertList={alertList}
+      handleAlertClick={handleAlertClick}
+      deleteItem={deleteItem}
+      deleteAllItems={deleteAllItems}
+      closeModal={closeModal}
+      fetchAlarmCount={fetchAlarmCount}
+    />
+  );
+
+  const openAlarmModal = async () => {
+    if (!isModalOpen) {
+      await fetchAlarmList();
+      openModal(renderModalContent());
+      await fetchAlarmCount();
+    }
+  };
+
+  useEffect(() => {
+    if (isModalOpen) {
+      openModal(renderModalContent());
+    }
+    return () => {
+      fetchAlarmCount();
+    };
+  }, [alertList, isModalOpen, fetchAlarmCount]);
+
+  const setUserType = useAppStore((state) => state.setUserType);
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      console.error("Logout failed", error);
+    } finally {
+      setUserType("");
+      navigate("/");
+    }
+  };
+
   return (
     <>
       <aside
@@ -35,13 +118,27 @@ export const Sidebar: React.FC<SidebarProps> = ({
           isSidebarOpen ? "h-full" : "h-[80px]"
         } py-4 top-0 z-50`}
       >
+        <div className="flex flex-row justify-between items-center">
         <Link to="/" className="flex items-center pl-8">
           <p className="text-[36px] font-bold text-left font-Cafe24Ssurround gradient-text cursor-pointer whitespace-nowrap">
             키즈링크
           </p>
         </Link>
+        <div className="flex flex-row items-center pr-8 space-x-4">
+          <div className="relative" onClick={openAlarmModal}>
+            <BiBell className="w-[32px] h-[32px] cursor-pointer text-gray-700" />
+            <span className="absolute top-0 right-0 w-4 h-4 bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center">
+              {alertNum}
+            </span>
+          </div>
+          <FiLogOut onClick={handleLogout} className="w-[29px] h-[29px] mr-10 cursor-pointer text-gray-700"/>
+          {/* <Link to="/mypage">
+            <CgProfile className="w-[30px] h-[30px] cursor-pointer text-gray-700" />
+          </Link> */}
+        </div>
+        </div>
         <div
-          className={`flex flex-col space-y-4 ${
+          className={`flex flex-col space-y-4 mt-4 ${
             isSidebarOpen ? "block" : "hidden"
           }`}
         >
@@ -135,16 +232,29 @@ export const Sidebar: React.FC<SidebarProps> = ({
           isSidebarOpen ? "translate-x-0 w-60" : "translate-x-0 w-0"
         }`}
       >
-        <Link
-          to="/"
-          className={`flex items-center mb-8 pl-8 transition-opacity duration-300 ${
-            isSidebarOpen ? "block" : "hidden"
-          }`}
-        >
-          <p className="text-[36px] font-bold text-left font-Cafe24Ssurround gradient-text cursor-pointer">
-            키즈링크
-          </p>
-        </Link>
+        <div className="flex flex-row justify-between items-center">
+          <div
+            className={`flex items-center mb-8 pl-8 transition-opacity duration-300 ${
+              isSidebarOpen ? "block" : "hidden"
+            }`}
+            onClick={() => navigate("/")}
+          >
+            <p className="text-[36px] font-bold text-left font-Cafe24Ssurround gradient-text cursor-pointer">
+              키즈링크
+            </p>
+          </div>
+          <div className="flex items-center mt-4 pl-8 lg:hidden">
+            <div className="relative" onClick={openAlarmModal}>
+              <BiBell className="w-[32px] h-[32px] cursor-pointer text-gray-700" />
+              <span className="absolute top-0 right-0 w-4 h-4 bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center">
+                {alertNum}
+              </span>
+            </div>
+            <div onClick={() => navigate("/mypage")}>
+              <CgProfile className="w-[30px] h-[30px] cursor-pointer text-gray-700" />
+            </div>
+          </div>
+        </div>
         <div className={`flex flex-col space-y-4 ${isSidebarOpen ? "block" : "hidden"}`}>
           {/* 메뉴 아이템들 */}
           <SidebarLink
@@ -221,6 +331,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
           />
         </div>
       </aside>
+
+      <Modal />
     </>
   );
 };

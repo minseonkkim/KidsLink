@@ -152,20 +152,36 @@ export default function TeacherMeetingConfirm() {
     };
 
     const handleConfirmMeetingClick = async () => {
+        const allParentsSelected = Object.keys(groupedMeetings).every(
+            parentId => selectedTimes[parentId]
+        );
+
+        if (!allParentsSelected) {
+            showToastError(<div>모든 상담 일정을 선택해주세요.</div>);
+            return;
+        }
         try {
             const transformedData = createTransformedData(groupedMeetings, selectedTimes, teacherName);
 
             if (transformedData.length > 0) {
-                await confirmMeeting(transformedData);
-                showToastSuccess(
-                    <div>
-                        상담일자가 확정되었습니다!<br />상담목록으로 이동합니다.
-                    </div>
-                );
+                const response = await confirmMeeting(transformedData);
+                if (response.status === "success") {
+                    showToastSuccess(
+                        <div>
+                            상담일자가 확정되었습니다!<br />상담목록으로 이동합니다.
+                        </div>
+                    );
 
-                setTimeout(() => {
-                    navigate('/meeting/scheduled');
-                }, 3000);
+                    setTimeout(() => {
+                        navigate('/meeting/scheduled');
+                    }, 3000);
+                }else{
+                    showToastError(
+                        <div>
+                            동일한 상담일정이 존재합니다. 일정을 조율해주세요.
+                        </div>
+                    );
+                }
             } else {
                 showToastError(<div>선택된 상담일자가 없습니다.</div>);
             }
@@ -174,6 +190,7 @@ export default function TeacherMeetingConfirm() {
             console.error('상담일자 확정 중 오류 발생:', error);
         }
     };
+    
 
     const tabs = [
         { label: "상담가능시간 open", link: "/meeting/reservation" },

@@ -2,6 +2,7 @@ package com.ssafy.kidslink.application.parent.controller;
 
 import com.ssafy.kidslink.application.child.dto.ChildDTO;
 import com.ssafy.kidslink.application.parent.dto.ParentDTO;
+import com.ssafy.kidslink.application.parent.dto.ParentIdDTO;
 import com.ssafy.kidslink.application.parent.dto.ParentJoinDTO;
 import com.ssafy.kidslink.application.parent.service.ParentService;
 import com.ssafy.kidslink.common.dto.APIResponse;
@@ -74,6 +75,7 @@ public class ParentController {
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = APIResponse.class)))
     })
+
     @GetMapping("")
     @Secured("ROLE_PARENT")
     public ResponseEntity<APIResponse<ParentDTO>> getProcesses(@AuthenticationPrincipal Object principal) {
