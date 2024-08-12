@@ -80,6 +80,12 @@ export default function TeacherLayout({
           setActiveMenu={setActiveMenu}
           handleLinkClick={handleLinkClick}
           toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
+          alertNum={alertNum} 
+          alertList={alertList}
+          fetchAlarmList={fetchAlarmList} 
+          fetchAlarmCount={fetchAlarmCount} 
+          deleteItem={deleteItem} 
+          deleteAllItems={deleteAllItems}
         />
         <main
           className={`flex-1 p-8 min-h-screen max-h-screen bg-[#F5F5F5] overflow-hidden transition-all duration-300 ${

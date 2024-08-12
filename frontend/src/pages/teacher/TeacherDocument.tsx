@@ -104,20 +104,6 @@ export default function TeacherDocument() {
   const handleDocumentClick = (type, id) => {
     setSelectedDocumentId(id);
     setSelectedDocumentRealType(type);
-
-    // 선택된 아이 카드로 스크롤
-    const element = documentRefs.current[id];
-    const container = containerRef.current;
-    if (element && container) {
-      const containerTop = container.getBoundingClientRect().top;
-      const elementTop = element.getBoundingClientRect().top;
-      const scrollOffset = elementTop - containerTop;
-
-      container.scrollTo({
-        top: container.scrollTop + scrollOffset,
-        behavior: 'smooth'
-      });
-    }
   };
 
   const findChildImg = async (childId: number): Promise<string> => {
@@ -145,8 +131,29 @@ export default function TeacherDocument() {
 
   const handleFilterClick = (type) => {
     setSelectedDocumentType(type);
+    const filteredDocs = documents.filter(document => type === "전체" || document.type === type);
+    
+    if (filteredDocs.length > 0) {
+      const firstDocument = filteredDocs[0];
+      const documentId = firstDocument.type === "Absent" ? firstDocument.details.absentId : firstDocument.details.dosageId;
+      
+      setSelectedDocumentId(documentId);
+      setSelectedDocumentRealType(firstDocument.type);
+    } else {
+      setSelectedDocumentId(null);
+      setSelectedDocumentRealType(null);
+    }
+    
     filterAndSetDocuments(documents, type);
+  
+    if (containerRef.current) {
+      containerRef.current.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    }
   };
+  
 
   return (
     <TeacherLayout

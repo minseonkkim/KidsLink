@@ -5,6 +5,9 @@ import { CgProfile } from "react-icons/cg";
 import { FaRegTrashAlt } from "react-icons/fa";
 import useModal from "../../../hooks/teacher/useModal";
 import { CSSTransition } from "react-transition-group";
+import { FiLogOut } from "react-icons/fi";
+import useAppStore from "../../../stores/store";
+import { logout } from "../../../api/member";
 
 interface Alarm {
   id: number;
@@ -260,6 +263,19 @@ export const Header: React.FC<HeaderProps> = ({
     }
   };
 
+  const setUserType = useAppStore((state) => state.setUserType);
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      console.error("Logout failed", error);
+    } finally {
+      setUserType("");
+      navigate("/");
+    }
+  };
+
   return (
     <div className="flex justify-between items-center mb-1">
       <h1 className="text-[20px] font-semibold text-[#363636]">
@@ -272,9 +288,10 @@ export const Header: React.FC<HeaderProps> = ({
             {alertNum}
           </span>
         </div>
-        <Link to="/mypage">
-          <CgProfile className="mt-4 w-[30px] h-[30px] cursor-pointer text-gray-700" />
-        </Link>
+        <FiLogOut onClick={handleLogout} className="w-[29px] h-[29px] mt-4 mr-10 cursor-pointer text-gray-700"/>
+        {/* <Link to="/mypage">
+          <CgProfile className="mt-4 mr-4 w-[30px] h-[30px] cursor-pointer text-gray-700" />
+        </Link> */}
       </div>
       <Modal />
     </div>

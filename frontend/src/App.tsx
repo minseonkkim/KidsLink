@@ -1,11 +1,14 @@
 import { Suspense, lazy } from "react";
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import useAppStore, { AppState } from "./stores/store";
-import { CSSTransition, TransitionGroup } from "react-transition-group";
 import LoadingSpinner from "./components/common/LoadingSpinner";
+<<<<<<< HEAD
 
 import "./index.css"; // CSS for animations
 import { MeetingGuard } from "./components/meeting/MeetingGuard";
+=======
+import LoginCenterPage from "./pages/common/LoginCenterPage";
+>>>>>>> 7f7cdc70cde744ffd6fc38fe28611dd68129af9e
 
 // Lazy loading of components and pages
 const Join = lazy(() => import("./pages/common/Join"));
@@ -61,8 +64,6 @@ export default function App() {
   const userType = useAppStore((state: AppState) => state.userType);
 
   return (
-    <TransitionGroup>
-      <CSSTransition key={location.key} classNames="page" timeout={300}>
         <Suspense fallback={<LoadingSpinner/>}>
           <Routes location={location}>
             {userType === "ROLE_PARENT" ? (
@@ -133,6 +134,7 @@ export default function App() {
               <>
                 {/* Default User Routes */}
                 <Route path="/" element={<Login />} />
+                <Route path="/login" element={<LoginCenterPage/>}/>
                 <Route path="/join" element={<Join />} />
                 <Route path="/social/join" element={<SocialJoinRedirect />} />
                 <Route path="/social/login" element={<SocialLoginRedirect />} />
@@ -143,7 +145,5 @@ export default function App() {
             )}
           </Routes>
         </Suspense>
-      </CSSTransition>
-    </TransitionGroup>
   );
 }

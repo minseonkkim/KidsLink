@@ -204,7 +204,7 @@ public class MeetingTimeController {
     public ResponseEntity<APIResponse<List<SelectedMeetingDTO>>> classifySchedule(@AuthenticationPrincipal Object principal,@RequestBody List<SelectedMeetingDTO> selectedMeetingDTOS){
         if(principal instanceof CustomUserDetails){
             List<SelectedMeetingDTO> meetings = meetingTimeService.classifySchedule(selectedMeetingDTOS);
-            System.out.println(meetings);
+
             if (meetings.isEmpty()) {
                 APIResponse<List<SelectedMeetingDTO>> responseData = new APIResponse<>(
                         "fail",
@@ -239,7 +239,17 @@ public class MeetingTimeController {
     public ResponseEntity<APIResponse<List<MeetingRoomDTO>>> confirmMeeting(@AuthenticationPrincipal Object principal,@RequestBody List<SelectedMeetingDTO> selectedMeetingDTOS ){
         if(principal instanceof CustomUserDetails){
             CustomUserDetails userDetails = (CustomUserDetails) principal;
+            List<SelectedMeetingDTO> classifySchedule = meetingTimeService.classifySchedule(selectedMeetingDTOS);
 
+            if (classifySchedule.isEmpty()) {
+                APIResponse<List<MeetingRoomDTO>> responseData = new APIResponse<>(
+                        "fail",
+                        null,
+                        "모든 일정을 분류할 수 없습니다.",
+                        null
+                );
+                return new ResponseEntity<>(responseData, HttpStatus.OK);
+            }
             List<MeetingRoomDTO> meetings = meetingTimeService.confirmMeeting(selectedMeetingDTOS);
             meetingTimeService.deleteMeeting(userDetails.getUsername());
             meetingTimeService.deleteMeetingTime(userDetails.getUsername());
