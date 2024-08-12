@@ -156,7 +156,7 @@ export default function TeacherGrowth() {
         titleComponent={<Title title="성장일지" />}
         imageSrc={daramgi} 
     >
-      <div className="relative w-full gap-8 lg:my-8 mt-5 px-4 flex flex-col lg:flex-row lg:justify-between justify-start">
+      <div className="relative w-full gap-8 lg:my-12 mt-5 px-4 flex flex-col lg:flex-row lg:justify-between justify-start">
         <div className="rounded-[10px] bg-[#f4f4f4] w-full h-[320px] lg:h-[540px] p-[10px] mb-4 lg:mb-0">
           <div className="bg-[#fff] lg:h-[50px] h-[44px] rounded-[10px] flex items-center p-3 mx-2 mt-2 mb-4">
             <IoSearch className="text-[24px] mr-3" />
