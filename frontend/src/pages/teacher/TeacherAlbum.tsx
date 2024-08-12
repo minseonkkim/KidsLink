@@ -48,9 +48,9 @@ export default function TeacherAlbum() {
         <div className={`h-[470px] flex lg:flex-row flex-col items-center ${images.length === 0 || loading ? 'justify-center' : 'justify-between'} w-full`}>
           {!loading && (
             <div className={`flex flex-col items-center ${images.length === 0 ? 'mx-auto' : ''}`}>
-              <label className="flex flex-col items-center justify-center bg-[#FFF9D7] border-[#FFE96F] border-[2px] lg:w-[300px] lg:h-[300px] w-[250px] h-[250px] rounded-[360px] p-6 cursor-pointer">
-                <FiUpload className="text-[70px] mb-5" />
-                <span className="text-[20px] font-bold">사진업로드</span>
+              <label className="flex flex-col items-center justify-center bg-[#FFF9D7] border-[#FFE96F] border-[2px] lg:w-[300px] lg:h-[300px] w-[200px] h-[200px] rounded-[360px] p-6 cursor-pointer">
+                <FiUpload className="lg:text-[70px] text-[60px] mb-5" />
+                <span className="lg:text-[20px] text-[18px] font-bold">사진업로드</span>
                 <input 
                   type="file" 
                   multiple 
