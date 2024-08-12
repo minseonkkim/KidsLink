@@ -4,6 +4,7 @@ import com.ssafy.kidslink.application.child.domain.Child;
 import com.ssafy.kidslink.application.child.mapper.ChildMapper;
 import com.ssafy.kidslink.application.parent.domain.Parent;
 import com.ssafy.kidslink.application.parent.dto.ParentDTO;
+import com.ssafy.kidslink.application.parent.dto.ParentIdDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -52,5 +53,24 @@ public class ParentMapper {
         parentDTO.setProfile(parent.getParentProfile());
 
         return parentDTO;
+    }
+    public ParentIdDTO parentIdToDTO(Parent parent) {
+        ParentIdDTO parentIdDTO = new ParentIdDTO();
+        parentIdDTO.setParentId(parentIdDTO.getParentId());
+        parentIdDTO.setUsername(parent.getParentUsername());
+        parentIdDTO.setEmail(parent.getParentEmail());
+        parentIdDTO.setName(parent.getParentName());
+        parentIdDTO.setNickname(parent.getParentNickname());
+        parentIdDTO.setTel(parent.getParentTel());
+
+        Set<Child> children = parent.getChildren();
+        Iterator<Child> iterator = children.iterator();
+        if (iterator.hasNext()) {
+            Child child = iterator.next();
+            parentIdDTO.setChild(childMapper.toDTO(child));
+        }
+        parentIdDTO.setProfile(parent.getParentProfile());
+
+        return parentIdDTO;
     }
 }

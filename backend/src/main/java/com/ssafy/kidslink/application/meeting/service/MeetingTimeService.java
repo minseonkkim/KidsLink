@@ -17,10 +17,13 @@ import com.ssafy.kidslink.application.parent.domain.Parent;
 import com.ssafy.kidslink.application.parent.repository.ParentRepository;
 import com.ssafy.kidslink.application.teacher.domain.Teacher;
 import com.ssafy.kidslink.application.teacher.repository.TeacherRepository;
+import com.ssafy.kidslink.common.dto.APIResponse;
 import com.ssafy.kidslink.common.enums.NotificationCode;
 import com.ssafy.kidslink.common.exception.InvalidPrincipalException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -160,6 +163,7 @@ public class MeetingTimeService {
 
     public List<MeetingRoomDTO> confirmMeeting(List<SelectedMeetingDTO> selectedMeetingDTOs) {
         Teacher teacher = teacherRepository.findByTeacherUsername(selectedMeetingDTOs.get(0).getTeacherName());
+
         List<MeetingRoomDTO> confirmMeetings = new ArrayList<>();
         for (SelectedMeetingDTO selectedMeetingDTO : selectedMeetingDTOs) {
             Parent parent = parentRepository.findById(selectedMeetingDTO.getParentId()).orElseThrow();
