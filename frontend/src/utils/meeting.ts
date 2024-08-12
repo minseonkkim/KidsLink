@@ -15,11 +15,28 @@ export const getCurrentTimeString = (): string => {
 
 // 미팅 활성화 함수
 export const isMeetingActive = (meetingDate: string, meetingTime: string): boolean => {
-  const currentTime = new Date();
-  const meetingDateTime = new Date(`${meetingDate}T${meetingTime}`);
-  const timeDiff = meetingDateTime.getTime() - currentTime.getTime();
+  const currentTime = new Date(); // 현재 시간
+  const meetingDateTime = new Date(`${meetingDate}T${meetingTime}`); // 상담 시간
+  const timeDiff = meetingDateTime.getTime() - currentTime.getTime(); // 상담 시간과 현재 시간의 차이 (밀리초)
+  
+  console.log("현재 시간:", currentTime);
+  console.log("상담 시간:", meetingDateTime);
+  console.log("시간 차이 (밀리초):", timeDiff);
+  console.log(-30*1000*60)
+  console.log(10*1000*60)
 
-  // 상담 시간 30분 전후로 활성화 상태로 설정
+/*
+  // 상담 시작 10분 전부터 상담 시작 30분 후까지의 범위 확인
+  if (-30 * 60 * 1000 <= timeDiff && timeDiff <= 10 * 60 * 1000) {
+    console.log("참");
+    return true; // 상담 시간이 10분 전 ~ 30분 후 범위에 있으면 true 반환
+  }
+
+  console.log("거짓");
+  return false; // 그 외의 경우 false 반환
+  */
+
+    // 상담 시간 30분 전후로 활성화 상태로 설정
   // TODO 
   // return timeDiff > -10 * 60 * 1000 && timeDiff < 30 * 60 * 1000;
   return true;
@@ -28,8 +45,8 @@ export const isMeetingActive = (meetingDate: string, meetingTime: string): boole
 
 // 진행, 예정인 상담내역만 보이게 판별해주는 함수
 export const isMeetingVisible = (meetingDate: string, meetingTime: string): boolean => {
-  const currentTimeString = getCurrentTimeString();
-  const meetingDateTimeString = `${meetingDate} ${meetingTime}`;
+  const currentTimeString = getCurrentTimeString(); // 현재 시간을 문자열로 가져옴
+  const meetingDateTimeString = `${meetingDate} ${meetingTime}`; // 상담 날짜와 시간을 문자열로 결합
 
   // 현재 시간을 Date 객체로 변환
   const currentDateTime = new Date(currentTimeString);
@@ -40,20 +57,19 @@ export const isMeetingVisible = (meetingDate: string, meetingTime: string): bool
   // 상담 시간에 30분을 더한 시간을 계산
   const meetingEndTime = new Date(meetingDateTime.getTime() + 30 * 60000);
 
-  // 날짜가 지난 상담은 보이지 않게 설정
-  if (meetingDateTime < currentDateTime) {
+  console.log("현재 시간:", currentTimeString);
+  console.log("상담 종료 시간:", meetingEndTime);
+  console.log("시간이 지났나?", currentDateTime <= meetingEndTime);
+
+  // 상담 종료 시간이 현재 시간보다 이전인 경우 상담을 보이지 않게 설정
+  if (currentDateTime > meetingEndTime) {
     return false;
   }
 
-  // 날짜가 같은 경우, 상담 시간이 지난 것만 보이지 않게 설정
-  if (meetingDate === currentTimeString.split(' ')[0]) {
-    // 상담 시간이 30분 지난 경우 보이지 않게 설정
-    return currentDateTime <= meetingEndTime;
-  }
-
-  // 날짜가 지나지 않은 경우 모두 보이게 설정
+  // 상담 시간이 현재 시간 이후라면 보이도록 설정
   return true;
 };
+
 
 //날짜 변환
 export const formatDate = (date: ValuePiece): string => {
