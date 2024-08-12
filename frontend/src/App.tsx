@@ -2,13 +2,8 @@ import { Suspense, lazy } from "react";
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import useAppStore, { AppState } from "./stores/store";
 import LoadingSpinner from "./components/common/LoadingSpinner";
-<<<<<<< HEAD
-
-import "./index.css"; // CSS for animations
 import { MeetingGuard } from "./components/meeting/MeetingGuard";
-=======
 import LoginCenterPage from "./pages/common/LoginCenterPage";
->>>>>>> 7f7cdc70cde744ffd6fc38fe28611dd68129af9e
 
 // Lazy loading of components and pages
 const Join = lazy(() => import("./pages/common/Join"));

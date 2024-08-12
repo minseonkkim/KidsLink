@@ -5,7 +5,7 @@ interface ReservationTimeProps {
   time: string;
   isActive: boolean;
   isFetched: boolean;
-  onClick: () => void;
+  onClick?: () => void;
   date: Date;
 }
 
