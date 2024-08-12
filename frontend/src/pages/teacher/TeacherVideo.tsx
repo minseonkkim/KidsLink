@@ -3,22 +3,15 @@ import { useEffect, useState, useRef } from "react";
 import OpenViduVideoComponent from "../../components/openvidu/VideoComponent";
 import {
   handleSpeechRecognition,
-  // stopRecording,
-  // startSegmentRecording,
-  stopSegmentRecording,
   startMainRecording, // 메인 녹화 관련 함수 추가
   stopMainRecording,
-  mergeSegments,
-  startSegmentRecordingInterval,
-  stopSegmentRecordingInterval, // 메인 녹화 관련 함수 추가
 } from "../../api/openvidu";
-// import TeacherHeader from "../../components/teacher/common/TeacherHeader";
 import MeetingBackground from "../../assets/teacher/meeting_background.png";
 import { useTeacherInfoStore } from "../../stores/useTeacherInfoStore";
 import { getTeacherInfo } from "../../api/Info";
 import TeacherMeetingFooter from "../../components/openvidu/TeacherMeetingFooter";
-import { ControlState, OpenViduState, Recording, TabState, User } from "../../types/openvidu";
-import { fetchRecordingsList, joinSession, leaveSession } from "../../utils/openvidu";
+import { ControlState, OpenViduState, User } from "../../types/openvidu";
+import { joinSession, leaveSession } from "../../utils/openvidu";
 import DefaultProfile from "../../assets/teacher/default_profile.png";
 
 export default function TeacherVideo() {
@@ -50,18 +43,15 @@ export default function TeacherVideo() {
     muted: false,
     volume: 0.2,
   });
-  const [recordings, setRecordings] = useState<Recording[]>([]);
   const [isSessionJoined, setIsSessionJoined] = useState(false);
-
   const [myStreamId, setMyStreamId] = useState<string | undefined>(undefined);
   const [otherVideoActive, setOtherVideoActive] = useState(false);
   const [otherOpacity, setOtherOpacity] = useState(false);
 
-  const segmentList = useRef<string[]>([]);
-  const intervalIdRef = useRef<number | null>(null);
-
   const [isRecording, setIsRecording] = useState(false); // 녹화 상태 관리
   const [currentRecordingId, setCurrentRecordingId] = useState<string | null>(null);
+  const [recordStartTime, setRecordStartTime] = useState<number | null>(null);
+  const recordingStartTimeRef = useRef<number | null>(null); // 키워드 감지 시점 전의 녹화 시작 시간
 
   useEffect(() => {
     console.log("useEffect - otherVideoActive changed", otherVideoActive);
@@ -115,85 +105,67 @@ export default function TeacherVideo() {
 
   useEffect(() => {
     if (isSessionJoined && !isRecording) {
-      handleSpeechRecognition(
-        user.sessionId, // meetingId
-        setCurrentRecordingId, // recordingId 세팅하기
-        segmentList,  // 
-        intervalIdRef,
-        handleStartMainRecording
-      );
-      startSegmentRecordingInterval(
-        user.sessionId,
-        setCurrentRecordingId,
-        segmentList,
-        intervalIdRef
-      )
+      handleStartRecording();
     }
   }, [isSessionJoined, isRecording]);
 
-// handleStartMainRecording 함수 수정
-const handleStartMainRecording = async () => {
-  if (isRecording) return;
+  const handleStartRecording = async () => {
+    if (isRecording) return;
 
-  setIsRecording(true);
-  clearInterval(intervalIdRef.current); // 세그먼트 녹화 타이머 중지
+    try {
+      const recordingId = await startMainRecording(user.sessionId);
+      setCurrentRecordingId(recordingId);
+      recordingStartTimeRef.current = Date.now();
+      setIsRecording(true);
 
-  // 최신 3개의 세그먼트만 병합
-  const segmentsToMerge = segmentList.current.slice(-3);
+      console.log("Recording started with ID:", recordingId);
 
-  if (segmentsToMerge.length > 0) {
-      await stopSegmentRecording(segmentsToMerge[segmentsToMerge.length - 1]);
-
-      // 백엔드에 세그먼트 병합 요청
-      const mergedFilePath = await mergeSegments(segmentsToMerge);
-      console.log("Merged segments saved to:", mergedFilePath);
-  }
-
-  segmentList.current = []; // 세그먼트 리스트 초기화
-
-  // 메인 녹화를 시작하는 로직
-  const mainRecordingId = await startMainRecording(user.sessionId);
-  setCurrentRecordingId(mainRecordingId);
-
-  console.log("Main recording started with ID:", mainRecordingId);
-};
+      handleSpeechRecognition(user.sessionId, (detectedTime) => {
+        const adjustedStartTime = detectedTime - 20000; // 20초 전으로 시간 조정
+        setRecordStartTime(Math.max(adjustedStartTime, recordingStartTimeRef.current!)); // 녹화 시작 시간을 설정
+        console.log("Adjusted start time for recording:", recordStartTime);
+      });
+    } catch (error) {
+      console.error("Failed to start recording:", error);
+    }
+  };
 
   const handleStopRecording = async () => {
-    if (!isRecording) return;
+    if (!isRecording || !currentRecordingId) return;
 
-    setIsRecording(false);
-    console.log(currentRecordingId)
-    
-    segmentList.current = []; // 세그먼트 리스트 초기화
-    stopSegmentRecordingInterval(intervalIdRef); // 세그먼트 녹화 Interval 해제
+    try {
+      setIsRecording(false);
+      const startTime = recordStartTime || recordingStartTimeRef.current!;
+      await stopMainRecording(currentRecordingId, startTime);
 
-    // 메인 녹화를 중지하는 로직
-    await stopMainRecording(currentRecordingId);
+      console.log("Recording stopped and saved from start time:", startTime);
 
-
-    // 녹화 중지 후 다시 세그먼트 녹화 시작
-    // handleSpeechRecognition(
-    //   user.sessionId,
-    //   setCurrentRecordingId,
-    //   segmentList,
-    //   intervalIdRef,
-    //   handleStartMainRecording
-    // );
-
-    // startSegmentRecordingInterval(
-    //   user.sessionId,
-    //   setCurrentRecordingId,
-    //   segmentList,
-    //   intervalIdRef,
-    // )
+      // 상태 초기화
+      setCurrentRecordingId(null);
+      recordingStartTimeRef.current = null;
+      setRecordStartTime(null);
+    } catch (error) {
+      console.error("Failed to stop recording:", error);
+    }
   };
 
   const handleLeaveSession = () => {
     console.log("Leaving session...");
+    
     if (isRecording) {
-      handleStopRecording(); // 세션 종료 시 녹화 중지
+      // 녹화가 진행 중이면 먼저 녹화를 중지합니다.
+      handleStopRecording().then(() => {
+        // 녹화가 중지된 후 세션을 종료합니다.
+        leaveSession(openvidu, setOpenvidu, setIsSessionJoined, navigate);
+      }).catch(error => {
+        console.error("Failed to stop recording before leaving session:", error);
+        // 녹화 중지에 실패해도 세션 종료는 진행합니다.
+        leaveSession(openvidu, setOpenvidu, setIsSessionJoined, navigate);
+      });
+    } else {
+      // 녹화가 진행 중이지 않으면 바로 세션을 종료합니다.
+      leaveSession(openvidu, setOpenvidu, setIsSessionJoined, navigate);
     }
-    leaveSession(openvidu, setOpenvidu, setIsSessionJoined, navigate);
   };
 
   const teacherVideoOpacity = control.video ? 1 : 0.8;
@@ -272,7 +244,7 @@ const handleStartMainRecording = async () => {
             control={control}
             handleControl={setControl}
             close={handleLeaveSession}
-            startRecording={handleStartMainRecording} // 녹화 시작 함수 전달
+            startRecording={handleStartRecording} // 녹화 시작 함수 전달
             stopRecording={handleStopRecording} // 녹화 중지 함수 전달
             isRecording={isRecording} // 녹화 상태 전달
           />

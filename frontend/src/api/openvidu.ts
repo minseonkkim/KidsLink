@@ -41,61 +41,6 @@ export const getToken = async (mySessionId: string): Promise<string> => {
   const sessionId = await createSession(mySessionId);
   return await createToken(sessionId);
 };
-// 세그먼트 녹화 시작
-export const startSegmentRecording = async (sessionId: string): Promise<string> => {
-  const url = `${APPLICATION_SERVER_URL}/sessions/${sessionId}/recordings/start`;
-
-  try {
-    const response = await axios.post(
-      url,
-      {
-        outputMode: "COMPOSED",
-        recordingMode: "ALWAYS",
-        name: `segment-${Date.now()}`,
-        hasAudio: true,
-        hasVideo: true,
-      },
-      { headers: { "Content-Type": "application/json" } }
-    );
-
-    console.log("startSegmentRecording response : ", response)
-
-    return response.data.segmentId;
-  } catch (error) {
-    console.error("Error starting segment recording:", error);
-    throw error;
-  }
-};
-
-// 세그먼트 녹화 중지
-export const stopSegmentRecording = async (recordingId: string): Promise<void> => {
-  const url = `${APPLICATION_SERVER_URL}/recordings/stop/${recordingId}`;
-  console.log("stopSegmentRecording recordingId:", recordingId)
-
-  try {
-    const response = await axios.post(url, {}, { headers: { "Content-Type": "application/json" } });
-    console.log("stopSegmentRecording response : ", response)
-  } catch (error) {
-    console.error("Error stopping segment recording:", error);
-    throw error;
-  }
-};
-
-// 세그먼트 병합
-export const mergeSegments = async (segmentList: string[]): Promise<string> => {
-  const url = `${APPLICATION_SERVER_URL}/recordings/save`;
-
-  try {
-    const response = await axios.post(url, segmentList, {
-      headers: { "Content-Type": "application/json" },
-    });
-
-    return response.data;
-  } catch (error) {
-    console.error("Error merging segments:", error);
-    throw error;
-  }
-};
 
 // 욕설 감지
 const detectProfanity = (text: string): boolean => {
@@ -114,13 +59,10 @@ export const fetchRecordings = async (): Promise<any[]> => {
   }
 };
 
-// STT 및 세그먼트 녹화 처리
+// STT 처리 및 키워드 감지
 export const handleSpeechRecognition = async (
   sessionId: string,
-  setRecordingId: React.Dispatch<React.SetStateAction<string | null>>,
-  segmentList: React.MutableRefObject<string[]>,
-  intervalIdRef: React.MutableRefObject<number | null>,
-  startMainRecording: () => void
+  setDetectedTime: (time: number) => void
 ) => {
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SpeechRecognition) {
@@ -132,20 +74,16 @@ export const handleSpeechRecognition = async (
   recognition.continuous = true;
   recognition.interimResults = true;
 
-  recognition.onresult = async (event) => {
+  recognition.onresult = (event) => {
     for (let i = event.resultIndex; i < event.results.length; i++) {
       if (event.results[i].isFinal) {
         const transcript = event.results[i][0].transcript;
         console.log("STT Result:", transcript);
 
         if (detectProfanity(transcript)) {
-          console.log("Profanity detected. Starting main recording...");
-
-          if (segmentList.current.length > 0) {
-            await stopSegmentRecording(segmentList.current[segmentList.current.length - 1]);
-          }
-
-          startMainRecording();
+          console.log("Profanity detected.");
+          const detectedTime = Date.now();
+          setDetectedTime(detectedTime); // 감지된 시간을 전달
           recognition.stop(); // STT 중지
         }
       }
@@ -157,44 +95,6 @@ export const handleSpeechRecognition = async (
   };
 
   recognition.start();
-};
-
-// 세그먼트 녹화 관리 함수
-export const startSegmentRecordingInterval = (
-  sessionId: string,
-  setRecordingId: React.Dispatch<React.SetStateAction<string | null>>,
-  segmentList: React.MutableRefObject<string[]>,
-  intervalIdRef: React.MutableRefObject<number | null>
-) => {
-  if (intervalIdRef.current !== null) {
-    console.log("Interval is already set. No need to set again.");
-    return; // 이미 interval이 설정된 경우 중복 설정 방지
-  }
-
-  intervalIdRef.current = window.setInterval(async () => {
-    if (segmentList.current.length > 0) {
-      const lastSegmentId = segmentList.current[segmentList.current.length - 1];
-      console.log("마지막 녹화 세그먼트 ID:", lastSegmentId);
-      await stopSegmentRecording(lastSegmentId);
-    }
-    
-    const newSegmentId = await startSegmentRecording(sessionId);
-    console.log("새 녹화 세그먼트 ID:", newSegmentId, " for session:", sessionId);
-    segmentList.current.push(newSegmentId);
-    console.log("세그먼트 리스트:", segmentList.current);
-    setRecordingId(newSegmentId);
-  }, 30000);
-};
-
-// 기존 기능은 그대로 유지
-export const stopSegmentRecordingInterval = (
-  intervalIdRef: React.MutableRefObject<number | null>
-) => {
-  if (intervalIdRef.current !== null) {
-    clearInterval(intervalIdRef.current);
-    intervalIdRef.current = null; // interval 해제 후 초기화
-    console.log("Interval cleared.");
-  }
 };
 
 // 메인 녹화 시작
@@ -214,7 +114,12 @@ export const startMainRecording = async (sessionId: string): Promise<string> => 
       { headers: { "Content-Type": "application/json" } }
     );
 
-    return response.data;
+    console.log(
+      `startMainRecording -> /sessions/${sessionId}/recordings/start -> response`,
+      response
+    );
+
+    return response.data.recordingId; // 녹화 ID 반환
   } catch (error) {
     console.error("Error starting main recording:", error);
     throw error;
@@ -222,39 +127,19 @@ export const startMainRecording = async (sessionId: string): Promise<string> => 
 };
 
 // 메인 녹화 중지
-export const stopMainRecording = async (recordingId: string): Promise<void> => {
+export const stopMainRecording = async (recordingId: string, startTime: number): Promise<void> => {
   const url = `${APPLICATION_SERVER_URL}/recordings/stop/${recordingId}`;
 
   try {
-    await axios.post(url, {}, { headers: { "Content-Type": "application/json" } });
+    await axios.post(
+      url,
+      {
+        startTime, // 시작 시간을 백엔드로 전송
+      },
+      { headers: { "Content-Type": "application/json" } }
+    );
   } catch (error) {
     console.error("Error stopping main recording:", error);
-    throw error;
-  }
-};
-
-// 녹화 중지 버튼 - 세그먼트 병합 및 녹화 중지
-export const stopRecording = async (
-  sessionId: string,
-  segmentList: string[],
-  intervalIdRef: React.MutableRefObject<number | null>
-) => {
-  try {
-    if (intervalIdRef.current) {
-      clearInterval(intervalIdRef.current); // 세그먼트 녹화 타이머 중지
-    }
-
-    console.log("segmentList", segmentList)
-    for (const segmentId of segmentList) {
-      await stopSegmentRecording(segmentId); // 모든 세그먼트 녹화 중지
-    }
-
-    const mergedFilePath = await mergeSegments(segmentList); // 세그먼트 병합
-    console.log("Merged recording available at:", mergedFilePath);
-
-    return mergedFilePath;
-  } catch (error) {
-    console.error("Error stopping and merging recordings:", error);
     throw error;
   }
 };
