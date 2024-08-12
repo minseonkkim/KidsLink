@@ -56,6 +56,7 @@ export default function TeacherMeetingConfirm() {
 
     return (
         <div className="w-full py-3 pt-72">
+        <div className="dark-overlay"></div>
           <div className="w-full mt-10 mb-32">
           {Object.keys(groupedMeetings).length !== 0 && (
                 <div className="text-center text-[17px] mb-3">

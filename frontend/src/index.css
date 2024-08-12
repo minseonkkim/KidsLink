@@ -121,6 +121,15 @@ a{
   }
 }
 
+.dark-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.3); /* 반투명 검정색 */
+  z-index: 30; /* 다른 요소보다 위에 배치 */
+}
 
 
 /* custom-scrollbar 클래스 정의 */
@@ -130,7 +139,6 @@ a{
     overflow: auto;
     overflow-y: auto; /* 세로 스크롤만 허용 */
     overflow-x: hidden; /* 가로 스크롤 숨기기 */
-    cursor: pointer;
 }
 
 .custom-scrollbar::-webkit-scrollbar {

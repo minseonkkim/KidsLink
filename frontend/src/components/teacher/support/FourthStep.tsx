@@ -22,6 +22,7 @@ const TeacherMeetingRecordingList = () => {
 
   return (
     <div className="p-6">
+      <div className="dark-overlay"></div>
       <h1 className="text-2xl font-bold mb-6">녹화된 상담</h1>
       <div className="w-full mt-10 mb-32 px-4 lg:px-8 py-6 lg:py-8">
         {noRecordings ? (

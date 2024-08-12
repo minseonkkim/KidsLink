@@ -5,6 +5,7 @@ import { CSSTransition, TransitionGroup } from "react-transition-group";
 import LoadingSpinner from "./components/common/LoadingSpinner";
 
 import "./index.css"; // CSS for animations
+import { MeetingGuard } from "./components/meeting/MeetingGuard";
 
 // Lazy loading of components and pages
 const Join = lazy(() => import("./pages/common/Join"));
@@ -82,7 +83,14 @@ export default function App() {
                   <Route path="/bus" element={<ParentBus />} />
                   <Route path="/meeting" element={<ParentMeeting />} />
                   <Route path="/meeting/submit" element={<ParentMeetingSubmit />} />
-                  <Route path="/meeting/:meetingId" element={<ParentVideo />} />
+                  <Route
+                    path="/meeting/:meetingId"
+                    element={
+                      <MeetingGuard>
+                        <ParentVideo />
+                      </MeetingGuard>
+                    }
+                  />
                   <Route path="/schedule" element={<ParentSchedule />} />
                   <Route path="/mypage" element={<ParentMyPage />} />
                   {/* Parent User Error Page */}
