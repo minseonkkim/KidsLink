@@ -9,9 +9,11 @@ import { getConfirmedMeeting } from "../../api/meeting";
 import TeacherLayout from '../../layouts/TeacherLayout';
 import daramgi from "../../assets/teacher/meeting-daramgi.png";
 import DefaultImg from "../../assets/teacher/default_profile.png";
+import { useTeacherInfoStore } from '../../stores/useTeacherInfoStore';
 
 export default function TeacherMeeting() {
   const [meetings, setMeetings] = useState<ParentTeacherMeeting[]>([]);
+  const setHasAccessedMeeting = useTeacherInfoStore(state => state.setHasAccessedMeeting);
 
   useEffect(() => {
     const fetchMeetings = async () => {
@@ -32,7 +34,7 @@ export default function TeacherMeeting() {
               return { 
                 ...meeting, 
                 childName: "알 수 없음",
-                parentProfile: DefaultImg // Use default profile image if error occurs
+                parentProfile: DefaultImg
               };
             }
           })
@@ -87,6 +89,7 @@ return (
       to={`/meeting/${meeting.meetingId}`}
       state={{ parentName: meeting.childName }}
       key={meeting.meetingId}
+      onClick={() => setHasAccessedMeeting(true)}  
     >
       <TeacherMeetingSchedule
         date={meeting.meetingDate}
