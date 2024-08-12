@@ -75,11 +75,8 @@ export async function postTeacherReservations(
 export async function confirmMeeting(selectedMeetings) {
   try {
     const response = await axiosInstance.post("meeting/confirm",selectedMeetings);
-    if (response.data.status === "success") {
-      return response.data.data;
-    } else {
-      throw new Error("Failed to confirmMeeting");
-    }
+    return response.data;
+
   } catch (error) {
     console.log(error);
     throw error;
@@ -88,11 +85,7 @@ export async function confirmMeeting(selectedMeetings) {
 export async function classifyMeeting(selectedMeetings) {
   try {
     const response = await axiosInstance.post("meeting/classify",selectedMeetings);
-    if (response.data.status === "success"||response.data.status === "fail") {
-      return response.data;
-    } else {
-      throw new Error("Failed to confirmMeeting");
-    }
+    return response.data;
   } catch (error) {
     console.log(error);
     throw error;
