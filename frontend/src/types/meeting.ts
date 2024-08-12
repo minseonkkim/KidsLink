@@ -27,7 +27,7 @@ export interface ParentTeacherMeeting {
   parentId: number;
   teacherId: number;
   childName: string;
-  parentProfile: string;
+  childProfile: string;
 }
 
 export interface MeetingInfo {
