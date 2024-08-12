@@ -19,7 +19,7 @@ interface Alarm {
 interface AlertModalProps {
   alertList: Alarm[];
   isModalOpen: boolean;
-  handleAlertClick: (alert: Alarm) => Promise<void>;
+  handleAlertClick: (alert: Alarm, isDelete?: boolean) => Promise<void>;
   deleteItem: (id: number) => Promise<void>;
   deleteAllItems: () => Promise<void>;
   closeModal: () => void;
@@ -80,7 +80,7 @@ const AlertModal: React.FC<AlertModalProps> = ({
                   <FaRegTrashAlt
                     className="text-[18px] cursor-pointer"
                     onClick={async (e) => {
-                      e.preventDefault(); // e.stopPropagation() 제거
+                      e.stopPropagation(); // 이벤트 전파 방지
                       await deleteItem(alert.id);
                       await fetchAlarmCount();
                     }}
@@ -97,10 +97,9 @@ const AlertModal: React.FC<AlertModalProps> = ({
   );
 };
 
-
 interface AlertModalContentProps {
   alertList: Alarm[];
-  handleAlertClick: (alert: Alarm) => Promise<void>;
+  handleAlertClick: (alert: Alarm, isDelete?: boolean) => Promise<void>;
   deleteItem: (id: number) => Promise<void>;
   deleteAllItems: () => Promise<void>;
   closeModal: () => void;
@@ -160,7 +159,7 @@ const AlertModalContent: React.FC<AlertModalContentProps> = ({
                   <FaRegTrashAlt
                     className="text-[18px] cursor-pointer"
                     onClick={async (e) => {
-                      e.preventDefault(); // e.stopPropagation() 제거
+                      e.stopPropagation(); // 이벤트 전파 방지
                       await deleteItem(alert.id);
                       await fetchAlarmCount();
                     }}
@@ -178,7 +177,6 @@ const AlertModalContent: React.FC<AlertModalContentProps> = ({
 };
 
 export default AlertModalContent;
-
 
 interface HeaderProps {
   alertNum: number;
@@ -206,13 +204,16 @@ export const Header: React.FC<HeaderProps> = ({
   const { openModal, Modal, isModalOpen, closeModal } = useModal();
   const navigate = useNavigate();
 
-  const handleAlertClick = async (alert: Alarm) => {
+  const handleAlertClick = async (alert: Alarm, isDelete: boolean = false) => {
     closeModal();
 
-    if (alert.code === "MEETING") {
-      navigate("/meeting/confirm");
-    } else if (alert.code === "DOCUMENT") {
-      navigate("/document");
+    // 삭제 작업이 아닌 경우에만 페이지 이동
+    if (!isDelete) {
+      if (alert.code === "MEETING") {
+        navigate("/meeting/confirm");
+      } else if (alert.code === "DOCUMENT") {
+        navigate("/document");
+      }
     }
 
     await fetchAlarmCount();
@@ -288,7 +289,10 @@ export const Header: React.FC<HeaderProps> = ({
             {alertNum}
           </span>
         </div>
-        <FiLogOut onClick={handleLogout} className="w-[29px] h-[29px] mt-4 mr-10 cursor-pointer text-gray-700"/>
+        <FiLogOut
+          onClick={handleLogout}
+          className="w-[29px] h-[29px] mt-4 mr-10 cursor-pointer text-gray-700"
+        />
         {/* <Link to="/mypage">
           <CgProfile className="mt-4 mr-4 w-[30px] h-[30px] cursor-pointer text-gray-700" />
         </Link> */}
