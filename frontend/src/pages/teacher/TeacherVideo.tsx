@@ -158,26 +158,17 @@ export default function TeacherVideo() {
 
   const handleLeaveSession = async () => {
     console.log("Leaving session...");
-  
+
     if (isRecording) {
       try {
-        // 녹화가 진행 중이면 먼저 녹화를 중지합니다.
-        await handleStopRecording();
-  
+        await handleStopRecording(); // 녹화가 진행 중이면 녹화 중지
         console.log("Recording stopped. Now leaving the session...");
-  
-        // 녹화가 중지된 후 세션을 종료합니다.
-        leaveSession(openvidu, setOpenvidu, setIsSessionJoined, navigate);
       } catch (error) {
         console.error("Failed to stop recording before leaving session:", error);
-  
-        // 녹화 중지에 실패해도 세션 종료는 진행합니다.
-        leaveSession(openvidu, setOpenvidu, setIsSessionJoined, navigate);
       }
-    } else {
-      // 녹화가 진행 중이지 않으면 바로 세션을 종료합니다.
-      leaveSession(openvidu, setOpenvidu, setIsSessionJoined, navigate);
     }
+
+    leaveSession(openvidu, setOpenvidu, setIsSessionJoined, navigate);
   };
 
   const teacherVideoOpacity = control.video ? 1 : 0.8;
