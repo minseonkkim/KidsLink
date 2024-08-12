@@ -25,6 +25,7 @@ export const isMeetingActive = (meetingDate: string, meetingTime: string): boole
   console.log(-30*1000*60)
   console.log(10*1000*60)
 
+/*
   // 상담 시작 10분 전부터 상담 시작 30분 후까지의 범위 확인
   if (-30 * 60 * 1000 <= timeDiff && timeDiff <= 10 * 60 * 1000) {
     console.log("참");
@@ -33,6 +34,12 @@ export const isMeetingActive = (meetingDate: string, meetingTime: string): boole
 
   console.log("거짓");
   return false; // 그 외의 경우 false 반환
+  */
+
+    // 상담 시간 30분 전후로 활성화 상태로 설정
+  // TODO 
+  // return timeDiff > -10 * 60 * 1000 && timeDiff < 30 * 60 * 1000;
+  return true;
 };
 
 
