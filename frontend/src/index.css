@@ -131,7 +131,6 @@ a{
     overflow: auto;
     overflow-y: auto; /* 세로 스크롤만 허용 */
     overflow-x: hidden; /* 가로 스크롤 숨기기 */
-    cursor: pointer;
 }
 
 .custom-scrollbar::-webkit-scrollbar {
