@@ -178,9 +178,9 @@ export default function TeacherVideo() {
       setIsRecording(false);
       // const startTime = recordStartTime || recordingStartTimeRef.current!;
       const startTime = recordStartTime || 60000;
-      console.log(recordStartTime)
-      console.log(startTime)
-      await stopMainRecording(currentRecordingId, startTime);
+      console.log("handleStopRecording", recordStartTime)
+      console.log("handleStopRecording", startTime)
+      await stopMainRecording(currentRecordingId, 60000);
 
       console.log("Recording stopped.");
 
