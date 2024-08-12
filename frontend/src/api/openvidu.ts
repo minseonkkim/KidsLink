@@ -59,11 +59,49 @@ export const fetchRecordings = async (): Promise<any[]> => {
   }
 };
 
+// 학부모 측 STT 감지 메서드 => 감지 시 선생님에게 신호
+export const handleSpeechRecognitionSignalByParent = async (session) => {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) {
+    console.error("SpeechRecognition not supported in this browser.");
+    return;
+  }
+
+  const recognition = new SpeechRecognition();
+  recognition.continuous = true;
+  recognition.interimResults = true;
+
+  recognition.onresult = (event) => {
+    for (let i = event.resultIndex; i < event.results.length; i++) {
+      if (event.results[i].isFinal) {
+        const transcript = event.results[i][0].transcript;
+        console.log("STT Result from Parent:", transcript);
+
+        if (detectProfanity(transcript)) {
+          console.log("Profanity detected by Parent.");
+
+          // 욕설 감지 신호를 선생님 세션으로 전송
+          session.signal({
+            data: "startRecording",
+            to: [], // 선생님에게 신호 전송
+            type: "profanityDetected",
+          });
+
+          recognition.stop(); // STT 중지
+        }
+      }
+    }
+  };
+
+  recognition.onerror = (event) => {
+    console.error("Speech recognition error:", event.error);
+  };
+
+  recognition.start();
+};
+
 // STT 처리 및 키워드 감지
-export const handleSpeechRecognition = async (
-  sessionId: string,
-  setDetectedTime: (time: number) => void
-) => {
+export const handleSpeechRecognition = async (sessionId: string, setDetectedTime: (time: number) => void) => {
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SpeechRecognition) {
     console.error("SpeechRecognition not supported in this browser.");
@@ -112,10 +150,7 @@ export const startMainRecording = async (sessionId: string): Promise<string> => 
       { headers: { "Content-Type": "application/json" } }
     );
 
-    console.log(
-      `startMainRecording -> /sessions/${sessionId}/recordings/start -> response`,
-      response
-    );
+    console.log(`startMainRecording -> /sessions/${sessionId}/recordings/start -> response`, response);
 
     return response.data.recordingId; // 녹화 ID 반환
   } catch (error) {
@@ -127,17 +162,9 @@ export const startMainRecording = async (sessionId: string): Promise<string> => 
 // 메인 녹화 중지
 export const stopMainRecording = async (recordingId: string, startTime: number): Promise<void> => {
   try {
-    console.log("stopMainRecording : ",
-      `${APPLICATION_SERVER_URL}/recordings/stop/${recordingId}`,
-      { startTime },
-      { headers: { "Content-Type": "application/json" } }
-    );
+    console.log("stopMainRecording : ", `${APPLICATION_SERVER_URL}/recordings/stop/${recordingId}`, { startTime }, { headers: { "Content-Type": "application/json" } });
 
-    const response = await axios.post(
-      `${APPLICATION_SERVER_URL}/recordings/stop/${recordingId}`,
-      { startTime },
-      { headers: { "Content-Type": "application/json" } }
-    );
+    const response = await axios.post(`${APPLICATION_SERVER_URL}/recordings/stop/${recordingId}`, { startTime }, { headers: { "Content-Type": "application/json" } });
     return response.data;
   } catch (error) {
     console.error("Error stopping recording:", error);
