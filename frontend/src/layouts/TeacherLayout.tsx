@@ -54,15 +54,25 @@ export default function TeacherLayout({
   }, []);
 
   const deleteItem = async (id: number) => {
-    await deleteAlarm(id);
-    await fetchAlarmList();
-    await fetchAlarmCount();
+    try {
+      await deleteAlarm(id);
+      // 삭제 후 알람 목록과 개수를 업데이트
+      await fetchAlarmList();
+      await fetchAlarmCount();
+    } catch (error) {
+      console.error("Failed to delete alarm:", error);
+    }
   };
 
   const deleteAllItems = async () => {
-    await deleteAllAlarms();
-    await fetchAlarmList();
-    await fetchAlarmCount();
+    try {
+      await deleteAllAlarms();
+      // 삭제 후 알람 목록과 개수를 업데이트
+      await fetchAlarmList();
+      await fetchAlarmCount();
+    } catch (error) {
+      console.error("Failed to delete all alarms:", error);
+    }
   };
 
   const handleLinkClick = () => {
