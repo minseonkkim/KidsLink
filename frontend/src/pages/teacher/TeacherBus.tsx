@@ -11,7 +11,6 @@ import useModal from "../../hooks/teacher/useModal";
 import TeacherLayout from "../../layouts/TeacherLayout";
 import daramgi from "../../assets/teacher/bus-daramgi.png"
 import LoadingSpinner from '../../components/common/LoadingSpinner';
-import { CSSTransition } from 'react-transition-group';
 
 const WEBSOCKET_URL = import.meta.env.VITE_WEBSOCKET_URL;
 
@@ -214,12 +213,6 @@ export default function TeacherBus() {
   };
 
   return (
-    <CSSTransition
-      in={isPageVisible}
-      appear={true}
-      timeout={500} // 트랜지션 시간 설정
-      classNames="page" // 위에 정의된 클래스 이름
-    >
       <TeacherLayout
         activeMenu="bus"
         setActiveMenu={() => {}}
@@ -246,12 +239,6 @@ export default function TeacherBus() {
               {currentStopId !== busStops[0].busStopId ? busStops[busStops.findIndex(stop => stop.busStopId === currentStopId) - 1].busStopName : ''}
             </div>
             <MdNavigateBefore className={`hidden lg:block ${currentStopId === busStops[0].busStopId && 'invisible'} text-[50px] text-[#8CAD1E] cursor-pointer`} onClick={handlePrevStop} />
-            <CSSTransition
-              in={true}
-              key={currentStopId} // currentStopId가 변경될 때마다 애니메이션 적용
-              timeout={500} // 애니메이션 지속 시간 설정
-              classNames={direction} // direction에 따라 slide-left 또는 slide-right 클래스 적용
-            >
               <div className="bg-[#D5E4B4] rounded-[20px] w-[360px] lg:w-[420px] h-[510px] p-[20px] m-4">
                 <p className="font-bold text-[24px] text-center mb-3">{currentStop.busStopName}</p>
                 <div className="bg-[#fff] rounded-[10px] w-[320px] lg:w-[380px] h-[420px] m-1 p-1 lg:p-3">
@@ -281,7 +268,6 @@ export default function TeacherBus() {
                   </div>
                 </div>
               </div>
-            </CSSTransition>
             <MdNavigateNext className={`hidden lg:block ${currentStopId === busStops[busStops.length - 1].busStopId && 'invisible'} text-[50px] text-[#8CAD1E] cursor-pointer`} onClick={handleNextStop} />
             <div className={`hidden lg:flex w-[210px] h-[330px] ${currentStopId !== busStops[busStops.length - 1].busStopId ? 'bg-[#F4F8ED]' : 'bg-transparent'} rounded-[20px] items-center justify-center font-bold text-[24px]`}>
               {currentStopId !== busStops[busStops.length - 1].busStopId ? busStops[busStops.findIndex(stop => stop.busStopId === currentStopId) + 1].busStopName : ''}
@@ -290,6 +276,5 @@ export default function TeacherBus() {
         </div>
         <Modal />
       </TeacherLayout>
-    </CSSTransition>
   );
 }
