@@ -178,7 +178,7 @@ export default function TeacherMeetingConfirm() {
                 }else{
                     showToastError(
                         <div>
-                            모든 상담 일정을 선택해주세요.
+                            동일한 상담일정이 존재합니다. 일정을 조율해주세요.
                         </div>
                     );
                 }
