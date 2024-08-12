@@ -100,6 +100,8 @@ export default function TeacherVideo() {
       openvidu.publisher.publishAudio(control.mic);
       console.log("Publishing video:", control.video);
       openvidu.publisher.publishVideo(control.video);
+
+      console.log("Video active:", openvidu.publisher.stream.videoActive);
     }
   }, [control, openvidu.publisher]);
 
@@ -121,9 +123,14 @@ export default function TeacherVideo() {
       console.log("Recording started with ID:", recordingId);
 
       handleSpeechRecognition(user.sessionId, (detectedTime) => {
-        const adjustedStartTime = detectedTime - 20000; // 20초 전으로 시간 조정
-        setRecordStartTime(Math.max(adjustedStartTime, recordingStartTimeRef.current!)); // 녹화 시작 시간을 설정
-        console.log("Adjusted start time for recording:", recordStartTime);
+        if (recordingStartTimeRef.current) {
+          const adjustedStartTime = detectedTime - 30000; // 30초 전으로 시간 조정
+          const validStartTime = Math.max(adjustedStartTime, recordingStartTimeRef.current);
+          setRecordStartTime(validStartTime); // 녹화 시작 시간을 설정
+          console.log("Adjusted start time for recording:", validStartTime);
+        } else {
+          console.error("Recording start time reference is null.");
+        }
       });
     } catch (error) {
       console.error("Failed to start recording:", error);
@@ -151,19 +158,17 @@ export default function TeacherVideo() {
 
   const handleLeaveSession = () => {
     console.log("Leaving session...");
-    
+
     if (isRecording) {
-      // 녹화가 진행 중이면 먼저 녹화를 중지합니다.
-      handleStopRecording().then(() => {
-        // 녹화가 중지된 후 세션을 종료합니다.
-        leaveSession(openvidu, setOpenvidu, setIsSessionJoined, navigate);
-      }).catch(error => {
-        console.error("Failed to stop recording before leaving session:", error);
-        // 녹화 중지에 실패해도 세션 종료는 진행합니다.
-        leaveSession(openvidu, setOpenvidu, setIsSessionJoined, navigate);
-      });
+      handleStopRecording()
+        .then(() => {
+          leaveSession(openvidu, setOpenvidu, setIsSessionJoined, navigate);
+        })
+        .catch((error) => {
+          console.error("Failed to stop recording before leaving session:", error);
+          leaveSession(openvidu, setOpenvidu, setIsSessionJoined, navigate);
+        });
     } else {
-      // 녹화가 진행 중이지 않으면 바로 세션을 종료합니다.
       leaveSession(openvidu, setOpenvidu, setIsSessionJoined, navigate);
     }
   };

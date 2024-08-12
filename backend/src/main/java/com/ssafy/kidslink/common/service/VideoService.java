@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -84,12 +85,38 @@ public class VideoService {
         // TODO: FFmpeg 등을 사용하여 startTime부터 끝까지 자르기 처리 로직 추가
         // 예: trimRecording(recording.getId(), startTime);
 
+        // 녹화를 중지하여 영상을 저장합니다.
         Recording recording = openvidu.stopRecording(recordingId);
+
+        // 영상을 자르기 위해 FFmpeg를 사용합니다.
+        String inputFilePath = recordingPath + "/" + recording.getName() + ".mp4";
+        String outputFilePath = recordingPath + "/" + recording.getName() + "_trimmed.mp4";
+        trimRecording(inputFilePath, outputFilePath, startTime);
+
         Map<String, Object> response = new HashMap<>();
         response.put("status", "OK");
         response.put("recordingId", recordingId);
+        response.put("outputFilePath", outputFilePath);
         response.put("recording", recording);
         return response;
+    }
+
+    private void trimRecording(String inputFilePath, String outputFilePath, Long startTime) {
+        String startTimeFormatted = String.format("%02d:%02d:%02d", startTime / 3600, (startTime % 3600) / 60, startTime % 60);
+        ProcessBuilder pb = new ProcessBuilder("ffmpeg", "-i", inputFilePath, "-ss", startTimeFormatted, "-c", "copy", outputFilePath);
+        pb.redirectErrorStream(true);
+
+        try {
+            Process process = pb.start();
+            int exitCode = process.waitFor();
+            if (exitCode != 0) {
+                log.error("FFmpeg process failed with exit code: " + exitCode);
+            } else {
+                log.info("Successfully trimmed video from " + startTimeFormatted);
+            }
+        } catch (IOException | InterruptedException e) {
+            log.error("Failed to trim video", e);
+        }
     }
 
     public List<Recording> listRecordings() throws OpenViduJavaClientException, OpenViduHttpException {
