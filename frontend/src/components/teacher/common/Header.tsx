@@ -3,7 +3,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { BiBell } from "react-icons/bi";
 import { CgProfile } from "react-icons/cg";
 import { FaRegTrashAlt } from "react-icons/fa";
-import { FiHelpCircle } from "react-icons/fi";
 import useModal from "../../../hooks/teacher/useModal";
 import { CSSTransition } from "react-transition-group";
 
@@ -275,9 +274,6 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
         <Link to="/mypage">
           <CgProfile className="mt-4 w-[30px] h-[30px] cursor-pointer text-gray-700" />
-        </Link>
-        <Link to="/support">
-          <FiHelpCircle className="mt-4 mr-4 w-[30px] h-[30px] cursor-pointer text-gray-700" />
         </Link>
       </div>
       <Modal />

@@ -13,7 +13,8 @@ export default function FirstStep() {
   ];
 
   return (
-    <div className="w-full py-3">
+    <div className="w-full py-3"> 
+    <div className="dark-overlay"></div>
       <div className="w-full mt-10 mb-32 flex flex-col lg:flex-row lg:justify-between">
         <div className="w-full lg:w-[665px] lg:mr-4">
           <StyledCalendar
