@@ -9,6 +9,7 @@ const ParentMeetingSubmit = () => {
   const [selectedMeetings, setSelectedMeetings] = useState<Set<number>>(new Set());
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
   const [showMaxSelectionWarning, setShowMaxSelectionWarning] = useState<boolean>(false);
+  const [showNoSelectionWarning, setShowNoSelectionWarning] = useState<boolean>(false); // 새로운 상태 추가
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -67,6 +68,11 @@ const ParentMeetingSubmit = () => {
   };
 
   const handleSubmit = async () => {
+    if (selectedMeetings.size === 0) {
+      setShowNoSelectionWarning(true); // 선택한 시간이 없을 때 경고 메시지 표시
+      return;
+    }
+
     const selectedReservations: ParentReservation[] = Array.from(selectedMeetings).map((meetingId) => {
       const reservation = reservations.find((res) => res.meetingId === meetingId);
       return {
@@ -90,6 +96,10 @@ const ParentMeetingSubmit = () => {
 
   const handleMaxSelectionModalClose = () => {
     setShowMaxSelectionWarning(false);
+  };
+
+  const handleNoSelectionModalClose = () => { // 새로운 모달 닫기 함수 추가
+    setShowNoSelectionWarning(false);
   };
 
   const groupedReservations = reservations.reduce((acc, reservation) => {
@@ -152,6 +162,12 @@ const ParentMeetingSubmit = () => {
         <Modal
           message="상담 시간은 최대 3개까지 선택하실 수 있습니다."
           onClose={handleMaxSelectionModalClose}
+        />
+      )}
+      {showNoSelectionWarning && ( // 새로운 경고 모달 추가
+        <Modal
+          message="선택한 시간이 없습니다. 상담 시간을 선택해주세요."
+          onClose={handleNoSelectionModalClose}
         />
       )}
     </div>

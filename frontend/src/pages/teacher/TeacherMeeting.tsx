@@ -77,30 +77,37 @@ return (
         />}
         imageSrc={daramgi} 
     >
-      <div className="w-full mt-3 mb-32 px-4 py-0 lg:px-8 lg:py-8">
+      <div className="w-full mt-3 mb-32 px-4 py-0 lg:px-8 lg:py-8 cursor-auto">
         <div className="flex justify-center items-center">
           <div className="flex flex-row flex-wrap items-start content-start gap-4">
-            {meetings.length === 0 ? (
-              <div className="flex items-center justify-center w-full h-[400px] text-[18px]">
-                예정된 상담 일정이 없어요.
-              </div>
-            ) : (
-              meetings.map((meeting) => (
-                <Link
-                  to={`/meeting/${meeting.meetingId}`}
-                  state={{ parentName: meeting.childName }}
-                  key={meeting.meetingId}
-                >
-                  <TeacherMeetingSchedule
-                    date={meeting.meetingDate}
-                    time={meeting.meetingTime}
-                    name={meeting.childName}
-                    profileImgPath={meeting.parentProfile}
-                    isActivate={isMeetingActive(meeting.meetingDate, meeting.meetingTime)}
-                  />
-                </Link>
-              ))
-            )}
+          {meetings.map((meeting) => {
+  const isActive = isMeetingActive(meeting.meetingDate, meeting.meetingTime);
+  return isActive ? (
+    <Link
+      to={`/meeting/${meeting.meetingId}`}
+      state={{ parentName: meeting.childName }}
+      key={meeting.meetingId}
+    >
+      <TeacherMeetingSchedule
+        date={meeting.meetingDate}
+        time={meeting.meetingTime}
+        name={meeting.childName}
+        profileImgPath={meeting.parentProfile}
+        isActivate={isActive}
+      />
+    </Link>
+  ) : (
+    <div key={meeting.meetingId} style={{ pointerEvents: 'none', opacity: 0.5 }}>
+      <TeacherMeetingSchedule
+        date={meeting.meetingDate}
+        time={meeting.meetingTime}
+        name={meeting.childName}
+        profileImgPath={meeting.parentProfile}
+        isActivate={isActive}
+      />
+    </div>
+  );
+})}
           </div>
         </div>
       </div>
