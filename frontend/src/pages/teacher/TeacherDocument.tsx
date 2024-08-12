@@ -162,7 +162,7 @@ export default function TeacherDocument() {
         titleComponent={<Title title="문서관리" />}
         imageSrc={daramgi} 
     >
-      <div className="relative w-full lg:my-8 mt-5 px-[15px] flex flex-col lg:flex-row justify-between">
+      <div className="relative w-full lg:my-12 mt-5 px-[15px] flex flex-col lg:flex-row justify-between">
         <div className="rounded-[20px] bg-[#f4f4f4] w-full lg:w-[360px] lg:h-[540px] h-[340px] p-[15px] mb-5 lg:mb-0">
           <div className="flex space-x-2 ml-2 mb-4">
             <button
