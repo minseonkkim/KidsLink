@@ -30,23 +30,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/video")
 @Slf4j
 public class VideoController {
-    @Value("${openvidu.url}")
-    private String OPENVIDU_URL;
-
-    @Value("${openvidu.secret}")
-    private String OPENVIDU_SECRET;
-
-    @Value("${openvidu.recording.path}")
-    private String recordingPath;
-
-    private OpenVidu openvidu;
-
     private final VideoService videoService;
-
-    @PostConstruct
-    public void init() {
-        this.openvidu = new OpenVidu(OPENVIDU_URL, OPENVIDU_SECRET);
-    }
 
     /**
      * @param params The Session properties
