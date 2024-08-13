@@ -1,5 +1,9 @@
 package com.ssafy.kidslink.common.service;
 
+import com.ssafy.kidslink.application.meeting.domain.MeetingSchedule;
+import com.ssafy.kidslink.application.meeting.repository.MeetingScheduleRepository;
+import com.ssafy.kidslink.application.parent.domain.Parent;
+import com.ssafy.kidslink.application.teacher.domain.Teacher;
 import io.openvidu.java.client.*;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +17,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +27,7 @@ import java.util.Map;
 @Slf4j
 @RequiredArgsConstructor
 public class VideoService {
+    private final MeetingScheduleRepository meetingScheduleRepository;
     @Value("${openvidu.url}")
     private String OPENVIDU_URL;
 
@@ -65,7 +72,12 @@ public class VideoService {
 
     public Map<String, Object> startRecording(String sessionId) throws OpenViduJavaClientException, OpenViduHttpException {
         log.info("녹화시작 startRecording");
-        String recordingName = sessionId + "_" + System.currentTimeMillis();
+        MeetingSchedule meetingSchedule = meetingScheduleRepository.findById(Integer.parseInt(sessionId)).orElseThrow();
+        Parent parent = meetingSchedule.getParent();
+        Teacher teacher = meetingSchedule.getTeacher();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+        String formattedDate = LocalDateTime.now().format(formatter);
+        String recordingName = sessionId + ":" + teacher.getTeacherId() + ":" + parent.getParentId() + ":" + formattedDate;
         RecordingProperties properties = new RecordingProperties.Builder()
                 .name(recordingName)
                 .outputMode(Recording.OutputMode.COMPOSED)
