@@ -85,7 +85,7 @@ export default function ParentVideo() {
   // useEffect(() => {
   //   console.log("location",location.pathname)
   //   if (location.pathname !== `/meeting/${meetingId}`) {
-      
+
   //     return () => {
   //       console.log("여기서 걸림")
   //       leaveSession(openvidu, setOpenvidu, setIsSessionJoined, navigate);
@@ -129,10 +129,19 @@ export default function ParentVideo() {
     leaveSession(openvidu, setOpenvidu, setIsSessionJoined, navigate); // navigate 함수 전달
   };
 
+  const handleSpeechTestButton = () => {
+    openvidu.session.signal({
+      data: "startRecording",
+      to: [], // 선생님에게 신호 전송
+      type: "profanityDetected",
+    });
+  };
+
   return (
     <div
       className="relative min-h-screen bg-cover bg-center bg-no-repeat px-4 pt-4 flex items-center justify-center"
       style={{ backgroundImage: `url(${bgImg})` }}
+      onClick={() => handleSpeechTestButton}
     >
       {/* 반투명 검정 배경 */}
       <div className="absolute inset-0 bg-black bg-opacity-50"></div>
