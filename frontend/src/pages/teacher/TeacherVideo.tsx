@@ -146,6 +146,7 @@ export default function TeacherVideo() {
 
       // 녹화 시작 시점 기록
       recordingStartTimeRef.current = Date.now();
+      console.log("녹화 시작 : recordingStartTimeRef.current", recordingStartTimeRef.current)
 
       // 녹화가 시작된 후 STT 기능을 호출
       // startSTT();
@@ -177,10 +178,9 @@ export default function TeacherVideo() {
     try {
       setIsRecording(false);
       // const startTime = recordStartTime || recordingStartTimeRef.current!;
-      const startTime = recordStartTime || 60000;
-      console.log("handleStopRecording", recordStartTime)
+      const startTime = recordStartTime - recordingStartTimeRef.current;
       console.log("handleStopRecording", startTime)
-      await stopMainRecording(currentRecordingId, 60000);
+      await stopMainRecording(currentRecordingId, startTime);
 
       console.log("Recording stopped.");
 
