@@ -50,7 +50,7 @@ export default function GrowthDiaryItem({ diaryId, createDate, content, thumbnai
         <>
             <div
                 onClick={openReadModal}
-                className={`relative rounded-[10px] w-[100px] h-[100px] lg:w-[130px] lg:h-[130px] lg:m-[17px] m-[14px] flex items-center justify-center overflow-hidden ${
+                className={`relative cursor-pointer rounded-[10px] w-[100px] h-[100px] lg:w-[130px] lg:h-[130px] lg:m-[17px] m-[14px] flex items-center justify-center overflow-hidden ${
                     images.length === 0 ? 'bg-[#D5E4B4]' : 'bg-transparent'
                 }`}
             >
