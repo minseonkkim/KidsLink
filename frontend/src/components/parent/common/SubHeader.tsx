@@ -18,7 +18,7 @@ export default function SubHeader({ title }: CommonHeaderProps) {
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        console.log("Fetching notifications...");
+        // console.log("Fetching notifications...");
         const fetchedNotifications = await getAllAlarms();
         setNotifications(fetchedNotifications.reverse());
         setNotificationCount(fetchedNotifications.length);
