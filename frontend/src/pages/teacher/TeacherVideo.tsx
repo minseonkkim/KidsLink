@@ -163,12 +163,14 @@ export default function TeacherVideo() {
       try {
         await handleStopRecording();
         // 학부모들에게 세션 종료를 알리는 Signal을 보냄
-        sendSignalLeaveSession("session-ended");
       } catch (error) {
         console.error("Failed to stop recording before leaving session:", error);
       }
     }
-    leaveSession(openvidu, setOpenvidu, setIsSessionJoined, navigate);
+    sendSignalLeaveSession("session-ended");
+    setTimeout(() => {
+      leaveSession(openvidu, setOpenvidu, setIsSessionJoined, navigate);
+    }, 1000);
   };
 
   const sendSignalLeaveSession = (message) => {
