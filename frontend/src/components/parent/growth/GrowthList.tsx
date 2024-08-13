@@ -2,12 +2,12 @@ import DiaryItem from "./GrowthItem"
 import { Diary } from "../../../api/growthdiary"
 import cryingDaramgi from "../../../assets/common/crying-daramgi.png"
 
-interface DiaryListProps {
+interface GrowthListProps {
   filteredDiarys: Diary[];
   handleBoxClick: (diaryId: number) => void;
 }
 
-export default function DiaryList({ filteredDiarys, handleBoxClick }: DiaryListProps) {
+export default function GrowthList({ filteredDiarys, handleBoxClick }: GrowthListProps) {
   return (
     <div className="space-y-6 overflow-auto" style={{ maxHeight: 'calc(100vh - 200px)', paddingBottom: '100px', scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
       {filteredDiarys.length > 0 ? (
