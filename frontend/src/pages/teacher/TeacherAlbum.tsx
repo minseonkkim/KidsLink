@@ -7,6 +7,8 @@ import PulseLoader from "react-spinners/PulseLoader";
 import { handleClassify, handleDeleteImage, handleImageUpload } from "../../utils/album";
 import TeacherLayout from "../../layouts/TeacherLayout";
 import daramgi from "../../assets/teacher/camera-daramgi.png";
+import ThreeModel from "../../components/ThreeModel2";
+import { Vector2 } from "three";
 
 export default function TeacherAlbum() {
   const navigate = useNavigate();
@@ -29,6 +31,15 @@ export default function TeacherAlbum() {
     { label: "전송내역", link: "/album/history" },
 ];
 
+const [mousePosition, setMousePosition] = useState(new Vector2(0, 0));
+useEffect(() => {
+  const handleMouseMove = (event: MouseEvent) => {
+    setMousePosition(new Vector2(event.clientX, event.clientY));
+  };
+  window.addEventListener('mousemove', handleMouseMove);
+  return () => window.removeEventListener('mousemove', handleMouseMove);
+}, []);
+
   return (
     <TeacherLayout
         activeMenu="album"
@@ -44,6 +55,12 @@ export default function TeacherAlbum() {
         />}
         imageSrc={daramgi} 
     >
+      <div className="fixed z-30 flex gap-12">
+
+        
+        <ThreeModel mousePosition={mousePosition} />
+        
+      </div>
       <div className="relative w-full lg:my-10 my-5 mb-32 px-7 flex flex-col items-center">
         <div className={`h-[470px] flex lg:flex-row flex-col items-center ${images.length === 0 || loading ? 'justify-center' : 'justify-between'} w-full`}>
           {!loading && (
