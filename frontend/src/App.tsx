@@ -36,9 +36,9 @@ const ParentAlbumDetail = lazy(
   () => import("./pages/parent/ParentAlbumDetail")
 );
 const AlbumDetailCard = lazy(() => import("./pages/parent/AlbumDetailCard"));
-const ParentDiary = lazy(() => import("./pages/parent/ParentDiary"));
-const ParentDiaryDetail = lazy(
-  () => import("./pages/parent/ParentDiaryDetail")
+const ParentGrowth = lazy(() => import("./pages/parent/ParentGrowth"));
+const ParentGrowthDetail = lazy(
+  () => import("./pages/parent/ParentGrowthDetail")
 );
 const ParentBus = lazy(() => import("./pages/parent/ParentBus"));
 const ParentMeeting = lazy(() => import("./pages/parent/ParentMeeting"));
@@ -116,8 +116,8 @@ export default function App() {
                 path="/album/:albumId/image/:imageId"
                 element={<AlbumDetailCard />}
               />
-              <Route path="/diary" element={<ParentDiary />} />
-              <Route path="/diary/:diaryId" element={<ParentDiaryDetail />} />
+              <Route path="/growth" element={<ParentGrowth />} />
+              <Route path="/growth/:diaryId" element={<ParentGrowthDetail />} />
               <Route path="/bus" element={<ParentBus />} />
               <Route path="/meeting" element={<ParentMeeting />} />
               <Route path="/meeting/submit" element={<ParentMeetingSubmit />} />

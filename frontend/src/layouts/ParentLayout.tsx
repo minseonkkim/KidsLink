@@ -21,7 +21,7 @@ export default function ParentLayout() {
       return '알림장'
     } else if (location.pathname.startsWith('/album')) {
       return '앨범'
-    } else if (location.pathname.startsWith('/diary')) {
+    } else if (location.pathname.startsWith('/growth')) {
       return '성장일지'
     } else if (location.pathname.startsWith('/bus')) {
       return '등하원 관리'
