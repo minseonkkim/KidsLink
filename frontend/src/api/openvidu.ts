@@ -59,6 +59,17 @@ export const fetchRecordings = async (): Promise<any[]> => {
   }
 };
 
+export const fetchRecordingsByTeacherId = async (teacherId: number): Promise<any[]> => {
+  try {
+    const response = await axiosInstance.get(`${import.meta.env.VITE_OPENVIDU_URL}/teacher/${teacherId}/recordings`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching recordings:", error);
+    throw error;
+  }
+};
+
+
 // 학부모 측 STT 감지 메서드 => 감지 시 선생님에게 신호
 export const handleSpeechRecognitionSignalByParent = async (session) => {
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
