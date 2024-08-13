@@ -8,6 +8,7 @@ import { getClassAllDocuments } from '../../api/document';
 import { getChildInfo } from '../../api/child';
 import AbsentDocument from '../../components/teacher/document/AbsentDocument';
 import daramgi from "../../assets/teacher/document-daramgi.png";
+import { AxiosError } from 'axios';
 
 export default function TeacherDocument() {
   const [searchTerm, setSearchTerm] = useState<string>('');
@@ -55,7 +56,7 @@ export default function TeacherDocument() {
         }
         setChildImages(images);
       } catch (error) {
-        if (error.response && error.response.status === 401) {
+        if ((error as AxiosError).response && (error as AxiosError).response.status === 401) {
           console.error("Unauthorized request. User might be logged out.");
         } else {
           console.error('Failed to fetch documents:', error);
