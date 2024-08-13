@@ -84,49 +84,55 @@ public class VideoService {
 
     public Map<String, Object> stopRecording(String recordingId, Long startTime) throws OpenViduJavaClientException, OpenViduHttpException {
         log.info("녹화 중지 시작 - 녹화 ID: {}", recordingId);
-
-        if (startTime == null || startTime < 0) {
-            log.error("startTime < 0입니다. 녹화를 중지할 수 없습니다. startTime: {}", startTime);
-            throw new IllegalArgumentException("startTime cannot be negative.");
-        }
+        Map<String, Object> response = new HashMap<>();
 
         // 녹화를 중지하여 영상을 저장합니다.
         Recording recording = openvidu.stopRecording(recordingId);
+        String folderPath = recordingPath + "/" + recordingId;
+        File recordingFolder = new File(folderPath);
 
-        // 영상을 자르기 위해 FFmpeg를 사용합니다.
-        String inputFilePath = recordingPath + "/" + recordingId + "/" + recording.getName() + ".mp4";
-        String tempFilePath = recordingPath + "/" + recordingId + "/" + recording.getName() + "_trimmed.mp4";
-
-        log.info("녹화된 파일 경로: {}", inputFilePath);
-        log.info("잘라낸 파일 경로: {}", tempFilePath);
-
-        // FFmpeg를 사용하여 영상 트리밍
-        trimRecording(inputFilePath, tempFilePath, startTime);
-
-        // 원본 파일 삭제 후 임시 파일을 원본 파일 이름으로 변경
-        File originalFile = new File(inputFilePath);
-        File tempFile = new File(tempFilePath);
-
-        if (originalFile.delete()) {
-            log.info("원본 파일 삭제 성공: {}", inputFilePath);
-            if (tempFile.renameTo(originalFile)) {
-                log.info("임시 파일을 원본 파일 이름으로 변경 성공: {}", inputFilePath);
+        if (startTime == null || startTime < 0) {
+            // 폴더 삭제
+            if (deleteDirectory(recordingFolder)) {
+                log.info("녹화된 폴더 삭제 성공: {}", folderPath);
+                response.put("status", "NOT_SAVED");
             } else {
-                log.error("임시 파일을 원본 파일 이름으로 변경 실패: {}", tempFilePath);
-                throw new RuntimeException("Failed to rename temp file to original file name.");
+                log.error("녹화된 폴더 삭제 실패: {}", folderPath);
+                throw new RuntimeException("Failed to delete recorded folder.");
             }
         } else {
-            log.error("원본 파일 삭제 실패: {}", inputFilePath);
-            throw new RuntimeException("Failed to delete original file.");
+            // 영상을 자르기 위해 FFmpeg를 사용합니다.
+            String inputFilePath = recordingPath + "/" + recordingId + "/" + recording.getName() + ".mp4";
+            String tempFilePath = recordingPath + "/" + recordingId + "/" + recording.getName() + "_trimmed.mp4";
+
+            log.info("녹화된 파일 경로: {}", inputFilePath);
+            log.info("잘라낸 파일 경로: {}", tempFilePath);
+
+            // FFmpeg를 사용하여 영상 트리밍
+            trimRecording(inputFilePath, tempFilePath, startTime);
+
+            // 원본 파일 삭제 후 임시 파일을 원본 파일 이름으로 변경
+            File originalFile = new File(inputFilePath);
+            File tempFile = new File(tempFilePath);
+
+            if (originalFile.delete()) {
+                log.info("원본 파일 삭제 성공: {}", inputFilePath);
+                if (tempFile.renameTo(originalFile)) {
+                    log.info("임시 파일을 원본 파일 이름으로 변경 성공: {}", inputFilePath);
+                } else {
+                    log.error("임시 파일을 원본 파일 이름으로 변경 실패: {}", tempFilePath);
+                    throw new RuntimeException("Failed to rename temp file to original file name.");
+                }
+            } else {
+                log.error("원본 파일 삭제 실패: {}", inputFilePath);
+                throw new RuntimeException("Failed to delete original file.");
+            }
+            response.put("status", "OK");
+            response.put("inputFilePath", inputFilePath);
+            response.put("outputFilePath", tempFilePath);
         }
-
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("status", "OK");
         response.put("recordingId", recordingId);
         response.put("recordingName", recording.getName());
-        response.put("inputFilePath", inputFilePath);
-        response.put("outputFilePath", tempFilePath);
         response.put("recording", recording);
         return response;
     }
@@ -177,6 +183,17 @@ public class VideoService {
 
     public File getRecordingFile(String sessionId, String recordingName) {
         return new File(recordingPath + "/" + sessionId + "/" + recordingName + ".mp4");
+    }
+
+    // 디렉토리 및 내부 파일 삭제 메서드
+    private boolean deleteDirectory(File directoryToBeDeleted) {
+        File[] allContents = directoryToBeDeleted.listFiles();
+        if (allContents != null) {
+            for (File file : allContents) {
+                deleteDirectory(file);
+            }
+        }
+        return directoryToBeDeleted.delete();
     }
 
     // TODO: startTime부터 녹화본을 자르는 로직을 추가할 수 있습니다.
