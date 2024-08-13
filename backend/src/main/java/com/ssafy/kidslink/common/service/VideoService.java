@@ -85,6 +85,11 @@ public class VideoService {
     public Map<String, Object> stopRecording(String recordingId, Long startTime) throws OpenViduJavaClientException, OpenViduHttpException {
         log.info("녹화 중지 시작 - 녹화 ID: {}", recordingId);
 
+        if (startTime == null || startTime < 0) {
+            log.error("startTime < 0입니다. 녹화를 중지할 수 없습니다. startTime: {}", startTime);
+            throw new IllegalArgumentException("startTime cannot be negative.");
+        }
+
         // 녹화를 중지하여 영상을 저장합니다.
         Recording recording = openvidu.stopRecording(recordingId);
 
