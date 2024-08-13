@@ -14,8 +14,15 @@ import { ControlState, OpenViduState, User } from "../../types/openvidu";
 import { joinSession, leaveSession } from "../../utils/openvidu";
 import DefaultProfile from "../../assets/teacher/default_profile.png";
 import { getMeetingInfo } from "../../api/meeting";
+import { FaBan } from "react-icons/fa";
+import { IoDocumentAttach, IoRecording } from "react-icons/io5";
+import { GiTalk } from "react-icons/gi";
+import { TbMoodKidFilled } from "react-icons/tb";
 
 export default function TeacherVideo() {
+  const [meetingDate, setMeetingDate] = useState(""); // 상담 날짜 상태 추가
+  const [meetingTime, setMeetingTime] = useState(""); // 상담 시간 상태 추가
+  const [meetingEndTime, setMeetingEndTime] = useState(""); // 상담 종료 시간 상태 추가
   const navigate = useNavigate();
   const { meetingId } = useParams<{ meetingId: string }>();
   const { teacherInfo, setTeacherInfo } = useTeacherInfoStore();
@@ -54,6 +61,21 @@ export default function TeacherVideo() {
       try {
         const meetingInfo = await getMeetingInfo(Number(meetingId));
         setChildName(meetingInfo.childName); // childName 상태 설정
+        // 상담 날짜 설정 (이거 utils에 저장된 날짜 함수 확인해보고 쓸지말지 수정하기)
+        const date = new Date(meetingInfo.date);
+        setMeetingDate(`${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일`);
+
+        // 상담 시간 설정
+        setMeetingTime(meetingInfo.time);
+
+        // 상담 종료 시간 계산
+        const [hours, minutes] = meetingInfo.time.split(":").map(Number);
+        const endDate = new Date(date);
+        endDate.setHours(hours);
+        endDate.setMinutes(minutes + 30); // 상담 시간은 30분
+        const endHours = endDate.getHours().toString().padStart(2, "0");
+        const endMinutes = endDate.getMinutes().toString().padStart(2, "0");
+        setMeetingEndTime(`${endHours}:${endMinutes}`);
       } catch (error) {
         console.error("자녀 정보를 가져오지 못했습니다:", error);
       }
@@ -155,6 +177,11 @@ export default function TeacherVideo() {
     setIsModalOpen(false); // 모달을 닫기
   };
 
+  const handleOutClick = () => {
+    leaveSession(openvidu, setOpenvidu, setIsSessionJoined, navigate);
+    navigate("/meeting");
+  };
+
   const teacherVideoOpacity = control.video ? 1 : 0.8;
 
   return (
@@ -201,30 +228,61 @@ export default function TeacherVideo() {
         </div>
         {!openvidu.session && (
           <div className="flex flex-col items-center w-full h-full">
-            <div className="bg-white p-5 rounded-xl drop-shadow-md bg-[#]">
-              <p>상담번호 : {user.sessionId}</p>
-              <p>참가자 : {user.username}</p>
-              <p>
-                학부모가 욕설을 할 경우 자동으로 녹화가 진행됩니다. <br /> 녹화중지를 원하실 경우,
-                "녹화중지" 버튼을 눌러주세요.
-              </p>
-              <div className="flex justify-center mt-2">
-                <button
-                  onClick={() =>
-                    joinSession(
-                      user,
-                      setOpenvidu,
-                      setIsSessionJoined,
-                      setMyStreamId,
-                      setOtherVideoActive
-                    )
-                  }
-                  className="w-[70px] h-[38px] border-[2px] border-[#7C7C7C] bg-[#E3EEFF] px-3 py-1 font-bold rounded-[8px] hover:bg-[#D4DDEA]"
-                >
-                  연결
-                </button>
-              </div>
+            <div className="absolute top-[250px] bg-[#fff9d7] rounded-[20px] p-6 shadow-lg border-2 border-[#ffec8a] bg-notebook-pattern">
+            {/* 상담 안내문 */}
+            <p className="text-base font-bold text-[#212121] mb-4">
+              {meetingDate} {meetingTime} ~ {meetingEndTime}
+            </p>
+            <div className="text-sm text-[#212121] mb-6">
+              <p className="font-bold mb-2 text-xl">상담 중 지켜야 할 규칙</p>
+              <ul className="list-none space-y-2">
+                <li className="flex items-center">
+                  <div className="flex items-center justify-center mr-2">
+                    <IoDocumentAttach className="text-[#ff6347]" size={20} />
+                  </div>
+                  <span className="flex-1 text-lg">상담에 필요한 자료들은 미리 준비해주세요.</span>
+                </li>
+                <li className="flex items-center">
+                  <div className="flex items-center justify-center mr-2">
+                    <GiTalk className="text-[#ff6347]" size={20} />
+                  </div>
+                  <span className="flex-1 text-lg">학부모가 편안하게 자신의 생각을 표현할 수 있도록 도와주세요.</span>
+                </li>
+                <li className="flex items-center">
+                  <div className="flex items-center justify-center mr-2">
+                    <TbMoodKidFilled className="text-[#ff6347]" size={20} />
+                  </div>
+                  <span className="flex-1 text-lg">학생의 긍정적인 면을 강조해주세요.</span>
+                </li>
+                <li className="flex items-center">
+                  <div className="flex items-center justify-center mr-2">
+                    <IoRecording className="text-[#ff6347]" size={20} />
+                  </div>
+                  <span className="flex-1 text-lg">학부모가 욕설을 할 경우 자동으로 녹화가 진행됩니다.</span>
+                </li>
+              </ul>
             </div>
+            <div className="flex justify-center gap-4">
+              {/* 세션 연결 버튼 */}
+              <button
+                onClick={() =>
+                  joinSession(
+                    user,
+                    setOpenvidu,
+                    setIsSessionJoined,
+                    setMyStreamId,
+                    setOtherVideoActive // 추가
+                  )
+                }
+                className="w-28 h-10 bg-[#ffec8a] rounded-full flex items-center justify-center text-lg font-medium text-[#212121] hover:bg-[#fdda6e] transition-colors"
+              >
+                입장하기
+              </button>
+              <button onClick={handleOutClick} className="w-28 h-10 bg-[#ffec8a] rounded-full flex items-center justify-center text-lg font-medium text-[#212121] hover:bg-[#fdda6e] transition-colors">
+                나가기
+              </button>
+            </div>
+          </div>
           </div>
         )}
         {isSessionJoined && (
