@@ -1,6 +1,5 @@
 import { GoHome, GoHomeFill } from 'react-icons/go'
 import { IoCalendarClearOutline, IoCalendarClear } from 'react-icons/io5'
-import { BsCameraVideo, BsCameraVideoFill } from "react-icons/bs";
 import { FaRegUser, FaUser } from 'react-icons/fa6'
 import { useNavigate, useLocation } from 'react-router-dom'
 
@@ -20,10 +19,6 @@ export default function BottomNavbar() {
     navigate('/mypage')
   }
 
-  const handleMeetingClick = () => {
-    navigate('/meeting')
-  }
-
   const isCurrentPage = (path: string) => location.pathname === path
 
   const iconColor = '#FFC107'
@@ -34,13 +29,6 @@ export default function BottomNavbar() {
           <GoHomeFill className="w-7 h-7" style={{ color: iconColor }} />
         ) : (
           <GoHome className="w-7 h-7 text-gray-300" />
-        )}
-      </div>
-      <div className="footer-item flex flex-col items-center" onClick={handleMeetingClick}>
-        {isCurrentPage('/meeting') ? (
-          <BsCameraVideoFill className="w-7 h-7" style={{ color: iconColor }} />
-        ) : (
-          <BsCameraVideo className="w-7 h-7 text-gray-300" />
         )}
       </div>
       <div className="footer-item flex flex-col items-center" onClick={handleScheduleClick}>
