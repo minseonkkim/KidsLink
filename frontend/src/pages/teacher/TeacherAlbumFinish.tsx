@@ -1,18 +1,23 @@
-import { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { BsSend } from 'react-icons/bs';
-import { DndProvider } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
-import Title from '../../components/teacher/common/Title';
-import ClassifiedChild from '../../components/teacher/album/ClassifiedChild';
-import ChildName from '../../components/teacher/album/ChildName';
-import { AlbumItem, Child } from '../../types/album';
-import ToastNotification, { showToastError, showToastSuccess } from '../../components/teacher/common/ToastNotification';
-import { useDragLayer } from 'react-dnd';
-import TeacherLayout from '../../layouts/TeacherLayout';
-import daramgi from '../../assets/teacher/camera-daramgi.png';
-import { getTeacherInfo } from '../../api/Info';
-import { getClassChilds } from '../../api/kindergarten';
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { BsSend } from "react-icons/bs";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
+import Title from "../../components/teacher/common/Title";
+import ClassifiedChild from "../../components/teacher/album/ClassifiedChild";
+import ChildName from "../../components/teacher/album/ChildName";
+import { AlbumItem, Child } from "../../types/album";
+import ToastNotification, {
+  showToastError,
+  showToastSuccess,
+} from "../../components/teacher/common/ToastNotification";
+import { useDragLayer } from "react-dnd";
+import TeacherLayout from "../../layouts/TeacherLayout";
+import daramgi from "../../assets/teacher/camera-daramgi.png";
+import { getTeacherInfo } from "../../api/Info";
+import { getClassChilds } from "../../api/kindergarten";
+import { transformData } from "../../utils/album";
+import { sendAlbumToParent } from "../../api/album";
 
 export function DragOverlay() {
   const { isDragging, currentOffset, item } = useDragLayer((monitor) => ({
@@ -31,14 +36,14 @@ export function DragOverlay() {
     <>
       <div
         style={{
-          position: 'fixed',
+          position: "fixed",
           top: 0,
           left: 0,
-          width: '100%',
-          height: '100%',
-          backgroundColor: 'rgba(0, 0, 0, 0.65)',
+          width: "100%",
+          height: "100%",
+          backgroundColor: "rgba(0, 0, 0, 0.65)",
           zIndex: 9998,
-          pointerEvents: 'none',
+          pointerEvents: "none",
         }}
       />
 
@@ -46,19 +51,19 @@ export function DragOverlay() {
         style={{
           transform,
           WebkitTransform: transform,
-          position: 'fixed',
+          position: "fixed",
           top: 0,
           left: 0,
           zIndex: 10000,
-          pointerEvents: 'none',
-          width: '150px', 
-          height: '150px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          borderRadius: '8px',
-          boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.65)',
-          backgroundColor: '#fff',
+          pointerEvents: "none",
+          width: "150px",
+          height: "150px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          borderRadius: "8px",
+          boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.65)",
+          backgroundColor: "#fff",
         }}
       >
         {item.image && (
@@ -67,9 +72,9 @@ export function DragOverlay() {
             alt="dragged"
             className="object-cover"
             style={{
-              width: '100%',
-              height: '100%',
-              borderRadius: '8px',
+              width: "100%",
+              height: "100%",
+              borderRadius: "8px",
             }}
           />
         )}
@@ -87,13 +92,13 @@ export function ChildNameContainer({ classChildren, moveImage }) {
     <div
       className="flex flex-wrap mb-2 justify-center"
       style={{
-        position: 'fixed', 
-        top: '50%',
-        left: '50%',
-        transform: 'translateX(-50%)',
-        display: isDragging ? 'flex' : 'none',
-        zIndex: 10000, 
-        width: '100%',
+        position: "fixed",
+        top: "50%",
+        left: "50%",
+        transform: "translateX(-50%)",
+        display: isDragging ? "flex" : "none",
+        zIndex: 10000,
+        width: "100%",
       }}
     >
       {classChildren.map((child, index) => (
@@ -107,8 +112,8 @@ export default function TeacherAlbumFinish() {
   const location = useLocation();
   const today = new Date();
   const year = today.getFullYear();
-  const month = (today.getMonth() + 1).toString().padStart(2, '0');
-  const date = today.getDate().toString().padStart(2, '0');
+  const month = (today.getMonth() + 1).toString().padStart(2, "0");
+  const date = today.getDate().toString().padStart(2, "0");
 
   const [albumName, setAlbumName] = useState(`${year}년 ${month}월 ${date}일 사진첩`);
   const [result, setResult] = useState<AlbumItem[]>([]);
@@ -116,7 +121,7 @@ export default function TeacherAlbumFinish() {
 
   useEffect(() => {
     // Load data from local storage
-    const savedResult = JSON.parse(localStorage.getItem('result') || '[]');
+    const savedResult = JSON.parse(localStorage.getItem("result") || "[]");
     if (savedResult.length > 0) {
       setResult(savedResult);
     }
@@ -159,7 +164,7 @@ export default function TeacherAlbumFinish() {
   useEffect(() => {
     // Save data to local storage
     if (result.length > 0) {
-      localStorage.setItem('result', JSON.stringify(result));
+      localStorage.setItem("result", JSON.stringify(result));
     }
   }, [result]);
 
@@ -180,7 +185,7 @@ export default function TeacherAlbumFinish() {
     const updatedResult = [...result];
     const draggedImage = updatedResult[itemIndex].images[imgIndex];
     updatedResult[itemIndex].images.splice(imgIndex, 1);
-    let failedCategoryIndex = updatedResult.findIndex(item => item.child === null);
+    let failedCategoryIndex = updatedResult.findIndex((item) => item.child === null);
     if (failedCategoryIndex === -1) {
       updatedResult.push({ child: null, images: [] });
       failedCategoryIndex = updatedResult.length - 1;
@@ -196,9 +201,19 @@ export default function TeacherAlbumFinish() {
       return;
     }
 
-    // Normally, you would send the data to the backend here
-    showToastSuccess(<div>앨범이 성공적으로 전송되었습니다.</div>);
-    navigate('/album/send_finish');
+    // TODO #3 API 추가했는데, 괜찮겠지요? - 범수
+    const transformedData = transformData(result);
+    const sendData = {
+      albumName: albumName,
+      taggedPhotos: transformedData,
+    };
+    const res = await sendAlbumToParent(sendData);
+    if (res === "success") {
+      showToastSuccess(<div>앨범이 성공적으로 전송되었습니다.</div>);
+      navigate("/album/send_finish");
+    } else {
+      showToastError(<div>전송에 실패했습니다.</div>);
+    }
   };
 
   const tabs = [
@@ -236,14 +251,23 @@ export default function TeacherAlbumFinish() {
                 학부모에게 전송하기
               </button>
             </div>
-            <div className="mb-5 lg:text-[17px] text-[16px]">잘못된 분류가 있나요? 드래그로 수정해보세요</div>
+            <div className="mb-5 lg:text-[17px] text-[16px]">
+              잘못된 분류가 있나요? 드래그로 수정해보세요
+            </div>
             <ChildNameContainer classChildren={classChildren} moveImage={moveImage} />
 
-            {result.map((item, index) => (
-              item.images.length > 0 && (
-                <ClassifiedChild key={index} item={item} index={index} moveImage={moveImage} deleteImage={deleteImage} />
-              )
-            ))}
+            {result.map(
+              (item, index) =>
+                item.images.length > 0 && (
+                  <ClassifiedChild
+                    key={index}
+                    item={item}
+                    index={index}
+                    moveImage={moveImage}
+                    deleteImage={deleteImage}
+                  />
+                )
+            )}
           </div>
         </div>
         <ToastNotification />
