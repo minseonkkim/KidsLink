@@ -49,10 +49,10 @@ const TeacherMeetingRecordingList: React.FC = () => {
             day: "numeric",
           });
           const parentInfo = await getOneParentInfo(parentId); // 부모님 이름 가져오기
-          const parentName = parentInfo.name;
+          const childName = parentInfo.child.name;
           return {
             ...recording,
-            name: `${formattedDate} ${parentName} 학부모님과의 상담내용`,
+            name: `${formattedDate} ${childName} 학부모님과의 상담내용`,
           };
         })
       );
@@ -80,12 +80,12 @@ const TeacherMeetingRecordingList: React.FC = () => {
     setRecordings(recordings.filter((recording) => recording.id !== id));
   };
 
+  // TODO #1 삭제 필요 - 범수
   const handleFetchListTest = async () => {
-    // TODO #1 아래 두 개 다 삭제해야하는 위치 console.log
     const recordingList = await fetchRecordings();
     console.log(recordingList);
-    setRecordings(recordingList)
-  }
+    setRecordings(recordingList);
+  };
 
   const tabs = [
     { label: "상담가능시간 open", link: "/meeting/reservation" },
@@ -95,21 +95,36 @@ const TeacherMeetingRecordingList: React.FC = () => {
   ];
 
   return (
-    <TeacherLayout activeMenu="meeting" setActiveMenu={() => {}} titleComponent={<Title title="녹화된 상담" tabs={tabs} />} imageSrc={daramgi}>
+    <TeacherLayout
+      activeMenu="meeting"
+      setActiveMenu={() => {}}
+      titleComponent={<Title title="녹화된 상담" tabs={tabs} />}
+      imageSrc={daramgi}
+    >
       <div className="w-full mt-10 mb-32 px-4 lg:px-8 py-6 lg:py-8">
+        {/* // TODO #1 삭제 필요 - 범수 */}
         <button onClick={handleFetchListTest}>녹화본 가져오기</button>
         {noRecordings ? (
           <p className="text-gray-600">저장된 녹화본이 없습니다.</p>
         ) : (
           <ul className="list-none p-0">
             {recordings.map((recording) => (
-              <li key={recording.id} className="flex flex-col lg:flex-row justify-between items-center mb-4 p-4 border border-gray-200 rounded-md shadow-sm">
+              <li
+                key={recording.id}
+                className="flex flex-col lg:flex-row justify-between items-center mb-4 p-4 border border-gray-200 rounded-md shadow-sm"
+              >
                 <span className="text-lg font-semibold">{recording.name}</span>
                 <div className="flex flex-col lg:flex-row mt-2 lg:mt-0">
-                  <button onClick={() => handleDownload(recording.url)} className="mb-2 lg:mb-0 lg:mr-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700 transition duration-200">
+                  <button
+                    onClick={() => handleDownload(recording.url)}
+                    className="mb-2 lg:mb-0 lg:mr-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700 transition duration-200"
+                  >
                     다운로드
                   </button>
-                  <button onClick={() => handleDelete(recording.id)} className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-700 transition duration-200">
+                  <button
+                    onClick={() => handleDelete(recording.id)}
+                    className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-700 transition duration-200"
+                  >
                     삭제
                   </button>
                 </div>
