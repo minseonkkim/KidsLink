@@ -1,11 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import OpenViduVideoComponent from "../../components/openvidu/VideoComponent";
-import {
-  handleSpeechRecognition,
-  startMainRecording,
-  stopMainRecording,
-} from "../../api/openvidu";
+import { handleSpeechRecognition, startMainRecording, stopMainRecording } from "../../api/openvidu";
 import MeetingBackground from "../../assets/teacher/meeting_background.png";
 import { useTeacherInfoStore } from "../../stores/useTeacherInfoStore";
 import { getTeacherInfo } from "../../api/Info";
@@ -139,18 +135,27 @@ export default function TeacherVideo() {
   const handleLeaveSession = () => {
     setIsModalOpen(true); // 모달을 열기
   };
-  
+
   const confirmLeaveSession = async () => {
     if (isRecording) {
       try {
         await handleStopRecording();
+        // 학부모들에게 세션 종료를 알리는 Signal을 보냄
+        sendSignalLeaveSession("session-ended");
       } catch (error) {
         console.error("Failed to stop recording before leaving session:", error);
       }
     }
     leaveSession(openvidu, setOpenvidu, setIsSessionJoined, navigate);
   };
-  
+
+  const sendSignalLeaveSession = (message) => {
+    openvidu.session.signal({
+      type: "session-ended",
+      data: message,
+    });
+  };
+
   const cancelLeaveSession = () => {
     setIsModalOpen(false); // 모달을 닫기
   };
