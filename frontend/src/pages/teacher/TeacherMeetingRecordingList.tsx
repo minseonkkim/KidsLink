@@ -8,9 +8,10 @@ import daramgi from "../../assets/teacher/meeting-daramgi.png"
 
 // 페이지 디자인용으로 진행하고, 나중에는 삭제해야합니다!
 const dummyRecordings: Recording[] = [
-  { id: "1", name: "Recording 1", url: "/path/to/recording1" },
-  { id: "2", name: "Recording 2", url: "/path/to/recording2" },
-  { id: "3", name: "Recording 3", url: "/path/to/recording3" },
+  // {meetingId}:{teacherId}:{parentId}:촬영날짜
+  { id: "1", name: "2:1:1:20240813", url: "/path/to/recording1" },
+  { id: "2", name: "2:1:1:20240814", url: "/path/to/recording2" },
+  { id: "3", name: "2:1:1:20240815", url: "/path/to/recording3" },
 ];
 
 const TeacherMeetingRecordingList: React.FC = () => {
