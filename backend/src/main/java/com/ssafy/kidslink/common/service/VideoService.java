@@ -78,6 +78,7 @@ public class VideoService {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
         String formattedDate = LocalDateTime.now().format(formatter);
         String recordingName = sessionId + ":" + teacher.getTeacherId() + ":" + parent.getParentId() + ":" + formattedDate;
+        log.info("recordingName - {}, sessionId - {}", recordingName, sessionId);
         RecordingProperties properties = new RecordingProperties.Builder()
                 .name(recordingName)
                 .outputMode(Recording.OutputMode.COMPOSED)

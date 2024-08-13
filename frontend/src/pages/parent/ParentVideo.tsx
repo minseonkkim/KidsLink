@@ -101,7 +101,15 @@ export default function ParentVideo() {
       openvidu.publisher.publishAudio(control.mic);
       openvidu.publisher.publishVideo(control.video);
     }
-  }, [control, openvidu.publisher]);
+
+    if (openvidu.session) {
+      openvidu.session.on("signal:session-ended", (event) => {
+        console.log("세션 종료", event.data);
+        leaveSession(openvidu, setOpenvidu, setIsSessionJoined, navigate);
+        navigate("/meeting");
+      });
+    }
+  }, [control, openvidu]);
 
   const parentVideoOpacity = control.video ? 1 : 0.8; // 부모 비디오의 투명도
   const teacherVideoOpacity = otherVideoActive ? 1 : 0.6; // 상대방 비디오의 투명도
@@ -117,26 +125,45 @@ export default function ParentVideo() {
   };
 
   return (
-    <div className="relative min-h-screen bg-cover bg-center bg-no-repeat px-4 pt-4 flex items-center justify-center" style={{ backgroundImage: `url(${bgImg})` }}>
+    <div
+      className="relative min-h-screen bg-cover bg-center bg-no-repeat px-4 pt-4 flex items-center justify-center"
+      style={{ backgroundImage: `url(${bgImg})` }}
+    >
       {/* 반투명 검정 배경 */}
       <div className="absolute inset-0 bg-black bg-opacity-50"></div>
       {openvidu.session ? (
         <div className="absolute w-full h-full flex flex-col items-center justify-center">
           <Draggable>
             {/* 수정 필요한 부분 */}
-            <div className="absolute top-[100px] right-[30px] w-[120px] h-[150px] rounded-lg border border-white z-50 bg-black cursor-move flex items-center justify-center" style={{ opacity: parentVideoOpacity, backgroundColor: "white" }}>
+            <div
+              className="absolute top-[100px] right-[30px] w-[120px] h-[150px] rounded-lg border border-white z-50 bg-black cursor-move flex items-center justify-center"
+              style={{ opacity: parentVideoOpacity, backgroundColor: "white" }}
+            >
               {/* 부모 비디오가 꺼져있을 때 표시 */}
-              {!control.video && <div className="absolute z-50 text-white text-opacity-100">학부모</div>}
-              <div className="h-full w-full flex items-center justify-center">{openvidu.mainStreamManager && <OpenViduVideoComponent streamManager={openvidu.mainStreamManager} />}</div>
+              {!control.video && (
+                <div className="absolute z-50 text-white text-opacity-100">학부모</div>
+              )}
+              <div className="h-full w-full flex items-center justify-center">
+                {openvidu.mainStreamManager && (
+                  <OpenViduVideoComponent streamManager={openvidu.mainStreamManager} />
+                )}
+              </div>
             </div>
           </Draggable>
           {/* 수정 필요한 부분 */}
-          <div className="absolute top-20 bg-white w-[90%] h-[calc(70vh)] rounded-lg z-40 flex items-center justify-center" style={{ opacity: 1, backgroundColor: "white" }}>
+          <div
+            className="absolute top-20 bg-white w-[90%] h-[calc(70vh)] rounded-lg z-40 flex items-center justify-center"
+            style={{ opacity: 1, backgroundColor: "white" }}
+          >
             {/* 상대방 비디오가 꺼져있을 때 표시 */}
             {/* 구독자 비디오 컴포넌트 표시 */}
             {openvidu.subscribers.map((sub, i) => (
               <div key={i} className="h-full w-full z-80">
-                <OpenViduVideoComponent streamManager={sub} muted={control.muted} volume={control.volume} />
+                <OpenViduVideoComponent
+                  streamManager={sub}
+                  muted={control.muted}
+                  volume={control.volume}
+                />
               </div>
             ))}
           </div>
@@ -181,7 +208,10 @@ export default function ParentVideo() {
               >
                 입장하기
               </button>
-              <button onClick={handleOutClick} className="w-20 h-8 bg-[#ffec8a] rounded-full flex items-center justify-center text-sm font-medium text-[#212121] hover:bg-[#fdda6e] transition-colors">
+              <button
+                onClick={handleOutClick}
+                className="w-20 h-8 bg-[#ffec8a] rounded-full flex items-center justify-center text-sm font-medium text-[#212121] hover:bg-[#fdda6e] transition-colors"
+              >
                 나가기
               </button>
             </div>
