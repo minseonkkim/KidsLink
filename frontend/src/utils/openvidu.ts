@@ -1,5 +1,5 @@
 import { OpenVidu, StreamEvent, StreamPropertyChangedEvent } from "openvidu-browser";
-import { fetchRecordings, getToken, handleSpeechRecognitionSignalByParent } from "../api/openvidu";
+import { fetchRecordings, fetchRecordingsByTeacherId, getToken, handleSpeechRecognitionSignalByParent } from "../api/openvidu";
 import { OpenViduState, Recording, User } from "../types/openvidu";
 import { getParentInfo } from "../api/Info";
 
@@ -107,12 +107,7 @@ export const joinSession = async (
   console.log("session");
 };
 
-export const leaveSession = async (
-  openvidu: OpenViduState,
-  setOpenvidu: React.Dispatch<React.SetStateAction<OpenViduState>>,
-  setIsSessionJoined: React.Dispatch<React.SetStateAction<boolean>>,
-  navigate: (path: string) => void
-) => {
+export const leaveSession = async (openvidu: OpenViduState, setOpenvidu: React.Dispatch<React.SetStateAction<OpenViduState>>, setIsSessionJoined: React.Dispatch<React.SetStateAction<boolean>>, navigate: (path: string) => void) => {
   if (openvidu.session) {
     try {
       // 세션을 안전하게 종료
@@ -129,7 +124,7 @@ export const leaveSession = async (
         subscribers: [],
       }));
       setIsSessionJoined(false);
-      navigate('/meeting'); // /meeting 페이지로 이동
+      navigate("/meeting"); // /meeting 페이지로 이동
     }
   } else {
     console.warn("No active session to leave.");
@@ -137,10 +132,7 @@ export const leaveSession = async (
   }
 };
 
-export const fetchParentInfo = async (
-  setParentInfo: React.Dispatch<React.SetStateAction<any>>,
-  setUser: React.Dispatch<React.SetStateAction<User>>
-) => {
+export const fetchParentInfo = async (setParentInfo: React.Dispatch<React.SetStateAction<any>>, setUser: React.Dispatch<React.SetStateAction<User>>) => {
   try {
     const fetchedParentInfo = await getParentInfo();
     setParentInfo(fetchedParentInfo);
@@ -150,9 +142,7 @@ export const fetchParentInfo = async (
   }
 };
 
-export const fetchRecordingsList = async (
-  setRecordings: React.Dispatch<React.SetStateAction<Recording[]>>
-) => {
+export const fetchRecordingsList = async (setRecordings: React.Dispatch<React.SetStateAction<Recording[]>>) => {
   try {
     const recordings = await fetchRecordings();
     setRecordings(recordings);
@@ -161,3 +151,11 @@ export const fetchRecordingsList = async (
   }
 };
 
+export const fetchRecordingsListByTeacherId = async (setRecordings: React.Dispatch<React.SetStateAction<Recording[]>>, teacherId: number) => {
+  try {
+    const recordings = await fetchRecordingsByTeacherId(teacherId);
+    setRecordings(recordings);
+  } catch (error) {
+    console.error("Error fetching recordings:", error);
+  }
+};

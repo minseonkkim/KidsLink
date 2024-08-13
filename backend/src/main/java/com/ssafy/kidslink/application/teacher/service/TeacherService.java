@@ -81,4 +81,8 @@ public class TeacherService {
     public TeacherDTO getDetailByTeacherId(int teacherId) {
         return teacherMapper.toDTO(teacherRepository.findById(teacherId).orElseThrow());
     }
+
+    public int getMyId(String username) {
+        return teacherRepository.findByTeacherUsername(username).getTeacherId();
+    }
 }
