@@ -46,7 +46,8 @@ export default function TeacherLayout({
 
   const fetchAlarmCount = async () => {
     if (!checkIsLoggedIn()) return; // 로그아웃 상태이면 함수 실행 중지
-    console.log("알람 개수 가져오려고 시도 중");
+    // TODO #2 물어보기, 너무 많이 시도되는데 이유가 있나?
+    // console.log("알람 개수 가져오려고 시도 중");
     try {
       const count = await getAlarmCount();
       setAlertNum(count);
