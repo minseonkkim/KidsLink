@@ -28,6 +28,9 @@ export default function ParentDocument() {
   const childName = useParentInfoStore(
     (state) => state.parentInfo?.child.name
   );
+  const childProfile = useParentInfoStore(
+    (state) => state.parentInfo?.child.profile
+  );
   const navigate = useNavigate();
 
   const handleOptionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -84,6 +87,7 @@ export default function ParentDocument() {
       endDate: endDate?.toISOString().split("T")[0] || "",
       childId: childId,
       childName: childName,
+      childProfile: childProfile,
     };
 
     try {
@@ -130,8 +134,8 @@ export default function ParentDocument() {
       <div className="w-full flex flex-col items-center flex-grow">
         <div className="flex flex-col items-center mt-10">
           <img
-            src={daramgi}
-            className="w-20 h-20 object-cover rounded-full"
+            src={childProfile || daramgi}
+            className="w-20 h-20 object-cover rounded-full border-1 border-gray-700"
             alt="프로필 이미지"
           />
           <p className="text-lg font-bold text-[#212121] mt-4">{childName}</p>

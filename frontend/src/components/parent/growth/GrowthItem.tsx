@@ -1,11 +1,11 @@
 import { Diary } from "../../../api/growthdiary"
 
-interface DiaryItemProps {
+interface GrowthItemProps {
   diary: Diary;
   handleBoxClick: (diaryId: number) => void;
 }
 
-export default function DiaryItem({ diary, handleBoxClick }: DiaryItemProps) {
+export default function DiaryItem({ diary, handleBoxClick }: GrowthItemProps) {
   const date = new Date(diary.createDate)
   const day = date.getDate()
   const weekDay = date.toLocaleString('ko-KR', { weekday: 'long' })
