@@ -70,12 +70,15 @@ const TeacherMeetingRecordingList: React.FC = () => {
   }, [recordings]);
 
   const handleDelete = (id: string) => {
-    // TODO #1 아래 두 개 다 삭제해야하는 위치 console.log
-    const recordingList = fetchRecordings();
-    console.log(recordingList)
-
     setRecordings(recordings.filter((recording) => recording.id !== id));
   };
+
+  const handleFetchListTest = async () => {
+    // TODO #1 아래 두 개 다 삭제해야하는 위치 console.log
+    const recordingList = await fetchRecordings();
+    console.log(recordingList);
+    setRecordings(recordingList)
+  }
 
   const tabs = [
     { label: "상담가능시간 open", link: "/meeting/reservation" },
@@ -87,6 +90,7 @@ const TeacherMeetingRecordingList: React.FC = () => {
   return (
     <TeacherLayout activeMenu="meeting" setActiveMenu={() => {}} titleComponent={<Title title="녹화된 상담" tabs={tabs} />} imageSrc={daramgi}>
       <div className="w-full mt-10 mb-32 px-4 lg:px-8 py-6 lg:py-8">
+        <button onClick={handleFetchListTest}>녹화본 가져오기</button>
         {noRecordings ? (
           <p className="text-gray-600">저장된 녹화본이 없습니다.</p>
         ) : (

@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import OpenViduVideoComponent from "../../components/openvidu/VideoComponent";
-import { handleSpeechRecognition, startMainRecording, stopMainRecording } from "../../api/openvidu";
+import { startMainRecording, stopMainRecording } from "../../api/openvidu";
 import MeetingBackground from "../../assets/teacher/meeting_background.png";
 import { useTeacherInfoStore } from "../../stores/useTeacherInfoStore";
 import { getTeacherInfo } from "../../api/Info";
