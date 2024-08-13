@@ -1,4 +1,4 @@
-import axiosInstance from './token/axiosInstance';
+import axiosInstance from "./token/axiosInstance";
 
 interface Kindergarten {
   kindergartenId: number;
@@ -31,7 +31,6 @@ export interface ParentInfo {
   child: ChildInfo;
 }
 
-
 export interface TeacherInfo {
   username: string;
   email: string | null;
@@ -45,21 +44,20 @@ export interface TeacherInfo {
   profile: string | null;
 }
 
-
 // 부모 정보 조회 함수
 export async function getParentInfo(): Promise<ParentInfo> {
   try {
-    const response = await axiosInstance.get('/parent');
+    const response = await axiosInstance.get("/parent");
 
-    if (response.data.status === 'success') {
-      console.log(response.data.data)
-      return response.data.data
+    if (response.data.status === "success") {
+      console.log(response.data.data);
+      return response.data.data;
     } else {
-      throw new Error('Failed to fetch parent-info')
+      throw new Error("Failed to fetch parent-info");
     }
   } catch (error) {
-    console.error(error)
-    throw error
+    console.error(error);
+    throw error;
   }
 }
 
@@ -67,30 +65,30 @@ export async function getOneParentInfo(parentId: number): Promise<ParentInfo> {
   try {
     const response = await axiosInstance.get(`/parent/${parentId}`);
 
-    if (response.data.status === 'success') {
-      return response.data.data
+    if (response.data.status === "success") {
+      return response.data.data;
     } else {
-      throw new Error('Failed to fetch parent-info')
+      throw new Error("Failed to fetch parent-info");
     }
   } catch (error) {
-    console.error(error)
-    throw error
+    console.error(error);
+    throw error;
   }
 }
 
 // 선생님 정보 조회 함수
 export async function getTeacherInfo(): Promise<TeacherInfo> {
   try {
-    const response = await axiosInstance.get('/teacher');
+    const response = await axiosInstance.get("/teacher");
 
-    if (response.data.status === 'success') {
-      return response.data.data
+    if (response.data.status === "success") {
+      return response.data.data;
     } else {
-      throw new Error('Failed to fetch parent-info')
+      throw new Error("Failed to fetch parent-info");
     }
   } catch (error) {
-    console.error(error)
-    throw error
+    console.error(error);
+    throw error;
   }
 }
 
@@ -99,15 +97,31 @@ export async function getClassTeacherInfo(kindergartenClassId: number): Promise<
   try {
     const response = await axiosInstance.get(`/kindergarten/class/${kindergartenClassId}/teacher`);
 
-    if (response.data.status === 'success') {
-      return response.data.data
+    if (response.data.status === "success") {
+      return response.data.data;
     } else {
-      throw new Error('Failed to fetch parent-info')
+      throw new Error("Failed to fetch parent-info");
     }
   } catch (error) {
-    console.error(error)
-    throw error
+    console.error(error);
+    throw error;
   }
 }
 
+// 범수가 건드림
+export async function getTeacherId() {
+  try {
+    const response = await axiosInstance.get(`/teacher/teacherId`);
 
+    console.log("getTeacherId", response)
+
+    if (response.data.status === "success") {
+      return response.data.data;
+    } else {
+      throw new Error("Failed to fetch parent-info");
+    }
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}

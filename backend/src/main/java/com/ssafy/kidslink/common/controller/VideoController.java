@@ -95,6 +95,13 @@ public class VideoController {
         return new ResponseEntity<>(recordings, HttpStatus.OK);
     }
 
+    @GetMapping("/teacher/{teacherId}/recordings")
+    public ResponseEntity<List<Recording>> getTeacherRecordings(@PathVariable("teacherId") int teacherId)
+            throws OpenViduJavaClientException, OpenViduHttpException {
+        List<Recording> recordings = videoService.listRecordings();
+        return new ResponseEntity<>(recordings, HttpStatus.OK);
+    }
+
     /**
      * Get a specific recording by ID
      * @param recordingId The Recording ID
