@@ -7,6 +7,7 @@ import {
   getAlarmCount,
   getAllAlarms,
 } from "../api/alarm";
+import { useTeacherInfoStore } from "../stores/useTeacherInfoStore";
 
 interface Alarm {
   id: number;
@@ -71,44 +72,48 @@ export default function TeacherLayout({
     }
   };
 
-  return (
-    <>
-      <div className="flex min-h-screen overflow-hidden">
-        <Sidebar
-          isSidebarOpen={isSidebarOpen}
-          activeMenu={activeMenu}
-          setActiveMenu={setActiveMenu}
-          handleLinkClick={handleLinkClick}
-          toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
-          alertNum={alertNum} 
+  const teacherInfo = useTeacherInfoStore((state) => state.teacherInfo);
+
+return (
+  <>
+    <div className="flex min-h-screen overflow-hidden">
+      <Sidebar
+        isSidebarOpen={isSidebarOpen}
+        activeMenu={activeMenu}
+        setActiveMenu={setActiveMenu}
+        handleLinkClick={handleLinkClick}
+        toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
+        alertNum={alertNum} 
+        alertList={alertList}
+        fetchAlarmList={fetchAlarmList} 
+        fetchAlarmCount={fetchAlarmCount} 
+        deleteItem={deleteItem} 
+        deleteAllItems={deleteAllItems}
+      />
+      <main
+        className={`flex-1 p-8 min-h-screen max-h-screen bg-[#F5F5F5] overflow-hidden transition-all duration-300 ${
+          isSidebarOpen ? "lg:ml-60" : "lg:ml-0"
+        }`}
+      >
+        {!isSidebarOpen && <div className="h-[80px] lg:h-0"></div>}
+        <Header
+          alertNum={alertNum}
           alertList={alertList}
-          fetchAlarmList={fetchAlarmList} 
-          fetchAlarmCount={fetchAlarmCount} 
-          deleteItem={deleteItem} 
+          fetchAlarmList={fetchAlarmList}
+          fetchAlarmCount={fetchAlarmCount}
+          deleteItem={deleteItem}
           deleteAllItems={deleteAllItems}
+          titleComponent={titleComponent}
+          imageSrc={imageSrc}
+          activeMenu={activeMenu}
+          userName={teacherInfo?.name}
         />
-        <main
-          className={`flex-1 p-8 min-h-screen max-h-screen bg-[#F5F5F5] overflow-hidden transition-all duration-300 ${
-            isSidebarOpen ? "lg:ml-60" : "lg:ml-0"
-          }`}
-        >
-          {!isSidebarOpen && <div className="h-[80px] lg:h-0"></div>}
-          <Header
-            alertNum={alertNum}
-            alertList={alertList}
-            fetchAlarmList={fetchAlarmList}
-            fetchAlarmCount={fetchAlarmCount}
-            deleteItem={deleteItem}
-            deleteAllItems={deleteAllItems}
-            titleComponent={titleComponent}
-            imageSrc={imageSrc}
-            activeMenu={activeMenu}
-          />
-          <div className="bg-white shadow-lg rounded-lg p-6 h-full overflow-y-auto custom-scrollbar">
-            {children}
-          </div>
-        </main>
-      </div>
-    </>
-  );
+        <div className="bg-white shadow-lg rounded-lg p-6 h-full overflow-y-auto custom-scrollbar">
+          {children}
+        </div>
+      </main>
+    </div>
+  </>
+);
+
 }
