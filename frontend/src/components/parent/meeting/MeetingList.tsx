@@ -45,7 +45,7 @@ export default function MeetingList({ meetings, isMeetingActive }: MeetingListPr
 
   const handleMeetingClick = (meeting: ParentTeacherMeeting) => {
     setParentHasAccessedMeeting(true)  // 사용자가 클릭했음을 표시
-    navigate(`./${meeting.meetingId}`)
+    navigate(`${meeting.meetingId}`)
   }
 
   return (
