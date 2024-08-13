@@ -12,7 +12,7 @@ interface MeetingListProps {
 
 export default function MeetingList({ meetings, isMeetingActive }: MeetingListProps) {
   const navigate = useNavigate()
-  const { parentInfo, setParentInfo, setHasAccessedMeeting } = useParentInfoStore()
+  const { parentInfo, setParentInfo, setParentHasAccessedMeeting } = useParentInfoStore()
   const [teacherInfo, setTeacherInfo] = useState(null)
 
   useEffect(() => {
@@ -44,7 +44,7 @@ export default function MeetingList({ meetings, isMeetingActive }: MeetingListPr
   }
 
   const handleMeetingClick = (meeting: ParentTeacherMeeting) => {
-    setHasAccessedMeeting(true)  // 사용자가 클릭했음을 표시
+    setParentHasAccessedMeeting(true)  // 사용자가 클릭했음을 표시
     navigate(`./${meeting.meetingId}`)
   }
 
