@@ -1,9 +1,11 @@
 package com.ssafy.kidslink.common.service;
 
+import com.ssafy.kidslink.application.kindergarten.domain.Kindergarten;
 import com.ssafy.kidslink.application.meeting.domain.MeetingSchedule;
 import com.ssafy.kidslink.application.meeting.repository.MeetingScheduleRepository;
 import com.ssafy.kidslink.application.parent.domain.Parent;
 import com.ssafy.kidslink.application.teacher.domain.Teacher;
+import com.ssafy.kidslink.application.teacher.repository.TeacherRepository;
 import io.openvidu.java.client.*;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +24,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -38,6 +41,7 @@ public class VideoService {
     private String recordingPath;
 
     private OpenVidu openvidu;
+    private final TeacherRepository teacherRepository;
 
     @PostConstruct
     public void init() {
@@ -188,6 +192,17 @@ public class VideoService {
 
     public List<Recording> listRecordings() throws OpenViduJavaClientException, OpenViduHttpException {
         return openvidu.listRecordings();
+    }
+
+    public List<Recording> getRecordingsByTeacherId(int teacherId) throws OpenViduJavaClientException, OpenViduHttpException {
+        List<Recording> recordings = listRecordings();
+
+        return recordings.stream()
+                .filter(recording -> {
+                    String recordingName = recording.getName();
+                    return Integer.parseInt(recordingName.split("-")[1]) == teacherId;
+                })
+                .collect(Collectors.toList());
     }
 
     public Recording getRecording(String recordingId) throws OpenViduJavaClientException, OpenViduHttpException {
