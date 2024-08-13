@@ -137,3 +137,18 @@ export async function getParentSelectedTime(){
     throw error;
   }
 }
+
+// 학부모의 상담 제출 유무 체크
+export async function PostParentMeetingSubmitted() {
+  try {
+    const response = await axiosInstance.post('meeting/submitted');
+    if (response.data.status === 'success') {
+      return response.data.data;
+    } else {
+      throw new Error('Failed to post parent meeting submitted info')
+    }
+  } catch(error) {
+    console.error('Error posting parent submitted info: ', error)
+    throw error;
+  }
+}

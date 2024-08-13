@@ -3,14 +3,16 @@ import InfoSection from "../../components/parent/common/InfoSection"
 import MeetingList from "../../components/parent/meeting/MeetingList"
 import daramgi from "../../assets/parent/meeting-daramgi.png"
 import meetingTimeIcon from "../../assets/parent/meeting.png"
-import { getConfirmedMeeting } from "../../api/meeting"
+import { PostParentMeetingSubmitted, getConfirmedMeeting } from "../../api/meeting"
 import { useNavigate } from "react-router-dom"
 import { ParentTeacherMeeting } from "../../types/meeting"
 import cryingDaramgi from "../../assets/common/crying-daramgi.png"
+import Modal from "../../components/parent/common/Modal"
 
 export default function ParentMeeting() {
   const navigate = useNavigate()
   const [meetings, setMeetings] = useState<ParentTeacherMeeting[]>([]) // 회의 목록 상태
+  const [showAlreadySubmittedModal, setShowAlreadySubmittedModal] = useState<boolean>(false);
 
   // 상담 시작 10분전부터 활성화 시키기
   const isMeetingActive = (date: string, time: string): boolean => {
@@ -40,10 +42,18 @@ export default function ParentMeeting() {
     fetchMeetings()
   }, [])
 
-  
-  const navigateToSubmitPage = () => {
-    navigate("/meeting/submit")
-  }
+  const navigateToSubmitPage = async () => {
+    const submitted = await PostParentMeetingSubmitted();
+    if (submitted) {
+      setShowAlreadySubmittedModal(true); // 모달 표시
+    } else {
+      navigate("/meeting/submit");
+    }
+  };
+
+  const handleCloseModal = () => {
+    setShowAlreadySubmittedModal(false); // 모달 닫기
+  };
 
   return (
     <div className="flex flex-col h-screen bg-[#FFEC8A]">
@@ -59,9 +69,7 @@ export default function ParentMeeting() {
         {meetings.length === 0 ? (
           <div className="col-span-4 flex flex-col items-center justify-center">
             <img src={cryingDaramgi} alt="Crying Daramgi" className="w-16 mt-12 mb-4" />
-            <p className="text-center text-gray-500">
-              예정된 상담이 없습니다.
-            </p>
+            <p className="text-center text-gray-500">예정된 상담이 없습니다.</p>
           </div>
         ) : (
           <MeetingList meetings={meetings} isMeetingActive={isMeetingActive} />
@@ -69,10 +77,7 @@ export default function ParentMeeting() {
       </div>
 
       {/* 상담 예약 아이콘 */}
-      <div
-        className="fixed right-10 z-40 bottom-20"
-        onClick={navigateToSubmitPage}
-      >
+      <div className="fixed right-10 z-40 bottom-20" onClick={navigateToSubmitPage}>
         <div
           className="z-50 w-[70px] h-[70px] rounded-full bg-[#ffec8a] flex items-center justify-center"
           style={{
@@ -87,6 +92,14 @@ export default function ParentMeeting() {
           />
         </div>
       </div>
+
+      {/* 이미 상담시간 제출 모달 */}
+      {showAlreadySubmittedModal && (
+        <Modal
+          message="이미 상담시간을 제출했습니다."
+          onClose={handleCloseModal} // 모달 닫기 핸들러
+        />
+      )}
     </div>
-  )
+  );
 }
