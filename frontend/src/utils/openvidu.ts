@@ -163,10 +163,10 @@ export const fetchRecordingsList = async (setRecordings: React.Dispatch<React.Se
   }
 };
 
-export const fetchRecordingsListByTeacherId = async (setRecordings: React.Dispatch<React.SetStateAction<Recording[]>>, teacherId: number) => {
+export const fetchRecordingsListByTeacherId = async (teacherId: number) => {
   try {
     const recordings = await fetchRecordingsByTeacherId(teacherId);
-    setRecordings(recordings);
+    return recordings;
   } catch (error) {
     console.error("Error fetching recordings:", error);
   }
