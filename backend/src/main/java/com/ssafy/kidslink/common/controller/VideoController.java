@@ -92,13 +92,15 @@ public class VideoController {
     public ResponseEntity<List<Recording>> listRecordings()
             throws OpenViduJavaClientException, OpenViduHttpException {
         List<Recording> recordings = videoService.listRecordings();
+        log.info("listRecordings - {}", recordings);
         return new ResponseEntity<>(recordings, HttpStatus.OK);
     }
 
     @GetMapping("/teacher/{teacherId}/recordings")
     public ResponseEntity<List<Recording>> getTeacherRecordings(@PathVariable("teacherId") int teacherId)
             throws OpenViduJavaClientException, OpenViduHttpException {
-        List<Recording> recordings = videoService.listRecordings();
+        List<Recording> recordings = videoService.getRecordingsByTeacherId(teacherId);
+        log.info("getTeacherRecordings recordings - {}", recordings);
         return new ResponseEntity<>(recordings, HttpStatus.OK);
     }
 
