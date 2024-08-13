@@ -378,3 +378,21 @@ from { transform: scale(0.9); opacity: 0; }
 to { transform: scale(1); opacity: 1; }
 }
    */ 
+
+   @keyframes moveShuttlebus {
+    0% {
+      transform: translateX(-200%); /* 화면 오른쪽 밖에서 시작 */
+      opacity: 1; /* 이미지가 보임 */
+    }
+    70% {
+      transform: translateX(100%); /* 화면 왼쪽 밖으로 이동 */
+      opacity: 1; /* 이미지가 보임 */
+    }
+    95% {
+      opacity: 0; /* 이미지가 사라짐 */
+    }
+    100% {
+      transform: translateX(100%); /* 다시 화면 오른쪽 밖으로 돌아옴 */
+      opacity: 0; /* 이미지는 아직 보이지 않음 */
+    }
+  }
