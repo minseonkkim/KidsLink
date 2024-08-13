@@ -1,9 +1,9 @@
-import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState, useRef } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import OpenViduVideoComponent from "../../components/openvidu/VideoComponent";
 import {
   handleSpeechRecognition,
-  startMainRecording, // 메인 녹화 관련 함수 추가
+  startMainRecording,
   stopMainRecording,
 } from "../../api/openvidu";
 import MeetingBackground from "../../assets/teacher/meeting_background.png";
@@ -13,11 +13,10 @@ import TeacherMeetingFooter from "../../components/openvidu/TeacherMeetingFooter
 import { ControlState, OpenViduState, User } from "../../types/openvidu";
 import { joinSession, leaveSession } from "../../utils/openvidu";
 import DefaultProfile from "../../assets/teacher/default_profile.png";
+import { getMeetingInfo } from "../../api/meeting";
 
 export default function TeacherVideo() {
   const navigate = useNavigate();
-  // const location = useLocation();
-  // const { parentName } = location.state || {};
   const { meetingId } = useParams<{ meetingId: string }>();
   const { teacherInfo, setTeacherInfo } = useTeacherInfoStore();
   const [user, setUser] = useState<User>({
@@ -32,11 +31,6 @@ export default function TeacherVideo() {
     publisher: undefined,
     subscribers: [],
   });
-  // const [tabOpen, setTabOpen] = useState<TabState>({
-  //   formTab: false,
-  //   profileTab: false,
-  //   chatTab: false,
-  // });
   const [control, setControl] = useState<ControlState>({
     video: false,
     mic: false,
@@ -46,31 +40,49 @@ export default function TeacherVideo() {
   const [myStreamId, setMyStreamId] = useState<string | undefined>(undefined);
   const [otherVideoActive, setOtherVideoActive] = useState(false);
   const [otherOpacity, setOtherOpacity] = useState(false);
-
   const [isSessionJoined, setIsSessionJoined] = useState(false);
-  const [isRecording, setIsRecording] = useState(false); // 녹화 상태 관리
+  const [isRecording, setIsRecording] = useState(false);
   const [currentRecordingId, setCurrentRecordingId] = useState<string | null>(null);
-
   const [recordStartTime, setRecordStartTime] = useState<number | null>(null);
-  const recordingStartTimeRef = useRef<number | null>(null); // 키워드 감지 시점 전의 녹화 시작 시간
+  const recordingStartTimeRef = useRef<number | null>(null);
+  const [childName, setChildName] = useState<string>(""); // childName 상태 추가
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   useEffect(() => {
-    console.log("useEffect - otherVideoActive changed", otherVideoActive);
-    if (otherVideoActive) {
-      if (otherOpacity) {
-        setOtherOpacity(false);
-      } else {
-        setOtherOpacity(true);
+    async function fetchChildInfo() {
+      console.log("자녀 정보 패치 중...");
+      try {
+        const meetingInfo = await getMeetingInfo(Number(meetingId));
+        setChildName(meetingInfo.childName); // childName 상태 설정
+      } catch (error) {
+        console.error("자녀 정보를 가져오지 못했습니다:", error);
       }
     }
-  }, [otherVideoActive]);
+
+    if (meetingId) {
+      fetchChildInfo();
+    }
+  }, [meetingId]);
+
+  useEffect(() => {
+    if (openvidu.session) {
+      openvidu.session.on("signal:profanityDetected", (event) => {
+        console.log("학부모 욕설 감지:", event);
+
+        if (recordingStartTimeRef.current) {
+          const detectedTime = Date.now();
+          const adjustedStartTime = Math.max(recordingStartTimeRef.current, detectedTime - 20000);
+          setRecordStartTime(adjustedStartTime);
+          console.log("Adjusted recording start time:", adjustedStartTime);
+        }
+      });
+    }
+  }, [openvidu.session]);
 
   useEffect(() => {
     async function fetchTeacherInfo() {
-      console.log("Fetching teacher info...");
       try {
         const fetchedTeacherInfo = await getTeacherInfo();
-        console.log("Fetched teacher info:", fetchedTeacherInfo);
         setTeacherInfo(fetchedTeacherInfo);
         setUser((prevUser) => ({ ...prevUser, username: fetchedTeacherInfo.name }));
       } catch (error) {
@@ -81,52 +93,14 @@ export default function TeacherVideo() {
     if (!teacherInfo) {
       fetchTeacherInfo();
     } else {
-      console.log("Teacher info already available", teacherInfo);
       setUser((prevUser) => ({ ...prevUser, username: teacherInfo.name }));
     }
   }, [teacherInfo, setTeacherInfo]);
 
   useEffect(() => {
-    if (openvidu.session) {
-      openvidu.session.on("signal:profanityDetected", (event) => {
-        console.log("학부모 욕설 감지:", event);
-
-        if (recordingStartTimeRef.current) {
-          // STT 감지 시점에서 20초 전 시간으로 기록 시작 시간 조정
-          const detectedTime = Date.now();
-          const adjustedStartTime = Math.max(recordingStartTimeRef.current, detectedTime - 20000);
-          setRecordStartTime(adjustedStartTime);
-          console.log("Adjusted recording start time:", adjustedStartTime);
-        }
-      });
-    }
-  }, [openvidu.session]);
-
-  // useEffect(() => {
-  //   console.log("useEffect쪽, isRecording", isRecording)
-  //   return () => {
-  //     // 컴포넌트가 언마운트될 때만 실행되도록 조건 추가
-  //     if (isRecording) {
-  //       handleStopRecording().then(() => {
-  //         leaveSession(openvidu, setOpenvidu, setIsSessionJoined, navigate);
-  //       }).catch((error) => {
-  //         console.error("Failed to stop recording before leaving session:", error);
-  //         leaveSession(openvidu, setOpenvidu, setIsSessionJoined, navigate);
-  //       });
-  //     } else {
-  //       leaveSession(openvidu, setOpenvidu, setIsSessionJoined, navigate);
-  //     }
-  //   };
-  // }, [navigate]); // isRecording을 의존성에서 제거
-
-  useEffect(() => {
     if (openvidu.publisher) {
-      console.log("Publishing audio:", control.mic);
       openvidu.publisher.publishAudio(control.mic);
-      console.log("Publishing video:", control.video);
       openvidu.publisher.publishVideo(control.video);
-
-      console.log("Video active:", openvidu.publisher.stream.videoActive);
     }
   }, [control, openvidu.publisher]);
 
@@ -139,37 +113,12 @@ export default function TeacherVideo() {
   const handleStartRecording = async () => {
     try {
       const recordingId = await startMainRecording(user.sessionId);
-      console.log("handleStopRecording recordingId", recordingId);
       setCurrentRecordingId(recordingId);
       setIsRecording(true);
-      console.log("Recording started", isRecording);
-
-      // 녹화 시작 시점 기록
       recordingStartTimeRef.current = Date.now();
-      console.log("녹화 시작 : recordingStartTimeRef.current", recordingStartTimeRef.current)
-
-      // 녹화가 시작된 후 STT 기능을 호출
-      // startSTT();
     } catch (error) {
       console.error("Failed to start recording:", error);
     }
-  };
-
-  const startSTT = () => {
-    handleSpeechRecognition(user.sessionId, (detectedTime) => {
-      console.log("Profanity detected at time:", detectedTime);
-
-      // 여기에서 필요한 추가 동작을 수행할 수 있습니다.
-      // 예를 들어, 감지된 시점에 대한 정보를 저장하거나 UI를 업데이트하는 등의 작업을 할 수 있습니다.
-      if (recordingStartTimeRef.current) {
-        // STT 감지 시점에서 20초 전 시간을 계산
-        console.log(detectedTime - 20000)
-        console.log(recordingStartTimeRef.current);
-        const adjustedStartTime = Math.max(recordingStartTimeRef.current, detectedTime - 20000);
-        setRecordStartTime(adjustedStartTime); // 이 시간을 저장하여 종료 시 사용
-        console.log("Adjusted recording start time:", adjustedStartTime);
-      }
-    });
   };
 
   const handleStopRecording = async () => {
@@ -177,13 +126,8 @@ export default function TeacherVideo() {
 
     try {
       setIsRecording(false);
-      // const startTime = recordStartTime || recordingStartTimeRef.current!;
       const startTime = recordStartTime - recordingStartTimeRef.current;
-      console.log("handleStopRecording", startTime)
       await stopMainRecording(currentRecordingId, startTime);
-
-      console.log("Recording stopped.");
-
       setCurrentRecordingId(null);
       recordingStartTimeRef.current = null;
       setRecordStartTime(null);
@@ -192,20 +136,23 @@ export default function TeacherVideo() {
     }
   };
 
-  const handleLeaveSession = async () => {
-    console.log("Leaving session...");
-
+  const handleLeaveSession = () => {
+    setIsModalOpen(true); // 모달을 열기
+  };
+  
+  const confirmLeaveSession = async () => {
     if (isRecording) {
       try {
         await handleStopRecording();
-        console.log("handleStopRecording 동작 끝");
       } catch (error) {
         console.error("Failed to stop recording before leaving session:", error);
       }
     }
-
-    console.log("leaveSession 동작 시작");
     leaveSession(openvidu, setOpenvidu, setIsSessionJoined, navigate);
+  };
+  
+  const cancelLeaveSession = () => {
+    setIsModalOpen(false); // 모달을 닫기
   };
 
   const teacherVideoOpacity = control.video ? 1 : 0.8;
@@ -214,7 +161,6 @@ export default function TeacherVideo() {
     <div className="relative flex flex-col justify-center items-center w-screen h-screen min-w-[1000px] overflow-hidden">
       <img src={MeetingBackground} className="absolute top-0 left-0 w-full h-full object-cover" />
       <div className="relative z-10 w-full h-full flex flex-col items-center">
-        {/* <TeacherHeader /> */}
         <div className="relative w-full h-full flex">
           {openvidu.session && (
             <div className="absolute top-[150px] left-[100px] font-bold text-[20px] flex flex-row items-center">
@@ -234,7 +180,9 @@ export default function TeacherVideo() {
             )}
           </div>
           {openvidu.session && (
-            <div className="absolute top-[150px] right-[648px] font-bold text-[20px]">학부모</div>
+            <div className="absolute top-[150px] right-[648px] font-bold text-[20px]">
+              {childName} 학부모
+            </div>
           )}
           {openvidu.session && (
             <div
@@ -284,12 +232,36 @@ export default function TeacherVideo() {
             control={control}
             handleControl={setControl}
             close={handleLeaveSession}
-            startRecording={handleStartRecording} // 녹화 시작 함수 전달
-            stopRecording={handleStopRecording} // 녹화 중지 함수 전달
-            isRecording={isRecording} // 녹화 상태 전달
+            startRecording={handleStartRecording}
+            stopRecording={handleStopRecording}
+            isRecording={isRecording}
           />
         )}
       </div>
+
+      {/* 모달 컴포넌트 */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg">
+            <h2 className="text-lg font-semibold mb-4">세션을 종료하시겠습니까?</h2>
+            <p className="mb-4">학부모와 함께 상담이 종료됩니다.</p>
+            <div className="flex justify-end space-x-4">
+              <button
+                onClick={confirmLeaveSession}
+                className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
+              >
+                종료
+              </button>
+              <button
+                onClick={cancelLeaveSession}
+                className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400"
+              >
+                취소
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
