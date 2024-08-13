@@ -13,8 +13,11 @@ export default function TeacherErrorPage() {
             {/* <TeacherHeader /> */}
             <div className="flex h-screen">
                 <div className="m-auto text-center">
-                    <img src={daramgisad} alt="daramgisad" />
-                    <p className="text-3xl">존재하지 않는 페이지 입니다.</p>
+                    <div className='flex items-center justify-center'>
+                        <img src={daramgisad} alt="daramgisad" className='h-[270px] mb-[30px]' />
+                    </div>
+                    
+                    <p className="text-[25px] font-bold">존재하지 않는 페이지입니다.</p>
                     <div className="mt-4 space-y-2">
                         <div className="block">
                             <div className="inline-block text-center border-[2px] border-[#7C7C7C] bg-[#E3EEFF] px-3 py-1 font-bold rounded-[10px] hover:bg-[#D4DDEA]">

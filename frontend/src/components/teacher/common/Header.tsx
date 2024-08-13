@@ -8,6 +8,7 @@ import { CSSTransition } from "react-transition-group";
 import { FiLogOut } from "react-icons/fi";
 import useAppStore from "../../../stores/store";
 import { logout } from "../../../api/member";
+import { useTeacherInfoStore } from "../../../stores/useTeacherInfoStore";
 
 interface Alarm {
   id: number;
@@ -63,6 +64,7 @@ const AlertModal: React.FC<AlertModalProps> = ({
           )}
         </div>
         <div>
+        
           {alertList.length > 0 ? (
             <div className="custom-scrollbar max-h-[380px] overflow-y-auto">
               {alertList.map((alert, index) => (
@@ -188,6 +190,7 @@ interface HeaderProps {
   titleComponent: React.ReactNode;
   imageSrc: string;
   activeMenu: string;
+  userName: string;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -200,6 +203,7 @@ export const Header: React.FC<HeaderProps> = ({
   titleComponent,
   imageSrc,
   activeMenu,
+  userName
 }) => {
   const { openModal, Modal, isModalOpen, closeModal } = useModal();
   const navigate = useNavigate();
@@ -277,25 +281,23 @@ export const Header: React.FC<HeaderProps> = ({
     }
   };
 
+  
+
   return (
     <div className="flex justify-between items-center mb-1">
       <h1 className="text-[20px] font-semibold text-[#363636]">
         {getMenuTitle()}
       </h1>
-      <div className="fixed top-4 right-8 flex items-center space-x-4">
+      <div className="fixed top-4 right-8 flex flex-row items-center space-x-4">
+        <div className="mr-1 mt-4 font-bold text-[18px]">{userName}님 로그인 중</div>
         <div className="relative mt-4 mr-1" onClick={openAlarmModal}>
           <BiBell className="w-[32px] h-[32px] cursor-pointer text-gray-700" />
           <span className="absolute top-0 right-0 w-4 h-4 bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center">
             {alertNum}
           </span>
         </div>
-        <FiLogOut
-          onClick={handleLogout}
-          className="w-[29px] h-[29px] mt-4 mr-10 cursor-pointer text-gray-700"
-        />
-        {/* <Link to="/mypage">
-          <CgProfile className="mt-4 mr-4 w-[30px] h-[30px] cursor-pointer text-gray-700" />
-        </Link> */}
+        <FiLogOut onClick={handleLogout} className="w-[29px] h-[29px] mt-4 mr-10 cursor-pointer text-gray-700"/>
+
       </div>
       <Modal />
     </div>

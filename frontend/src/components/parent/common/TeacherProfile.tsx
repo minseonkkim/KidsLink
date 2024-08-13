@@ -1,7 +1,7 @@
 export default function TeacherProfile({ profileImg, teacherName }) {
   return (
     <div className="flex items-center mt-8">
-      <div className="w-[30px] h-[30px] mr-2">
+      <div className="w-[30px] h-[30px] mr-1">
         <img
           src={profileImg}
           className="w-full h-full object-cover rounded-full"
