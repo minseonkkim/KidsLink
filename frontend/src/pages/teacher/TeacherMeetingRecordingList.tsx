@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { fetchRecordingsListByTeacherId } from "../../utils/openvidu";
 import { Recording } from "../../types/openvidu";
-import { handleDownload } from "../../api/openvidu";
+import { fetchRecordings, handleDownload } from "../../api/openvidu";
 import Title from "../../components/teacher/common/Title";
 import TeacherLayout from "../../layouts/TeacherLayout";
 import daramgi from "../../assets/teacher/meeting-daramgi.png";
@@ -70,6 +70,10 @@ const TeacherMeetingRecordingList: React.FC = () => {
   }, [recordings]);
 
   const handleDelete = (id: string) => {
+    // TODO #1 아래 두 개 다 삭제해야하는 위치 console.log
+    const recordingList = fetchRecordings();
+    console.log(recordingList)
+
     setRecordings(recordings.filter((recording) => recording.id !== id));
   };
 
