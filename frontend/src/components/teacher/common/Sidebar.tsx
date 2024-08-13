@@ -246,9 +246,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
               >
                 키즈링크
               </p>
-              {/* <div className="mt-4 mx-3">
+              <div className="mt-4 mx-3">
                 <TeacherInfoCard /> 
-              </div> */}
+              </div>
             </>
           )}
         </div>
