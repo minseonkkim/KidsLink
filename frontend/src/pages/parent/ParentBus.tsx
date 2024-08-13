@@ -61,7 +61,6 @@ export default function ParentBus() {
     fetchParentInfo();
   }, [kindergartenId, setParentInfo]);
 
-
   useEffect(() => {
     if (mapRef.current && busStops.length > 0) {
 
@@ -69,33 +68,27 @@ export default function ParentBus() {
         content: '',
       });
 
-      console.log(busStops)
-  
       busStops.forEach((busStop) => {
         const busStopPosition = new window.kakao.maps.LatLng(busStop.latitude, busStop.longitude);
-  
-        // 마커 생성
+
         const busStopMarker = new window.kakao.maps.Marker({
           map: mapRef.current,
           position: busStopPosition,
           title: busStop.busStopName,
         });
-  
-        // 마커 클릭 이벤트 등록
+
         window.kakao.maps.event.addListener(busStopMarker, 'click', function () {
           infowindow.setContent(`<div style="padding:5px;">${busStop.busStopName}</div>
             `);
           infowindow.open(mapRef.current, busStopMarker);
         });
       });
-  
-      // 지도 클릭 시 정보창 닫기
+
       window.kakao.maps.event.addListener(mapRef.current, 'click', function () {
         infowindow.close();
       });
     }
   }, [mapRef.current, busStops]);
-
 
   const initializeMap = () => {
     if (mapRef.current || !mapContainer.current) {
@@ -168,7 +161,7 @@ export default function ParentBus() {
     const ws = new WebSocket(wsUrl);
     wsRef.current = ws;
 
-    receiveBusLocation(wsRef, setLocation, mapRef, busMarkerRef, setIsMoving, busCenterFlag, setBusOption); // setBusOption 추가
+    receiveBusLocation(wsRef, setLocation, mapRef, busMarkerRef, setIsMoving, busCenterFlag, setBusOption);
 
     ws.onclose = () => {
       isWebSocketInitialized.current = false;
@@ -314,21 +307,23 @@ export default function ParentBus() {
   const main1 = isWebSocketInitialized.current
     ? currentTime < 12
       ? isMoving
-        ? "등원 중이에요."
-        : "운행 중이 아니에요"
+        ? "등원 중"
+        : "정차 중"
       : isMoving
-      ? "하원 중이에요."
-      : "운행 중이 아니에요"
-    : "운행 중이 아니에요";
+      ? "하원 중"
+      : "정차 중"
+    : "정차 중";
 
-  const description1 = "버스가";
+  // main1이 "정차 중"이면 description1은 "버스가", 그렇지 않으면 "아이가"
+  const description1 = main1 === "정차 중" ? "버스가" : "아이가";
+  const main2 = "이에요";
 
   return (
     <div className="flex flex-col h-screen bg-[#FFEC8A]">
       <InfoSection
         description1={description1}
         main1={main1}
-        main2=""
+        main2={main2}
         imageSrc={daramgi}
         altText="다람쥐"
       />
