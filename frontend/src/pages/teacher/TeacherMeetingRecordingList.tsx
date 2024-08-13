@@ -23,17 +23,24 @@ const TeacherMeetingRecordingList: React.FC = () => {
     async function fetchAllRecordings() {
       // try {
       const teacherId = await getTeacherId();
-      await fetchRecordingsListByTeacherId(setRecordings, teacherId);
+      const fetchedRecordings = await fetchRecordingsListByTeacherId(teacherId);
+
+      console.log("fetchAllRecordings 메서드 동작 fetchedRecordings:", fetchedRecordings);
 
       // Fetch parent names and format recording names
       const updatedRecordings = await Promise.all(
-        recordings.map(async (recording) => {
+        fetchedRecordings.map(async (recording) => {
           const parts = recording.name.split("-");
           const parentId = parseInt(parts[2], 10);
           const meetingDateStr = parts[3]; // "20240813" 형식의 날짜 문자열
 
           // "20240813" 형식의 문자열을 Date 객체로 변환
-          const meetingDate = new Date(`${meetingDateStr.slice(0, 4)}-${meetingDateStr.slice(4, 6)}-${meetingDateStr.slice(6, 8)}`);
+          const meetingDate = new Date(
+            `${meetingDateStr.slice(0, 4)}-${meetingDateStr.slice(4, 6)}-${meetingDateStr.slice(
+              6,
+              8
+            )}`
+          );
 
           // 날짜를 'YYYY년 MM월 DD일' 형식으로 변환
           const formattedDate = meetingDate.toLocaleDateString("ko-KR", {
@@ -42,7 +49,7 @@ const TeacherMeetingRecordingList: React.FC = () => {
             day: "numeric",
           });
           const parentInfo = await getOneParentInfo(parentId); // 부모님 이름 가져오기
-          const parentName = parentInfo.name
+          const parentName = parentInfo.name;
           return {
             ...recording,
             name: `${formattedDate} ${parentName} 학부모님과의 상담내용`,
