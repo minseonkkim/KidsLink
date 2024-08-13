@@ -1,4 +1,4 @@
-import DiaryItem from "./DiaryItem"
+import DiaryItem from "./GrowthItem"
 import { Diary } from "../../../api/growthdiary"
 import cryingDaramgi from "../../../assets/common/crying-daramgi.png"
 
