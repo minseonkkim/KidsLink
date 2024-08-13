@@ -254,4 +254,8 @@ public class MeetingTimeService {
     }
 
 
+    public boolean confirmSubmitStatus(String parentUsername) {
+        Parent parent = parentRepository.findByParentUsername(parentUsername);
+        return selectedMeetingRepository.existsByParent(parent);
+    }
 }

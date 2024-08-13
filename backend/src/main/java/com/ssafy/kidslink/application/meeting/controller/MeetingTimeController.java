@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -272,6 +273,22 @@ public class MeetingTimeController {
 
         return new ResponseEntity<>(responseData, HttpStatus.BAD_REQUEST);
     }
+
+    @PostMapping("/submitted")
+    public ResponseEntity<APIResponse<Boolean>> getSubmittedMeetings(@AuthenticationPrincipal UserDetails principal) {
+        // 학부모 Username, 선생님 PK
+        Boolean meetingSubmitted = meetingTimeService.confirmSubmitStatus(principal.getUsername());
+
+        APIResponse<Boolean> responseData = new APIResponse<>(
+                "success",
+                meetingSubmitted,
+                "학부모 상담 일정 조회를 성공하였습니다.",
+                null
+        );
+        return new ResponseEntity<>(responseData, HttpStatus.OK);
+    }
+
+
 
     @GetMapping("/selected")
     public ResponseEntity<APIResponse<List<SelectedMeetingDTO>>> getSelectedMeetings(@AuthenticationPrincipal Object principal){
