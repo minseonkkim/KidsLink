@@ -237,18 +237,18 @@ export const Sidebar: React.FC<SidebarProps> = ({
           isSidebarOpen ? "translate-x-0 w-60" : "translate-x-0 w-0"
         }`}
       >
-        <div className="flex flex-col mx-6 mb-4 transition-opacity duration-300">
+        <div className="flex flex-col mb-6 transition-opacity duration-300">
           {isSidebarOpen && (
             <>
               <p
-                className="text-[36px] font-bold text-left font-Cafe24Ssurround gradient-text cursor-pointer"
+                className="text-[36px] mx-6 font-bold text-left font-Cafe24Ssurround gradient-text cursor-pointer"
                 onClick={() => navigate("/")}
               >
                 키즈링크
               </p>
-              <div className="mt-4">
-                <TeacherInfoCard /> {/* Teacher info card under the logo */}
-              </div>
+              {/* <div className="mt-4 mx-3">
+                <TeacherInfoCard /> 
+              </div> */}
             </>
           )}
         </div>
@@ -361,7 +361,7 @@ const SidebarLink: React.FC<SidebarLinkProps> = ({
   return (
     <Link
       to={to}
-      className={`flex items-center py-3 pl-8 transition-colors duration-300 bg-left bg-no-repeat bg-[length:200%_100%] ${
+      className={`flex items-center py-4 pl-8 transition-colors duration-300 bg-left bg-no-repeat bg-[length:200%_100%] ${
         activeMenu === menuKey
           ? "bg-[#FFF9D7] border-r-8 border-[#FFEC8A]"
           : "hover:bg-[#FFF9D7] hover:bg-right hover:bg-[length:100%_100%]"
@@ -371,7 +371,7 @@ const SidebarLink: React.FC<SidebarLinkProps> = ({
         handleLinkClick();
       }}
     >
-      <img src={icon} alt={label} className="w-8 h-8 mr-5" />
+      <img src={icon} alt={label} className="w-7 h-7 mr-5" />
       <span
         className={`text-[17px] ${
           activeMenu === menuKey
