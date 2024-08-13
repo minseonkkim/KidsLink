@@ -83,27 +83,45 @@ public class VideoService {
     }
 
     public Map<String, Object> stopRecording(String recordingId, Long startTime) throws OpenViduJavaClientException, OpenViduHttpException {
-        log.info("녹화 중지 시작 - 녹화 ID: " + recordingId);
+        log.info("녹화 중지 시작 - 녹화 ID: {}", recordingId);
 
         // 녹화를 중지하여 영상을 저장합니다.
         Recording recording = openvidu.stopRecording(recordingId);
 
         // 영상을 자르기 위해 FFmpeg를 사용합니다.
         String inputFilePath = recordingPath + "/" + recordingId + "/" + recording.getName() + ".mp4";
-        String outputFilePath = recordingPath + "/" + recordingId + "/" + recording.getName() + "_trimmed.mp4";
+        String tempFilePath = recordingPath + "/" + recordingId + "/" + recording.getName() + "_trimmed.mp4";
 
-        log.info("녹화된 파일 경로: " + inputFilePath);
-        log.info("잘라낸 파일 경로: " + outputFilePath);
+        log.info("녹화된 파일 경로: {}", inputFilePath);
+        log.info("잘라낸 파일 경로: {}", tempFilePath);
 
         // FFmpeg를 사용하여 영상 트리밍
-        trimRecording(inputFilePath, outputFilePath, startTime);
+        trimRecording(inputFilePath, tempFilePath, startTime);
+
+        // 원본 파일 삭제 후 임시 파일을 원본 파일 이름으로 변경
+        File originalFile = new File(inputFilePath);
+        File tempFile = new File(tempFilePath);
+
+        if (originalFile.delete()) {
+            log.info("원본 파일 삭제 성공: {}", inputFilePath);
+            if (tempFile.renameTo(originalFile)) {
+                log.info("임시 파일을 원본 파일 이름으로 변경 성공: {}", inputFilePath);
+            } else {
+                log.error("임시 파일을 원본 파일 이름으로 변경 실패: {}", tempFilePath);
+                throw new RuntimeException("Failed to rename temp file to original file name.");
+            }
+        } else {
+            log.error("원본 파일 삭제 실패: {}", inputFilePath);
+            throw new RuntimeException("Failed to delete original file.");
+        }
+
 
         Map<String, Object> response = new HashMap<>();
         response.put("status", "OK");
         response.put("recordingId", recordingId);
         response.put("recordingName", recording.getName());
         response.put("inputFilePath", inputFilePath);
-        response.put("outputFilePath", outputFilePath);
+        response.put("outputFilePath", tempFilePath);
         response.put("recording", recording);
         return response;
     }
@@ -135,9 +153,9 @@ public class VideoService {
 
             int exitCode = process.waitFor();
             if (exitCode != 0) {
-                log.error("FFmpeg process failed with exit code: " + exitCode);
+                log.error("FFmpeg process failed with exit code: {}", exitCode);
             } else {
-                log.info("Successfully trimmed video from " + startTimeFormatted);
+                log.info("Successfully trimmed video from {}", startTimeFormatted);
             }
         } catch (IOException | InterruptedException e) {
             log.error("Failed to trim video", e);
