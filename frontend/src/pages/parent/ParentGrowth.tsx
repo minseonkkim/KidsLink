@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import InfoSection from "../../components/parent/common/InfoSection";
 import YearMonthSelector from "../../components/parent/common/YearMonthSelector";
-import DiaryList from "../../components/parent/diary/DiaryList";
+import DiaryList from "../../components/parent/growth/GrowthList";
 import daramgi from "../../assets/parent/growth-daramgi.png";
 import { getKidAllGrowthDiarys, Diary } from "../../api/growthdiary";
 import { useParentInfoStore } from "../../stores/useParentInfoStore";
@@ -11,8 +11,12 @@ import { getParentInfo } from "../../api/Info";
 export default function ParentDiary() {
   const [diarys, setDiarys] = useState<Diary[]>([]);
   const [filteredDiarys, setFilteredDiarys] = useState<Diary[]>([]);
-  const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
-  const [selectedMonth, setSelectedMonth] = useState<number>(new Date().getMonth() + 1);
+  const [selectedYear, setSelectedYear] = useState<number>(
+    new Date().getFullYear()
+  );
+  const [selectedMonth, setSelectedMonth] = useState<number>(
+    new Date().getMonth() + 1
+  );
   const navigate = useNavigate();
 
   const parentInfo = useParentInfoStore((state) => state.parentInfo);
@@ -32,7 +36,11 @@ export default function ParentDiary() {
         if (currentChildId) {
           const response = await getKidAllGrowthDiarys(currentChildId);
           if (response) {
-            const sortedDiarys = response.sort((a, b) => new Date(b.createDate).getTime() - new Date(a.createDate).getTime());
+            const sortedDiarys = response.sort(
+              (a, b) =>
+                new Date(b.createDate).getTime() -
+                new Date(a.createDate).getTime()
+            );
             setDiarys(sortedDiarys);
           }
         }
@@ -60,7 +68,7 @@ export default function ParentDiary() {
   };
 
   const handleBoxClick = (diaryId: number) => {
-    navigate(`/diary/${diaryId}`);
+    navigate(`/growth/${diaryId}`);
   };
 
   return (
