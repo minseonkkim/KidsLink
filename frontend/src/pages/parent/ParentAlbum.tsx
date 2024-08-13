@@ -29,9 +29,9 @@ export default function Album() {
         }
 
         if (currentChildId) {
-          const data = await getKidAllAlbums(currentChildId)
-          setAlbums(data)
-          setFilteredAlbums(data)
+          const albums = await getKidAllAlbums(currentChildId)
+          setAlbums(albums)
+          setFilteredAlbums(albums)
         }
       } catch (error) {
         console.error("Failed to fetch albums", error)

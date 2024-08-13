@@ -3,11 +3,11 @@ import { useParams } from "react-router-dom";
 import profileImg from "../../assets/parent/notice-daramgi.png";
 import { getGrowthDiary, DiaryDetail } from "../../api/growthdiary";
 import TeacherProfile from "../../components/parent/common/TeacherProfile";
-import DiaryContent from "../../components/parent/growth/GrowthContent";
+import GrowthContent from "../../components/parent/growth/GrowthContent";
 import LoadingSpinner from "../../components/common/LoadingSpinner";
 import cryingDaramgi from "../../assets/common/crying-daramgi.png";
 
-export default function ParentDiaryDetail() {
+export default function ParentGrowthDetail() {
   const { diaryId } = useParams<{ diaryId: string }>();
   const [diary, setDiary] = useState<DiaryDetail | null>(null);
   const [loading, setLoading] = useState(true);
@@ -47,9 +47,8 @@ export default function ParentDiaryDetail() {
 
   return (
     <div className="flex flex-col px-6">
-      <TeacherProfile profileImg={profileImg} teacherName={diary.teacherName} />
-      <DiaryContent
-        createDate={diary.createDate}
+      <TeacherProfile />
+      <GrowthContent
         content={diary.content}
         images={diary.images}
       />
