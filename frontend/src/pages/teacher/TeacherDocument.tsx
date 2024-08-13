@@ -8,6 +8,7 @@ import { getClassAllDocuments } from '../../api/document';
 import { getChildInfo } from '../../api/child';
 import AbsentDocument from '../../components/teacher/document/AbsentDocument';
 import daramgi from "../../assets/teacher/document-daramgi.png";
+import { AxiosError } from 'axios';
 
 export default function TeacherDocument() {
   const [searchTerm, setSearchTerm] = useState<string>('');
@@ -26,8 +27,11 @@ export default function TeacherDocument() {
   const documentRefs = useRef<{ [key: number]: HTMLDivElement | null }>({});
   const containerRef = useRef<HTMLDivElement>(null);
 
+  const isLoggedIn = !!localStorage.getItem("accessToken"); // 로그인 상태 확인
+
   useEffect(() => {
     const fetchDocuments = async () => {
+      if (!isLoggedIn) return; // 로그아웃 상태라면 함수 실행 중지
       try {
         const fetchedDocuments = await getClassAllDocuments();
         const reversedDocuments = fetchedDocuments.reverse();
@@ -52,12 +56,18 @@ export default function TeacherDocument() {
         }
         setChildImages(images);
       } catch (error) {
-        console.error('Failed to fetch documents:', error);
+        if ((error as AxiosError).response && (error as AxiosError).response.status === 401) {
+          console.error("Unauthorized request. User might be logged out.");
+        } else {
+          console.error('Failed to fetch documents:', error);
+        }
       }
     };
 
-    fetchDocuments();
-  }, []);
+    if (isLoggedIn) {
+      fetchDocuments(); // 로그인 상태에서만 fetchDocuments 호출
+    }
+  }, [isLoggedIn]);
 
   const filterAndSetDocuments = (docs, type) => {
     let filtered = docs;
@@ -123,6 +133,7 @@ export default function TeacherDocument() {
   };
 
   const handleDocumentUpdate = async () => {
+    if (!isLoggedIn) return; // 로그아웃 상태라면 함수 실행 중지
     const fetchedDocuments = await getClassAllDocuments();
     const reversedDocuments = fetchedDocuments.reverse();
     setDocuments(reversedDocuments);
