@@ -20,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -134,5 +135,20 @@ public class TeacherController {
             return ResponseEntity.status(HttpStatus.OK).body(responseData);
         }
         throw new InvalidPrincipalException("Invalid user principal");
+    }
+
+    // 로그인 한 사용자에 pk를 가져오는 API
+    // TODO #1 후에 DTO에 PK를 추가하는 방안으로 변경하기
+    @GetMapping("/teacherId")
+    public ResponseEntity<APIResponse<Integer>> getTeacherPK(@AuthenticationPrincipal UserDetails userDetails) {
+        int teacherId = teacherService.getMyId(userDetails.getUsername());
+        APIResponse<Integer> responseData = new APIResponse<>(
+                "success",
+                teacherId,
+                "선생님 ID 조회 성공",
+                null
+        );
+
+        return ResponseEntity.status(HttpStatus.OK).body(responseData);
     }
 }
