@@ -6,7 +6,7 @@ import { useSpring, animated, SpringValue } from '@react-spring/three';
 import { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
 
 function Model(props: JSX.IntrinsicElements['group'] & { mousePosition: Vector2 }) {
-  const { scene } = useGLTF('/photo-daramgi.glb') as unknown as { scene: Group; materials: { [key: string]: MeshStandardMaterial } };
+  const { scene } = useGLTF('/holding-camera-daramgi.glb') as unknown as { scene: Group; materials: { [key: string]: MeshStandardMaterial } };
   const groupRef = useRef<Group>(null);
   const [clicked, setClicked] = useState(false);
 
@@ -52,7 +52,7 @@ function Model(props: JSX.IntrinsicElements['group'] & { mousePosition: Vector2 
   );
 }
 
-useGLTF.preload('/photo-daramgi.glb');
+useGLTF.preload('/holding-camera-daramgi.glb');
 
 export default function ThreeModel({ mousePosition }: { mousePosition: Vector2 }) {
   const controlsRef = useRef<OrbitControlsImpl>(null);

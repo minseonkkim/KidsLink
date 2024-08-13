@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
-import { FaRegBell, FaTrash } from 'react-icons/fa6'; // 삭제 아이콘 추가
+import { FaRegBell, FaTrash } from 'react-icons/fa6'; 
 import { FcAdvertising, FcReading, FcPicture, FcVoicePresentation, FcContacts } from 'react-icons/fc';
 import { FaBus } from 'react-icons/fa';
 import { getAllAlarms, deleteAlarm, deleteAllAlarms } from '../../../api/alarm';
 import { formatDate } from '../../../utils/parent/dateUtils';
-import { useNavigate } from 'react-router-dom'; // 페이지 이동을 위한 useNavigate 추가
+import { useNavigate } from 'react-router-dom';
 import { Notification } from './MainHeader';
 
 interface Alarm {
@@ -23,7 +23,7 @@ export default function AlaramBell({ notificationCount: initialNotificationCount
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>(initialNotifications);
   const [notificationCount, setNotificationCount] = useState(initialNotificationCount);
-  const navigate = useNavigate(); // useNavigate 훅 사용
+  const navigate = useNavigate(); 
 
   useEffect(() => {
     const fetchNotifications = async () => {
@@ -74,7 +74,7 @@ export default function AlaramBell({ notificationCount: initialNotificationCount
   };
 
   const handleDeleteClick = async (id: number, e: React.MouseEvent) => {
-    e.stopPropagation(); // 이벤트 버블링 방지
+    e.stopPropagation(); 
     try {
       await deleteAlarm(id);
       const updatedNotifications = notifications.filter(notification => notification.id !== id);
@@ -129,6 +129,8 @@ export default function AlaramBell({ notificationCount: initialNotificationCount
             <div className="space-y-4 mt-8">
               {[...notifications].reverse().map((notification, index) => (
                 <div key={notification.id} className="relative">
+
+                  {/* 클릭시 페이지 이동 */}
                   <div
                     onClick={() => handleNotificationClick(notification)}
                     className="flex items-center p-4 bg-white border border-gray-200 rounded-xl cursor-pointer hover:bg-gray-100 transition"
@@ -140,11 +142,14 @@ export default function AlaramBell({ notificationCount: initialNotificationCount
                       <div className="text-sm font-medium text-gray-800">{notification.contents}</div>
                       <div className="text-xs text-gray-600">{formatDate(notification.date)}</div>
                     </div>
-                    {/* 삭제 아이콘 */}
+
+                    {/* 단일 삭제 */}
                     <div onClick={(e) => handleDeleteClick(notification.id, e)} className="ml-3 text-red-600 hover:text-red-800">
                       <FaTrash className="w-4 h-4" />
                     </div>
                   </div>
+
+                  {/* 전체 삭제 */}
                   {index === notifications.length - 1 && (
                     <div className="flex justify-end mt-3">
                       <button
@@ -162,5 +167,5 @@ export default function AlaramBell({ notificationCount: initialNotificationCount
         </>
       )}
     </div>
-  );
+  )
 }
