@@ -3,9 +3,9 @@ import { useParentInfoStore } from "../../stores/useParentInfoStore"
 import { useTeacherInfoStore } from "../../stores/useTeacherInfoStore"
 
 export function ParentMeetingGuard({ children }: { children: JSX.Element }) {
-  const { hasAccessedMeeting } = useParentInfoStore()
-      // 사용자가 MeetingList를 통해서 접근하지 않았다면 입장불가
-  if (!hasAccessedMeeting) {
+  const { parentHasAccessedMeeting } = useParentInfoStore()
+  // 사용자가 MeetingList를 통해서 접근하지 않았다면 입장불가
+  if (!parentHasAccessedMeeting) {
     return <Navigate to="/meeting" />
   }
   return children
