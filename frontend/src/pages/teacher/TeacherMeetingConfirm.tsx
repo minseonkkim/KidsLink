@@ -7,6 +7,7 @@ import { showToastError, showToastSuccess } from "../../components/teacher/commo
 import ToastNotification from "../../components/teacher/common/ToastNotification";
 import TeacherLayout from '../../layouts/TeacherLayout';
 import daramgi from "../../assets/teacher/meeting-daramgi.png"
+import { getTeacherInfo } from "../../api/Info";
 
 interface Meeting {
     date: string;
@@ -24,9 +25,29 @@ interface GroupedMeetings {
     };
 }
 
+
 export default function TeacherMeetingConfirm() {
-    const teacherInfo = useTeacherInfoStore(state => state.teacherInfo);
-    const teacherName = teacherInfo?.username || "Unknown Teacher"; // 기본값 제공
+    useEffect(() => {
+        // teacherInfo를 가져오거나 없는 경우 불러오는 함수
+        const getAndSetTeacherInfo = async () => {
+          const teacherInfo = useTeacherInfoStore.getState().teacherInfo;
+      
+          if (!teacherInfo) {
+            try {
+              const data = await getTeacherInfo();
+              useTeacherInfoStore.setState({ teacherInfo: data });
+            } catch (error) {
+              console.error("Failed to fetch teacher info:", error);
+            }
+          } 
+        };
+      
+        getAndSetTeacherInfo();
+      }, []);
+      
+    // teacherInfo가 존재하지 않을 경우 기본값을 제공
+    const teacherUsername = useTeacherInfoStore.getState().teacherInfo?.username || "Unknown Teacher";
+
     const [groupedMeetings, setGroupedMeetings] = useState<GroupedMeetings>({});
     const [selectedTimes, setSelectedTimes] = useState<{ [parentId: number]: string }>({});
 
@@ -94,7 +115,7 @@ export default function TeacherMeetingConfirm() {
     const createTransformedData = (
         groupedMeetings: GroupedMeetings,
         selectedTimes: { [parentId: number]: string },
-        teacherName: string
+        teacherUsername: string
     ) => {
         return Object.entries(groupedMeetings).flatMap(([parentId, { childName, times }]) => {
             const selectedTime = selectedTimes[parentId];
@@ -105,7 +126,7 @@ export default function TeacherMeetingConfirm() {
                     childName: childName,
                     date: date,
                     time: time,
-                    teacherName: teacherName
+                    teacherName: teacherUsername
                 }];
             } else {
                 return times.map(timeSlot => ({
@@ -113,7 +134,7 @@ export default function TeacherMeetingConfirm() {
                     childName: childName,
                     date: timeSlot.date,
                     time: timeSlot.time,
-                    teacherName: teacherName
+                    teacherName: teacherUsername
                 }));
             }
         });
@@ -121,7 +142,7 @@ export default function TeacherMeetingConfirm() {
 
     const handleClassifyMeetingClick = async () => {
         try {
-            const transformedData = createTransformedData(groupedMeetings, selectedTimes, teacherName);
+            const transformedData = createTransformedData(groupedMeetings, selectedTimes, teacherUsername);
 
             const response = await classifyMeeting(transformedData);
             if (response.status === "success") {
@@ -161,7 +182,7 @@ export default function TeacherMeetingConfirm() {
             return;
         }
         try {
-            const transformedData = createTransformedData(groupedMeetings, selectedTimes, teacherName);
+            const transformedData = createTransformedData(groupedMeetings, selectedTimes, teacherUsername);
 
             if (transformedData.length > 0) {
                 const response = await confirmMeeting(transformedData);
