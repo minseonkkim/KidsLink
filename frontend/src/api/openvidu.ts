@@ -51,7 +51,8 @@ const detectProfanity = (text: string): boolean => {
 // 녹화된 영상 가져오기
 export const fetchRecordings = async (): Promise<any[]> => {
   try {
-    const response = await axiosInstance.get(`${import.meta.env.VITE_OPENVIDU_URL}/recordings`);
+    const response = await axiosInstance.get(`${APPLICATION_SERVER_URL}/recordings`);
+    console.log("fetchRecordings", response);
     return response.data;
   } catch (error) {
     console.error("Error fetching recordings:", error);
@@ -61,7 +62,10 @@ export const fetchRecordings = async (): Promise<any[]> => {
 
 export const fetchRecordingsByTeacherId = async (teacherId: number): Promise<any[]> => {
   try {
-    const response = await axiosInstance.get(`${import.meta.env.VITE_OPENVIDU_URL}/teacher/${teacherId}/recordings`);
+    const response = await axiosInstance.get(
+      `${APPLICATION_SERVER_URL}/teacher/${teacherId}/recordings`
+    );
+    console.log("fetchRecordingsTeacher", response)
     return response.data;
   } catch (error) {
     console.error("Error fetching recordings:", error);
@@ -106,6 +110,23 @@ export const handleSpeechRecognitionSignalByParent = async (session) => {
 
   recognition.onerror = (event) => {
     console.error("Speech recognition error:", event.error);
+
+    switch (event.error) {
+      case "not-allowed":
+        console.error("Microphone access was denied by the user.");
+        break;
+      case "network":
+        console.error("Network error occurred during speech recognition.");
+        break;
+      case "aborted":
+        console.error("Speech recognition aborted unexpectedly.");
+        break;
+      case "no-speech":
+        console.error("No speech detected.");
+        break;
+      default:
+        console.error("An unknown error occurred in speech recognition:", event.error);
+    }
   };
 
   recognition.start();
