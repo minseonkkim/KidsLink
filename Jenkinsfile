@@ -19,6 +19,8 @@ pipeline {
                             sh "echo \$DOCKER_HUB_PASS | docker login -u \$DOCKER_HUB_USER --password-stdin"
                             sh "docker push ${DOCKER_HUB_REPO}/backend"
                         }
+                         sh "docker image prune -f"
+                         sh "docker builder prune -f"
                     }
                 }
             }
@@ -33,6 +35,8 @@ pipeline {
                             sh "echo \$DOCKER_HUB_PASS | docker login -u \$DOCKER_HUB_USER --password-stdin"
                             sh "docker push ${DOCKER_HUB_REPO}/frontend"
                         }
+                         sh "docker image prune -f"
+                         sh "docker builder prune -f"
                     }
                 }
             }
