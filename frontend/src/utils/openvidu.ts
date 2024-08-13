@@ -107,9 +107,21 @@ export const joinSession = async (
   console.log("session");
 };
 
-export const leaveSession = async (openvidu: OpenViduState, setOpenvidu: React.Dispatch<React.SetStateAction<OpenViduState>>, setIsSessionJoined: React.Dispatch<React.SetStateAction<boolean>>, navigate: (path: string) => void) => {
+export const leaveSession = async (
+  openvidu: OpenViduState,
+  setOpenvidu: React.Dispatch<React.SetStateAction<OpenViduState>>,
+  setIsSessionJoined: React.Dispatch<React.SetStateAction<boolean>>,
+  navigate: (path: string) => void
+) => {
   if (openvidu.session) {
     try {
+      // 퍼블리셔가 있을 경우 카메라 및 마이크를 안전하게 해제
+      if (openvidu.publisher) {
+        openvidu.publisher.stream.disposeWebRtcPeer(); // 웹RTC 피어를 안전하게 종료
+        openvidu.publisher.stream.disposeMediaStream(); // 미디어 스트림을 안전하게 종료
+        openvidu.publisher = undefined;
+      }
+
       // 세션을 안전하게 종료
       openvidu.session.disconnect();
     } catch (error) {

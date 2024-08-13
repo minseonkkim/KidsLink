@@ -26,7 +26,7 @@ export default function AlaramBell({ notificationCount: initialNotificationCount
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        console.log("Fetching notifications...")
+        // console.log("Fetching notifications...")
         const fetchedNotifications: Alarm[] = await getAllAlarms()
         const transformedNotifications: Notification[] = fetchedNotifications.map((alarm: Alarm) => ({
           id: alarm.id,
