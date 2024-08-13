@@ -8,7 +8,7 @@ import productDocuments from "../../../assets/parent/product-documents.png"
 
 const menus = [
   { src: mailbox, label: "알림장", link: "/notice" },
-  { src: openedFolder, label: "성장일지", link: "/diary" },
+  { src: openedFolder, label: "성장일지", link: "/growth" },
   { src: picture, label: "앨범", link: "/album" },
   { src: shuttleBus, label: "등하원", link: "/bus" },
   { src: videoConference, label: "상담", link: "/meeting" },
