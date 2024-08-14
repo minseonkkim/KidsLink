@@ -15,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 @Conditional(S3Condition.class)
@@ -43,8 +44,10 @@ public class S3StorageService implements StorageService {
 
         ByteArrayInputStream inputStream = new ByteArrayInputStream(fileData);
 
-        amazonS3Client.putObject(new PutObjectRequest(bucket, fileName, inputStream, metadata)
-                .withCannedAcl(CannedAccessControlList.PublicRead));
+        CompletableFuture.runAsync(() -> {
+            amazonS3Client.putObject(new PutObjectRequest(bucket, fileName, inputStream, metadata)
+                    .withCannedAcl(CannedAccessControlList.PublicRead));
+        });
 
         return amazonS3Client.getUrl(bucket, fileName).toString();
     }

@@ -35,6 +35,7 @@ import org.springframework.web.multipart.MultipartRequest;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 
@@ -61,17 +62,15 @@ public class AlbumService {
         Teacher teacher = teacherRepository.findByTeacherUsername(teacherUsername);
         List<MultipartFile> classifyImages = request.getFiles("classifyImages");
 
-        // 사진 데이터 저장 후 저장되는 DTO
-        List<ImageDTO> classifies = new ArrayList<>();
-
         // TODO #1 사진 데이터 저장
-        for (MultipartFile image : classifyImages) {
-            try {
-                classifies.add(imageService.storeFile(image));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
+        List<CompletableFuture<ImageDTO>> futureClassifies = classifyImages.stream()
+                .map(image -> imageService.storeFileAsync(image))
+                .collect(Collectors.toList());
+
+        // 모든 작업이 완료되기를 기다림
+        List<ImageDTO> classifies = futureClassifies.stream()
+                .map(CompletableFuture::join)
+                .collect(Collectors.toList());
 
         // 기본 어린이 프로필 가져오기(존재하는 어린이 프로필만 가져오기)
         KindergartenClass kindergartenClass = teacher.getKindergartenClass();
