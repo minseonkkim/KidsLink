@@ -4,10 +4,8 @@ import "moment/locale/ko";
 import { getAllParentSchedules, getParentSchedules } from "../../api/schedule";
 import { getMeetingInfo } from "../../api/meeting";
 import CustomCalendar from "../../components/parent/common/CustomCalendar";
-import styled, { createGlobalStyle } from "styled-components";
 import { FaPills, FaRegTimesCircle, FaSchool, FaChalkboardTeacher } from "react-icons/fa";
 
-// Type definitions for schedules
 interface DosageSchedule {
   dosageId: number;
   name: string;
@@ -100,10 +98,9 @@ export default function ParentSchedule() {
       detailedSchedules.meetingSchedules.length > 0);
 
   return (
-    <div className="relative min-h-[100dvh] flex flex-col bg-[#FFEC8A]">
-      <GlobalStyle />
-      <ScrollContainer>
-        <div className="flex flex-col justify-center items-center">
+    <div className="relative min-h-[100dvh] flex flex-col bg-[#FFEC8A] overflow-hidden">
+      <div className="absolute bottom-0 h-[80%] flex flex-col w-full bg-white shadow-top rounded-tl-[25px] rounded-tr-[25px] py-6 px-8 animate-slideUp">
+        <div className="flex flex-col justify-center items-center mb-6">
           <CustomCalendar
             schedules={schedules}
             onDateClick={handleDateClick}
@@ -111,135 +108,79 @@ export default function ParentSchedule() {
           />
         </div>
 
-        <div className="px-4">
+        <div className="h-[1px] bg-[#FFDAB9] my-4" />
+
+        <div className="px-4 overflow-y-auto">
           {detailedSchedules && (
-            <ScheduleListContainer hasContent={hasContent}>
-              <ScheduleList>
-                {detailedSchedules.dosageSchedules.length > 0 && (
-                  <div>
-                    {detailedSchedules.dosageSchedules.map((schedule) => (
-                      <ScheduleItem key={schedule.dosageId}>
-                        <div className="bg-[#E7DFFF] text-purple-600">
-                          <FaPills />
-                        </div>
-                        <p>{schedule.name}</p>
-                      </ScheduleItem>
-                    ))}
+            <div className="flex flex-col gap-4">
+              {detailedSchedules.dosageSchedules.length > 0 && (
+                <div className="flex flex-col p-4 bg-[#FFF9D7] rounded-2xl shadow-md hover:bg-[#FFEC8A] transition-colors duration-200 cursor-pointer">
+                  <div className="flex items-center">
+                    <div className="flex gap-2 bg-[#FFECB3] text-[#795548] p-2 rounded-full">
+                      <FaPills className="h-5 w-5" />
+                    </div>
+                    <p className="ml-4 font-semibold text-gray-800">투약</p>
                   </div>
-                )}
-                {detailedSchedules.absentSchedules.length > 0 && (
-                  <div>
-                    {detailedSchedules.absentSchedules.map((schedule) => (
-                      <ScheduleItem key={schedule.absentId}>
-                        <div className="bg-[#FFDFDF] text-red-600">
-                          <FaRegTimesCircle />
-                        </div>
-                        <p>{schedule.reason}</p>
-                      </ScheduleItem>
-                    ))}
+                  {detailedSchedules.dosageSchedules.map((schedule) => (
+                    <p key={schedule.dosageId} className="mt-2 ml-10 text-gray-800">
+                      {schedule.name}
+                    </p>
+                  ))}
+                </div>
+              )}
+              {detailedSchedules.absentSchedules.length > 0 && (
+                <div className="flex flex-col p-4 bg-[#FFF9D7] rounded-2xl shadow-md hover:bg-[#FFEC8A] transition-colors duration-200 cursor-pointer">
+                  <div className="flex items-center">
+                    <div className="flex gap-2 bg-[#FFCC80] text-[#E65100] p-2 rounded-full">
+                      <FaRegTimesCircle className="h-5 w-5" />
+                    </div>
+                    <p className="ml-4 font-semibold text-gray-800">결석</p>
                   </div>
-                )}
-                {detailedSchedules.kindergartenSchedules.length > 0 && (
-                  <div>
-                    {detailedSchedules.kindergartenSchedules.map((schedule) => (
-                      <ScheduleItem key={schedule.id}>
-                        <div className="bg-[#FFF7CA] text-yellow-600">
-                          <FaSchool />
-                        </div>
-                        <p>{schedule.content}</p>
-                      </ScheduleItem>
-                    ))}
+                  {detailedSchedules.absentSchedules.map((schedule) => (
+                    <p key={schedule.absentId} className="mt-2 ml-10 text-gray-800">
+                      {schedule.reason}
+                    </p>
+                  ))}
+                </div>
+              )}
+              {detailedSchedules.kindergartenSchedules.length > 0 && (
+                <div className="flex flex-col p-4 bg-[#FFF9D7] rounded-2xl shadow-md hover:bg-[#FFEC8A] transition-colors duration-200 cursor-pointer">
+                  <div className="flex items-center">
+                    <div className="flex gap-2 bg-[#FFF59D] text-[#F57F17] p-2 rounded-full">
+                      <FaSchool className="h-5 w-5" />
+                    </div>
+                    <p className="ml-4 font-semibold text-gray-800">학사일정</p>
                   </div>
-                )}
-                {detailedSchedules.meetingSchedules.length > 0 && (
-                  <div>
-                    {detailedSchedules.meetingSchedules.map((schedule) => {
-                      const meetingInfo = meetingInfoMap[schedule.meetingId];
-                      return (
-                        <ScheduleItem key={schedule.meetingId}>
-                          <div className="bg-[#FFF7CA] text-green-600">
-                            <FaChalkboardTeacher />
-                          </div>
-                          <p>
-                            {schedule.meetingTime}{" "}
-                            {meetingInfo && ` ${meetingInfo.teacherName} 선생님과의 상담`}
-                          </p>
-                        </ScheduleItem>
-                      );
-                    })}
+                  {detailedSchedules.kindergartenSchedules.map((schedule) => (
+                    <p key={schedule.id} className="mt-2 ml-10 text-gray-800">
+                      {schedule.content}
+                    </p>
+                  ))}
+                </div>
+              )}
+              {detailedSchedules.meetingSchedules.length > 0 && (
+                <div className="flex flex-col p-4 bg-[#FFF9D7] rounded-2xl shadow-md hover:bg-[#FFEC8A] transition-colors duration-200 cursor-pointer">
+                  <div className="flex items-center">
+                    <div className="flex gap-2 bg-[#DCE775] text-[#33691E] p-2 rounded-full">
+                      <FaChalkboardTeacher className="h-5 w-5" />
+                    </div>
+                    <p className="ml-4 font-semibold text-gray-800">상담</p>
                   </div>
-                )}
-              </ScheduleList>
-            </ScheduleListContainer>
+                  {detailedSchedules.meetingSchedules.map((schedule) => {
+                    const meetingInfo = meetingInfoMap[schedule.meetingId];
+                    return (
+                      <p key={schedule.meetingId} className="mt-2 ml-10 text-gray-800">
+                        {schedule.meetingTime}{" "}
+                        {meetingInfo && ` ${meetingInfo.teacherName} 선생님과의 상담`}
+                      </p>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
           )}
         </div>
-      </ScrollContainer>
+      </div>
     </div>
   );
 }
-
-// Styled components for the rest of your ParentSchedule
-const GlobalStyle = createGlobalStyle`
-  body {
-    overflow: hidden; /* 전체 화면 스크롤 비활성화 */
-  }
-`;
-
-const ScrollContainer = styled.div`
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  height: calc(100vh - 80px); /* 상단에서 50px 떨어진 위치 */
-  background-color: #fff;
-  border-top-left-radius: 20px;
-  border-top-right-radius: 20px;
-  padding-top: 20px;
-  padding-left: 20px;
-  padding-right: 20px;
-  padding-bottom: 150px;
-  overflow-y: auto; /* 내부 스크롤 활성화 */
-`;
-
-const ScheduleListContainer = styled.div<{ hasContent: boolean }>`
-  padding: 15px;
-  border-radius: 15px;
-  background-color: #f9f9f9; /* 흰색 배경 */
-  box-shadow: ${({ hasContent }) =>
-    hasContent ? "0 4px 8px rgba(0, 0, 0, 0.1)" : "none"};
-`;
-
-const ScheduleList = styled.div`
-  width: 100%;
-  margin-top: 10px;
-`;
-
-const ScheduleItem = styled.div`
-  display: flex;
-  align-items: center;
-  margin-bottom: 12px; /* 리스트 간의 간격 감소 */
-  padding: 12px;
-  border-radius: 12px;
-  background-color: #ffffff; /* 흰색 배경 */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-  transition: transform 0.2s ease-in-out;
-
-  &:hover {
-    transform: translateY(-5px); /* 호버 시 살짝 위로 이동 */
-  }
-
-  & > div {
-    border-radius: 50%;
-    padding: 10px;
-    margin-right: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: none; /* 아이콘 배경의 그림자 제거 */
-  }
-
-  p {
-    margin: 0;
-    font-size: 1rem;
-    color: #353c4e;
-  }
-`;
