@@ -34,36 +34,37 @@ export function DragOverlay() {
 
   return (
     <>
+      {/* 어두운 배경 레이어 */}
       <div
         style={{
-          position: "fixed",
+          position: 'fixed',
           top: 0,
           left: 0,
-          width: "100%",
-          height: "100%",
-          backgroundColor: "rgba(0, 0, 0, 0.65)",
-          zIndex: 9998,
-          pointerEvents: "none",
+          width: '100%',
+          height: '100%',
+          backgroundColor: 'rgba(0, 0, 0, 0.65)',
+          zIndex: 1500, // ChildNameContainer보다 낮게 설정
+          pointerEvents: 'none',
         }}
       />
 
+      {/* 드래그된 이미지 */}
       <div
         style={{
           transform,
-          WebkitTransform: transform,
-          position: "fixed",
+          position: 'fixed',
           top: 0,
           left: 0,
-          zIndex: 10000,
-          pointerEvents: "none",
-          width: "150px",
-          height: "150px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          borderRadius: "8px",
-          boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.65)",
-          backgroundColor: "#fff",
+          zIndex: 2500, // ChildNameContainer보다 높게 설정
+          pointerEvents: 'none',
+          width: '150px',
+          height: '150px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          borderRadius: '8px',
+          boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.65)',
+          backgroundColor: '#fff',
         }}
       >
         {item.image && (
@@ -72,9 +73,9 @@ export function DragOverlay() {
             alt="dragged"
             className="object-cover"
             style={{
-              width: "100%",
-              height: "100%",
-              borderRadius: "8px",
+              width: '100%',
+              height: '100%',
+              borderRadius: '8px',
             }}
           />
         )}
@@ -82,6 +83,7 @@ export function DragOverlay() {
     </>
   );
 }
+
 
 export function ChildNameContainer({ classChildren, moveImage }) {
   const { isDragging } = useDragLayer((monitor) => ({
@@ -92,13 +94,12 @@ export function ChildNameContainer({ classChildren, moveImage }) {
     <div
       className="flex flex-wrap mb-2 justify-center"
       style={{
-        position: "fixed",
-        top: "50%",
-        left: "50%",
-        transform: "translateX(-50%)",
-        display: isDragging ? "flex" : "none",
-        zIndex: 10000,
-        width: "100%",
+        position: 'fixed',
+        top: '18%',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        display: isDragging ? 'flex' : 'none',
+        zIndex: 2000, // DragOverlay의 어두운 배경보다 높게, 드래그 이미지보다 낮게 설정
       }}
     >
       {classChildren.map((child, index) => (
@@ -107,6 +108,7 @@ export function ChildNameContainer({ classChildren, moveImage }) {
     </div>
   );
 }
+
 
 export default function TeacherAlbumFinish() {
   const location = useLocation();
@@ -120,7 +122,6 @@ export default function TeacherAlbumFinish() {
   const [classChildren, setClassChildren] = useState<Child[]>([]);
 
   useEffect(() => {
-    // Load data from local storage
     const savedResult = JSON.parse(localStorage.getItem("result") || "[]");
     if (savedResult.length > 0) {
       setResult(savedResult);
@@ -201,7 +202,6 @@ export default function TeacherAlbumFinish() {
       return;
     }
 
-    // TODO #3 API 추가했는데, 괜찮겠지요? - 범수
     const transformedData = transformData(result);
     const sendData = {
       albumName: albumName,
@@ -245,7 +245,7 @@ export default function TeacherAlbumFinish() {
               </div>
               <button
                 onClick={sendToParents}
-                className="border-[2px] border-[#7C7C7C] bg-[#E3EEFF] px-4 w-[190px] h-[40px] font-bold rounded-[10px] hover:bg-[#D4DDEA] flex flex-row items-center"
+                className="border-[2px] border-[#7C7C7C] bg-[#E3EEFF] px-4 w-[192px] h-[38px] font-bold rounded-[10px] hover:bg-[#D4DDEA] flex flex-row items-center"
               >
                 <BsSend className="mr-2" />
                 학부모에게 전송하기
