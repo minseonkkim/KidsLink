@@ -126,7 +126,8 @@ export default function TeacherVideo() {
 
   useEffect(() => {
     if (isSessionJoined && !isRecording) {
-      handleStartRecording();
+      setTimeout(handleStartRecording, 10000);
+      // handleStartRecording();
     }
   }, [isSessionJoined]);
 
