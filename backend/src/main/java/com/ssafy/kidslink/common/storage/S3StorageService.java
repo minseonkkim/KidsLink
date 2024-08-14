@@ -16,6 +16,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 @Service
 @Conditional(S3Condition.class)
@@ -44,10 +45,24 @@ public class S3StorageService implements StorageService {
 
         ByteArrayInputStream inputStream = new ByteArrayInputStream(fileData);
 
-        CompletableFuture.runAsync(() -> {
-            amazonS3Client.putObject(new PutObjectRequest(bucket, fileName, inputStream, metadata)
-                    .withCannedAcl(CannedAccessControlList.PublicRead));
+        CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
+            try {
+                amazonS3Client.putObject(new PutObjectRequest(bucket, fileName, inputStream, metadata)
+                        .withCannedAcl(CannedAccessControlList.PublicRead));
+            } catch (Exception e) {
+                // 예외 처리: 로깅 또는 적절한 조치
+                e.printStackTrace();
+            }
         });
+
+        try {
+            future.get(); // 비동기 작업이 완료될 때까지 대기
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt(); // 인터럽트 상태 복원
+            throw new RuntimeException("File upload interrupted", e);
+        } catch (ExecutionException e) {
+            throw new RuntimeException("File upload failed", e);
+        }
 
         return amazonS3Client.getUrl(bucket, fileName).toString();
     }
