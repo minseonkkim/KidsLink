@@ -90,7 +90,15 @@ public class VideoService {
 //                .hasAudio(true)
 //                .hasVideo(true)
 //                .build();
-        RecordingProperties properties = session.getProperties().defaultRecordingProperties();
+        // 기본 녹화 속성을 가져옵니다.
+        RecordingProperties defaultProperties = session.getProperties().defaultRecordingProperties();
+
+        // 기본 속성을 바탕으로 새로운 속성을 생성합니다.
+        // 여기서 name만 변경합니다.
+        RecordingProperties properties = new RecordingProperties.Builder(defaultProperties)
+                .name(recordingName) // 원하는 name으로 설정합니다.
+                .build();
+
         Recording recording = this.openvidu.startRecording(sessionId, properties);
 
         /* 기존 코드
