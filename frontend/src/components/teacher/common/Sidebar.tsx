@@ -142,38 +142,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
         >
           {/* 메뉴 아이템들 */}
           <SidebarLink
-            to="/"
-            icon={ourClassIcon}
-            label="우리반보기"
+            to="/schedule"
+            icon={scheduleIcon}
+            label="일정관리"
             activeMenu={activeMenu}
-            menuKey="ourclass"
-            setActiveMenu={setActiveMenu}
-            handleLinkClick={handleLinkClick}
-          />
-          <SidebarLink
-            to="/album"
-            icon={albumIcon}
-            label="사진분류"
-            activeMenu={activeMenu}
-            menuKey="album"
-            setActiveMenu={setActiveMenu}
-            handleLinkClick={handleLinkClick}
-          />
-          <SidebarLink
-            to="/bus"
-            icon={busIcon}
-            label="등하원관리"
-            activeMenu={activeMenu}
-            menuKey="bus"
-            setActiveMenu={setActiveMenu}
-            handleLinkClick={handleLinkClick}
-          />
-          <SidebarLink
-            to="/meeting"
-            icon={consultingIcon}
-            label="화상상담"
-            activeMenu={activeMenu}
-            menuKey="meeting"
+            menuKey="schedule"
             setActiveMenu={setActiveMenu}
             handleLinkClick={handleLinkClick}
           />
@@ -198,18 +171,36 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <SidebarLink
             to="/document"
             icon={documentIcon}
-            label="문서관리"
+            label="서류관리"
             activeMenu={activeMenu}
             menuKey="document"
             setActiveMenu={setActiveMenu}
             handleLinkClick={handleLinkClick}
           />
           <SidebarLink
-            to="/schedule"
-            icon={scheduleIcon}
-            label="일정관리"
+            to="/album"
+            icon={albumIcon}
+            label="사진분류"
             activeMenu={activeMenu}
-            menuKey="schedule"
+            menuKey="album"
+            setActiveMenu={setActiveMenu}
+            handleLinkClick={handleLinkClick}
+          />
+          <SidebarLink
+            to="/meeting"
+            icon={consultingIcon}
+            label="화상상담"
+            activeMenu={activeMenu}
+            menuKey="meeting"
+            setActiveMenu={setActiveMenu}
+            handleLinkClick={handleLinkClick}
+          />
+          <SidebarLink
+            to="/bus"
+            icon={busIcon}
+            label="등하원관리"
+            activeMenu={activeMenu}
+            menuKey="bus"
             setActiveMenu={setActiveMenu}
             handleLinkClick={handleLinkClick}
           />
@@ -257,38 +248,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
         >
           {/* 메뉴 아이템들 */}
           <SidebarLink
-            to="/"
-            icon={ourClassIcon}
-            label="우리반보기"
+            to="/schedule"
+            icon={scheduleIcon}
+            label="일정관리"
             activeMenu={activeMenu}
-            menuKey="ourclass"
-            setActiveMenu={setActiveMenu}
-            handleLinkClick={handleLinkClick}
-          />
-          <SidebarLink
-            to="/album"
-            icon={albumIcon}
-            label="사진분류"
-            activeMenu={activeMenu}
-            menuKey="album"
-            setActiveMenu={setActiveMenu}
-            handleLinkClick={handleLinkClick}
-          />
-          <SidebarLink
-            to="/meeting"
-            icon={consultingIcon}
-            label="화상상담"
-            activeMenu={activeMenu}
-            menuKey="meeting"
-            setActiveMenu={setActiveMenu}
-            handleLinkClick={handleLinkClick}
-          />
-          <SidebarLink
-            to="/bus"
-            icon={busIcon}
-            label="등하원관리"
-            activeMenu={activeMenu}
-            menuKey="bus"
+            menuKey="schedule"
             setActiveMenu={setActiveMenu}
             handleLinkClick={handleLinkClick}
           />
@@ -320,11 +284,29 @@ export const Sidebar: React.FC<SidebarProps> = ({
             handleLinkClick={handleLinkClick}
           />
           <SidebarLink
-            to="/schedule"
-            icon={scheduleIcon}
-            label="일정관리"
+            to="/album"
+            icon={albumIcon}
+            label="사진분류"
             activeMenu={activeMenu}
-            menuKey="schedule"
+            menuKey="album"
+            setActiveMenu={setActiveMenu}
+            handleLinkClick={handleLinkClick}
+          />
+          <SidebarLink
+            to="/meeting"
+            icon={consultingIcon}
+            label="화상상담"
+            activeMenu={activeMenu}
+            menuKey="meeting"
+            setActiveMenu={setActiveMenu}
+            handleLinkClick={handleLinkClick}
+          />
+          <SidebarLink
+            to="/bus"
+            icon={busIcon}
+            label="등하원관리"
+            activeMenu={activeMenu}
+            menuKey="bus"
             setActiveMenu={setActiveMenu}
             handleLinkClick={handleLinkClick}
           />
