@@ -13,15 +13,33 @@ declare global {
 
 // 세션 생성
 const createSession = async (sessionId: string): Promise<string> => {
+  const sessionProperties = {
+    customSessionId: sessionId, // 세션 ID를 고유 식별자로 설정
+    mediaMode: "ROUTED", // 미디어를 서버를 통해 라우팅하도록 설정
+    recordingMode: "ALWAYS", // 세션 시작 시 자동으로 녹화 시작
+    defaultRecordingProperties: {
+      name: sessionId, // 녹화 파일의 이름을 세션 ID로 설정
+      hasAudio: true, // 오디오를 녹음
+      hasVideo: true, // 비디오를 녹화
+      outputMode: "COMPOSED", // 단일 파일로 녹화
+      recordingLayout: "BEST_FIT", // 비디오 레이아웃 유형
+      resolution: "1280x720", // 비디오 해상도 설정
+      frameRate: 25, // 프레임 속도 설정
+      shmSize: 536870912 // Docker를 위한 공유 메모리 크기
+    },
+    allowTranscoding: false // 필요하지 않으면 트랜스코딩을 허용하지 않음
+  };
+
   const response = await axios.post(
     `${APPLICATION_SERVER_URL}/sessions`,
-    { customSessionId: sessionId },
+    sessionProperties, // 세션 속성을 요청 본문에 포함하여 전송
     {
       headers: {
         "Content-Type": "application/json",
       },
     }
   );
+  
   return response.data; // 세션 ID 반환
 };
 
@@ -44,7 +62,7 @@ export const getToken = async (mySessionId: string): Promise<string> => {
 
 // 욕설 감지
 const detectProfanity = (text: string): boolean => {
-  const profanityList = ["김범수", "바보"]; // 필요에 따라 단어 추가
+  const profanityList = ["멍청", "바보"]; // 필요에 따라 단어 추가
   return profanityList.some((word) => text.includes(word));
 };
 
