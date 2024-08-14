@@ -182,7 +182,7 @@ export const handleSpeechRecognition = async (sessionId: string, setDetectedTime
   recognition.onerror = (event) => {
     console.error("Speech recognition error:", event.error);
   };
-
+``
   recognition.start();
 };
 
