@@ -238,4 +238,4 @@ export default function TeacherDocument() {
     </TeacherLayout>
   );
 }
-filterAndSetDocuments(reversedDocuments, "전체")
+// filterAndSetDocuments(reversedDocuments, "전체")
