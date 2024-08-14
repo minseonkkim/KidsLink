@@ -14,6 +14,7 @@ import { FaBan } from "react-icons/fa";
 import { IoDocumentAttach, IoRecording } from "react-icons/io5";
 import { GiTalk } from "react-icons/gi";
 import { TbMoodKidFilled } from "react-icons/tb";
+import parentImg from "../../assets/parent/cute-daramgi.png";
 
 export default function TeacherVideo() {
   const [meetingDate, setMeetingDate] = useState(""); // 상담 날짜 상태 추가
@@ -214,7 +215,11 @@ export default function TeacherVideo() {
             )}
           </div>
           {openvidu.session && (
-            <div className="absolute top-[150px] right-[648px] font-bold text-[20px]">
+            <div className="absolute top-[150px] right-[600px] font-bold text-[20px] flex flex-row items-center">
+              <img
+                src={parentImg}
+                className="w-[40px] h-[40px] rounded-full object-cover mr-3"
+              />
               {childName} 학부모
             </div>
           )}
