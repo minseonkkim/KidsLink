@@ -69,7 +69,7 @@ const createSession = async (sessionId: string): Promise<string> => {
   const sessionProperties = {
     customSessionId: sessionId, // 세션 ID를 고유 식별자로 설정
     mediaMode: "ROUTED", // 미디어를 서버를 통해 라우팅하도록 설정
-    recordingMode: "ALWAYS", // 세션 시작 시 자동으로 녹화 시작
+    recordingMode: "MANUAL", // 세션 시작 시 자동으로 녹화 시작
     defaultRecordingProperties: {
       name: sessionId, // 녹화 파일의 이름을 세션 ID로 설정
       hasAudio: true, // 오디오를 녹음
