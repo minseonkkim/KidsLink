@@ -121,7 +121,7 @@ export default function ParentDocument() {
         </div>
       </div>
 
-      {/* 문서 작성 아이콘 */}
+      {/* 서류 작성 아이콘 */}
       <div
         className="fixed right-10 z-40 bottom-20"
         onClick={navigateToSubmitPage}

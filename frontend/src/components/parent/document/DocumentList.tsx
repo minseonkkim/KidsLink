@@ -26,7 +26,7 @@ export default function DocumentList({ documents, handleDocumentClick }: Documen
           <div className="col-span-4 flex flex-col items-center justify-center">
             <img src={cryingDaramgi} alt="Crying Daramgi" className="w-16 mt-12 mb-4" />
             <p className="text-center text-gray-500">
-              문서가 없습니다.
+              서류가 없습니다.
             </p>
           </div>
       ) : (
