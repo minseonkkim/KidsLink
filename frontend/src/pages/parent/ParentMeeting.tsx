@@ -31,8 +31,12 @@ export default function ParentMeeting() {
       try {
         const meetings = await getConfirmedMeeting() // 확정된 상담목록 조회
         const filteredMeetings = meetings.filter(meeting => {
-          const meetingEndTime = new Date(new Date(`${meeting.meetingDate}T${meeting.meetingTime}:00`).getTime() + 30 * 60 * 1000)
-          return new Date() <= meetingEndTime
+          // 시간 부분이 한 자리수일 경우 앞에 '0'을 붙입니다.
+          const formattedTime = meeting.meetingTime.padStart(5, '0');
+          // meetingDate와 formattedTime을 합쳐서 Date 객체를 생성합니다.
+          const meetingEndTime = new Date(new Date(`${meeting.meetingDate}T${formattedTime}:00`).getTime() + 30 * 60 * 1000);
+          console.log(new Date(), meetingEndTime);
+          return new Date() <= meetingEndTime;
         })
         setMeetings(filteredMeetings)
       } catch (error) {
