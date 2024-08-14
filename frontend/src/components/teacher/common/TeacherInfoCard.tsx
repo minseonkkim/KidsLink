@@ -1,8 +1,15 @@
 import DefaultProfile from "../../../assets/teacher/default_profile.png";
 import { useTeacherInfoStore } from "../../../stores/useTeacherInfoStore";
+import { LuSchool2 } from "react-icons/lu"
+import { useNavigate } from "react-router-dom";
 
 export const TeacherInfoCard: React.FC = () => {
   const teacherInfo = useTeacherInfoStore((state) => state.teacherInfo);
+  const navigate = useNavigate()
+  const handleHomeClick = () => {
+    navigate('/');
+  };
+  
 
   return (
     <div className="flex items-center space-x-4 p-4 bg-[#f4f4f4] rounded-lg shadow-md">
@@ -17,9 +24,12 @@ export const TeacherInfoCard: React.FC = () => {
         <p className="text-sm font-bold text-[#8cad1e]">
           {teacherInfo?.kindergartenClassName} 선생님
         </p>
-        <p className="text-sm font-bold text-[#363636]">
-          {teacherInfo?.name}
-        </p>
+        <div className="flex">
+          <p className="text-sm font-bold text-[#363636] mr-1">
+            {teacherInfo?.name}
+          </p>
+          <LuSchool2 className="w-[14px] cursor-pointer" onClick={handleHomeClick} />
+        </div>
       </div>
     </div>
   );
