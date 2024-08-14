@@ -43,7 +43,6 @@ export default function TeacherVideo() {
   });
   const [myStreamId, setMyStreamId] = useState<string | undefined>(undefined);
   const [otherVideoActive, setOtherVideoActive] = useState(false);
-  const [otherOpacity, setOtherOpacity] = useState(false);
   const [isSessionJoined, setIsSessionJoined] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [currentRecordingId, setCurrentRecordingId] = useState<string | null>(null);
