@@ -73,6 +73,7 @@ export async function getClassAllDocuments(){
           details: item.type === 'Absent' ? item.absent : item.dosage,
         };
       });
+      console.log("전체 서류 조회:", documents)
       return documents;
     } else {
       throw new Error('Failed to get documents');
