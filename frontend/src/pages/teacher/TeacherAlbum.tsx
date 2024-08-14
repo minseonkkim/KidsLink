@@ -58,7 +58,7 @@ useEffect(() => {
       <div className="fixed z-30 flex gap-12">
 
         
-        <ThreeModel mousePosition={mousePosition} />
+        {/* <ThreeModel mousePosition={mousePosition} /> */}
         
       </div>
       <div className="relative w-full lg:my-10 my-5 mb-32 px-7 flex flex-col items-center">
