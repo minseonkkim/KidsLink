@@ -86,6 +86,7 @@ public class VideoService {
         RecordingProperties properties = new RecordingProperties.Builder()
                 .name(recordingName)
                 .outputMode(Recording.OutputMode.COMPOSED)
+                .recordingLayout(RecordingLayout.BEST_FIT)
                 .hasAudio(true)
                 .hasVideo(true)
                 .build();
