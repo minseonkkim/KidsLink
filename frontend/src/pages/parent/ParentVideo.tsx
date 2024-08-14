@@ -168,7 +168,7 @@ export default function ParentVideo() {
             {/* 수정 필요한 부분 */}
             <div
               className="absolute top-[100px] right-[30px] w-[120px] h-[150px] rounded-lg border border-white z-50 bg-black cursor-move flex items-center justify-center"
-              style={{ opacity: parentVideoOpacity, backgroundColor: "white" }}
+              style={{ opacity: parentVideoOpacity, backgroundColor: "transparent" }}
             >
               {/* 부모 비디오가 꺼져있을 때 표시 */}
               {!control.video && (
@@ -184,7 +184,7 @@ export default function ParentVideo() {
           {/* 수정 필요한 부분 */}
           <div
             className="absolute top-20 bg-white w-[90%] h-[calc(70vh)] rounded-lg z-40 flex items-center justify-center"
-            style={{ opacity: 1, backgroundColor: "white" }}
+            style={{ opacity: 1, backgroundColor: "transparent" }}
           >
             {/* 상대방 비디오가 꺼져있을 때 표시 */}
             {/* 구독자 비디오 컴포넌트 표시 */}
