@@ -12,7 +12,7 @@ const menus = [
   { src: picture, label: "앨범", link: "/album" },
   { src: shuttleBus, label: "등하원", link: "/bus" },
   { src: videoConference, label: "상담", link: "/meeting" },
-  { src: productDocuments, label: "문서공유", link: "/document" },
+  { src: productDocuments, label: "서류관리", link: "/document" },
 ]
 
 interface MenuProps {

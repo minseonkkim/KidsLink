@@ -35,7 +35,7 @@ export default function AbsentDocument({ absentId, onUpdate, isOurClass }: Absen
         setAbsentDocument({ ...absentDocument, confirmationStatus: "T" });
         onUpdate(); 
         
-        showToastSuccess(<div>문서가 승인되었습니다.</div>);
+        showToastSuccess(<div>서류가 승인되었습니다.</div>);
       } catch (error) {
         console.error('Failed to check absent document:', error);
       }
