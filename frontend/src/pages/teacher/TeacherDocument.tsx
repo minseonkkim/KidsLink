@@ -170,7 +170,7 @@ export default function TeacherDocument() {
     <TeacherLayout
         activeMenu="document"
         setActiveMenu={() => {}}
-        titleComponent={<Title title="문서관리" />}
+        titleComponent={<Title title="서류관리" />}
         imageSrc={daramgi} 
     >
       <div className="relative w-full lg:my-12 mt-5 px-[15px] flex flex-col lg:flex-row justify-between">

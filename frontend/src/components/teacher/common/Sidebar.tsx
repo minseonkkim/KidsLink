@@ -277,7 +277,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <SidebarLink
             to="/document"
             icon={documentIcon}
-            label="문서관리"
+            label="서류관리"
             activeMenu={activeMenu}
             menuKey="document"
             setActiveMenu={setActiveMenu}

@@ -184,7 +184,7 @@ export default function LandingPage() {
                   animate={animation}
                 >
                   <img src={[albumIcon, busIcon, consultingIcon, noticeIcon, growthdiaryIcon, documentIcon][index]} alt="기능 아이콘" className="h-[150px]" />
-                  <h3 className="text-[22px] font-semibold mt-4 mb-3">{["사진분류", "등하원관리", "화상상담", "알림장", "성장일지", "문서관리"][index]}</h3>
+                  <h3 className="text-[22px] font-semibold mt-4 mb-3">{["사진분류", "등하원관리", "화상상담", "알림장", "성장일지", "서류관리"][index]}</h3>
                   <p className="text-center text-gray-60 text-[15.5px]">
                   {[
                     <span>
