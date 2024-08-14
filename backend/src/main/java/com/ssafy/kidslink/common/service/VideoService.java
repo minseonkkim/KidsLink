@@ -81,6 +81,19 @@ public class VideoService {
         String formattedDate = LocalDateTime.now().format(formatter);
         String recordingName = sessionId + "-" + teacher.getTeacherId() + "-" + parent.getParentId() + "-" + formattedDate;
         log.info("recordingName - {}, sessionId - {}", recordingName, sessionId);
+        // TODO #1 OPENVIDU 테스트 - 08142256김범수 
+        Session session = openvidu.getActiveSession(sessionId);
+//        RecordingProperties properties = new RecordingProperties.Builder()
+//                .name(recordingName)
+//                .outputMode(Recording.OutputMode.INDIVIDUAL)
+//                .recordingLayout(RecordingLayout.BEST_FIT)
+//                .hasAudio(true)
+//                .hasVideo(true)
+//                .build();
+        RecordingProperties properties = session.getProperties().defaultRecordingProperties();
+        Recording recording = this.openvidu.startRecording(sessionId, properties);
+
+        /* 기존 코드
         RecordingProperties properties = new RecordingProperties.Builder()
                 .name(recordingName)
                 .outputMode(Recording.OutputMode.INDIVIDUAL)
@@ -88,8 +101,9 @@ public class VideoService {
                 .hasAudio(true)
                 .hasVideo(true)
                 .build();
-        Recording recording = this.openvidu.startRecording(sessionId, properties);
-
+         */
+        // TODO #1 OPENVIDU 테스트 - 08142256김범수
+        
         Map<String, Object> response = new HashMap<>();
         response.put("recordingId", recording.getId());
         response.put("recordingName", recordingName);
@@ -222,6 +236,19 @@ public class VideoService {
         }
         return directoryToBeDeleted.delete();
     }
+
+    // TODO #2 범수 추가
+    public Map<String, Object> getSession(String sessionId) {
+        // 세션 정보 조회
+        Session session = openvidu.getActiveSession(sessionId);
+        Map<String, Object> sessionDetails = new HashMap<>();
+        sessionDetails.put("sessionId", session.getSessionId());
+        sessionDetails.put("createdAt", session.createdAt());
+        sessionDetails.put("mediaMode", session.getProperties().mediaMode());
+        sessionDetails.put("recordingMode", session.getProperties().recordingMode());
+        return sessionDetails;
+    }
+    // TODO #2 범수 추가
 
     // TODO: startTime부터 녹화본을 자르는 로직을 추가할 수 있습니다.
     // private void trimRecording(String recordingId, Long startTime) {
