@@ -21,7 +21,8 @@ const createSession = async (sessionId: string): Promise<string> => {
       name: sessionId, // 녹화 파일의 이름을 세션 ID로 설정
       hasAudio: true, // 오디오를 녹음
       hasVideo: true, // 비디오를 녹화
-      outputMode: "COMPOSED", // 단일 파일로 녹화
+      // outputMode: "COMPOSED", // 단일 파일로 녹화
+      outputMode: "INDIVIDUAL", // 단일 파일로 녹화
       recordingLayout: "BEST_FIT", // 비디오 레이아웃 유형
       resolution: "1280x720", // 비디오 해상도 설정
       frameRate: 25, // 프레임 속도 설정
@@ -39,7 +40,7 @@ const createSession = async (sessionId: string): Promise<string> => {
       },
     }
   );
-  
+
   return response.data; // 세션 ID 반환
 };
 
