@@ -332,11 +332,12 @@ export const startMainRecording = async (sessionId: string): Promise<string> => 
     const response = await axios.post(
       `${APPLICATION_SERVER_URL}/sessions/${sessionId}/recordings/start`,
       {
-        outputMode: "INDIVIDUAL",
-        recordingMode: "ALWAYS",
-        name: "recording-name",
-        hasAudio: true,
-        hasVideo: true,
+        // TODO #4 범수 근데 여긴 안수정해도될듯
+        // outputMode: "INDIVIDUAL",
+        // recordingMode: "ALWAYS",
+        // name: "recording-name",
+        // hasAudio: true,
+        // hasVideo: true,
       },
       { headers: { "Content-Type": "application/json" } }
     );
