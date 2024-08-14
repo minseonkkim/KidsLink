@@ -83,7 +83,7 @@ public class VideoService {
         log.info("recordingName - {}, sessionId - {}", recordingName, sessionId);
         RecordingProperties properties = new RecordingProperties.Builder()
                 .name(recordingName)
-                .outputMode(Recording.OutputMode.COMPOSED)
+                .outputMode(Recording.OutputMode.INDIVIDUAL)
                 .recordingLayout(RecordingLayout.BEST_FIT)
                 .hasAudio(true)
                 .hasVideo(true)
