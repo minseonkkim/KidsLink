@@ -187,7 +187,7 @@ export const joinSession = async (
     setMyStreamId(publisher.stream.streamId);
     setIsSessionJoined(true);
   } catch (error) {
-    console.log("There was an error connecting to the session:", error.code, error.message);
+    console.log("There was an error connecting to the session:", error);
   }
 
   console.log(session);
