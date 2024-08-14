@@ -64,8 +64,8 @@ public class AlbumService {
 
         // TODO #1 사진 데이터 저장
         List<CompletableFuture<ImageDTO>> futureClassifies = classifyImages.stream()
-                .map(image -> imageService.storeFileAsync(image))
-                .collect(Collectors.toList());
+                .map(imageService::storeFileAsync)
+                .toList();
 
         // 모든 작업이 완료되기를 기다림
         List<ImageDTO> classifies = futureClassifies.stream()
