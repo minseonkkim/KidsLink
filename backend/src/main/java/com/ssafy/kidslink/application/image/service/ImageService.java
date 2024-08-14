@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +22,16 @@ import java.io.IOException;
 public class ImageService {
     private final ImageRepository imageRepository;
     private final StorageService storageService;
+
+    public CompletableFuture<ImageDTO> storeFileAsync(MultipartFile file) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                return storeFile(file);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
 
     public ImageDTO storeFile(MultipartFile file) throws IOException {
         String savedFileName = storageService.storeFile(file);
