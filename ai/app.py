@@ -22,7 +22,14 @@ process_executor = ProcessPoolExecutor(max_workers=2)
 #     memory_info = process.memory_info()
 #     logging.info(f"Memory usage: {memory_info.rss / 1024 ** 2:.2f} MB")
 
+# 인메모리 캐시 초기화
+image_cache = {}
+
 def load_image_from_url(url):
+    if url in image_cache:
+        logging.info(f"[캐시 사용] 이미 캐시된 이미지 사용: {url}")
+        return image_cache[url]
+
     try:
         logging.info(f"[로드 시작] 이미지 URL 로드 시작: {url}")
         start_time = time.time()
@@ -36,6 +43,8 @@ def load_image_from_url(url):
 
         if image is None:
             raise ValueError(f"Could not decode image from URL: {url}")
+
+        image_cache[url] = image  # 이미지 캐시에 저장
         return image
     except Exception as e:
         logging.error(f"[로드 실패] 이미지 로드 오류: {url}, 오류: {e}")
