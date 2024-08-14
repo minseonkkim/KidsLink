@@ -90,6 +90,18 @@ public class VideoService {
 //                .hasAudio(true)
 //                .hasVideo(true)
 //                .build();
+        SessionProperties sessionProperties = session.getProperties();
+        log.info("sessionProperties session - {}", session.getConnection(sessionId));
+
+        log.info("Media Mode: {}", sessionProperties.mediaMode());
+        log.info("Recording Mode: {}", sessionProperties.recordingMode());
+        log.info("Default Recording Properties: {}", sessionProperties);
+        log.info("Custom Session ID: {}", sessionProperties.customSessionId());
+        log.info("Media Node: {}", sessionProperties.mediaNode());
+        log.info("Forced Video Codec: {}", sessionProperties.forcedVideoCodec());
+        log.info("Forced Video Codec Resolved: {}", sessionProperties.forcedVideoCodecResolved());
+        log.info("Allow Transcoding: {}", sessionProperties.isTranscodingAllowed());
+
         // 기본 녹화 속성을 가져옵니다.
         RecordingProperties defaultProperties = session.getProperties().defaultRecordingProperties();
 
