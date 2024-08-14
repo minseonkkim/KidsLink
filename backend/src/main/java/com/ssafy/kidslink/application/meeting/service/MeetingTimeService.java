@@ -45,6 +45,7 @@ public class MeetingTimeService {
     private final SelectedMeetingRepository selectedMeetingRepository;
     private final ParentNotificationRepository parentNotificationRepository;
     boolean flag = false;
+    int max = 0;
     public void openMeetingTimes(String teacherUsername, List<OpenMeetingTimeDTO> openMeetingTimeDTOList) {
         Teacher teacher = teacherRepository.findByTeacherUsername(teacherUsername);
 
@@ -157,6 +158,7 @@ public class MeetingTimeService {
 
     public List<SelectedMeetingDTO> classifySchedule(List<SelectedMeetingDTO> selectedMeetingDTOs){
         flag = false;
+        max = 0;
         List<SelectedMeetingDTO> meetingSchedules = allocateMeetings(selectedMeetingDTOs);
         return meetingSchedules;
     }
@@ -190,32 +192,33 @@ public class MeetingTimeService {
     private List<SelectedMeetingDTO> allocateMeetings(List<SelectedMeetingDTO> selectedMeetingDTOs) {
         // 학부모별로 가능한 시간대를 그룹화
         Map<Integer, List<SelectedMeetingDTO>> parentMeetingMap = new HashMap<>();
-
         for (SelectedMeetingDTO dto : selectedMeetingDTOs) {
             int parentId = dto.getParentId();
-
-            // parentName에 해당하는 리스트가 이미 존재하는지 확인
             if (!parentMeetingMap.containsKey(parentId)) {
                 parentMeetingMap.put(parentId, new ArrayList<>());
             }
-
-            // parentName에 해당하는 리스트에 dto 추가
             parentMeetingMap.get(parentId).add(dto);
         }
 
         List<SelectedMeetingDTO> result = new ArrayList<>();
         List<Integer> parentIds = new ArrayList<>(parentMeetingMap.keySet());
         SelectedMeetingDTO[] resultArr = new SelectedMeetingDTO[parentIds.size()];
-        backtrack(parentIds, parentMeetingMap, resultArr, result, 0, new HashSet<>());
+        SelectedMeetingDTO[] bestResultArr = new SelectedMeetingDTO[parentIds.size()];
+        backtrack(parentIds, parentMeetingMap, resultArr, bestResultArr, result, 0, new HashSet<>());
 
+        result.addAll(Arrays.asList(bestResultArr).subList(0, max));
         return result;
     }
     private void backtrack(List<Integer> parentIds, Map<Integer, List<SelectedMeetingDTO>> parentMeetingMap,
-                           SelectedMeetingDTO[] resultArr, List<SelectedMeetingDTO> result, int index, Set<String> usedSlots) {
+                           SelectedMeetingDTO[] resultArr, SelectedMeetingDTO[] bestResultArr, List<SelectedMeetingDTO> result,
+                           int index, Set<String> usedSlots) {
         if (flag) return;
+        if (usedSlots.size() > max) {
+            max = usedSlots.size();
+            System.arraycopy(resultArr, 0, bestResultArr, 0, parentIds.size());
+        }
         if (index == parentIds.size()) {
             flag = true;
-            result.addAll(Arrays.asList(resultArr).subList(0, index));
             return;
         }
 
@@ -229,7 +232,7 @@ public class MeetingTimeService {
 
             resultArr[index] = meeting;
             usedSlots.add(slot);
-            backtrack(parentIds, parentMeetingMap, resultArr, result, index + 1, usedSlots);
+            backtrack(parentIds, parentMeetingMap, resultArr, bestResultArr, result, index + 1, usedSlots);
             usedSlots.remove(slot);
             resultArr[index] = null;
         }
