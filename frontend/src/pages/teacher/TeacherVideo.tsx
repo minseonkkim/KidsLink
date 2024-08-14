@@ -87,6 +87,8 @@ export default function TeacherVideo() {
     if (openvidu.session) {
       openvidu.session.on("signal:profanityDetected", (event) => {
         console.log("학부모 욕설 감지:", event);
+        
+        // 녹화 시작됐다는 변수 조정해서 REC 뜨게하기
 
         if (recordingStartTimeRef.current) {
           const detectedTime = Date.now();
@@ -171,7 +173,7 @@ export default function TeacherVideo() {
     sendSignalLeaveSession("session-ended");
     setTimeout(() => {
       leaveSession(openvidu, setOpenvidu, setIsSessionJoined, navigate);
-    }, 1000);
+    }, 500);
   };
 
   const sendSignalLeaveSession = (message) => {
@@ -208,7 +210,7 @@ export default function TeacherVideo() {
           )}
           <div
             className="absolute top-[200px] left-[100px] w-[600px] h-auto rounded-lg bg-white"
-            style={{ opacity: teacherVideoOpacity, backgroundColor: "white" }}
+            style={{ opacity: teacherVideoOpacity, backgroundColor: "transparent" }}
           >
             {openvidu.mainStreamManager && (
               <OpenViduVideoComponent streamManager={openvidu.mainStreamManager} />
@@ -226,7 +228,7 @@ export default function TeacherVideo() {
           {openvidu.session && (
             <div
               className="absolute top-[200px] right-[100px] w-[600px] h-[340px] rounded-lg bg-white"
-              style={{ opacity: 1, backgroundColor: "white" }}
+              style={{ opacity: 1, backgroundColor: "transparent" }}
             >
               {openvidu.subscribers.length > 0 && (
                 <OpenViduVideoComponent
