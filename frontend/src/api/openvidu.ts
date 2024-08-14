@@ -192,7 +192,7 @@ export const startMainRecording = async (sessionId: string): Promise<string> => 
     const response = await axios.post(
       `${APPLICATION_SERVER_URL}/sessions/${sessionId}/recordings/start`,
       {
-        outputMode: "INDIVIDUAL",
+        outputMode: "COMPOSED",
         recordingMode: "ALWAYS",
         name: "recording-name",
         hasAudio: true,
