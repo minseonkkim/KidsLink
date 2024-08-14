@@ -49,7 +49,7 @@ export default function MeetingList({ meetings, isMeetingActive }: MeetingListPr
   }
 
   return (
-    <div className="w-full space-y-6">
+    <div className="w-full space-y-6 overflow-y-auto">
       {meetings.map((meeting) => {
         const isActive = meeting.meetingDate && meeting.meetingTime ? isMeetingActive(meeting.meetingDate, meeting.meetingTime) : false;
         return (
