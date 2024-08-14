@@ -206,19 +206,16 @@ public class MeetingTimeService {
         SelectedMeetingDTO[] bestResultArr = new SelectedMeetingDTO[parentIds.size()];
         backtrack(parentIds, parentMeetingMap, resultArr, bestResultArr, result, 0, new HashSet<>());
 
-        result.addAll(Arrays.asList(bestResultArr).subList(0, max));
         return result;
     }
     private void backtrack(List<Integer> parentIds, Map<Integer, List<SelectedMeetingDTO>> parentMeetingMap,
                            SelectedMeetingDTO[] resultArr, SelectedMeetingDTO[] bestResultArr, List<SelectedMeetingDTO> result,
                            int index, Set<String> usedSlots) {
         if (flag) return;
-        if (usedSlots.size() > max) {
-            max = usedSlots.size();
-            System.arraycopy(resultArr, 0, bestResultArr, 0, parentIds.size());
-        }
+
         if (index == parentIds.size()) {
             flag = true;
+            result.addAll(Arrays.asList(resultArr).subList(0, index));
             return;
         }
 
