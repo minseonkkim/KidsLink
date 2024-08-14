@@ -142,6 +142,7 @@ def classify_images():
         futures = [process_executor.submit(handle_task, item, known_face_labels, known_face_embeddings_list) for item in classify]
 
         results = []
+        logging.info("Loading reference images")
         for future in futures:
             try:
                 result = future.result()
@@ -157,7 +158,7 @@ def classify_images():
         # logging.info(f"Processing complete. Results: {results}")
 
         end_time = time.time()
-        # logging.info(f"Processing time: {end_time - start_time} seconds")
+        logging.info(f"Processing time: {end_time - start_time} seconds")
         # log_memory_usage()
 
         return jsonify(results)

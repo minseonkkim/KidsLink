@@ -61,7 +61,7 @@ public class S3StorageService implements StorageService {
 
         Thumbnails.of(file.getInputStream())
                 .size(1200, 1200) // 최대 크기를 1200으로 설정 (가로 또는 세로 중 더 긴 쪽에 맞춤)
-                .outputQuality(0.8) // 이미지 품질을 80%로 설정 (0.0에서 1.0 사이의 값)
+                .outputQuality(0.7) // 이미지 품질을 80%로 설정 (0.0에서 1.0 사이의 값)
                 .keepAspectRatio(true) // 비율을 유지
                 .toOutputStream(outputStream);
 
