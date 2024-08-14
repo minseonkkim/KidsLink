@@ -35,7 +35,7 @@ export default function DosageDocument({ dosageId, onUpdate, isOurClass }: Dosag
                 setDosageDocument({ ...dosageDocument, confirmationStatus: "T" });
                 onUpdate(); 
                 
-                showToastSuccess(<div>문서가 승인되었습니다.</div>);
+                showToastSuccess(<div>서류가 승인되었습니다.</div>);
             } catch (error) {
                 console.error('Failed to check dosage document:', error);
             }

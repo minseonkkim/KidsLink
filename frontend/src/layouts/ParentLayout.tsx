@@ -14,9 +14,9 @@ export default function ParentLayout() {
   // 각 경로에 대한 타이틀 설정(서브 헤더 params)
   const getTitle = () => {
     if (location.pathname.startsWith('/document/submit')) {
-      return '문서 작성'
+      return '서류 작성'
     } else if (location.pathname.startsWith('/document')) {
-      return '문서'
+      return '서류'
     } else if (location.pathname.startsWith('/notice')) {
       return '알림장'
     } else if (location.pathname.startsWith('/album')) {

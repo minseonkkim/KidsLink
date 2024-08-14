@@ -197,7 +197,7 @@ export async function createAbsentDocument(data: AbsentData, childId: number) {
   }
 }
 
-// 날짜별 아이 문서 조회
+// 날짜별 아이 서류 조회
 export async function getDocumentsByDate(childId: number, date: string){
   try{
     const response = await axiosInstance.get(`child/${childId}/document/check?date=${date}`)
