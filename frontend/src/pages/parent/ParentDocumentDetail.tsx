@@ -60,7 +60,7 @@ export default function DocumentDetail() {
       <div className="col-span-4 flex flex-col items-center justify-center">
         <img src={cryingDaramgi} alt="Crying Daramgi" className="w-16 mt-12 mb-4" />
         <p className="text-center text-gray-500">
-          해당 문서를 찾을 수 없습니다.
+          해당 서류를 찾을 수 없습니다.
         </p>
       </div>
     )

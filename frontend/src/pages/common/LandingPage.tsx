@@ -203,7 +203,7 @@ export default function LandingPage() {
                       아이들의 <strong>소중한 성장 과정</strong>을<br/>사진과 함께 기록하고 공유하세요.
                     </span>,
                     <span>
-                      클릭 한번으로 <strong>문서제출</strong> 끝!<br/>결석 및 투약 문서를 간편하게 관리하세요.
+                      클릭 한번으로 <strong>서류제출</strong> 끝!<br/>결석 및 투약 서류를 간편하게 관리하세요.
                     </span>,
                   ][index]}
                 </p>
