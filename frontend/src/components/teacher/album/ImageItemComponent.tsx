@@ -26,6 +26,7 @@ export default function ImageItemComponent({
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
     }),
+    // Remove the `canDrag: !isFailedCategory` condition to allow dragging for all categories
   });
 
   const [, drop] = useDrop({
@@ -42,17 +43,17 @@ export default function ImageItemComponent({
   return (
     <div
       ref={(node) => drag(drop(node))}
-      className={`relative w-full h-32 ${isDragging ? 'opacity-50' : 'opacity-100'}`}
-      style={{ minHeight: '8rem' }} // minHeight을 추가하여 드롭 가능 영역을 확대합니다.
+      className={`cursor-pointer relative w-full ${isDragging ? 'opacity-50' : 'opacity-100'}`}
+      style={{ paddingBottom: '100%' }} // Ensures 1:1 aspect ratio
     >
       {image?.path ? (
         <img
           src={image.path}
-          className="object-cover w-full h-full rounded-md"
+          className="object-cover w-full h-full absolute top-0 left-0 rounded-md"
           alt="item"
         />
       ) : (
-        <div className="object-cover w-full h-full rounded-md bg-gray-200 flex items-center justify-center">
+        <div className="absolute top-0 left-0 object-cover w-full h-full rounded-md bg-gray-200 flex items-center justify-center">
           이미지 없음
         </div>
       )}
