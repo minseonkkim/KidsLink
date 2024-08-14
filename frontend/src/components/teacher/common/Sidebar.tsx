@@ -133,9 +133,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
               onClick={handleLogout}
               className="w-[29px] h-[29px] mr-10 cursor-pointer text-gray-700"
             />
-            {/* <Link to="/mypage">
-              <CgProfile className="w-[30px] h-[30px] cursor-pointer text-gray-700" />
-            </Link> */}
           </div>
         </div>
         <div
