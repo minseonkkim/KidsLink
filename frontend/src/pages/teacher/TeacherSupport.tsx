@@ -51,7 +51,7 @@ export default function TeacherSupport() {
         return (
           <div className="text-center mt-44 z-50">
             <p className="text-lg font-semibold mb-8">
-              화상상담 조작법 설명이 다 끝났습니다!
+              화상상담 튜토리얼이 다 끝났습니다!
             </p>
             <button
               className="z-50 px-4 py-2 rounded-full bg-[#FFD700] text-gray-800 hover:bg-[#FFB800] hover:text-gray-900 transition duration-300"
@@ -95,7 +95,6 @@ export default function TeacherSupport() {
           <div className='z-50 text-[#1F1F1F] font-semibold'> 
             <div className='text-[#333333] text-[20px] mb-6'>💻 3단계: 상담시간에 맞춰 화상상담을 진행해보세요!</div>
             <div className='text-[16px] mb-2'><p className="text-red-600 mb-2">&lt;주의&gt;</p>폭언을 감지하여 전후를 녹화합니다. 녹화중지 버튼을 누르면 녹화를 중지합니다.</div>
-            <div className='text-[16px]'>실수로 나가더라도 다시 들어갈 수 있어요!</div>
           </div>
         );
       case 5:

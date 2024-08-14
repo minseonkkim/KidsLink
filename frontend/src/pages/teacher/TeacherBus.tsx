@@ -11,7 +11,7 @@ import useModal from "../../hooks/teacher/useModal";
 import TeacherLayout from "../../layouts/TeacherLayout";
 import daramgi from "../../assets/teacher/bus-daramgi.png"
 import LoadingSpinner from '../../components/common/LoadingSpinner';
-import shuttlebus from '../../assets/teacher/shuttlebus.gif'
+import shuttlebus from "../../assets/teacher/shuttle.gif";
 import '../../index.css'
 
 const WEBSOCKET_URL = import.meta.env.VITE_WEBSOCKET_URL;
@@ -221,19 +221,24 @@ export default function TeacherBus() {
         titleComponent={<Title title="등하원 관리" />}
         imageSrc={daramgi} 
       >
-        {isWebSocketActive ? (
-          // 높이 수정 필요
-          <img 
-          src={shuttlebus} 
-          alt="shuttlebus" 
-          className="absolute top-[255px] left-1/2 transform -translate-x-1/2 w-[100px] h-auto z-10"
-          style={{
-            animation: "moveShuttlebus 3s linear infinite", // 5초 동안 애니메이션을 실행하고 무한 반복
-          }} 
-        />
-        ) : (
-          <></>
-        )}
+        <div className="relative">
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="relative w-[360px] lg:w-[420px] h-[200px]">
+            {isWebSocketActive ? (
+              <img 
+                src={shuttlebus} 
+                alt="shuttlebus" 
+                className="absolute top-[160px] left-1/2 transform -translate-x-1/2 w-[100px] h-auto z-10"
+                style={{
+                  animation: "moveShuttlebus 3s linear infinite", // 애니메이션을 3초 동안 실행하고 무한 반복
+                }} 
+              />
+            ) : (
+              <></>
+            )}
+            </div>
+          </div>
+        </div>
         <div className="relative w-full px-4 mt-10 lg:px-12">
           <div className="flex justify-end mt-2">
             <button 
