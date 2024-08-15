@@ -9,6 +9,7 @@ import { getConfirmedMeeting } from "../../api/meeting";
 import TeacherLayout from '../../layouts/TeacherLayout';
 import daramgi from "../../assets/teacher/meeting-daramgi.png";
 import DefaultImg from "../../assets/teacher/default_profile.png";
+import daramgisad from '../../assets/common/crying-daramgi.png';
 import { useTeacherInfoStore } from '../../stores/useTeacherInfoStore';
 
 export default function TeacherMeeting() {
@@ -81,37 +82,52 @@ return (
     >
       <div className="w-full mt-3 mb-32 px-4 py-0 lg:px-8 lg:py-8 cursor-auto">
         <div className="flex justify-center items-center">
-          <div className="flex flex-row flex-wrap items-start content-start gap-4">
-          {meetings.map((meeting) => {
-  const isActive = isMeetingActive(meeting.meetingDate, meeting.meetingTime);
-  return isActive ? (
-    <Link
-      to={`/meeting/${meeting.meetingId}`}
-      state={{ parentName: meeting.childName }}
-      key={meeting.meetingId}
-      onClick={() => setHasAccessedMeeting(true)}  
-    >
-      <TeacherMeetingSchedule
-        date={meeting.meetingDate}
-        time={meeting.meetingTime}
-        name={meeting.childName}
-        profileImgPath={meeting.childProfile}
-        isActivate={isActive}
-      />
-    </Link>
-  ) : (
-    <div key={meeting.meetingId} style={{ pointerEvents: 'none', opacity: 0.5 }}>
-      <TeacherMeetingSchedule
-        date={meeting.meetingDate}
-        time={meeting.meetingTime}
-        name={meeting.childName}
-        profileImgPath={meeting.childProfile}
-        isActivate={isActive}
-      />
-    </div>
-  );
-})}
+          {meetings.length === 0 ? (
+            <div className="flex bg-transparent">
+              <div className="m-auto text-center mt-24">
+                  <img 
+                      src={daramgisad} 
+                      alt="daramgisad" 
+                      className="h-[200px] mb-6 mx-auto" 
+                  />
+                  <p className="text-[22px] font-bold text-[#333] mb-4">
+                      예약된 상담이 없습니다.
+                  </p>
+              </div>
           </div>
+          ) : (
+            <div className="flex flex-row flex-wrap items-start content-start gap-4">
+              {meetings.map((meeting) => {
+                const isActive = isMeetingActive(meeting.meetingDate, meeting.meetingTime);
+                return isActive ? (
+                  <Link
+                    to={`/meeting/${meeting.meetingId}`}
+                    state={{ parentName: meeting.childName }}
+                    key={meeting.meetingId}
+                    onClick={() => setHasAccessedMeeting(true)}  
+                  >
+                    <TeacherMeetingSchedule
+                      date={meeting.meetingDate}
+                      time={meeting.meetingTime}
+                      name={meeting.childName}
+                      profileImgPath={meeting.childProfile}
+                      isActivate={isActive}
+                    />
+                  </Link>
+                ) : (
+                  <div key={meeting.meetingId} style={{ pointerEvents: 'none', opacity: 0.5 }}>
+                    <TeacherMeetingSchedule
+                      date={meeting.meetingDate}
+                      time={meeting.meetingTime}
+                      name={meeting.childName}
+                      profileImgPath={meeting.childProfile}
+                      isActivate={isActive}
+                    />
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       </div>
     </TeacherLayout>

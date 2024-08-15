@@ -5,6 +5,7 @@ import { fetchRecordings, handleDownload } from "../../api/openvidu";
 import Title from "../../components/teacher/common/Title";
 import TeacherLayout from "../../layouts/TeacherLayout";
 import daramgi from "../../assets/teacher/meeting-daramgi.png";
+import daramgisad from '../../assets/common/crying-daramgi.png';
 import { getOneParentInfo, getTeacherId } from "../../api/Info";
 import { convertTimestampToDateTime } from "../../utils/meeting";
 
@@ -113,7 +114,18 @@ const TeacherMeetingRecordingList: React.FC = () => {
         {/* // TODO #1 삭제 필요 - 범수 */}
         <button onClick={handleFetchListTest}>녹화본 가져오기</button>
         {noRecordings ? (
-          <p className="text-gray-600">저장된 녹화본이 없습니다.</p>
+          <div className="flex bg-transparent">
+            <div className="m-auto text-center mt-24">
+                <img 
+                    src={daramgisad} 
+                    alt="daramgisad" 
+                    className="h-[200px] mb-6 mx-auto" 
+                />
+                <p className="text-[22px] font-bold text-[#333] mb-4">
+                    저장된 녹화본이 없습니다.
+                </p>
+            </div>
+        </div>
         ) : (
           <ul className="list-none p-0">
             {recordings.map((recording) => (
