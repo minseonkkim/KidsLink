@@ -80,13 +80,6 @@ const TeacherMeetingRecordingList: React.FC = () => {
     setRecordings(recordings.filter((recording) => recording.id !== id));
   };
 
-  // TODO #1 삭제 필요 - 범수
-  const handleFetchListTest = async () => {
-    const recordingList = await fetchRecordings();
-    console.log(recordingList);
-    setRecordings(recordingList);
-  };
-
   const tabs = [
     { label: "상담가능시간 open", link: "/meeting/reservation" },
     { label: "상담시간 확정", link: "/meeting/confirm" },
@@ -102,8 +95,6 @@ const TeacherMeetingRecordingList: React.FC = () => {
       imageSrc={daramgi}
     >
       <div className="w-full mt-10 mb-32 px-4 lg:px-8 py-6 lg:py-8">
-        {/* // TODO #1 삭제 필요 - 범수 */}
-        <button onClick={handleFetchListTest}>녹화본 가져오기</button>
         {noRecordings ? (
           <p className="text-gray-600">저장된 녹화본이 없습니다.</p>
         ) : (
