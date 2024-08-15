@@ -102,7 +102,6 @@ export default function TeacherMeetingFooter({
         </div>
       </div>
       <div className="flex items-center gap-4">
-        {isRecording && <div className="text-red-600 font-bold">REC</div>}
         <RxCrossCircled
           className="ml-3 text-3xl cursor-pointer text-red-600"
           onClick={close} // 세션 종료 및 녹화 종료 로직을 close 함수에 통합하여 호출
