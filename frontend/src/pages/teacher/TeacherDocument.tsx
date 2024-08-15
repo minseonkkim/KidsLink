@@ -12,13 +12,13 @@ import { AxiosError } from 'axios';
 
 export default function TeacherDocument() {
   const [searchTerm, setSearchTerm] = useState<string>('');
-  const [documents, setDocuments] = useState([]); // 전체 문서 목록
-  const [filteredDocuments, setFilteredDocuments] = useState([]); // 필터링된 문서 목록
-  const [selectedDocumentType, setSelectedDocumentType] = useState<string>("전체"); // 선택된 문서 타입 추가
-  const [selectedDocumentKey, setSelectedDocumentKey] = useState<string | null>(null); // 선택된 문서의 고유 키
-  const [selectedDocumentRealType, setSelectedDocumentRealType] = useState<string | null>(null); // 실제 선택된 문서 타입
-  const [childImages, setChildImages] = useState<{ [key: number]: string }>({}); // 학생 이미지 관리
-  const [loading, setLoading] = useState(false); // 로딩 상태
+  const [documents, setDocuments] = useState([]);
+  const [filteredDocuments, setFilteredDocuments] = useState([]); 
+  const [selectedDocumentType, setSelectedDocumentType] = useState<string>("전체"); 
+  const [selectedDocumentKey, setSelectedDocumentKey] = useState<string | null>(null);
+  const [selectedDocumentRealType, setSelectedDocumentRealType] = useState<string | null>(null);
+  const [childImages, setChildImages] = useState<{ [key: number]: string }>({}); 
+  const [loading, setLoading] = useState(false); 
 
   const documentRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
   const containerRef = useRef<HTMLDivElement>(null);
