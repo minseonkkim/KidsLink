@@ -72,6 +72,7 @@ const TeacherMeetingRecordingList: React.FC = () => {
     } else {
       setNoRecordings(false); // 녹화본이 있을 때 상태를 false로 설정
     }
+    console.log("recordings", recordings)
   }, [recordings]);
 
   const handleDelete = (id: string) => {
