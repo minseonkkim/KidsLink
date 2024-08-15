@@ -5,6 +5,7 @@ import { fetchRecordings, handleDownload } from "../../api/openvidu";
 import Title from "../../components/teacher/common/Title";
 import TeacherLayout from "../../layouts/TeacherLayout";
 import daramgi from "../../assets/teacher/meeting-daramgi.png";
+import daramgisad from '../../assets/common/crying-daramgi.png';
 import { getOneParentInfo, getTeacherId } from "../../api/Info";
 import { convertTimestampToDateTime } from "../../utils/meeting";
 
@@ -97,7 +98,18 @@ const TeacherMeetingRecordingList: React.FC = () => {
     >
       <div className="w-full mt-10 mb-32 px-4 lg:px-8 py-6 lg:py-8">
         {noRecordings ? (
-          <p className="text-gray-600">저장된 녹화본이 없습니다.</p>
+          <div className="flex bg-transparent">
+            <div className="m-auto text-center mt-24">
+                <img 
+                    src={daramgisad} 
+                    alt="daramgisad" 
+                    className="h-[200px] mb-6 mx-auto" 
+                />
+                <p className="text-[22px] font-bold text-[#333] mb-4">
+                    저장된 녹화본이 없습니다.
+                </p>
+            </div>
+        </div>
         ) : (
           <ul className="list-none p-0">
             {recordings.map((recording) => (
