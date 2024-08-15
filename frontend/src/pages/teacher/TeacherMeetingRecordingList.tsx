@@ -130,7 +130,7 @@ const TeacherMeetingRecordingList: React.FC = () => {
                   </button>
                   <button
                     onClick={() => handleDelete(recording.id)}
-                    className="mr-[24px] mt-2 h-[40px] border-2 border-[#7C7C7C] bg-[#E3EEFF] px-3 py-1 font-bold rounded-[10px] hover:bg-[#D4DDEA] flex items-center"
+                    className="mr-[24px] mt-2 h-[40px] border-2 border-[#7C7C7C] bg-[#FFDFDF] px-3 py-1 font-bold rounded-[10px] hover:bg-[#D4DDEA] flex items-center"
                   >
                     삭제
                   </button>
