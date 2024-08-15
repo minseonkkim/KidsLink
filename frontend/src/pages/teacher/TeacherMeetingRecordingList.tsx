@@ -26,9 +26,6 @@ const TeacherMeetingRecordingList: React.FC = () => {
       // try {
       const teacherId = await getTeacherId();
       const fetchedRecordings = await fetchRecordingsListByTeacherId(teacherId);
-
-      console.log("fetchAllRecordings 메서드 동작 fetchedRecordings:", fetchedRecordings);
-
       // Fetch parent names and format recording names
       const updatedRecordings = await Promise.all(
         fetchedRecordings.map(async (recording) => {
@@ -75,7 +72,6 @@ const TeacherMeetingRecordingList: React.FC = () => {
     } else {
       setNoRecordings(false); // 녹화본이 있을 때 상태를 false로 설정
     }
-    console.log(recordings);
   }, [recordings]);
 
   const handleDelete = (id: string) => {
@@ -96,7 +92,7 @@ const TeacherMeetingRecordingList: React.FC = () => {
       titleComponent={<Title title="녹화된 상담" tabs={tabs} />}
       imageSrc={daramgi}
     >
-      <div className="w-full mt-10 mb-32 px-4 lg:px-8 py-6 lg:py-8">
+      <div className="w-full mb-32 px-4 lg:px-8 py-6 lg:py-8">
         {noRecordings ? (
           <div className="flex bg-transparent">
             <div className="m-auto text-center mt-24">

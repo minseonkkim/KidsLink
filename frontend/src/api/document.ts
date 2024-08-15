@@ -73,7 +73,6 @@ export async function getClassAllDocuments(){
           details: item.type === 'Absent' ? item.absent : item.dosage,
         };
       });
-      console.log("전체 서류 조회:", documents)
       return documents;
     } else {
       throw new Error('Failed to get documents');
@@ -169,8 +168,6 @@ export async function checkDosageDocument(dosageId: number) {
 export async function createDosageDocument(data: DosageData, childId: number) {
   try {
     const response = await axiosInstance.post(`document/dosage/${childId}`, data);
-    console.log(data, "data")
-
     if (response.data.status === 'success') {
       return response.data.data;
     } else {

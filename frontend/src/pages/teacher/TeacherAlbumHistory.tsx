@@ -19,7 +19,6 @@ export default function TeacherAlbumHistory() {
             try {
                 const fetchedAlbums = await getAllClassChildAlbum(classId);
                 setChildrenAlbums(fetchedAlbums);
-                console.log(fetchedAlbums);
             } catch (error) {
                 console.error('Error fetching albums:', error);
             } finally {

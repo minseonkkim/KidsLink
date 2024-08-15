@@ -80,7 +80,7 @@ return (
         />}
         imageSrc={daramgi} 
     >
-      <div className="w-full mt-3 mb-32 px-4 py-0 lg:px-8 lg:py-8 cursor-auto">
+      <div className="w-full mb-32 px-4 lg:px-8 py-6 lg:py-8 cursor-auto">
         <div className="flex justify-center items-center">
           {meetings.length === 0 ? (
             <div className="flex bg-transparent">

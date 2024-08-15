@@ -111,8 +111,6 @@ export async function parentSignup(user: ParentSignupData) {
         "Content-Type": "multipart/form-data",
       },
     })
-
-    console.log("Parent signup successful:", response.data)
     return response.data
   } catch (error) {
     console.error("Error signing up parent:", error)
@@ -181,7 +179,6 @@ export async function logout() {
       useAppStore.getState().resetState()
       // 세션 스토리지에서 user-storage 키 제거
       sessionStorage.removeItem('user-storage')
-      console.log("Logout successful:", response.data.data)
       return response.data.data
     } else {
       throw new Error("Logout failed: " + response.data.message)

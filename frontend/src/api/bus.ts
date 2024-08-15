@@ -41,14 +41,11 @@ export async function getAllBusStops(kindergartenId: number) {
     );
 
     if (response.data.status === "success") {
-      console.log(response.data.data);
       return response.data.data;
     } else {
-      console.log("111");
       throw new Error("Failed to get all-busstops");
     }
   } catch (error) {
-    console.log("222");
     console.error(error);
 
     throw error;
