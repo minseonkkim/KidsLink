@@ -70,8 +70,8 @@ export default function TeacherDocument() {
   };
 
   useEffect(() => {
-    filterAndSetDocuments(documents, selectedDocumentType);
-  }, [searchTerm, documents, selectedDocumentType]);
+    filterAndSetDocuments(documents, selectedDocument.type || "전체");
+  }, [searchTerm, documents, selectedDocument.type]);
 
   const handleDocumentClick = (type, id) => {
     const documentKey = `${type}-${id}`; // 문서 타입과 ID를 결합하여 고유한 키 생성
@@ -100,7 +100,7 @@ export default function TeacherDocument() {
     const fetchedDocuments = await getClassAllDocuments();
     const reversedDocuments = fetchedDocuments.reverse();
     setDocuments(reversedDocuments);
-    filterAndSetDocuments(reversedDocuments, selectedDocumentType);
+    filterAndSetDocuments(reversedDocuments, selectedDocument.type || "전체");
   };
 
   const handleFilterClick = (type) => {
@@ -229,3 +229,4 @@ export default function TeacherDocument() {
     </TeacherLayout>
   );
 }
+// filterAndSetDocuments(reversedDocuments, "전체")

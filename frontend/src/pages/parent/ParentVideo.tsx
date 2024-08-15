@@ -82,16 +82,16 @@ export default function ParentVideo() {
     console.log("parentInfo: ", parentInfo);
   }, [parentInfo, setParentInfo]);
 
-  // useEffect(() => {
-  //   console.log("location",location.pathname)
-  //   if (location.pathname !== `/meeting/${meetingId}`) {
+  useEffect(() => {
+    console.log("location",location.pathname)
+    if (location.pathname !== `/meeting/${meetingId}`) {
 
-  //     return () => {
-  //       console.log("여기서 걸림")
-  //       leaveSession(openvidu, setOpenvidu, setIsSessionJoined, navigate);
-  //     };
-  //   }
-  // }, [navigate, location.pathname, meetingId]);
+      return () => {
+        console.log("여기서 걸림")
+        leaveSession(openvidu, setOpenvidu, setIsSessionJoined, navigate);
+      };
+    }
+  }, [navigate, location.pathname, meetingId]);
 
   useEffect(() => {
     if (isSessionJoined && openvidu.session) {
