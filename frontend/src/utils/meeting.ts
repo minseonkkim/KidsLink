@@ -12,6 +12,23 @@ export const getCurrentTimeString = (): string => {
     return `${year}-${month}-${date} ${hours}:${minutes}`;
   };
 
+export const convertTimestampToDateTime = (timestamp: number): string => {
+    // 밀리초 단위 타임스탬프를 Date 객체로 변환
+    const date = new Date(timestamp);
+  
+    // 연도, 월, 일, 시, 분, 초 추출
+    const year = date.getUTCFullYear();
+    const month = date.getUTCMonth() + 1; // getUTCMonth()는 0부터 시작하므로 1을 더해줌
+    const day = date.getUTCDate();
+    const hours = date.getUTCHours();
+    const minutes = date.getUTCMinutes();
+    const seconds = date.getUTCSeconds();
+  
+    // "YYYY년 MM월 DD일 HH시 mm분 ss초" 형식으로 반환
+    return `${year}년 ${month}월 ${day}일 ${hours}시 ${minutes}분 ${seconds}초`;
+  }
+
+  
 
 // 미팅 활성화 함수
 export const isMeetingActive = (meetingDate: string, meetingTime: string): boolean => {
