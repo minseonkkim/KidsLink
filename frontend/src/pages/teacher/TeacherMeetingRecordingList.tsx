@@ -89,8 +89,9 @@ const TeacherMeetingRecordingList: React.FC = () => {
       const dataB = new Date(b.createAt);
       return dataB.getTime() - dataA.getTime()
     })
-    console.log(recordingList)
+    console.log("recordingList : ",recordingList)
     setRecordings(recordingList);
+    console.log("recordings",recordings)
   };
 
   const tabs = [
@@ -123,13 +124,13 @@ const TeacherMeetingRecordingList: React.FC = () => {
                 <div className="flex flex-col lg:flex-row mt-2 lg:mt-0">
                   <button
                     onClick={() => handleDownload(recording.url)}
-                    className="mb-2 lg:mb-0 lg:mr-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700 transition duration-200"
+                    className="mr-[24px] mt-2 h-[40px] border-2 border-[#7C7C7C] bg-[#E3EEFF] px-3 py-1 font-bold rounded-[10px] hover:bg-[#D4DDEA] flex items-center"
                   >
                     다운로드
                   </button>
                   <button
                     onClick={() => handleDelete(recording.id)}
-                    className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-700 transition duration-200"
+                    className="mr-[24px] mt-2 h-[40px] border-2 border-[#7C7C7C] bg-[#E3EEFF] px-3 py-1 font-bold rounded-[10px] hover:bg-[#D4DDEA] flex items-center"
                   >
                     삭제
                   </button>
