@@ -1,6 +1,4 @@
-// 회원가입 진행률
-
-import { FaCheck } from "react-icons/fa"
+import { FaCheck } from "react-icons/fa";
 
 interface ProgressBarProps {
   steps: string[];
@@ -54,7 +52,10 @@ export default function ProgressBar({ steps, currentStep }: ProgressBarProps) {
             </p>
           </div>
           <div className="flex-1 relative">
-            <div className="border-t-[3px] border-custom-gradient absolute left-0 right-0 transform -translate-y-1/2"></div>
+            {/* 왼쪽 절반의 선 */}
+            <div className="absolute left-0 w-1/2 border-t-[3px] border-[#F8DE56] transform -translate-y-1/2"></div>
+            {/* 오른쪽 절반의 선 */}
+            <div className="absolute right-0 w-1/2 border-t-[3px] border-[#D9D9D9] transform -translate-y-1/2"></div>
             <div className="absolute left-1/2 transform -translate-x-[48%] top-[-12px] flex items-center justify-center w-6 h-6 bg-[#F8DE56] rounded-full">
               <div className="flex items-center justify-center w-4 h-4 bg-white rounded-full">
                 <div className="w-2 h-2 bg-[#F8DE56] rounded-full"></div>
@@ -109,5 +110,5 @@ export default function ProgressBar({ steps, currentStep }: ProgressBarProps) {
         </>
       )}
     </div>
-  )
+  );
 }
