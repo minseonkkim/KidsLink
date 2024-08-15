@@ -38,19 +38,21 @@ export default function ParentLayout() {
   const useNoHeaderAndNavbar = noHeaderAndNavbarPaths.some((path) => location.pathname.startsWith(path));
 
   return (
-    <div className='min-h-[100dvh] flex flex-col'>
-      {!useNoHeaderAndNavbar && (
-        useMainHeader ? (
-          <MainHeader />
-        ) : (
-          <SubHeader title={getTitle()} />
-        )
-      )}
-      {/* 헤더, 하단네비바 높이만큼 패딩 적용 */}
-      <main className={`${!useNoHeaderAndNavbar ? 'flex-grow pt-[67px] pb-[60px]' : 'flex-grow'}`}>
-        <Outlet />
-      </main>
-      {!useNoHeaderAndNavbar && <BottomNavbar />}
+    <div className='flex justify-center'>
+      <div className='min-h-[100dvh] flex flex-col max-w-md w-full'>
+        {!useNoHeaderAndNavbar && (
+          useMainHeader ? (
+            <MainHeader />
+          ) : (
+            <SubHeader title={getTitle()} />
+          )
+        )}
+        {/* 헤더, 하단네비바 높이만큼 패딩 적용 */}
+        <main className={`${!useNoHeaderAndNavbar ? 'flex-grow pt-[67px] pb-[60px]' : 'flex-grow'}`}>
+          <Outlet />
+        </main>
+        {!useNoHeaderAndNavbar && <BottomNavbar />}
+      </div>
     </div>
   )
 }

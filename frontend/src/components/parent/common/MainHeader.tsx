@@ -39,7 +39,7 @@ export default function MainHeader() {
   };
 
   return (
-    <header className="fixed z-10 w-full h-[67px] border-b bg-white border-gray-300 p-4 shadow-md flex items-center justify-between">
+    <header className="max-w-md w-full fixed z-10 w-full h-[67px] border-b bg-white border-gray-300 p-4 shadow-md flex items-center justify-between">
       <p
         className="text-[30px] font-bold text-left font-Cafe24Ssurround gradient-text cursor-pointer"
         onClick={handleHomeClick}

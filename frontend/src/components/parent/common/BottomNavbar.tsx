@@ -23,7 +23,7 @@ export default function BottomNavbar() {
 
   const iconColor = '#FFC107'
   return (
-    <div className="footer fixed bottom-0 w-full bg-white text-gray-700 h-[60px] flex justify-around items-center shadow-md">
+    <div className="max-w-md w-full footer fixed bottom-0 w-full bg-white text-gray-700 h-[60px] flex justify-around items-center shadow-md">
       <div className="footer-item flex flex-col items-center" onClick={handleHomeClick}>
         {isCurrentPage('/') ? (
           <GoHomeFill className="w-7 h-7" style={{ color: iconColor }} />
