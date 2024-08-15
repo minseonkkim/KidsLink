@@ -14,6 +14,7 @@ import { FaBan } from "react-icons/fa";
 import { IoDocumentAttach, IoRecording } from "react-icons/io5";
 import { GiTalk } from "react-icons/gi";
 import { TbMoodKidFilled } from "react-icons/tb";
+import recImg from "../../assets/teacher/record_img.png"
 import parentImg from "../../assets/parent/cute-daramgi.png";
 
 export default function TeacherVideo() {
@@ -195,14 +196,13 @@ export default function TeacherVideo() {
 
   return (
     <div className="relative flex flex-col justify-center items-center w-screen h-screen min-w-[1000px] overflow-hidden">
-      {/* 녹화 중일 때 좌측 상단에 고정된 REC 표시 */}
+      {/* 녹화 중일 때 학부모 화면 위에 고정된 REC 표시 */}
       {showRecIndicator && (
-        <div className="absolute top-0 left-0 mt-4 ml-4 flex items-center space-x-2 z-50">
-          <div className="relative">
-            <span className="absolute inline-flex h-3 w-3 rounded-full bg-red-600 opacity-30 animate-slow-pulse"></span>
-            <span className="relative inline-flex rounded-full h-3 w-3 bg-red-600"></span>
+        <div className="absolute top-[0px] left-[50%] z-50 flex items-center space-x-2">
+          <div className="relative top-[20px] left-[-50%] animate-fade-in-out">
+            {/* 애니메이션 효과를 이 요소에 적용합니다 */}
+            <img src={recImg} alt="녹화 이미지" style={{ width: "70px" }} />
           </div>
-          <div className="text-red-600 font-bold">REC</div>
         </div>
       )}
       <img src={MeetingBackground} className="absolute top-0 left-0 w-full h-full object-cover" />
@@ -226,7 +226,7 @@ export default function TeacherVideo() {
             )}
           </div>
           {openvidu.session && (
-            <div className="absolute top-[150px] right-[600px] font-bold text-[20px] flex flex-row items-center">
+            <div className="absolute top-[150px] right-[570px] font-bold text-[20px] flex flex-row items-center">
               <img src={parentImg} className="w-[40px] h-[40px] rounded-full object-cover mr-3" />
               {childName} 학부모
             </div>
