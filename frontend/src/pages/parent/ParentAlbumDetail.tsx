@@ -4,7 +4,7 @@ import Slider from 'react-slick';
 import { getKidAlbum } from '../../api/album';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import { FiDownload } from 'react-icons/fi';  // react-icons 라이브러리에서 다운로드 아이콘 가져오기
+import { CgMaximize } from "react-icons/cg";
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 
 export default function AlbumDetail() {
@@ -62,8 +62,7 @@ export default function AlbumDetail() {
 
   return (
     <div className="flex flex-col justify-center items-center px-6">
-      <h2 className="text-2xl font-bold mt-10 mb-4">{album.albumName}</h2>
-      <p className="text-sm text-gray-600 mb-8">{new Date(album.albumDate).toLocaleDateString()}</p>
+      <h2 className="text-2xl font-bold mt-10 mb-8">{album.albumName}</h2>
       <div className="w-full max-w-3xl">
         <Slider {...settings}>
           {album.images.map((image) => (
@@ -78,9 +77,9 @@ export default function AlbumDetail() {
               />
               <button
                 onClick={() => downloadImage(image.path, `image-${image.imageId}.jpg`)}
-                className="absolute bottom-4 right-4 bg-yellow-500 text-white p-2 rounded-full shadow-lg"
+                className="absolute bottom-4 right-4 bg-yellow-500 text-white p-2 rounded-xl shadow-lg"
               >
-                <FiDownload size={24} /> {/* 다운로드 아이콘 */}
+                <CgMaximize size={24} />
               </button>
             </div>
           ))}
