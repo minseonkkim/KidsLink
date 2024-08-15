@@ -144,6 +144,13 @@ export default function TeacherOurClass() {
       imageSrc={daramgi}
     >
       <div className="relative w-full mt-7 mb-8 px-[15px] flex flex-col items-center">
+        {/* <div className="absolute top-0 left-0 mt-4 ml-4 flex items-center space-x-2 z-50">
+          <div className="relative">
+            <span className="inline-flex h-3 w-3 rounded-full bg-red-600"></span>
+          </div>
+          <div className="text-red-600 font-bold">REC</div>
+        </div> */}
+
         <div className="flex lg:flex-row flex-col justify-between items-center w-full">
           <div className="lg:w-[250px] w-0"></div>
           <div className="text-[24px] ml-[20px] font-bold whitespace-nowrap mb-5 lg:mb-0">
@@ -162,9 +169,7 @@ export default function TeacherOurClass() {
             <div className="mr-5">{dosageCount}명</div>
           </div>
         </div>
-        <div className="flex flex-row flex-wrap w-full mt-3 justify-around">
-          {memoizedChilds}
-        </div>
+        <div className="flex flex-row flex-wrap w-full mt-3 justify-around">{memoizedChilds}</div>
       </div>
     </TeacherLayout>
   );
