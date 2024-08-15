@@ -3,6 +3,8 @@ import { fetchRecordings, fetchRecordingsByTeacherId, getToken } from "../api/op
 import { OpenViduState, Recording, User } from "../types/openvidu";
 import { getParentInfo } from "../api/Info";
 
+// TODO #2 08142231 범수 수정해야함
+/* 변경전 코드
 export const joinSession = async (
   user: User,
   setOpenvidu: React.Dispatch<React.SetStateAction<OpenViduState>>,
@@ -106,6 +108,92 @@ export const joinSession = async (
   console.log(session);
   console.log("session");
 };
+*/
+
+// 세션 참가 및 스트림 구독 처리
+export const joinSession = async (
+  user: User,
+  setOpenvidu: React.Dispatch<React.SetStateAction<OpenViduState>>,
+  setIsSessionJoined: React.Dispatch<React.SetStateAction<boolean>>,
+  setMyStreamId: React.Dispatch<React.SetStateAction<string | undefined>>,
+  setOtherVideoActive: React.Dispatch<React.SetStateAction<boolean>>
+) => {
+  if (!user.sessionId) {
+    console.log("user", user);
+    return;
+  }
+
+  const OV = new OpenVidu();
+  OV.enableProdMode();
+  const session = OV.initSession();
+
+  // 이벤트 등록
+  session.on("streamCreated", (event: StreamEvent) => {
+    try {
+      const subscriber = session.subscribe(event.stream, undefined, { insertMode: "REPLACE" });
+      setOpenvidu((prevOpenvidu) => ({
+        ...prevOpenvidu,
+        subscribers: [...prevOpenvidu.subscribers, subscriber],
+      }));
+    } catch (error) {
+      console.error("Error during stream subscription:", error);
+    }
+  });
+
+  session.on("streamDestroyed", (event: StreamEvent) => {
+    setOpenvidu((prevOpenvidu) => {
+      const streamManager = event.stream.streamManager;
+      return {
+        ...prevOpenvidu,
+        subscribers: prevOpenvidu.subscribers.filter((sub) => sub !== streamManager),
+      };
+    });
+  });
+
+  session.on("streamPropertyChanged", (event: StreamPropertyChangedEvent) => {
+    if (event.changedProperty === "videoActive") {
+      console.log("Video state changed for stream", event.stream.streamId, ":", event.newValue);
+      setOtherVideoActive(Boolean(event.newValue));
+    }
+  });
+
+  session.on("exception", (exception) => {
+    console.warn(exception);
+  });
+
+  try {
+    const token = await getToken(user.sessionId);
+    await session.connect(token, { clientData: user.username });
+
+    const publisher = await OV.initPublisherAsync(undefined, {
+      audioSource: undefined,
+      videoSource: undefined,
+      publishAudio: true,
+      publishVideo: true,
+      resolution: "1260x720",
+      frameRate: 30,
+      insertMode: "REPLACE",
+      mirror: true,
+    });
+    await session.publish(publisher);
+
+    setOpenvidu((p) => ({
+      ...p,
+      session: session,
+      mainStreamManager: publisher,
+      publisher: publisher,
+    }));
+
+    setMyStreamId(publisher.stream.streamId);
+    setIsSessionJoined(true);
+  } catch (error) {
+    console.log("There was an error connecting to the session:", error);
+  }
+
+  console.log(session);
+};
+
+// TODO #2 여기까지
 
 export const leaveSession = async (
   openvidu: OpenViduState,
