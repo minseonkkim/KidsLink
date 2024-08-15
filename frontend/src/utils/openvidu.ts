@@ -119,7 +119,6 @@ export const joinSession = async (
   setOtherVideoActive: React.Dispatch<React.SetStateAction<boolean>>
 ) => {
   if (!user.sessionId) {
-    console.log("user", user);
     return;
   }
 
@@ -152,7 +151,6 @@ export const joinSession = async (
 
   session.on("streamPropertyChanged", (event: StreamPropertyChangedEvent) => {
     if (event.changedProperty === "videoActive") {
-      console.log("Video state changed for stream", event.stream.streamId, ":", event.newValue);
       setOtherVideoActive(Boolean(event.newValue));
     }
   });
@@ -189,8 +187,6 @@ export const joinSession = async (
   } catch (error) {
     console.log("There was an error connecting to the session:", error);
   }
-
-  console.log(session);
 };
 
 // TODO #2 여기까지

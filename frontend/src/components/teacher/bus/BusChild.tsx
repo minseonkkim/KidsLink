@@ -17,8 +17,6 @@ export default function BusChild({ busStopId, childId, childName, parentTel, sta
 
   const handleCheckboxChange = () => {
     toggleChildChecked(busStopId, childId);
-    console.log(busStopId)
-    console.log(childId)
   };
 
   const handleCallClick = () => {

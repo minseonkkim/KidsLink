@@ -3,12 +3,9 @@ let intervalId: number | null = null;
 
 export const startWebSocket = (url: string, kindergartenId: number, selectedOption: string) => {
   const wsUrl = `${url}/${kindergartenId}`;
-  console.log(kindergartenId)
   ws = new WebSocket(wsUrl);
 
   ws.onopen = () => {
-    console.log('WebSocket connection opened');
-    
     // 서버로 인증 토큰과 kindergartenId, selectedOption 전송
     ws.send(JSON.stringify({ type: 'authenticate', kindergartenId: kindergartenId, selectedOption: selectedOption }));
 
@@ -23,7 +20,6 @@ export const startWebSocket = (url: string, kindergartenId: number, selectedOpti
               kindergartenId,
               selectedOption // selectedOption 포함
             };
-            console.log('Sending location:', data);
             if (ws && ws.readyState === WebSocket.OPEN) {
               ws.send(JSON.stringify(data));
             }
@@ -44,7 +40,6 @@ export const startWebSocket = (url: string, kindergartenId: number, selectedOpti
   };
 
   ws.onclose = () => {
-    console.log('WebSocket connection closed');
     if (intervalId) {
       clearInterval(intervalId);
     }
@@ -87,7 +82,6 @@ export function receiveBusLocation(wsRef, setLocation, mapRef, busMarkerRef, set
 
       setIsMoving(false);
     } else {
-      console.log('Received location:', ++count, data);
       setLocation({ lat: data.latitude, lng: data.longitude });
       setIsMoving(true);
       setBusOption(data.selectedOption); // 버스 옵션 설정
@@ -106,7 +100,6 @@ export function receiveBusLocation(wsRef, setLocation, mapRef, busMarkerRef, set
   };
 
   ws.onclose = () => {
-    console.log('WebSocket closed');
     setIsMoving(false);
   };
 
