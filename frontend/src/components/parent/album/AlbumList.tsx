@@ -8,7 +8,7 @@ interface AlbumListProps {
 
 export default function AlbumList({ albums, handleAlbumClick }: AlbumListProps) {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 overflow-y-auto p-4">
+    <div className="grid grid-cols-1 gap-4 overflow-y-auto p-4">
       {albums.length > 0 ? (
         albums.map((album) => (
           <div
@@ -26,11 +26,8 @@ export default function AlbumList({ albums, handleAlbumClick }: AlbumListProps) 
             />
             {/* 반투명 배경 박스 추가 */}
             <div className="absolute inset-0 bg-gradient-to-t from-[#00000080] to-transparent opacity-90 transition-opacity duration-300 ease-in-out group-hover:opacity-100"></div>
-            <div className="absolute bottom-0 left-0 w-full bg-[#FFF9D7CC] p-2 text-center">
+            <div className="absolute bottom-0 left-0 w-full bg-[#FFF9D7CC] py-4 px-2 text-center">
               <p className="text-sm font-extrabold text-[#353c4e]">{album.albumName}</p>
-              <p className="text-xs font-medium text-[#757575]">
-                {new Date(album.albumDate).toLocaleDateString()}
-              </p>
             </div>
           </div>
         ))
