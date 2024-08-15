@@ -1,0 +1,411 @@
+@charset "UTF-8";
+@layer;
+@import "//cdn.jsdelivr.net/npm/font-kopub@1.0/kopubdotum.min.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+    font-family: 'Cafe24Ssurround';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2105_2@1.0/Cafe24Ssurround.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+/* 
+html {
+  scroll-behavior: smooth;
+} */
+
+body {
+    @apply font-KoPubDotum;
+  }
+
+a{
+  padding: 0;
+  margin: 0;
+}
+
+
+@keyframes grow {
+    from {
+      transform: scale(0.7);
+    }
+    to {
+      transform: scale(1);
+    }
+}
+
+.grow-animation {
+    animation: grow 4s forwards;
+}
+
+.rotate {
+    transform: rotate(7deg);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.gradient-text {
+    background: linear-gradient(to right, #F8DE56, #B2D170);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.circle{
+    display: inline-block; /* 영역적용가능해짐 */
+    width: 17px; height: 17px;
+    border: 2px solid #666;
+    box-sizing: border-box;
+    border-radius: 10px; /* 모서리둥글게 처리 */
+    position: relative; top: 4px;
+    cursor: pointer; /* 마우스 올렸을때 손모양 처리 */
+  
+    background-image: url(https://blog.kakaocdn.net/dn/XTnSL/btrhtUIVtpB/5FungHN6IXVXG8bLbhE9Dk/img.png);
+    background-size: 70%;
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+  
+  #chk:checked + .circle{
+    background-color: navy;
+    border-color: navy;
+    background-image: url(https://blog.kakaocdn.net/dn/t7a2D/btrhtVgLYmG/dUxzAkBy9hIZ4gHmyllQrk/img.png);
+  }
+  
+  
+  /* 체크박스는 display:none;을 주면 데이터 처리가 안됨 */
+  #chk{ position: absolute; left: -999em; }
+
+
+.hide-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+}
+.hide-scrollbar::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera*/
+}
+
+
+.loading {
+  display: inline-block;
+  margin: 0 -.05em;
+  animation: loading 1.2s infinite alternate;
+}
+.loading:nth-child(2) {
+  animation-delay: .2s;
+}
+.loading:nth-child(3) {
+  animation-delay: .4s;
+}
+.loading:nth-child(4) {
+  animation-delay: .6s;
+}
+.loading:nth-child(5) {
+  animation-delay: .8s;
+}
+.loading:nth-child(6) {
+  animation-delay: 1s;
+}
+.loading:nth-child(7) {
+  animation-delay: 1.2s;
+}
+@keyframes loading {
+  0% {
+    filter: blur(0);
+    opacity: 1;
+  }
+  100% {
+    filter: blur(5px);
+    opacity: .2;
+  }
+}
+
+.dark-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.3); 
+  z-index: 30; /* 다른 요소보다 위에 배치 */
+}
+
+
+/* custom-scrollbar 클래스 정의 */
+.custom-scrollbar {
+    padding: 0 0.5em;
+    /* max-width: 360px; */
+    overflow: auto;
+    overflow-y: auto; /* 세로 스크롤만 허용 */
+    overflow-x: hidden; /* 가로 스크롤 숨기기 */
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+    width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background-color: #f4f4f4;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: #e7e7e7;
+}
+
+.custom-scrollbar::-webkit-scrollbar-button {
+    display: none;
+}
+
+/* hover 효과 */
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: #DAEBA2;
+  transition: all 0.2s; /* 호버 효과에 전환 추가 */
+}
+
+/* 코너에 라운드 효과 */
+.custom-scrollbar::-webkit-scrollbar-track,
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  border-radius: 5px;
+}
+
+/* custom-scrollbar 클래스 정의 */
+.custom-x-scrollbar {
+  padding: 0.5em 0;
+  /* max-width: 360px; */
+  overflow: auto;
+  overflow-y: hidden; /* 가로 스크롤만 허용 */
+  overflow-x: auto; /* 세로 스크롤 숨기기 */
+  cursor: pointer;
+}
+
+.custom-x-scrollbar::-webkit-scrollbar {
+  height: 8px;
+}
+
+.custom-x-scrollbar::-webkit-scrollbar-track {
+  background-color: #f4f4f4;
+}
+
+.custom-x-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #e7e7e7;
+}
+
+.custom-x-scrollbar::-webkit-scrollbar-button {
+  display: none;
+}
+
+
+/* hover 효과 */
+.custom-x-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: #DAEBA2;
+    transition: all 0.2s; /* 호버 효과에 전환 추가 */
+}
+
+/* 코너에 라운드 효과 */
+.custom-x-scrollbar::-webkit-scrollbar-track,
+.custom-x-scrollbar::-webkit-scrollbar-thumb {
+    border-radius: 5px;
+}
+
+/* 그림자 효과 */
+.shadow-top {
+  box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.1), 0 -10px 15px rgba(0, 0, 0, 0.1);
+  }
+
+/* ParentBus.module.css */
+.pulse-ring {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  border: 3px solid rgba(255, 0, 0, 0.5); /* Blue color with some transparency */
+  border-radius: 50%;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(0.5);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(2.5);
+    opacity: 0;
+  }
+}
+
+/* 확인 */
+/* .border-custom-gradient {
+  border-image: linear-gradient(to right, #F8DE56 50%, #D9D9D9 50%);
+  border-image-slice: 1;
+}
+
+@layer utilities {
+  @media (max-width: 768px) {
+    .container {
+      padding: 1.25rem;
+    }
+    .progress-text {
+      font-size: 0.75rem;
+    }
+    .input-title {
+      font-size: 1rem;
+    }
+    .input-description {
+      font-size: 0.625rem;
+    }
+    .input-label {
+      font-size: 0.75rem;
+    }
+    .buttons {
+      flex-direction: column;
+      align-items: center;
+    }
+    .buttons button {
+      width: 80%;
+      margin-bottom: 0.625rem;
+    }
+    .email-inputs .input-box,
+    .phone-inputs .phone-number {
+      width: calc(50% - 0.3125rem);
+    }
+  }
+
+  @media (max-width: 480px) {
+    .title {
+      font-size: 1.25rem;
+    }
+    .signup {
+      font-size: 1.25rem;
+    }
+    .progress-text {
+      font-size: 0.625rem;
+    }
+    .input-title {
+      font-size: 0.875rem;
+    }
+    .input-description {
+      font-size: 0.5625rem;
+    }
+    .input-label {
+      font-size: 0.625rem;
+    }
+    .buttons {
+      flex-direction: column;
+      align-items: center;
+    }
+    .buttons button {
+      width: 100%;
+      margin-bottom: 0.625rem;
+    }
+    .email-inputs .input-box,
+    .phone-inputs .phone-number {
+      width: calc(50% - 0.3125rem);
+    }
+  }
+}
+
+.shadow-top {
+box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.1), 0 -10px 15px rgba(0, 0, 0, 0.1);
+}
+
+.header-title {
+@apply text-xl sm:text-2xl font-semibold;
+}
+
+.welcome-section {
+@apply w-full bg-[#FFEC8A] p-4 rounded-lg shadow-md mt-4 flex items-center relative;
+background-size: contain;
+background-repeat: no-repeat;
+background-position: right center;
+height: 180px;
+}
+
+.welcome-text {
+@apply text-lg sm:text-xl font-semibold text-[#E88471] font-KoPubDotum;
+position: absolute;
+left: 2rem; /* 중앙에서 살짝 왼쪽으로 이동 */
+/* top: 2rem;
+line-height: 1.5;
+}
+
+.child-info {
+@apply text-sm sm:text-base text-gray-800 bg-white p-4 rounded-lg shadow-md w-full max-w-md mx-auto mt-4 text-center;
+}
+
+.child-info .bold {
+font-weight: bold;
+}
+
+.custom-border-color:focus {
+border-color: #FDDA6E;
+}
+
+.menu-section {
+@apply w-full p-6 grid grid-cols-2 gap-4;
+}
+
+.menu-item {
+@apply flex flex-col items-center justify-center p-4 text-gray-800 rounded-lg bg-white shadow-md cursor-pointer transition-all transform hover:scale-105;
+}
+
+.custom-placeholder::placeholder {
+color: #FDDA6E;
+}
+
+.menu-item:hover,
+.menu-item:focus {
+@apply bg-[#FDDA6E] text-white;
+}
+
+.menu-item img {
+@apply w-12 h-12 mb-2;
+}
+
+@keyframes fadeIn {
+from { opacity: 0; }
+to { opacity: 1; }
+}
+
+@keyframes slideIn {
+from { transform: translateY(20px); opacity: 0; }
+to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes popIn {
+from { transform: scale(0.9); opacity: 0; }
+to { transform: scale(1); opacity: 1; }
+}
+   */ 
+
+   @keyframes moveShuttlebus {
+    0% {
+      transform: translateX(-200%); /* 화면 오른쪽 밖에서 시작 */
+      opacity: 1; /* 이미지가 보임 */
+    }
+    70% {
+      transform: translateX(100%); /* 화면 왼쪽 밖으로 이동 */
+      opacity: 1; /* 이미지가 보임 */
+    }
+    95% {
+      opacity: 0; /* 이미지가 사라짐 */
+    }
+    100% {
+      transform: translateX(100%); /* 다시 화면 오른쪽 밖으로 돌아옴 */
+      opacity: 0; /* 이미지는 아직 보이지 않음 */
+    }
+  }
+
+  @keyframes fadeInOut {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.3;
+    }
+  }
+  
+  .animate-fade-in-out {
+    animation: fadeInOut 1.5s ease-in-out infinite;
+  }
