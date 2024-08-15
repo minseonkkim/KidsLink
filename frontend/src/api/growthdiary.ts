@@ -79,7 +79,6 @@ export async function createDiary(childId: number, diary: FormDiaryData) {
  
 
     if (response.data.status === "success") {
-      console.log("create diary success");
     } else {
       throw new Error("create diary failed: " + response.data.message);
     }

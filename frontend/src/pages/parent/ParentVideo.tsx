@@ -47,7 +47,6 @@ export default function ParentVideo() {
     const fetchMeetingInfo = async () => {
       try {
         const res = await getMeetingInfo(parseInt(meetingId));
-        console.log("상담 조회하면서 parentInfo: ", parentInfo);
         setTeacherName(res.teacherName);
 
         // 상담 날짜 설정 (이거 utils에 저장된 날짜 함수 확인해보고 쓸지말지 수정하기)
@@ -79,15 +78,12 @@ export default function ParentVideo() {
     } else {
       setUser((prevUser) => ({ ...prevUser, username: parentInfo.child.name }));
     }
-    console.log("parentInfo: ", parentInfo);
   }, [parentInfo, setParentInfo]);
 
   useEffect(() => {
-    console.log("location",location.pathname)
     if (location.pathname !== `/meeting/${meetingId}`) {
 
       return () => {
-        console.log("여기서 걸림")
         leaveSession(openvidu, setOpenvidu, setIsSessionJoined, navigate);
       };
     }
@@ -109,7 +105,6 @@ export default function ParentVideo() {
 
     if (openvidu.session) {
       openvidu.session.on("signal:session-ended", (event) => {
-         console.log("세션 종료 신호 수신:", event.data);
         leaveSession(openvidu, setOpenvidu, setIsSessionJoined, navigate);
         navigate("/meeting");
       });
@@ -130,7 +125,6 @@ export default function ParentVideo() {
   };
 
    const handleSpeechTestButton = () => {
-     console.log("욕설전송 버튼");
      openvidu.session.signal({
        data: "startRecording",
        to: [], // 선생님에게 신호 전송

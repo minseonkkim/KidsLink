@@ -18,8 +18,6 @@ export default function MainHeader() {
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        // console.log("Fetching notifications...");
-
         const fetchedNotifications = await getAllAlarms();
         setNotifications(fetchedNotifications.reverse());
         setNotificationCount(fetchedNotifications.length);
