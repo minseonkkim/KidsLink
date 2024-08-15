@@ -6,6 +6,7 @@ import Title from "../../components/teacher/common/Title";
 import TeacherLayout from "../../layouts/TeacherLayout";
 import daramgi from "../../assets/teacher/meeting-daramgi.png";
 import { getOneParentInfo, getTeacherId } from "../../api/Info";
+import { convertTimestampToDateTime } from "../../utils/meeting";
 
 // 페이지 디자인용으로 진행하고, 나중에는 삭제해야합니다!
 // const dummyRecordings: Recording[] = [
@@ -121,6 +122,9 @@ const TeacherMeetingRecordingList: React.FC = () => {
                 className="flex flex-col lg:flex-row justify-between items-center mb-4 p-4 border border-gray-200 rounded-md shadow-sm"
               >
                 <span className="text-lg font-semibold">{recording.name}</span>
+                <span className="text-xs text-gray-400 lg:mb-0 mb-2">
+                  {convertTimestampToDateTime(recording.createAt)}
+                </span>
                 <div className="flex flex-col lg:flex-row mt-2 lg:mt-0">
                   <button
                     onClick={() => handleDownload(recording.url)}
@@ -130,7 +134,7 @@ const TeacherMeetingRecordingList: React.FC = () => {
                   </button>
                   <button
                     onClick={() => handleDelete(recording.id)}
-                    className="mr-[24px] mt-2 h-[40px] border-2 border-[#7C7C7C] bg-[#FFDFDF] px-3 py-1 font-bold rounded-[10px] hover:bg-[#D4DDEA] flex items-center"
+                    className="mr-[24px] mt-2 h-[40px] border-2 border-[#7C7C7C] bg-red-500 px-3 py-1 font-bold rounded-[10px] hover:bg-red-600 flex items-center text-center"
                   >
                     삭제
                   </button>
