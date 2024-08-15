@@ -123,7 +123,7 @@ const TeacherMeetingRecordingList: React.FC = () => {
               >
                 <span className="text-lg font-semibold">{recording.name}</span>
                 <span className="text-xs text-gray-400 lg:mb-0 mb-2">
-                  {convertTimestampToDateTime(recording.createAt)}
+                  {convertTimestampToDateTime(recording.createdAt)}
                 </span>
                 <div className="flex flex-col lg:flex-row mt-2 lg:mt-0">
                   <button
@@ -134,7 +134,7 @@ const TeacherMeetingRecordingList: React.FC = () => {
                   </button>
                   <button
                     onClick={() => handleDelete(recording.id)}
-                    className="mr-[24px] mt-2 h-[40px] border-2 border-[#7C7C7C] bg-red-500 px-3 py-1 font-bold rounded-[10px] hover:bg-red-600 flex items-center text-center"
+                    className="mr-[24px] mt-2 h-[40px] border-2 border-[#7C7C7C] bg-[#FFDFDF] py-1 font-bold rounded-[10px] hover:bg-[#FFC0C0] flex items-center text-center"
                   >
                     삭제
                   </button>
