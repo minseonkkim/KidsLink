@@ -59,7 +59,7 @@
 <img src="https://img.shields.io/badge/Swagger_annotation_2.2.22-85EA2D?style=for-the-badge&logo=Swagger&logoColor=white">
 <img src="https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=MySQL&logoColor=white">
 <img src="https://img.shields.io/badge/AWS S3-569A31?style=for-the-badge&logo=amazons3&logoColor=white">
-<img src="https://img.shields.io/badge/Openvidu_2.3.0-232F3E?style=for-the-badge&logo=&logoColor=white">
+<img src="https://img.shields.io/badge/Openvidu_2.30.0-232F3E?style=for-the-badge&logo=&logoColor=white">
 
 ### **Backend - Flask**
 
@@ -76,10 +76,9 @@
 <img src="https://img.shields.io/badge/Vite_5.3.1-646CFF?style=for-the-badge&logo=Vite&logoColor=white">
 <img src="https://img.shields.io/badge/React_18.3.1-61DAFB?style=for-the-badge&logo=React&logoColor=white">
 <img src="https://img.shields.io/badge/Typescript_5.2.2-3178C6?style=for-the-badge&logo=Typescript&logoColor=white">
-<img src="https://img.shields.io/badge/Vuex_3.4.0-4FC08D?style=for-the-badge&logo=Vue.js&logoColor=white">
 <img src="https://img.shields.io/badge/Tailwind CSS_3.4.4-06B6D4?style=for-the-badge&logo=Tailwind CSS&logoColor=white">
 <img src="https://img.shields.io/badge/zustand-000000?style=for-the-badge&logo=&logoColor=white">
-<img src="https://img.shields.io/badge/Openvidu_2.3.0-232F3E?style=for-the-badge&logo=&logoColor=white">
+<img src="https://img.shields.io/badge/Openvidu_2.30.0-232F3E?style=for-the-badge&logo=&logoColor=white">
 <img src="https://img.shields.io/badge/Kakao Map API-FFCD00?style=for-the-badge&logo=&logoColor=black">
 <img src="https://img.shields.io/badge/WebSocket-000000?style=for-the-badge&logo=&logoColor=white">
 <img src="https://img.shields.io/badge/Three.js-000000?style=for-the-badge&logo=Three.js&logoColor=white">
@@ -333,6 +332,8 @@ KidsLink.
 
 ## 💛 키즈링크 서비스
 
+![로그인](./docs/assets/gifs/로그인.gif)
+
 ### 회원 가입
 - 학부모, 선생님, 원장 선생님등 회원에 맞게 가입이 가능
 - 소셜 로그인 시 필수 정보를 위한 회원 가입 진행
@@ -378,6 +379,8 @@ KidsLink.
 
 ![사진분류2](./docs/assets/gifs/사진분류_완료.gif)
 
+![앨범](./docs/assets/images/t_앨범.PNG)
+
 ### 선생님 - 화상상담
 - 유치원 정기 상담
 - 상담 예약 오픈 기능 및 자동 조율 기능
@@ -396,6 +399,8 @@ KidsLink.
 
 ---
 
+![학부모메인](./docs/assets/images/p_학부모메인.PNG)
+
 ### 학부모 - 일정관리
 - 유치원 일정 및 투약 기간 조회
 
@@ -404,15 +409,22 @@ KidsLink.
 ### 학부모 - 우리 아이 알림장
 - 유치원 알림장 확인
 
+![알림장](./docs/assets/images/p_알림장1.PNG)
+
 ![알림장](./docs/assets/images/p_알림장.PNG)
 
 ### 학부모 - 우리 아이 성장일지
+- 우리 아이 성장일지
 
 ![성장일지](./docs/assets/images/p_성장일지.PNG)
+
+![성장일지](./docs/assets/images/p_성장일지1.PNG)
 
 ### 학부모 - 우리 아이 서류
 
 ![서류관리](./docs/assets/images/p_서류관리.PNG)
+
+![서류관리](./docs/assets/images/p_서류상세.PNG)
 
 ### 학부모 - 우리 아이 앨범
 
@@ -423,5 +435,7 @@ KidsLink.
 ![상담화면](./docs/assets/images/p_상담화면.PNG)
 
 ### 학부모 - 우리 아이 등하원
+
+![버스](./docs/assets/images/p_버스.PNG)
 
 ![등하원](./docs/assets/gifs/하원.gif)
