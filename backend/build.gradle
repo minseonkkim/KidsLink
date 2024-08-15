@@ -1,0 +1,96 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.3.1'
+	id 'io.spring.dependency-management' version '1.1.5'
+}
+
+group = 'com.ssafy'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(17)
+	}
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
+	implementation 'io.jsonwebtoken:jjwt-impl:0.12.3'
+	implementation 'io.jsonwebtoken:jjwt-jackson:0.12.3'
+
+//    File Compress
+	implementation 'net.coobird:thumbnailator:0.4.14'
+
+//	Swagger
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
+	implementation group: 'io.swagger.core.v3', name: 'swagger-annotations', version: '2.2.22'
+
+//	S3
+	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+
+	// OpenVidu Dependency
+	implementation 'io.openvidu:openvidu-java-client:2.30.0'
+	implementation 'org.apache.httpcomponents:httpclient:4.5.14'
+
+    // Web Socket
+	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+
+	compileOnly 'org.projectlombok:lombok'
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	runtimeOnly 'com.mysql:mysql-connector-j'
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.security:spring-security-test'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
+tasks.withType(JavaCompile) {
+	options.compilerArgs << "-parameters"
+}
+
+//// Environment profile configuration
+//ext {
+//	profile = project.hasProperty('profile') ? project.getProperty('profile') : 'dev'
+//}
+//
+//processResources {
+//	filesMatching('application.properties') {
+//		expand(profile: profile)
+//	}
+//}
+//
+//bootRun {
+//	systemProperties = System.properties
+//	systemProperty 'spring.profiles.active', profile
+//}
+//
+//task printProfile {
+//	doLast {
+//		println "Active profile: ${profile}"
+//	}
+//}
+//
+//// Custom task for building with different profiles
+//task buildWithProd(type: GradleBuild) {
+//	tasks = ['build']
+//	startParameter.projectProperties = ['profile': 'prod']
+//}
