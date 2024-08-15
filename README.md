@@ -39,59 +39,66 @@
   - **백트래킹 알고리즘**을 적용시켜 상담 일정을 자동으로 조율할 수 있어요.
   - 상담 중 발생하는 폭언, 욕설 등을 감지하여 녹화본을 추출할 수 있습니다.
 
-## 💛 주요 기술
+## 💛 주요 기능
 
-**Backend - Spring**
-- IntelliJ IDE
-- SpringBoot 3.3.1
-- Spring Data JPA
-- Spring Security
-- Spring Web
-- WebSocket
-- Redis
-- Thumbnailator
-- Swagger-annotation 2.2.22
-- MySQL
-- AWS S3
-- Openvidu: 2.3.0
+### **Backend - Spring**
 
-**Backend - Flask**
-- face_recognition
-- numpy
-- dlib
-- sklearn
+<img src="https://img.shields.io/badge/IntelliJ IDEA-000000?style=for-the-badge&logo=IntelliJ IDEA&logoColor=white"> 
+<img src="https://img.shields.io/badge/SpringBoot_3.3.1-6DB33F?style=for-the-badge&logo=Spring Boot&logoColor=white">
+<img src="https://img.shields.io/badge/Spring Data JPA-6DB33F?style=for-the-badge&logo=&logoColor=white">
+<img src="https://img.shields.io/badge/Spring Security-6DB33F?style=for-the-badge&logo=Spring Security&logoColor=white">
+<img src="https://img.shields.io/badge/Spring Web-6DB33F?style=for-the-badge&logo=&logoColor=white">
+<img src="https://img.shields.io/badge/WebSocket-000000?style=for-the-badge&logo=&logoColor=white">
+<img src="https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=Redis&logoColor=white">
+<img src="https://img.shields.io/badge/Thumbnailator-000000?style=for-the-badge&logo=&logoColor=white">
+<img src="https://img.shields.io/badge/Swagger_annotation_2.2.22-85EA2D?style=for-the-badge&logo=Swagger&logoColor=white">
+<img src="https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=MySQL&logoColor=white">
+<img src="https://img.shields.io/badge/AWS S3-569A31?style=for-the-badge&logo=amazons3&logoColor=white">
+<img src="https://img.shields.io/badge/Openvidu_2.3.0-232F3E?style=for-the-badge&logo=&logoColor=white">
 
-**Frontend**
-- Visual Studio Code IDE
-- Node: 20.15.0
-- Vite: 5.3.1
-- React: 18.3.1
-- Typescript: 5.2.2
-- Vuex 3.4.0
-- TailwindCss : 3.4.4
-- zustand
-- Openvidu: 2.3.0
-- Kakao Map API
-- WebSocket
-- Three.js
+### **Backend - Flask**
 
-**CI/CD**
-- AWS EC2
-- Jenkins
-- Docker
-- Docker Compose
-- NGINX
-- SSL
+<img src="https://img.shields.io/badge/Flask-000000?style=for-the-badge&logo=Flask&logoColor=white">
+<img src="https://img.shields.io/badge/face_recognition-000000?style=for-the-badge&logo=&logoColor=white">
+<img src="https://img.shields.io/badge/numpy-013243?style=for-the-badge&logo=numpy&logoColor=white">
+<img src="https://img.shields.io/badge/dlib-000000?style=for-the-badge&logo=&logoColor=white">
+<img src="https://img.shields.io/badge/sklearn-F7931E?style=for-the-badge&logo=scikit-learn&logoColor=white">
 
-**Communication**
-- Git(Gitlab)
-- Jira
-- Notion
-- Mattermost
-- Figma
+### **Frontend**
+
+<img src="https://img.shields.io/badge/Visual Studio Code-007ACC?style=for-the-badge&logo=Visual Studio Code&logoColor=white">
+<img src="https://img.shields.io/badge/Node.js_20.15.0-339933?style=for-the-badge&logo=Node.js&logoColor=white">
+<img src="https://img.shields.io/badge/Vite_5.3.1-646CFF?style=for-the-badge&logo=Vite&logoColor=white">
+<img src="https://img.shields.io/badge/React_18.3.1-61DAFB?style=for-the-badge&logo=React&logoColor=white">
+<img src="https://img.shields.io/badge/Typescript_5.2.2-3178C6?style=for-the-badge&logo=Typescript&logoColor=white">
+<img src="https://img.shields.io/badge/Vuex_3.4.0-4FC08D?style=for-the-badge&logo=Vue.js&logoColor=white">
+<img src="https://img.shields.io/badge/Tailwind CSS_3.4.4-06B6D4?style=for-the-badge&logo=Tailwind CSS&logoColor=white">
+<img src="https://img.shields.io/badge/zustand-000000?style=for-the-badge&logo=&logoColor=white">
+<img src="https://img.shields.io/badge/Openvidu_2.3.0-232F3E?style=for-the-badge&logo=&logoColor=white">
+<img src="https://img.shields.io/badge/Kakao Map API-FFCD00?style=for-the-badge&logo=&logoColor=black">
+<img src="https://img.shields.io/badge/WebSocket-000000?style=for-the-badge&logo=&logoColor=white">
+<img src="https://img.shields.io/badge/Three.js-000000?style=for-the-badge&logo=Three.js&logoColor=white">
+
+### **CI/CD**
+
+<img src="https://img.shields.io/badge/AWS EC2-232F3E?style=for-the-badge&logo=Amazon AWS&logoColor=white">
+<img src="https://img.shields.io/badge/Jenkins-D24939?style=for-the-badge&logo=Jenkins&logoColor=white">
+<img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=Docker&logoColor=white">
+<img src="https://img.shields.io/badge/Docker Compose-2496ED?style=for-the-badge&logo=Docker&logoColor=white">
+<img src="https://img.shields.io/badge/NGINX-009639?style=for-the-badge&logo=NGINX&logoColor=white">
+<img src="https://img.shields.io/badge/SSL-000000?style=for-the-badge&logo=&logoColor=white">
+
+### **Communication**
+
+<img src="https://img.shields.io/badge/Git(Gitlab)-FCA121?style=for-the-badge&logo=Gitlab&logoColor=white">
+<img src="https://img.shields.io/badge/Jira-0052CC?style=for-the-badge&logo=Jira&logoColor=white">
+<img src="https://img.shields.io/badge/Notion-000000?style=for-the-badge&logo=Notion&logoColor=white">
+<img src="https://img.shields.io/badge/Mattermost-0058CC?style=for-the-badge&logo=Mattermost&logoColor=white">
+<img src="https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=Figma&logoColor=white">
 
 
-## 프로젝트 폴더 구조
+
+## 💛 프로젝트 폴더 구조
 ### Back-end
 <details>
   <summary>펼쳐보기</summary>
@@ -277,30 +284,34 @@ KidsLink.
 ```
 </details>
 
-## 팀원 소개
+## 💛 팀원 소개
 | ![김범수](https://avatars.githubusercontent.com/u/121588874?&v=4) | ![이상민](https://avatars.githubusercontent.com/u/134148399?v=4) | ![김지원](https://avatars.githubusercontent.com/u/102503653?v=4) | ![김민선](https://avatars.githubusercontent.com/u/76653033?v=4) | ![김여준](https://avatars.githubusercontent.com/u/151982401?v=4) | ![정현수](https://avatars.githubusercontent.com/u/109744927?v=4) |
 |---------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------|
 | 김범수([@Kimbumsoo99](https://github.com/Kimbumsoo99)) | 이상민([@sangmin0806](https://github.com/sangmin0806)) | 김지원([@wonxxikim](https://github.com/wonxxikim)) | 김민선([@minseonkkim](https://github.com/minseonkkim)) | 김여준([@junjunclub](https://github.com/junjunclub)) | 정현수([@surina125](https://github.com/surina125)) |
 | Leader / Back End | Back End | Back End | Front End | Front End | Front End |
 
-## 협업 방식
+## 💛 협업 방식
 
 - Git
   - [브랜치 전략 🔗](https://topaz-planet-38b.notion.site/Commit-branch-conventions-0218d4baf6c14dd992c6e39b914df28f)
   - MR시, 팀원이 코드리뷰를 진행하고 피드백 게시
+
 - JIRA
   - 작업 단위에 따라 `Epic-Story-Task` 분류
   - 매주 목표량을 설정하여 Sprint 진행
-  - 업무의 할당량을 정하여 Story Point를 설정하고, In-Progress -> Done 순으로 작업  
+  - 업무의 할당량을 정하여 Story Point를 설정하고, In-Progress -> Done 순으로 작업
+
 - 회의
   - 데일리 스크럼 10시 전날 목표 달성량과 당일 업무 브리핑
   - 문제 상황 1시간 이상 지속 시 MatterMost 메신저를 활용한 공유 및 도움 요청
+
 - Notion
   - 회의록 기록하여 보관
   - 컨벤션, 트러블 슈팅, 개발 산출물 관리
   - GANTT CHART 관리
 
-## 프로젝트 산출물
+## 💛 프로젝트 산출물
+
 - [요구사항명세서](./docs/요구사항명세서.md)
 - [기능명세서](./docs/기능명세서.md)
 - [와이어프레임](./docs/와이어프레임.md)
@@ -309,7 +320,11 @@ KidsLink.
 - [목업](./docs/목업.md)
 - [아키텍처](./docs/아키텍처.md)
 
-## 프로젝트 결과물
+## 💛 프로젝트 결과물
+
 - [포팅메뉴얼](./docs/assets/pdf/포팅_메뉴얼.pdf)
 - [중간발표자료](http://www.kidslink.xyz)
 - [최종발표자료](http://www.kidslink.xyz)
+
+## 💛 키즈링크 서비스
+
