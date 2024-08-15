@@ -396,3 +396,16 @@ to { transform: scale(1); opacity: 1; }
       opacity: 0; /* 이미지는 아직 보이지 않음 */
     }
   }
+
+  @keyframes fadeInOut {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.3;
+    }
+  }
+  
+  .animate-fade-in-out {
+    animation: fadeInOut 1.5s ease-in-out infinite;
+  }
