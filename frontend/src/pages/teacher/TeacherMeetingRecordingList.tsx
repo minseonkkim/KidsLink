@@ -84,6 +84,12 @@ const TeacherMeetingRecordingList: React.FC = () => {
   const handleFetchListTest = async () => {
     const recordingList = await fetchRecordings();
     console.log(recordingList);
+    recordingList.sort((a, b) => {
+      const dataA = new Date(a.createAt);
+      const dataB = new Date(b.createAt);
+      return dataB.getTime() - dataA.getTime()
+    })
+    console.log(recordingList)
     setRecordings(recordingList);
   };
 
