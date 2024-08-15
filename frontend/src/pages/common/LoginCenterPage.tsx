@@ -18,7 +18,6 @@ export default function LoginCenterPage(){
       if (accessToken && expiredAt) {
         localStorage.setItem('accessToken', accessToken);
         localStorage.setItem('expiredAt', expiredAt);
-        console.log("role", role);
         setUserType(role);
       }
     }
@@ -34,7 +33,6 @@ export default function LoginCenterPage(){
     e.preventDefault();
     try {
       const data = await loginAPI({ username, password });
-      console.log("Login successful:", data);
       setUserType(data.role);
       navigate("/"); // 로그인 성공 후 이동할 경로
     } catch (error) {

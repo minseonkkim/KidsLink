@@ -8,7 +8,6 @@ export default function SocialJoinRedirect() {
   const { setIsSocialLogin } = useAppStore()
 
   useEffect(() => {
-    console.log('Current location:', location);
     const queryParams = new URLSearchParams(location.search)
     const registrationId = queryParams.get('registrationId')
     const username = queryParams.get('username')

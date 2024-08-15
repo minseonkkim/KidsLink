@@ -21,7 +21,6 @@ export default function TeacherMeetingFooter({
             <IoVideocam
               className="cursor-pointer text-3xl text-black"
               onClick={() => {
-                console.log("Video off");
                 handleControl((prev) => ({ ...prev, video: false }));
               }}
             />
@@ -29,7 +28,6 @@ export default function TeacherMeetingFooter({
             <IoVideocamOff
               className="cursor-pointer text-[#B8B8B8] text-3xl"
               onClick={() => {
-                console.log("Video on");
                 handleControl((prev) => ({ ...prev, video: true }));
               }}
             />
@@ -41,7 +39,6 @@ export default function TeacherMeetingFooter({
             <FaMicrophone
               className="cursor-pointer text-3xl text-black"
               onClick={() => {
-                console.log("Mic off");
                 handleControl((prev) => ({ ...prev, mic: false }));
               }}
             />
@@ -49,7 +46,6 @@ export default function TeacherMeetingFooter({
             <FaMicrophoneSlash
               className="cursor-pointer text-3xl text-[#B8B8B8]"
               onClick={() => {
-                console.log("Mic on");
                 handleControl((prev) => ({ ...prev, mic: true }));
               }}
             />
@@ -61,7 +57,6 @@ export default function TeacherMeetingFooter({
             <IoVolumeMute
               className="cursor-pointer text-3xl text-[#B8B8B8] mr-3"
               onClick={() => {
-                console.log("Volume unmute");
                 handleControl((prev) => ({ ...prev, muted: false }));
               }}
             />
@@ -69,7 +64,6 @@ export default function TeacherMeetingFooter({
             <IoVolumeHigh
               className="cursor-pointer text-3xl text-black mr-3"
               onClick={() => {
-                console.log("Volume mute");
                 handleControl((prev) => ({ ...prev, muted: true }));
               }}
             />
@@ -81,7 +75,6 @@ export default function TeacherMeetingFooter({
               min={0.0}
               max={1.0}
               onChange={(event, newVal) => {
-                console.log("Volume changed to:", newVal);
                 handleControl((prev) => ({ ...prev, volume: newVal as number }));
               }}
               sx={{

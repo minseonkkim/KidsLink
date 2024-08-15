@@ -37,7 +37,6 @@ export default function Join() {
       return; 
     }
     setSelectedRole(role)
-    console.log("역할: ", role)
     navigate(`/join/${role}`)
   }
 

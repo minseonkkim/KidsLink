@@ -54,7 +54,6 @@ export default function TeacherVideo() {
   
   useEffect(() => {
     async function fetchChildInfo() {
-      console.log("자녀 정보 패치 중...");
       try {
         const meetingInfo = await getMeetingInfo(Number(meetingId));
         setChildName(meetingInfo.childName); // childName 상태 설정
@@ -85,9 +84,7 @@ export default function TeacherVideo() {
 
   useEffect(() => {
     if (openvidu.session) {
-      openvidu.session.on("signal:profanityDetected", (event) => {
-        console.log("학부모 욕설 감지:", event);
-        
+      openvidu.session.on("signal:profanityDetected", (event) => {       
         // 녹화 시작됐다는 변수 조정해서 REC 뜨게하기
         setShowRecIndicator(true);
         
