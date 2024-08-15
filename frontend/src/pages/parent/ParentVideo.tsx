@@ -129,11 +129,39 @@ export default function ParentVideo() {
     leaveSession(openvidu, setOpenvidu, setIsSessionJoined, navigate); // navigate 함수 전달
   };
 
+   const handleSpeechTestButton = () => {
+     console.log("욕설전송 버튼");
+     openvidu.session.signal({
+       data: "startRecording",
+       to: [], // 선생님에게 신호 전송
+       type: "profanityDetected",
+     });
+   };
+
+  
   return (
     <div
       className="relative min-h-screen bg-cover bg-center bg-no-repeat px-4 pt-4 flex items-center justify-center"
       style={{ backgroundImage: `url(${bgImg})` }}
     >
+      <button
+        onClick={handleSpeechTestButton}
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          zIndex: 1000, // 높은 z-index 값으로 다른 요소보다 앞에 위치하도록 함
+          padding: "10px 20px",
+          backgroundColor: "#007bff",
+          color: "#fff",
+          border: "none",
+          borderRadius: "4px",
+          cursor: "pointer",
+        }}
+      >
+        Test Button
+      </button>
+
       {/* 반투명 검정 배경 */}
       <div className="absolute inset-0 bg-black bg-opacity-50"></div>
       {openvidu.session ? (
