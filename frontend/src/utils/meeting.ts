@@ -22,10 +22,9 @@ export const convertTimestampToDateTime = (timestamp: number): string => {
     const day = date.getUTCDate();
     const hours = date.getUTCHours();
     const minutes = date.getUTCMinutes();
-    const seconds = date.getUTCSeconds();
   
     // "YYYY년 MM월 DD일 HH시 mm분 ss초" 형식으로 반환
-    return `${year}년 ${month}월 ${day}일 ${hours}시 ${minutes}분 ${seconds}초`;
+    return `${year}년 ${month}월 ${day}일 ${hours}시 ${minutes}분`;
   }
 
   
