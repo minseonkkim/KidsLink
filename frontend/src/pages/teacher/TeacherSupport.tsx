@@ -49,12 +49,12 @@ export default function TeacherSupport() {
         return <FourthStep />;
       case 6:
         return (
-          <div className="text-center mt-44 z-50">
+          <div className="fixed text-center mt-44 z-50">
             <p className="text-lg font-semibold mb-8">
               화상상담 튜토리얼이 다 끝났습니다!
             </p>
             <button
-              className="z-50 px-4 py-2 rounded-full bg-[#FFD700] text-gray-800 hover:bg-[#FFB800] hover:text-gray-900 transition duration-300"
+              className="absolute z-50 bottom-30 right-10 px-4 py-2 rounded-full bg-[#FFD700] text-gray-800 hover:bg-[#FFB800] hover:text-gray-900 transition duration-300"
               onClick={() => navigate('/meeting')}
             >
               화상상담 페이지로 이동
@@ -177,7 +177,7 @@ export default function TeacherSupport() {
           </>
         )}
 
-        <div className={`fixed ${step === 1 || step === 6 ? 'bottom-36' : 'top-44 right-60'} z-30`}>
+        <div className={`fixed ${step === 1 || step === 6 ? 'top-[200px] bottom-36 z-10' : 'top-44 right-60 z-20'} `}>
           <ThreeModel mousePosition={mousePosition} />
         </div>
       </div>
