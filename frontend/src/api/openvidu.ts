@@ -101,13 +101,11 @@ const getOrCreateSession = async (sessionId: string): Promise<string> => {
   try {
     // 세션 존재 여부 확인
     await axios.get(`${APPLICATION_SERVER_URL}/sessions/${sessionId}`);
-    console.log("getOrCreateSession 이미 존재")
     return sessionId; // 세션이 이미 존재하는 경우
   } catch (error) {
     const axiosError = error as AxiosError; // 타입 단언을 사용하여 'AxiosError'로 단언
     if (axiosError.response && axiosError.response.status === 404) {
       // 세션이 존재하지 않는 경우, 새로 생성
-      console.log("getOrCreateSession 처음 시도 존재");
       return await createSession(sessionId);
     } else {
       throw error; // 다른 오류는 재발생
@@ -144,7 +142,6 @@ const detectProfanity = (text: string): boolean => {
 export const fetchRecordings = async (): Promise<any[]> => {
   try {
     const response = await axiosInstance.get(`${APPLICATION_SERVER_URL}/recordings`);
-    console.log("fetchRecordings", response);
     return response.data;
   } catch (error) {
     console.error("Error fetching recordings:", error);
@@ -157,7 +154,6 @@ export const fetchRecordingsByTeacherId = async (teacherId: number): Promise<any
     const response = await axiosInstance.get(
       `${APPLICATION_SERVER_URL}/teacher/${teacherId}/recordings`
     );
-    console.log("fetchRecordingsTeacher", response)
     return response.data;
   } catch (error) {
     console.error("Error fetching recordings:", error);
@@ -241,10 +237,8 @@ export const handleSpeechRecognitionSignalByParent = async (session) => {
       for (let i = event.resultIndex; i < event.results.length; i++) {
         if (event.results[i].isFinal) {
           const transcript = event.results[i][0].transcript;
-          console.log("STT Result from Parent:", transcript);
 
           if (detectProfanity(transcript)) {
-            console.log("Profanity detected by Parent.");
 
             // 욕설 감지 신호를 선생님 세션으로 전송
             session.signal({
@@ -308,10 +302,8 @@ export const handleSpeechRecognition = async (sessionId: string, setDetectedTime
     for (let i = event.resultIndex; i < event.results.length; i++) {
       if (event.results[i].isFinal) {
         const transcript = event.results[i][0].transcript;
-        console.log("STT Result:", transcript);
 
         if (detectProfanity(transcript)) {
-          console.log("Profanity detected.");
           const detectedTime = Date.now();
           setDetectedTime(detectedTime); // 감지된 시간을 전달
           recognition.stop(); // STT 중지
@@ -341,9 +333,6 @@ export const startMainRecording = async (sessionId: string): Promise<string> => 
       },
       { headers: { "Content-Type": "application/json" } }
     );
-
-    console.log(`startMainRecording -> /sessions/${sessionId}/recordings/start -> response`, response);
-
     return response.data.recordingId; // 녹화 ID 반환
   } catch (error) {
     console.error("Error starting main recording:", error);
@@ -354,8 +343,6 @@ export const startMainRecording = async (sessionId: string): Promise<string> => 
 // 메인 녹화 중지
 export const stopMainRecording = async (recordingId: string, startTime: number): Promise<void> => {
   try {
-    console.log("stopMainRecording : ", `${APPLICATION_SERVER_URL}/recordings/stop/${recordingId}`, { startTime }, { headers: { "Content-Type": "application/json" } });
-
     const response = await axios.post(`${APPLICATION_SERVER_URL}/recordings/stop/${recordingId}`, { startTime }, { headers: { "Content-Type": "application/json" } });
     return response.data;
   } catch (error) {

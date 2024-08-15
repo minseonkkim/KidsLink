@@ -50,7 +50,6 @@ export async function getParentInfo(): Promise<ParentInfo> {
     const response = await axiosInstance.get("/parent");
 
     if (response.data.status === "success") {
-      console.log(response.data.data);
       return response.data.data;
     } else {
       throw new Error("Failed to fetch parent-info");
@@ -112,9 +111,6 @@ export async function getClassTeacherInfo(kindergartenClassId: number): Promise<
 export async function getTeacherId() {
   try {
     const response = await axiosInstance.get(`/teacher/teacherId`);
-
-    console.log("getTeacherId", response)
-
     if (response.data.status === "success") {
       return response.data.data;
     } else {

@@ -232,8 +232,7 @@ export default function TeacherMeetingConfirm() {
             />}
             imageSrc={daramgi} 
         >
-            <div className="w-full mb-32 px-5 lg:px-8 py-3 lg:py-10">
-                
+            <div className="w-full mb-32 px-4 lg:px-8 py-6 lg:py-8">
                 {Object.keys(groupedMeetings).length !== 0 && (
                     <div className="text-center text-[17px] mb-3">
                         학부모님들께서 선택하신 희망 날짜 및 시간입니다.<br />일정 조율하기 버튼을 누르면 선택하지 않은 일정을 자동으로 조율합니다.
