@@ -87,7 +87,7 @@ export default function ParentFormStep2({ onBack, onNext }: ParentFormStep2Props
       />
 
       {/* 2단계 */}
-      <p className="mt-5 text-base font-bold">자녀 정보입력</p>
+      <p className="mt-5 text-base font-bold">자녀 정보입력 (프로필 이미지 필수)</p>
       <p className="mt-1 text-xs font-normal text-gray-400">
         학부모 서비스에 필요한 정보를 입력합니다.
       </p>

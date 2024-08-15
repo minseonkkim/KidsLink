@@ -10,8 +10,9 @@ import { useTeacherInfoStore } from '../../stores/useTeacherInfoStore';
 import useModal from "../../hooks/teacher/useModal";
 import TeacherLayout from "../../layouts/TeacherLayout";
 import daramgi from "../../assets/teacher/bus-daramgi.png"
-import LoadingSpinner from '../../components/common/LoadingSpinner';
+import daramgisad from "../../assets/common/crying-daramgi.png"
 import shuttlebus from "../../assets/teacher/shuttle.gif";
+import { useNavigate } from 'react-router-dom';
 import '../../index.css'
 
 const WEBSOCKET_URL = import.meta.env.VITE_WEBSOCKET_URL;
@@ -134,8 +135,33 @@ export default function TeacherBus() {
     localStorage.setItem('isWebSocketActive', 'false');
   };
 
+  const navigate = useNavigate();
+
+  const navigateToHomePage = () => {
+      navigate('/');
+  };
+
   if (busStops.length === 0 || currentStopId === null) {
-    return <LoadingSpinner/>
+    return (
+      <div className="flex h-screen bg-[#f8f9fa]">
+      <div className="m-auto text-center">
+          <img 
+              src={daramgisad} 
+              alt="daramgisad" 
+              className="h-[200px] mb-6 mx-auto" 
+          />
+          <p className="text-[18px] font-bold text-[#333] mb-4">
+              유치원에 버스 또는 정류장 데이터가 존재하지 않습니다.
+          </p>
+          <button 
+              onClick={navigateToHomePage} 
+              className="text-[16px] font-semibold text-white bg-[#C0D290] px-6 py-2 rounded-[8px] hover:bg-[#8CAD1E] transition-all duration-200"
+          >
+              첫 화면으로 돌아가기
+          </button>
+      </div>
+  </div>
+    )
   }
 
   const currentStop = busStops.find(stop => stop.busStopId === currentStopId);
