@@ -14,91 +14,62 @@
 ## 💛 프로젝트 기간
 2024.07.01 ~ 2024.08.16 (7주)
 
-## 💛 기술스택
-![기술스택](./docs/assets/images/tech_stack.png)
 
 ## 💛 주요 기능
-- **학사 일정 관리**
-  - 유치원 내 행사 일정 및 개인 일정을 관리할 수 있는 서비스
+
+- **사진분류**
+  - **Deepface AI**로 아이별 사진분류
+  - 잘못 분류된 사진은 드래그앤드롭으로 수동 수정 가능
+  - 분류한 사진은 학부모에게 전송하여 앨범에 저장
+  - 아이별 누적 사진 개수를 계산하여 학부모 불만을 사전에 예방
+
+- **화상상담 예약**
+  - 선생님이 상담 가능 시간을 open하면, 학부모가 해당 시간에 상담 신청
+  - **백트래킹 알고리즘**으로 최대한 많은 학부모와 상담할 수 있도록 자동 일정 조율
+
+- **화상상담**
+  - **openVidu**로 실시간 화상상담
+  - 상담 중 발생하는 폭언, 욕설을 감지하여 자동으로 녹화 시작
+  - 상담 종료 후 녹화 파일 다운로드
+
+- **등하원관리**
+  - **웹소켓**으로 등하원 버스 실시간 위치 확인
+  - 정류장별 체크리스트로 등하원 여부 관리
 
 - **알림장**
-  - 온라인으로 작성하는 알림장 서비스
+  - 온라인으로 알림장을 작성하여 반 학부모들에게 전달
 
 - **성장일지**
-  - 원생들의 특별한 하루를 기록하는 서비스
-  - 학부모분들에게 아이의 하루 모습을 전달할 수 있습니다.
+  - 학부모에게 아이의 하루 기록을 전달
+  - 작성 여부 체크로 모든 아이의 성장일지를 빠르게 작성 가능
 
 - **서류관리**
-  - 아이들과 관련한 서류를 제출할 수 있습니다.
-  - 원에서 관리되는 투약 신청서 및 결석 사유서 등 서류 내역을 제출하고 처리할 수 있습니다.
+  - 투약 신청서, 결석 사유서 등 서류 내역을 제출하고 관리
 
-- **원생 앨범**
-  - 원생들의 추억을 남긴 사진들을 저장할 수 있습니다.
-  - 여러 아이들의 사진으로 앨범을 만들어 학부모에게 전달하세요.
-  - **얼굴 인식 AI**를 도입하여 학부모 자식에 해당하는 아이 앨범을 자동으로 만들어 줍니다.
-  - 아이별 누적 사진 개수를 계산하여 학부모 불만 사전 예방
+- **일정관리**
+  - 학사일정, 화상상담 일정, 개인 일정 관리
 
-- **유치원 정기 상담**
-  - 선생님, 학부모간 정기 화상 상담 진행 서비스
-  - 온라인 상으로 학부모들에게 상담을 예약받고, 상담 내역을 기반으로 유치원 정기 상담 진행합니다.
-  - **백트래킹 알고리즘**을 적용시켜 상담 일정을 자동으로 조율할 수 있어요.
-  - 상담 중 발생하는 폭언, 욕설 등을 감지하여 녹화본을 추출할 수 있습니다.
-
-## 💛 주요 기능
+## 💛 기술 스택
 
 ### **Backend - Spring**
 
-<img src="https://img.shields.io/badge/IntelliJ IDEA-000000?style=for-the-badge&logo=IntelliJ IDEA&logoColor=white"> 
-<img src="https://img.shields.io/badge/SpringBoot_3.3.1-6DB33F?style=for-the-badge&logo=Spring Boot&logoColor=white">
-<img src="https://img.shields.io/badge/Spring Data JPA-6DB33F?style=for-the-badge&logo=&logoColor=white">
-<img src="https://img.shields.io/badge/Spring Security-6DB33F?style=for-the-badge&logo=Spring Security&logoColor=white">
-<img src="https://img.shields.io/badge/Spring Web-6DB33F?style=for-the-badge&logo=&logoColor=white">
-<img src="https://img.shields.io/badge/WebSocket-000000?style=for-the-badge&logo=&logoColor=white">
-<img src="https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=Redis&logoColor=white">
-<img src="https://img.shields.io/badge/Thumbnailator-000000?style=for-the-badge&logo=&logoColor=white">
-<img src="https://img.shields.io/badge/Swagger_annotation_2.2.22-85EA2D?style=for-the-badge&logo=Swagger&logoColor=white">
-<img src="https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=MySQL&logoColor=white">
-<img src="https://img.shields.io/badge/AWS S3-569A31?style=for-the-badge&logo=amazons3&logoColor=white">
-<img src="https://img.shields.io/badge/Openvidu_2.30.0-232F3E?style=for-the-badge&logo=&logoColor=white">
-
+<img src="https://img.shields.io/badge/IntelliJ IDEA-000000?style=for-the-badge&logo=IntelliJ IDEA&logoColor=white"> <img src="https://img.shields.io/badge/SpringBoot_3.3.1-6DB33F?style=for-the-badge&logo=Spring Boot&logoColor=white"> <img src="https://img.shields.io/badge/Spring Data JPA-6DB33F?style=for-the-badge&logo=&logoColor=white"> <img src="https://img.shields.io/badge/Spring Security-6DB33F?style=for-the-badge&logo=Spring Security&logoColor=white"> <img src="https://img.shields.io/badge/Spring Web-6DB33F?style=for-the-badge&logo=&logoColor=white"> <br> <img src="https://img.shields.io/badge/WebSocket-000000?style=for-the-badge&logo=&logoColor=white"> <img src="https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=Redis&logoColor=white"> <img src="https://img.shields.io/badge/Thumbnailator-000000?style=for-the-badge&logo=&logoColor=white"> <img src="https://img.shields.io/badge/Swagger_annotation_2.2.22-85EA2D?style=for-the-badge&logo=Swagger&logoColor=white"> <br><img src="https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=MySQL&logoColor=white"> <img src="https://img.shields.io/badge/AWS S3-569A31?style=for-the-badge&logo=amazons3&logoColor=white"> <img src="https://img.shields.io/badge/Openvidu_2.30.0-232F3E?style=for-the-badge&logo=&logoColor=white">
+ 
 ### **Backend - Flask**
 
-<img src="https://img.shields.io/badge/Flask-000000?style=for-the-badge&logo=Flask&logoColor=white">
-<img src="https://img.shields.io/badge/face_recognition-000000?style=for-the-badge&logo=&logoColor=white">
-<img src="https://img.shields.io/badge/numpy-013243?style=for-the-badge&logo=numpy&logoColor=white">
-<img src="https://img.shields.io/badge/dlib-000000?style=for-the-badge&logo=&logoColor=white">
-<img src="https://img.shields.io/badge/sklearn-F7931E?style=for-the-badge&logo=scikit-learn&logoColor=white">
+<img src="https://img.shields.io/badge/Flask-000000?style=for-the-badge&logo=Flask&logoColor=white"> <img src="https://img.shields.io/badge/face_recognition-000000?style=for-the-badge&logo=&logoColor=white"> <img src="https://img.shields.io/badge/numpy-013243?style=for-the-badge&logo=numpy&logoColor=white"> <img src="https://img.shields.io/badge/dlib-000000?style=for-the-badge&logo=&logoColor=white"> <img src="https://img.shields.io/badge/sklearn-F7931E?style=for-the-badge&logo=scikit-learn&logoColor=white">
 
 ### **Frontend**
 
-<img src="https://img.shields.io/badge/Visual Studio Code-007ACC?style=for-the-badge&logo=Visual Studio Code&logoColor=white">
-<img src="https://img.shields.io/badge/Node.js_20.15.0-339933?style=for-the-badge&logo=Node.js&logoColor=white">
-<img src="https://img.shields.io/badge/Vite_5.3.1-646CFF?style=for-the-badge&logo=Vite&logoColor=white">
-<img src="https://img.shields.io/badge/React_18.3.1-61DAFB?style=for-the-badge&logo=React&logoColor=white">
-<img src="https://img.shields.io/badge/Typescript_5.2.2-3178C6?style=for-the-badge&logo=Typescript&logoColor=white">
-<img src="https://img.shields.io/badge/Tailwind CSS_3.4.4-06B6D4?style=for-the-badge&logo=Tailwind CSS&logoColor=white">
-<img src="https://img.shields.io/badge/zustand-000000?style=for-the-badge&logo=&logoColor=white">
-<img src="https://img.shields.io/badge/Openvidu_2.30.0-232F3E?style=for-the-badge&logo=&logoColor=white">
-<img src="https://img.shields.io/badge/Kakao Map API-FFCD00?style=for-the-badge&logo=&logoColor=black">
-<img src="https://img.shields.io/badge/WebSocket-000000?style=for-the-badge&logo=&logoColor=white">
-<img src="https://img.shields.io/badge/Three.js-000000?style=for-the-badge&logo=Three.js&logoColor=white">
+<img src="https://img.shields.io/badge/Visual Studio Code-007ACC?style=for-the-badge&logo=Visual Studio Code&logoColor=white"> <img src="https://img.shields.io/badge/Node.js_20.15.0-339933?style=for-the-badge&logo=Node.js&logoColor=white"> <img src="https://img.shields.io/badge/Vite_5.3.1-646CFF?style=for-the-badge&logo=Vite&logoColor=white"> <img src="https://img.shields.io/badge/React_18.3.1-61DAFB?style=for-the-badge&logo=React&logoColor=white"> <img src="https://img.shields.io/badge/Typescript_5.2.2-3178C6?style=for-the-badge&logo=Typescript&logoColor=white"> <br> <img src="https://img.shields.io/badge/Tailwind CSS_3.4.4-06B6D4?style=for-the-badge&logo=Tailwind CSS&logoColor=white"> <img src="https://img.shields.io/badge/zustand-000000?style=for-the-badge&logo=&logoColor=white"> <img src="https://img.shields.io/badge/Openvidu_2.30.0-232F3E?style=for-the-badge&logo=&logoColor=white"> <img src="https://img.shields.io/badge/Kakao Map API-FFCD00?style=for-the-badge&logo=&logoColor=black"> <img src="https://img.shields.io/badge/WebSocket-000000?style=for-the-badge&logo=&logoColor=white"> <img src="https://img.shields.io/badge/Three.js-000000?style=for-the-badge&logo=Three.js&logoColor=white">
 
 ### **CI/CD**
 
-<img src="https://img.shields.io/badge/AWS EC2-232F3E?style=for-the-badge&logo=Amazon AWS&logoColor=white">
-<img src="https://img.shields.io/badge/Jenkins-D24939?style=for-the-badge&logo=Jenkins&logoColor=white">
-<img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=Docker&logoColor=white">
-<img src="https://img.shields.io/badge/Docker Compose-2496ED?style=for-the-badge&logo=Docker&logoColor=white">
-<img src="https://img.shields.io/badge/NGINX-009639?style=for-the-badge&logo=NGINX&logoColor=white">
-<img src="https://img.shields.io/badge/SSL-000000?style=for-the-badge&logo=&logoColor=white">
+<img src="https://img.shields.io/badge/AWS EC2-232F3E?style=for-the-badge&logo=Amazon AWS&logoColor=white"> <img src="https://img.shields.io/badge/Jenkins-D24939?style=for-the-badge&logo=Jenkins&logoColor=white"> <img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=Docker&logoColor=white"> <img src="https://img.shields.io/badge/Docker Compose-2496ED?style=for-the-badge&logo=Docker&logoColor=white"> <img src="https://img.shields.io/badge/NGINX-009639?style=for-the-badge&logo=NGINX&logoColor=white"> <img src="https://img.shields.io/badge/SSL-000000?style=for-the-badge&logo=&logoColor=white">
 
 ### **Communication**
 
-<img src="https://img.shields.io/badge/Git(Gitlab)-FCA121?style=for-the-badge&logo=Gitlab&logoColor=white">
-<img src="https://img.shields.io/badge/Jira-0052CC?style=for-the-badge&logo=Jira&logoColor=white">
-<img src="https://img.shields.io/badge/Notion-000000?style=for-the-badge&logo=Notion&logoColor=white">
-<img src="https://img.shields.io/badge/Mattermost-0058CC?style=for-the-badge&logo=Mattermost&logoColor=white">
-<img src="https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=Figma&logoColor=white">
+<img src="https://img.shields.io/badge/Git(Gitlab)-FCA121?style=for-the-badge&logo=Gitlab&logoColor=white"> <img src="https://img.shields.io/badge/Jira-0052CC?style=for-the-badge&logo=Jira&logoColor=white"> <img src="https://img.shields.io/badge/Notion-000000?style=for-the-badge&logo=Notion&logoColor=white"> <img src="https://img.shields.io/badge/Mattermost-0058CC?style=for-the-badge&logo=Mattermost&logoColor=white"> <img src="https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=Figma&logoColor=white">
 
 
 
@@ -326,15 +297,16 @@ KidsLink.
 
 ## 💛 프로젝트 결과물
 
-- [포팅메뉴얼](./docs/assets/pdf/포팅_메뉴얼.pdf)
-- [중간발표자료](http://www.kidslink.xyz)
-- [최종발표자료](http://www.kidslink.xyz)
+- [포팅메뉴얼](./exec/포팅_메뉴얼.pdf)
+- [중간발표자료](./docs/키즈링크_중간발표_PPT.pptx)
+- [최종발표자료](./docs/키즈링크_최종발표_PPT.pdf)
 
-## 💛 키즈링크 서비스
+## 💛 화면 구성
 
+### 랜딩페이지
 ![로그인](./docs/assets/gifs/로그인.gif)
 
-### 회원 가입
+### 회원가입
 - 학부모, 선생님, 원장 선생님등 회원에 맞게 가입이 가능
 - 소셜 로그인 시 필수 정보를 위한 회원 가입 진행
 - 등록된 유치원 정보 및 자녀 정보 기입
