@@ -61,7 +61,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
     if (alert.code === "MEETING") {
       navigate("/meeting/confirm");
     } else if (alert.code === "DOCUMENT") {
-      console.log("서류 페이지 이동(알람)")
       navigate("/document");
     }
 

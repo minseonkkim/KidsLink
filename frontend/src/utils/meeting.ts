@@ -12,18 +12,28 @@ export const getCurrentTimeString = (): string => {
     return `${year}-${month}-${date} ${hours}:${minutes}`;
   };
 
+export const convertTimestampToDateTime = (timestamp: number): string => {
+    // 밀리초 단위 타임스탬프를 Date 객체로 변환
+    const date = new Date(timestamp);
+  
+    // 연도, 월, 일, 시, 분, 초 추출
+    const year = date.getUTCFullYear();
+    const month = date.getUTCMonth() + 1; // getUTCMonth()는 0부터 시작하므로 1을 더해줌
+    const day = date.getUTCDate();
+    const hours = date.getUTCHours();
+    const minutes = date.getUTCMinutes();
+  
+    // "YYYY년 MM월 DD일 HH시 mm분 ss초" 형식으로 반환
+    return `${year}년 ${month}월 ${day}일 ${hours}시 ${minutes}분`;
+  }
+
+  
 
 // 미팅 활성화 함수
 export const isMeetingActive = (meetingDate: string, meetingTime: string): boolean => {
   const currentTime = new Date(); // 현재 시간
   const meetingDateTime = new Date(`${meetingDate}T${meetingTime}`); // 상담 시간
   const timeDiff = meetingDateTime.getTime() - currentTime.getTime(); // 상담 시간과 현재 시간의 차이 (밀리초)
-  
-  console.log("현재 시간:", currentTime);
-  console.log("상담 시간:", meetingDateTime);
-  console.log("시간 차이 (밀리초):", timeDiff);
-  console.log(-30*1000*60)
-  console.log(10*1000*60)
 
 /*
   // 상담 시작 10분 전부터 상담 시작 30분 후까지의 범위 확인
@@ -56,11 +66,7 @@ export const isMeetingVisible = (meetingDate: string, meetingTime: string): bool
   
   // 상담 시간에 30분을 더한 시간을 계산
   const meetingEndTime = new Date(meetingDateTime.getTime() + 30 * 60000);
-
-  console.log("현재 시간:", currentTimeString);
-  console.log("상담 종료 시간:", meetingEndTime);
-  console.log("시간이 지났나?", currentDateTime <= meetingEndTime);
-
+  
   // 상담 종료 시간이 현재 시간보다 이전인 경우 상담을 보이지 않게 설정
   if (currentDateTime > meetingEndTime) {
     return false;

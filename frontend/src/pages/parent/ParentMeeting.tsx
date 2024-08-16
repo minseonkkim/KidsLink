@@ -35,7 +35,12 @@ export default function ParentMeeting() {
           const meetingEndTime = new Date(new Date(`${meeting.meetingDate}T${formattedTime}:00`).getTime() + 30 * 60 * 1000);
           return new Date() <= meetingEndTime;
         })
-        setMeetings(filteredMeetings)
+        const sortedMeetings = filteredMeetings.sort((a, b) => {
+          const dateA = new Date(`${a.meetingDate}T${a.meetingTime}`)
+          const dateB = new Date(`${b.meetingDate}T${b.meetingTime}`)
+          return dateA.getTime() - dateB.getTime();
+        })
+        setMeetings(sortedMeetings)
       } catch (error) {
         console.error("Failed to fetch meetings: ", error)
       }

@@ -14,6 +14,7 @@ import { FaBan } from "react-icons/fa";
 import { IoDocumentAttach, IoRecording } from "react-icons/io5";
 import { GiTalk } from "react-icons/gi";
 import { TbMoodKidFilled } from "react-icons/tb";
+import recImg from "../../assets/teacher/record_img.png"
 import parentImg from "../../assets/parent/cute-daramgi.png";
 
 export default function TeacherVideo() {
@@ -50,10 +51,10 @@ export default function TeacherVideo() {
   const recordingStartTimeRef = useRef<number | null>(null);
   const [childName, setChildName] = useState<string>(""); // childName 상태 추가
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-
+  const [showRecIndicator, setShowRecIndicator] = useState(false);
+  
   useEffect(() => {
     async function fetchChildInfo() {
-      console.log("자녀 정보 패치 중...");
       try {
         const meetingInfo = await getMeetingInfo(Number(meetingId));
         setChildName(meetingInfo.childName); // childName 상태 설정
@@ -84,11 +85,10 @@ export default function TeacherVideo() {
 
   useEffect(() => {
     if (openvidu.session) {
-      openvidu.session.on("signal:profanityDetected", (event) => {
-        console.log("학부모 욕설 감지:", event);
-        
+      openvidu.session.on("signal:profanityDetected", (event) => {       
         // 녹화 시작됐다는 변수 조정해서 REC 뜨게하기
-
+        setShowRecIndicator(true);
+        
         if (recordingStartTimeRef.current) {
           const detectedTime = Date.now();
           const adjustedStartTime = Math.max(recordingStartTimeRef.current, detectedTime - 20000);
@@ -126,7 +126,8 @@ export default function TeacherVideo() {
 
   useEffect(() => {
     if (isSessionJoined && !isRecording) {
-      handleStartRecording();
+      setTimeout(handleStartRecording, 10000);
+      // handleStartRecording();
     }
   }, [isSessionJoined]);
 
@@ -195,6 +196,15 @@ export default function TeacherVideo() {
 
   return (
     <div className="relative flex flex-col justify-center items-center w-screen h-screen min-w-[1000px] overflow-hidden">
+      {/* 녹화 중일 때 학부모 화면 위에 고정된 REC 표시 */}
+      {showRecIndicator && (
+        <div className="absolute top-[0px] left-[50%] z-50 flex items-center space-x-2">
+          <div className="relative top-[20px] left-[-50%] animate-fade-in-out">
+            {/* 애니메이션 효과를 이 요소에 적용합니다 */}
+            <img src={recImg} alt="녹화 이미지" style={{ width: "70px" }} />
+          </div>
+        </div>
+      )}
       <img src={MeetingBackground} className="absolute top-0 left-0 w-full h-full object-cover" />
       <div className="relative z-10 w-full h-full flex flex-col items-center">
         <div className="relative w-full h-full flex">
@@ -216,11 +226,8 @@ export default function TeacherVideo() {
             )}
           </div>
           {openvidu.session && (
-            <div className="absolute top-[150px] right-[600px] font-bold text-[20px] flex flex-row items-center">
-              <img
-                src={parentImg}
-                className="w-[40px] h-[40px] rounded-full object-cover mr-3"
-              />
+            <div className="absolute top-[150px] right-[570px] font-bold text-[20px] flex flex-row items-center">
+              <img src={parentImg} className="w-[40px] h-[40px] rounded-full object-cover mr-3" />
               {childName} 학부모
             </div>
           )}
@@ -242,60 +249,69 @@ export default function TeacherVideo() {
         {!openvidu.session && (
           <div className="flex flex-col items-center w-full h-full">
             <div className="absolute top-[250px] bg-[#fff9d7] rounded-[20px] p-6 shadow-lg border-2 border-[#ffec8a] bg-notebook-pattern">
-            {/* 상담 안내문 */}
-            <p className="text-base font-bold text-[#212121] mb-4">
-              {meetingDate} {meetingTime} ~ {meetingEndTime}
-            </p>
-            <div className="text-sm text-[#212121] mb-6">
-              <p className="font-bold mb-2 text-xl">상담 중 지켜야 할 규칙</p>
-              <ul className="list-none space-y-2">
-                <li className="flex items-center">
-                  <div className="flex items-center justify-center mr-2">
-                    <IoDocumentAttach className="text-[#ff6347]" size={20} />
-                  </div>
-                  <span className="flex-1 text-lg">상담에 필요한 자료들은 미리 준비해주세요.</span>
-                </li>
-                <li className="flex items-center">
-                  <div className="flex items-center justify-center mr-2">
-                    <GiTalk className="text-[#ff6347]" size={20} />
-                  </div>
-                  <span className="flex-1 text-lg">학부모가 편안하게 자신의 생각을 표현할 수 있도록 도와주세요.</span>
-                </li>
-                <li className="flex items-center">
-                  <div className="flex items-center justify-center mr-2">
-                    <TbMoodKidFilled className="text-[#ff6347]" size={20} />
-                  </div>
-                  <span className="flex-1 text-lg">학생의 긍정적인 면을 강조해주세요.</span>
-                </li>
-                <li className="flex items-center">
-                  <div className="flex items-center justify-center mr-2">
-                    <IoRecording className="text-[#ff6347]" size={20} />
-                  </div>
-                  <span className="flex-1 text-lg">학부모가 욕설을 할 경우 자동으로 녹화가 진행됩니다.</span>
-                </li>
-              </ul>
+              {/* 상담 안내문 */}
+              <p className="text-base font-bold text-[#212121] mb-4">
+                {meetingDate} {meetingTime} ~ {meetingEndTime}
+              </p>
+              <div className="text-sm text-[#212121] mb-6">
+                <p className="font-bold mb-2 text-xl">상담 중 지켜야 할 규칙</p>
+                <ul className="list-none space-y-2">
+                  <li className="flex items-center">
+                    <div className="flex items-center justify-center mr-2">
+                      <IoDocumentAttach className="text-[#ff6347]" size={20} />
+                    </div>
+                    <span className="flex-1 text-lg">
+                      상담에 필요한 자료들은 미리 준비해주세요.
+                    </span>
+                  </li>
+                  <li className="flex items-center">
+                    <div className="flex items-center justify-center mr-2">
+                      <GiTalk className="text-[#ff6347]" size={20} />
+                    </div>
+                    <span className="flex-1 text-lg">
+                      학부모가 편안하게 자신의 생각을 표현할 수 있도록 도와주세요.
+                    </span>
+                  </li>
+                  <li className="flex items-center">
+                    <div className="flex items-center justify-center mr-2">
+                      <TbMoodKidFilled className="text-[#ff6347]" size={20} />
+                    </div>
+                    <span className="flex-1 text-lg">학생의 긍정적인 면을 강조해주세요.</span>
+                  </li>
+                  <li className="flex items-center">
+                    <div className="flex items-center justify-center mr-2">
+                      <IoRecording className="text-[#ff6347]" size={20} />
+                    </div>
+                    <span className="flex-1 text-lg">
+                      학부모가 욕설을 할 경우 자동으로 녹화가 진행됩니다.
+                    </span>
+                  </li>
+                </ul>
+              </div>
+              <div className="flex justify-center gap-4">
+                {/* 세션 연결 버튼 */}
+                <button
+                  onClick={() =>
+                    joinSession(
+                      user,
+                      setOpenvidu,
+                      setIsSessionJoined,
+                      setMyStreamId,
+                      setOtherVideoActive // 추가
+                    )
+                  }
+                  className="w-28 h-10 bg-[#ffec8a] rounded-full flex items-center justify-center text-lg font-medium text-[#212121] hover:bg-[#fdda6e] transition-colors"
+                >
+                  입장하기
+                </button>
+                <button
+                  onClick={handleOutClick}
+                  className="w-28 h-10 bg-[#ffec8a] rounded-full flex items-center justify-center text-lg font-medium text-[#212121] hover:bg-[#fdda6e] transition-colors"
+                >
+                  나가기
+                </button>
+              </div>
             </div>
-            <div className="flex justify-center gap-4">
-              {/* 세션 연결 버튼 */}
-              <button
-                onClick={() =>
-                  joinSession(
-                    user,
-                    setOpenvidu,
-                    setIsSessionJoined,
-                    setMyStreamId,
-                    setOtherVideoActive // 추가
-                  )
-                }
-                className="w-28 h-10 bg-[#ffec8a] rounded-full flex items-center justify-center text-lg font-medium text-[#212121] hover:bg-[#fdda6e] transition-colors"
-              >
-                입장하기
-              </button>
-              <button onClick={handleOutClick} className="w-28 h-10 bg-[#ffec8a] rounded-full flex items-center justify-center text-lg font-medium text-[#212121] hover:bg-[#fdda6e] transition-colors">
-                나가기
-              </button>
-            </div>
-          </div>
           </div>
         )}
         {isSessionJoined && (
