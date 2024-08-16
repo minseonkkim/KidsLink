@@ -43,6 +43,26 @@ public class VideoController {
         return new ResponseEntity<>(sessionId, HttpStatus.OK);
     }
 
+    // TODO #3 범수추가
+    /**
+     * Get session details by session ID
+     *
+     * @param sessionId The Session ID
+     * @return Session details or 404 if not found
+     */
+    @GetMapping("/sessions/{sessionId}")
+    public ResponseEntity<?> checkSessionExists(@PathVariable("sessionId") String sessionId) {
+        log.info("checkSessionExists - {}", sessionId);
+        try {
+            videoService.getSession(sessionId); // 세션이 존재하면 세션 정보를 반환
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception e) {
+            // 세션이 존재하지 않거나 다른 문제가 발생한 경우 404 반환
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+    // TODO #3 범수추가
+    
     /**
      * @param sessionId The Session in which to create the Connection
      * @param params    The Connection properties

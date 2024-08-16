@@ -5,7 +5,9 @@ import { fetchRecordings, handleDownload } from "../../api/openvidu";
 import Title from "../../components/teacher/common/Title";
 import TeacherLayout from "../../layouts/TeacherLayout";
 import daramgi from "../../assets/teacher/meeting-daramgi.png";
+import daramgisad from '../../assets/common/crying-daramgi.png';
 import { getOneParentInfo, getTeacherId } from "../../api/Info";
+import { convertTimestampToDateTime } from "../../utils/meeting";
 
 // 페이지 디자인용으로 진행하고, 나중에는 삭제해야합니다!
 // const dummyRecordings: Recording[] = [
@@ -24,9 +26,6 @@ const TeacherMeetingRecordingList: React.FC = () => {
       // try {
       const teacherId = await getTeacherId();
       const fetchedRecordings = await fetchRecordingsListByTeacherId(teacherId);
-
-      console.log("fetchAllRecordings 메서드 동작 fetchedRecordings:", fetchedRecordings);
-
       // Fetch parent names and format recording names
       const updatedRecordings = await Promise.all(
         fetchedRecordings.map(async (recording) => {
@@ -73,18 +72,11 @@ const TeacherMeetingRecordingList: React.FC = () => {
     } else {
       setNoRecordings(false); // 녹화본이 있을 때 상태를 false로 설정
     }
-    console.log(recordings);
+    console.log("recordings", recordings)
   }, [recordings]);
 
   const handleDelete = (id: string) => {
     setRecordings(recordings.filter((recording) => recording.id !== id));
-  };
-
-  // TODO #1 삭제 필요 - 범수
-  const handleFetchListTest = async () => {
-    const recordingList = await fetchRecordings();
-    console.log(recordingList);
-    setRecordings(recordingList);
   };
 
   const tabs = [
@@ -101,11 +93,20 @@ const TeacherMeetingRecordingList: React.FC = () => {
       titleComponent={<Title title="녹화된 상담" tabs={tabs} />}
       imageSrc={daramgi}
     >
-      <div className="w-full mt-10 mb-32 px-4 lg:px-8 py-6 lg:py-8">
-        {/* // TODO #1 삭제 필요 - 범수 */}
-        <button onClick={handleFetchListTest}>녹화본 가져오기</button>
+      <div className="w-full mb-32 px-4 lg:px-8 py-6 lg:py-8">
         {noRecordings ? (
-          <p className="text-gray-600">저장된 녹화본이 없습니다.</p>
+          <div className="flex bg-transparent">
+            <div className="m-auto text-center mt-24">
+                <img 
+                    src={daramgisad} 
+                    alt="daramgisad" 
+                    className="h-[200px] mb-6 mx-auto" 
+                />
+                <p className="text-[22px] font-bold text-[#333] mb-4">
+                    저장된 녹화본이 없습니다.
+                </p>
+            </div>
+        </div>
         ) : (
           <ul className="list-none p-0">
             {recordings.map((recording) => (
@@ -114,16 +115,19 @@ const TeacherMeetingRecordingList: React.FC = () => {
                 className="flex flex-col lg:flex-row justify-between items-center mb-4 p-4 border border-gray-200 rounded-md shadow-sm"
               >
                 <span className="text-lg font-semibold">{recording.name}</span>
+                <span className="text-xs text-gray-400 lg:mb-0 mb-2">
+                  {convertTimestampToDateTime(recording.createdAt)}
+                </span>
                 <div className="flex flex-col lg:flex-row mt-2 lg:mt-0">
                   <button
                     onClick={() => handleDownload(recording.url)}
-                    className="mb-2 lg:mb-0 lg:mr-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700 transition duration-200"
+                    className="mr-[24px] mt-2 h-[40px] border-2 border-[#7C7C7C] bg-[#E3EEFF] px-3 py-1 font-bold rounded-[10px] hover:bg-[#D4DDEA] flex items-center"
                   >
                     다운로드
                   </button>
                   <button
                     onClick={() => handleDelete(recording.id)}
-                    className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-700 transition duration-200"
+                    className="mt-2 h-[40px] border-2 border-[#7C7C7C] bg-[#FFDFDF] px-3 py-1 font-bold rounded-[10px] hover:bg-[#FFC0C0] flex items-center text-center"
                   >
                     삭제
                   </button>

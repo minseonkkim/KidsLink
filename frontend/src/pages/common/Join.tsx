@@ -32,6 +32,10 @@ export default function Join() {
   }, [location.state, setIsSocialLogin, setUsername, setEmail])
 
   const handleCardClick = (role: string) => {
+    // 원장님은 이동 막기
+    if (role === "director") {
+      return; 
+    }
     setSelectedRole(role)
     navigate(`/join/${role}`)
   }

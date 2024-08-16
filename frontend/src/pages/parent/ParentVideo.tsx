@@ -47,7 +47,6 @@ export default function ParentVideo() {
     const fetchMeetingInfo = async () => {
       try {
         const res = await getMeetingInfo(parseInt(meetingId));
-        console.log("상담 조회하면서 parentInfo: ", parentInfo);
         setTeacherName(res.teacherName);
 
         // 상담 날짜 설정 (이거 utils에 저장된 날짜 함수 확인해보고 쓸지말지 수정하기)
@@ -79,19 +78,16 @@ export default function ParentVideo() {
     } else {
       setUser((prevUser) => ({ ...prevUser, username: parentInfo.child.name }));
     }
-    console.log("parentInfo: ", parentInfo);
   }, [parentInfo, setParentInfo]);
 
-  // useEffect(() => {
-  //   console.log("location",location.pathname)
-  //   if (location.pathname !== `/meeting/${meetingId}`) {
+  useEffect(() => {
+    if (location.pathname !== `/meeting/${meetingId}`) {
 
-  //     return () => {
-  //       console.log("여기서 걸림")
-  //       leaveSession(openvidu, setOpenvidu, setIsSessionJoined, navigate);
-  //     };
-  //   }
-  // }, [navigate, location.pathname, meetingId]);
+      return () => {
+        leaveSession(openvidu, setOpenvidu, setIsSessionJoined, navigate);
+      };
+    }
+  }, [navigate, location.pathname, meetingId]);
 
   useEffect(() => {
     if (isSessionJoined && openvidu.session) {
@@ -109,7 +105,6 @@ export default function ParentVideo() {
 
     if (openvidu.session) {
       openvidu.session.on("signal:session-ended", (event) => {
-         console.log("세션 종료 신호 수신:", event.data);
         leaveSession(openvidu, setOpenvidu, setIsSessionJoined, navigate);
         navigate("/meeting");
       });
@@ -128,38 +123,12 @@ export default function ParentVideo() {
   const handleLeaveSession = () => {
     leaveSession(openvidu, setOpenvidu, setIsSessionJoined, navigate); // navigate 함수 전달
   };
-
-  const handleSpeechTestButton = () => {
-    console.log("욕설전송 버튼");
-    openvidu.session.signal({
-      data: "startRecording",
-      to: [], // 선생님에게 신호 전송
-      type: "profanityDetected",
-    });
-  };
-
+  
   return (
     <div
       className="relative min-h-screen bg-cover bg-center bg-no-repeat px-4 pt-4 flex items-center justify-center"
       style={{ backgroundImage: `url(${bgImg})` }}
     >
-      <button
-        onClick={handleSpeechTestButton}
-        style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          zIndex: 1000, // 높은 z-index 값으로 다른 요소보다 앞에 위치하도록 함
-          padding: "10px 20px",
-          backgroundColor: "#007bff",
-          color: "#fff",
-          border: "none",
-          borderRadius: "4px",
-          cursor: "pointer",
-        }}
-      >
-        Test Button
-      </button>
       {/* 반투명 검정 배경 */}
       <div className="absolute inset-0 bg-black bg-opacity-50"></div>
       {openvidu.session ? (

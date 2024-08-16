@@ -86,11 +86,13 @@ export default function KindergartenSelector({
           <option value="" disabled>
             유치원 선택
           </option>
-          {kindergartens.map((kg) => (
-            <option key={kg.kindergartenId} value={kg.kindergartenId}>
-              {kg.kindergartenName}
-            </option>
-          ))}
+          {kindergartens
+            .filter((kg) => kg.kindergartenName !== "떡잎 유치원") // 시연 위해서 "떡잎 유치원" 제외
+            .map((kg) => (
+              <option key={kg.kindergartenId} value={kg.kindergartenId}>
+                {kg.kindergartenName}
+              </option>
+            ))}
         </select>
         <select
           className="w-1/2 border border-gray-400 rounded-md p-2 bg-white focus:ring-2 focus:ring-[#F8DE56]"

@@ -18,7 +18,6 @@ export default function SubHeader({ title }: CommonHeaderProps) {
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        // console.log("Fetching notifications...");
         const fetchedNotifications = await getAllAlarms();
         setNotifications(fetchedNotifications.reverse());
         setNotificationCount(fetchedNotifications.length);
@@ -43,7 +42,7 @@ export default function SubHeader({ title }: CommonHeaderProps) {
   };
 
   return (
-    <div className="z-50 fixed w-full h-[67px] border-b bg-white border-gray-300 p-4 shadow-md flex items-center justify-between">
+    <div className="max-w-md w-full z-50 fixed w-full h-[67px] border-b bg-white border-gray-300 p-4 shadow-md flex items-center justify-between">
       <button onClick={handleBack} className="flex items-center justify-center w-10 h-10">
         <FaArrowLeft className="w-6 h-6 text-gray-700" />
       </button>

@@ -7,6 +7,7 @@ import { showToastError, showToastSuccess } from "../../components/teacher/commo
 import ToastNotification from "../../components/teacher/common/ToastNotification";
 import TeacherLayout from '../../layouts/TeacherLayout';
 import daramgi from "../../assets/teacher/meeting-daramgi.png"
+import daramgisad from '../../assets/common/crying-daramgi.png';
 import { getTeacherInfo } from "../../api/Info";
 
 interface Meeting {
@@ -231,8 +232,7 @@ export default function TeacherMeetingConfirm() {
             />}
             imageSrc={daramgi} 
         >
-            <div className="w-full mb-32 px-5 lg:px-8 py-3 lg:py-10">
-                
+            <div className="w-full mb-32 px-4 lg:px-8 py-6 lg:py-8">
                 {Object.keys(groupedMeetings).length !== 0 && (
                     <div className="text-center text-[17px] mb-3">
                         학부모님들께서 선택하신 희망 날짜 및 시간입니다.<br />일정 조율하기 버튼을 누르면 선택하지 않은 일정을 자동으로 조율합니다.
@@ -280,8 +280,17 @@ export default function TeacherMeetingConfirm() {
                         ))}
                     </div>
                 ) : (
-                    <div className="flex items-center justify-center h-[400px] text-center text-[18px]">
-                        학부모님들께서 선택하신 희망 날짜 및 시간이 없어요.
+                    <div className="flex bg-transparent">
+                        <div className="m-auto text-center mt-24">
+                            <img 
+                                src={daramgisad} 
+                                alt="daramgisad" 
+                                className="h-[200px] mb-6 mx-auto" 
+                            />
+                            <p className="text-[22px] font-bold text-[#333] mb-4">
+                                희망 상담일자가 존재하지 않습니다.
+                            </p>
+                        </div>
                     </div>
                 )}
             </div>

@@ -39,7 +39,6 @@ const DesktopComponent = () => {
       if (accessToken && expiredAt) {
         localStorage.setItem('accessToken', accessToken);
         localStorage.setItem('expiredAt', expiredAt);
-        console.log("role", role);
         setUserType(role);
       }
     }
@@ -56,7 +55,6 @@ const DesktopComponent = () => {
     e.preventDefault();
     try {
       const data = await loginAPI({ username, password });
-      console.log("Login successful:", data);
       setUserType(data.role);
       navigate("/"); // 로그인 성공 후 이동할 경로
     } catch (error) {
@@ -214,7 +212,6 @@ const TabletOrMobileComponent = () => {
       if (accessToken && expiredAt) {
         localStorage.setItem('accessToken', accessToken);
         localStorage.setItem('expiredAt', expiredAt);
-        console.log("role", role);
         setUserType(role);
       }
     }
@@ -233,7 +230,6 @@ const TabletOrMobileComponent = () => {
     e.preventDefault();
     try {
       const data = await loginAPI({ username, password });
-      console.log("Login successful:", data);
       setUserType(data.role);
       navigate("/"); // 로그인 성공 후 이동할 경로
     } catch (error) {
@@ -243,7 +239,6 @@ const TabletOrMobileComponent = () => {
   };
 
   const handleSocialLogin = (provider: string) => {
-    console.log(`소셜 로그인: ${provider}`);
     window.location.href = `${import.meta.env.VITE_API}/oauth2/authorization/${provider}`;
   };
 
