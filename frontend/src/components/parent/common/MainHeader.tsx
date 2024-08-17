@@ -2,17 +2,12 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import AlarmBell from './AlarmBell'
 import { getAllAlarms } from '../../../api/alarm'
+import { Alarm } from "../../../types/alarm"
 
-export interface Notification {
-  id: number;
-  date: string;
-  contents: string;
-  code: string;
-}
 
 export default function MainHeader() {
   const navigate = useNavigate();
-  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [notifications, setNotifications] = useState<Alarm[]>([]);
   const [notificationCount, setNotificationCount] = useState(0);
 
   useEffect(() => {

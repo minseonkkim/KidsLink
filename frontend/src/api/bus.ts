@@ -1,5 +1,4 @@
-import axiosInstance from "./token/axiosInstance";
-import { useNavigate } from "react-router-dom";
+import axiosInstance from "./token/axiosInstance"
 
 // 학부모 버스 탑승 여부 작성
 export async function postKidBoardingStatus(childId: number) {

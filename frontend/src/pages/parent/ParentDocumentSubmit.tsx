@@ -4,9 +4,8 @@ import daramgi from "../../assets/parent/document-daramgi.png";
 import {
   createDosageDocument,
   createAbsentDocument,
-  DosageData,
-  AbsentData,
 } from "../../api/document";
+import { DosageData, AbsentData } from "../../types/document";
 import { useParentInfoStore } from "../../stores/useParentInfoStore";
 import DateRangePicker from "../../components/parent/document/DateRangePicker";
 import InputFields from "../../components/parent/document/InputFields";

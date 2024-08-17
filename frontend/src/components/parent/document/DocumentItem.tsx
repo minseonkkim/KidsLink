@@ -1,21 +1,10 @@
 import checkedIcon from '../../../assets/parent/check.png'
 import { FaPills, FaRegTimesCircle } from "react-icons/fa"
+import { DocumentDetail } from "../../../types/document"
 
-interface Document {
-  id: number;
-  date: string;
-  type: 'dosage' | 'absent';
-  checked: boolean;
-  startDate: string;
-  endDate: string;
-  documentId: number;
-  title: string;
-  details: string;
-  childId: number;
-}
 
 interface DocumentItemProps {
-  doc: Document;
+  doc: DocumentDetail;
   handleDocumentClick: (docType: string, docId: number) => void;
 }
 

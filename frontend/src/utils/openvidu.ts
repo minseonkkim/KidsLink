@@ -1,7 +1,15 @@
-import { OpenVidu, StreamEvent, StreamPropertyChangedEvent } from "openvidu-browser";
-import { fetchRecordings, fetchRecordingsByTeacherId, getToken } from "../api/openvidu";
+import {
+  OpenVidu,
+  StreamEvent,
+  StreamPropertyChangedEvent,
+} from "openvidu-browser";
+import {
+  fetchRecordings,
+  fetchRecordingsByTeacherId,
+  getToken,
+} from "../api/openvidu";
 import { OpenViduState, Recording, User } from "../types/openvidu";
-import { getParentInfo } from "../api/Info";
+import { getParentInfo } from "../api/info";
 
 // TODO #2 08142231 범수 수정해야함
 /* 변경전 코드
@@ -129,7 +137,9 @@ export const joinSession = async (
   // 이벤트 등록
   session.on("streamCreated", (event: StreamEvent) => {
     try {
-      const subscriber = session.subscribe(event.stream, undefined, { insertMode: "REPLACE" });
+      const subscriber = session.subscribe(event.stream, undefined, {
+        insertMode: "REPLACE",
+      });
       setOpenvidu((prevOpenvidu) => ({
         ...prevOpenvidu,
         subscribers: [...prevOpenvidu.subscribers, subscriber],
@@ -144,7 +154,9 @@ export const joinSession = async (
       const streamManager = event.stream.streamManager;
       return {
         ...prevOpenvidu,
-        subscribers: prevOpenvidu.subscribers.filter((sub) => sub !== streamManager),
+        subscribers: prevOpenvidu.subscribers.filter(
+          (sub) => sub !== streamManager
+        ),
       };
     });
   });
@@ -228,17 +240,25 @@ export const leaveSession = async (
   }
 };
 
-export const fetchParentInfo = async (setParentInfo: React.Dispatch<React.SetStateAction<any>>, setUser: React.Dispatch<React.SetStateAction<User>>) => {
+export const fetchParentInfo = async (
+  setParentInfo: React.Dispatch<React.SetStateAction<any>>,
+  setUser: React.Dispatch<React.SetStateAction<User>>
+) => {
   try {
     const fetchedParentInfo = await getParentInfo();
     setParentInfo(fetchedParentInfo);
-    setUser((prevUser) => ({ ...prevUser, username: fetchedParentInfo.child.name }));
+    setUser((prevUser) => ({
+      ...prevUser,
+      username: fetchedParentInfo.child.name,
+    }));
   } catch (error) {
     console.error("Failed to fetch parent info:", error);
   }
 };
 
-export const fetchRecordingsList = async (setRecordings: React.Dispatch<React.SetStateAction<Recording[]>>) => {
+export const fetchRecordingsList = async (
+  setRecordings: React.Dispatch<React.SetStateAction<Recording[]>>
+) => {
   try {
     const recordings = await fetchRecordings();
     setRecordings(recordings);
