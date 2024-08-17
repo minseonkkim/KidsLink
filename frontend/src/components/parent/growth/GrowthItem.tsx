@@ -1,4 +1,4 @@
-import { Diary } from "../../../api/growthdiary"
+import { Diary } from "../../../types/growthdiary"
 
 interface GrowthItemProps {
   diary: Diary;

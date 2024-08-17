@@ -1,16 +1,10 @@
-import { Notification } from '../components/parent/common/MainHeader';
 import axiosInstance from './token/axiosInstance'
+import { Alarm } from '../types/alarm'
 
-export interface Alarm{
-  id: number;
-  contents: string;
-  date: string;
-  code: string;
-}
 
-const mapAlarmToNotification = (alarm: Alarm): Notification => {
+const mapAlarmToNotification = (alarm: Alarm): Alarm => {
   // Alarm의 code를 Notification의 code 타입으로 변환
-  const codeMapping: { [key: string]: Notification['code'] } = {
+  const codeMapping: { [key: string]: Alarm['code'] } = {
     'NOTICE': 'NOTICE',
     'DIARY': 'DIARY',
     'ALBUM': 'ALBUM',
@@ -44,7 +38,7 @@ export async function getAlarmCount() {
 }
 
 // 알림 조회
-export async function getAllAlarms():Promise<Notification[]> {
+export async function getAllAlarms():Promise<Alarm[]> {
   try  {
     const response = await axiosInstance.get('notification')
 

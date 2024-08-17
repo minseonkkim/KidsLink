@@ -5,9 +5,9 @@ import { useNavigate } from "react-router-dom";
 import { useTeacherInfoStore } from "../../stores/useTeacherInfoStore";
 import useAppStore from "../../stores/store";
 import DefaultProfile from "../../assets/teacher/default_profile.png";
-import { getTeacherInfo } from "../../api/Info";
-import TeacherLayout from '../../layouts/TeacherLayout';
-import daramgi from "../../assets/teacher/playing-daramgi.png"
+import { getTeacherInfo } from "../../api/info";
+import TeacherLayout from "../../layouts/TeacherLayout";
+import daramgi from "../../assets/teacher/playing-daramgi.png";
 import LoadingSpinner from "../../components/common/LoadingSpinner";
 
 export default function TeacherMyPage() {
@@ -50,7 +50,7 @@ export default function TeacherMyPage() {
     return (
       <TeacherLayout>
         <div className="flex justify-center items-center h-screen">
-          <LoadingSpinner/>
+          <LoadingSpinner />
         </div>
       </TeacherLayout>
     );
@@ -58,19 +58,20 @@ export default function TeacherMyPage() {
 
   return (
     <TeacherLayout
-        activeMenu="meeting"
-        setActiveMenu={() => {}}
-        titleComponent={<Title title="마이페이지" />}
-        imageSrc={daramgi} 
+      activeMenu="meeting"
+      setActiveMenu={() => {}}
+      titleComponent={<Title title="마이페이지" />}
+      imageSrc={daramgi}
     >
       <div className="px-4 lg:px-8 py-6 lg:py-8 mt-24">
-        
         <div className="flex justify-center mt-8">
           <div className="w-full max-w-md bg-[#f4f4f4] rounded-lg shadow-md overflow-hidden flex flex-col items-center py-6">
             <div className="flex flex-col items-center mb-4">
               <div className="w-[120px] h-[120px] lg:w-[150px] lg:h-[150px] mb-4">
                 <img
-                  src={teacherInfo.profile ? teacherInfo.profile : DefaultProfile}
+                  src={
+                    teacherInfo.profile ? teacherInfo.profile : DefaultProfile
+                  }
                   alt="Profile"
                   className="w-full h-full rounded-full object-cover"
                 />

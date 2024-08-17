@@ -1,5 +1,5 @@
-import { create } from 'zustand';
-import { ChildInfo } from '../api/Info';
+import { create } from "zustand";
+import { ChildInfo } from "../types/info";
 
 interface Child {
   child: ChildInfo;
@@ -24,18 +24,18 @@ interface BusStore {
 
 export const useBusStore = create<BusStore>((set) => ({
   busStops: [],
-  setBusStops: (stops) => 
+  setBusStops: (stops) =>
     set({
-      busStops: stops.map(stop => ({
+      busStops: stops.map((stop) => ({
         ...stop,
-        children: stop.children 
-          ? stop.children.map(child => ({
+        children: stop.children
+          ? stop.children.map((child) => ({
               ...child,
-              checked: child.checked !== undefined ? child.checked : false
-            })) 
+              checked: child.checked !== undefined ? child.checked : false,
+            }))
           : [],
-      })
-    )}),
+      })),
+    }),
   toggleChildChecked: (busStopId, childId) =>
     set((state) => ({
       busStops: state.busStops.map((stop) =>

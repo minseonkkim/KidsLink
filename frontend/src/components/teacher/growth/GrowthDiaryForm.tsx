@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { IoCameraOutline } from "react-icons/io5";
-import { FormDiaryData, createDiary } from "../../../api/growthdiary.ts";
+import { createDiary } from "../../../api/growthdiary.ts";
+import { FormDiaryData } from "../../../types/growthdiary.ts";
 import { showToastError } from "../common/ToastNotification.tsx";
 import { FaMinusCircle } from "react-icons/fa";
 

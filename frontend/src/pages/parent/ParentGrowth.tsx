@@ -4,9 +4,10 @@ import InfoSection from "../../components/parent/common/InfoSection";
 import YearMonthSelector from "../../components/parent/common/YearMonthSelector";
 import GrowthList from "../../components/parent/growth/GrowthList";
 import daramgi from "../../assets/parent/growth-daramgi.png";
-import { getKidAllGrowthDiarys, Diary } from "../../api/growthdiary";
+import { getKidAllGrowthDiarys } from "../../api/growthdiary";
+import { Diary } from "../../types/growthdiary"
 import { useParentInfoStore } from "../../stores/useParentInfoStore";
-import { getParentInfo } from "../../api/Info";
+import { getParentInfo } from "../../api/info";
 
 export default function ParentGrowth() {
   const [diarys, setDiarys] = useState<Diary[]>([]);

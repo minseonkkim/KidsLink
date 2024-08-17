@@ -1,5 +1,5 @@
-import { create } from 'zustand';
-import { TeacherInfo } from '../api/Info';
+import { create } from "zustand";
+import { TeacherInfo } from "../types/info";
 
 interface TeacherState {
   teacherInfo: TeacherInfo | null;
@@ -12,5 +12,6 @@ export const useTeacherInfoStore = create<TeacherState>((set) => ({
   teacherInfo: null,
   hasAccessedMeeting: false,
   setTeacherInfo: (info) => set({ teacherInfo: info }),
-  setHasAccessedMeeting: (hasAccessed) => set({ hasAccessedMeeting: hasAccessed }),
-}))
+  setHasAccessedMeeting: (hasAccessed) =>
+    set({ hasAccessedMeeting: hasAccessed }),
+}));
