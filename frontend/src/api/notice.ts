@@ -1,25 +1,7 @@
 import axiosInstance from './token/axiosInstance'
+import { Notice, NoticeDetail, NoticeData } from "../types/notice"
 
-export interface Notice {
-  noticeBoardId: number;
-  teacherName: string;
-  title: string;
-  content: string;
-  noticeBoardDate: string; 
-}
 
-export interface NoticeDetail {
-  noticeBoardId: number;
-  teacherName: string;
-  title: string;
-  content: string;
-  noticeBoardDate: string; 
-}
-
-interface NoticeData {
-  title: string;
-  content: string;
-}
 
 // 전체 알림장 조회
 export async function getAllNotices(): Promise<Notice[]> {

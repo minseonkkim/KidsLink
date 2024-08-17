@@ -1,25 +1,7 @@
 import axiosInstance from './token/axiosInstance';
 import noAuthAxios from './token/noAuthAxios'
+import { Kindergarten, KindergartenClass, Child } from "../types/kindergarten"
 
-interface Kindergarten {
-  kindergartenId: number;
-  kindergartenName: string;
-}
-
-interface KindergartenClass {
-  kindergartenClassId: number;
-  kindergartenClassName: string;
-}
-
-interface Child{
-  childId: number;
-  name: string;
-  kindergartenClassName: string;
-  kindergartenName: string;
-  gender: string;
-  birth: string;
-  profile: string;
-}
 
 // 모든 유치원 조회
 export async function getAllKindergartens(): Promise<Kindergarten[]> {

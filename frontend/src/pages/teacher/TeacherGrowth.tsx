@@ -5,14 +5,17 @@ import GrowthChild from "../../components/teacher/growth/GrowthChild";
 import GrowthDiaryItem from "../../components/teacher/growth/GrowthDiaryItem";
 import { FiPlusCircle } from "react-icons/fi";
 import useModal from "../../hooks/teacher/useModal";
-import ToastNotification, { showToast, showToastError } from "../../components/teacher/common/ToastNotification";
+import ToastNotification, {
+  showToast,
+  showToastError,
+} from "../../components/teacher/common/ToastNotification";
 import { useTeacherInfoStore } from "../../stores/useTeacherInfoStore";
 import { getClassChilds } from "../../api/kindergarten";
 import { getKidAllGrowthDiarys } from "../../api/growthdiary";
 import GrowthDiaryForm from "../../components/teacher/growth/GrowthDiaryForm";
-import { getTeacherInfo } from "../../api/Info";
+import { getTeacherInfo } from "../../api/info";
 import TeacherLayout from "../../layouts/TeacherLayout";
-import daramgi from "../../assets/teacher/growth-daramgi.png"
+import daramgi from "../../assets/teacher/growth-daramgi.png";
 
 export default function TeacherGrowth() {
   const { openModal, Modal, isModalOpen, closeModal } = useModal();
@@ -151,10 +154,10 @@ export default function TeacherGrowth() {
 
   return (
     <TeacherLayout
-        activeMenu="growth"
-        setActiveMenu={() => {}}
-        titleComponent={<Title title="성장일지" />}
-        imageSrc={daramgi} 
+      activeMenu="growth"
+      setActiveMenu={() => {}}
+      titleComponent={<Title title="성장일지" />}
+      imageSrc={daramgi}
     >
       <div className="relative w-full gap-8 lg:my-12 mt-5 px-4 flex flex-col lg:flex-row lg:justify-between justify-start">
         <div className="rounded-[10px] bg-[#f4f4f4] w-full h-[320px] lg:h-[540px] p-[10px] mb-4 lg:mb-0">

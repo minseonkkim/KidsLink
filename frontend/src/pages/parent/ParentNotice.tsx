@@ -2,9 +2,10 @@ import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import InfoSection from "../../components/parent/common/InfoSection"
 import daramgi from "../../assets/parent/notice-daramgi.png"
-import { getAllNotices, Notice } from "../../api/notice"
+import { getAllNotices } from "../../api/notice"
 import SearchTitleBar from "../../components/parent/common/SearchTitleBar"
 import NoticeList from "../../components/parent/notice/NoticeList"
+import { Notice } from "../../types/notice"
 
 export default function ParentNotice() {
   const navigate = useNavigate();

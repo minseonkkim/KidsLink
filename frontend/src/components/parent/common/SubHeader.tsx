@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { FaArrowLeft } from 'react-icons/fa'
 import AlarmBell from './AlarmBell'
 import { getAllAlarms } from '../../../api/alarm'
-import { Notification } from './MainHeader'
+import { Alarm } from "../../../types/alarm"
 
 interface CommonHeaderProps {
   title: string;
@@ -12,7 +12,7 @@ interface CommonHeaderProps {
 
 export default function SubHeader({ title }: CommonHeaderProps) {
   const navigate = useNavigate();
-  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [notifications, setNotifications] = useState<Alarm[]>([]);
   const [notificationCount, setNotificationCount] = useState(0);
 
   useEffect(() => {
