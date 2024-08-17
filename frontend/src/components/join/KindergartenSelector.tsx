@@ -5,6 +5,7 @@ import {
   getAllKindergartens,
   getKindergartenClasses,
 } from "../../api/kindergarten"
+import { Kindergarten, KindergartenClass } from "../../types/kindergarten"
 
 interface KindergartenSelectorProps {
   selectedKindergartenId: number | null;
@@ -13,15 +14,6 @@ interface KindergartenSelectorProps {
   setSelectedKindergartenClassId: (id: number | null) => void;
 }
 
-interface Kindergarten {
-  kindergartenId: number;
-  kindergartenName: string;
-}
-
-interface KindergartenClass {
-  kindergartenClassId: number;
-  kindergartenClassName: string;
-}
 
 export default function KindergartenSelector({
   selectedKindergartenId,

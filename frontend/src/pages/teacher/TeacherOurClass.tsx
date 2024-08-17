@@ -3,7 +3,7 @@ import ChildCard from "../../components/teacher/ourclass/ChildCard";
 import { useEffect, useState, useMemo } from "react";
 import { useTeacherInfoStore } from "../../stores/useTeacherInfoStore";
 import { getClassChilds } from "../../api/kindergarten";
-import { getTeacherInfo } from "../../api/Info";
+import { getTeacherInfo } from "../../api/info";
 import { getDocumentsByDate } from "../../api/document";
 import TeacherLayout from "../../layouts/TeacherLayout";
 import useModal from "../../hooks/teacher/useModal";
@@ -169,7 +169,9 @@ export default function TeacherOurClass() {
             <div className="mr-5">{dosageCount}명</div>
           </div>
         </div>
-        <div className="flex flex-row flex-wrap w-full mt-3 justify-around">{memoizedChilds}</div>
+        <div className="flex flex-row flex-wrap w-full mt-3 justify-around">
+          {memoizedChilds}
+        </div>
       </div>
     </TeacherLayout>
   );

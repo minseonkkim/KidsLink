@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
 import { getNoticeDetail } from "../../api/notice"
-import { NoticeDetail } from "../../api/notice"
+import { NoticeDetail } from "../../types/notice"
 import TeacherProfile from "../../components/parent/common/TeacherProfile"
 import LoadingSpinner from "../../components/common/LoadingSpinner"
 import cryingDaramgi from "../../assets/common/crying-daramgi.png"
