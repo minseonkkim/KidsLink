@@ -1,5 +1,5 @@
 import DiaryItem from "./GrowthItem"
-import { Diary } from "../../../api/growthdiary"
+import { Diary } from "../../../types/growthdiary"
 import cryingDaramgi from "../../../assets/common/crying-daramgi.png"
 
 interface GrowthListProps {

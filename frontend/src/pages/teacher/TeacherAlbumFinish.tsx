@@ -14,7 +14,7 @@ import ToastNotification, {
 import { useDragLayer } from "react-dnd";
 import TeacherLayout from "../../layouts/TeacherLayout";
 import daramgi from "../../assets/teacher/camera-daramgi.png";
-import { getTeacherInfo } from "../../api/Info";
+import { getTeacherInfo } from "../../api/info";
 import { getClassChilds } from "../../api/kindergarten";
 import { transformData } from "../../utils/album";
 import { sendAlbumToParent } from "../../api/album";
@@ -37,14 +37,14 @@ export function DragOverlay() {
       {/* 어두운 배경 레이어 */}
       <div
         style={{
-          position: 'fixed',
+          position: "fixed",
           top: 0,
           left: 0,
-          width: '100%',
-          height: '100%',
-          backgroundColor: 'rgba(0, 0, 0, 0.65)',
+          width: "100%",
+          height: "100%",
+          backgroundColor: "rgba(0, 0, 0, 0.65)",
           zIndex: 1500, // ChildNameContainer보다 낮게 설정
-          pointerEvents: 'none',
+          pointerEvents: "none",
         }}
       />
 
@@ -52,19 +52,19 @@ export function DragOverlay() {
       <div
         style={{
           transform,
-          position: 'fixed',
+          position: "fixed",
           top: 0,
           left: 0,
           zIndex: 2500, // ChildNameContainer보다 높게 설정
-          pointerEvents: 'none',
-          width: '150px',
-          height: '150px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          borderRadius: '8px',
-          boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.65)',
-          backgroundColor: '#fff',
+          pointerEvents: "none",
+          width: "150px",
+          height: "150px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          borderRadius: "8px",
+          boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.65)",
+          backgroundColor: "#fff",
         }}
       >
         {item.image && (
@@ -73,9 +73,9 @@ export function DragOverlay() {
             alt="dragged"
             className="object-cover"
             style={{
-              width: '100%',
-              height: '100%',
-              borderRadius: '8px',
+              width: "100%",
+              height: "100%",
+              borderRadius: "8px",
             }}
           />
         )}
@@ -83,7 +83,6 @@ export function DragOverlay() {
     </>
   );
 }
-
 
 export function ChildNameContainer({ classChildren, moveImage }) {
   const { isDragging } = useDragLayer((monitor) => ({
@@ -94,21 +93,25 @@ export function ChildNameContainer({ classChildren, moveImage }) {
     <div
       className="flex flex-wrap mb-2 justify-center"
       style={{
-        position: 'fixed',
-        top: '18%',
-        left: '50%',
-        transform: 'translateX(-50%)',
-        display: isDragging ? 'flex' : 'none',
+        position: "fixed",
+        top: "18%",
+        left: "50%",
+        transform: "translateX(-50%)",
+        display: isDragging ? "flex" : "none",
         zIndex: 2000, // DragOverlay의 어두운 배경보다 높게, 드래그 이미지보다 낮게 설정
       }}
     >
       {classChildren.map((child, index) => (
-        <ChildName key={index} child={child} index={index + 1} moveImage={moveImage} />
+        <ChildName
+          key={index}
+          child={child}
+          index={index + 1}
+          moveImage={moveImage}
+        />
       ))}
     </div>
   );
 }
-
 
 export default function TeacherAlbumFinish() {
   const location = useLocation();
@@ -117,7 +120,9 @@ export default function TeacherAlbumFinish() {
   const month = (today.getMonth() + 1).toString().padStart(2, "0");
   const date = today.getDate().toString().padStart(2, "0");
 
-  const [albumName, setAlbumName] = useState(`${year}년 ${month}월 ${date}일 사진첩`);
+  const [albumName, setAlbumName] = useState(
+    `${year}년 ${month}월 ${date}일 사진첩`
+  );
   const [result, setResult] = useState<AlbumItem[]>([]);
   const [classChildren, setClassChildren] = useState<Child[]>([]);
 
@@ -144,10 +149,13 @@ export default function TeacherAlbumFinish() {
         const sortedResult = location.state?.sortedResult || [];
         sortedResult.forEach((sortedItem) => {
           if (!sortedItem.child) {
-            initialResult[0].images = initialResult[0].images.concat(sortedItem.images);
+            initialResult[0].images = initialResult[0].images.concat(
+              sortedItem.images
+            );
           } else {
             const childIndex = initialResult.findIndex(
-              (item) => item.child && item.child.childId === sortedItem.child.childId
+              (item) =>
+                item.child && item.child.childId === sortedItem.child.childId
             );
             initialResult[childIndex].images = sortedItem.images;
           }
@@ -186,7 +194,9 @@ export default function TeacherAlbumFinish() {
     const updatedResult = [...result];
     const draggedImage = updatedResult[itemIndex].images[imgIndex];
     updatedResult[itemIndex].images.splice(imgIndex, 1);
-    let failedCategoryIndex = updatedResult.findIndex((item) => item.child === null);
+    let failedCategoryIndex = updatedResult.findIndex(
+      (item) => item.child === null
+    );
     if (failedCategoryIndex === -1) {
       updatedResult.push({ child: null, images: [] });
       failedCategoryIndex = updatedResult.length - 1;
@@ -235,7 +245,9 @@ export default function TeacherAlbumFinish() {
           <div className="flex flex-col items-center">
             <div className="flex lg:flex-row flex-col items-center justify-between w-full px-[18px] mb-5">
               <div className="flex flex-row items-center mb-3 text-[18px]">
-                <span className="mr-3 font-bold whitespace-nowrap">앨범 이름</span>
+                <span className="mr-3 font-bold whitespace-nowrap">
+                  앨범 이름
+                </span>
                 <input
                   value={albumName}
                   onChange={(e) => setAlbumName(e.target.value)}
@@ -254,7 +266,10 @@ export default function TeacherAlbumFinish() {
             <div className="mb-5 lg:text-[17px] text-[16px]">
               잘못된 분류가 있나요? 드래그로 수정해보세요
             </div>
-            <ChildNameContainer classChildren={classChildren} moveImage={moveImage} />
+            <ChildNameContainer
+              classChildren={classChildren}
+              moveImage={moveImage}
+            />
 
             {result.map(
               (item, index) =>

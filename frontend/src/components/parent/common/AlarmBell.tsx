@@ -5,23 +5,17 @@ import { FaBus } from 'react-icons/fa';
 import { getAllAlarms, deleteAlarm, deleteAllAlarms } from '../../../api/alarm';
 import { formatDate } from '../../../utils/parent/dateUtils';
 import { useNavigate } from 'react-router-dom';
-import { Notification } from './MainHeader';
+import { Alarm } from "../../../types/alarm"
 
-interface Alarm {
-  id: number;
-  date: string;
-  contents: string;
-  code: string;
-}
 
 interface AlaramBellProps {
   notificationCount: number;
-  notifications: Notification[];
+  notifications: Alarm[];
 }
 
 export default function AlaramBell({ notificationCount: initialNotificationCount, notifications: initialNotifications }: AlaramBellProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [notifications, setNotifications] = useState<Notification[]>(initialNotifications);
+  const [notifications, setNotifications] = useState<Alarm[]>(initialNotifications);
   const [notificationCount, setNotificationCount] = useState(initialNotificationCount);
   const navigate = useNavigate(); 
 
@@ -29,11 +23,11 @@ export default function AlaramBell({ notificationCount: initialNotificationCount
     const fetchNotifications = async () => {
       try {
         const fetchedNotifications: Alarm[] = await getAllAlarms();
-        const transformedNotifications: Notification[] = fetchedNotifications.map((alarm: Alarm) => ({
+        const transformedNotifications: Alarm[] = fetchedNotifications.map((alarm: Alarm) => ({
           id: alarm.id,
           date: alarm.date,
           contents: alarm.contents,
-          code: alarm.code as Notification['code'],
+          code: alarm.code as Alarm['code'],
         }));
         setNotifications(transformedNotifications);
         setNotificationCount(transformedNotifications.length);
@@ -48,7 +42,7 @@ export default function AlaramBell({ notificationCount: initialNotificationCount
     return () => clearInterval(intervalId);
   }, []);
 
-  const handleNotificationClick = (notification: Notification) => {
+  const handleNotificationClick = (notification: Alarm) => {
     switch (notification.code) {
       case 'NOTICE':
         navigate('/notice');

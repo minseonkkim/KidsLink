@@ -5,8 +5,8 @@ import { fetchRecordings, handleDownload } from "../../api/openvidu";
 import Title from "../../components/teacher/common/Title";
 import TeacherLayout from "../../layouts/TeacherLayout";
 import daramgi from "../../assets/teacher/meeting-daramgi.png";
-import daramgisad from '../../assets/common/crying-daramgi.png';
-import { getOneParentInfo, getTeacherId } from "../../api/Info";
+import daramgisad from "../../assets/common/crying-daramgi.png";
+import { getOneParentInfo, getTeacherId } from "../../api/info";
 import { convertTimestampToDateTime } from "../../utils/meeting";
 
 // 페이지 디자인용으로 진행하고, 나중에는 삭제해야합니다!
@@ -35,10 +35,10 @@ const TeacherMeetingRecordingList: React.FC = () => {
 
           // "20240813" 형식의 문자열을 Date 객체로 변환
           const meetingDate = new Date(
-            `${meetingDateStr.slice(0, 4)}-${meetingDateStr.slice(4, 6)}-${meetingDateStr.slice(
-              6,
-              8
-            )}`
+            `${meetingDateStr.slice(0, 4)}-${meetingDateStr.slice(
+              4,
+              6
+            )}-${meetingDateStr.slice(6, 8)}`
           );
 
           // 날짜를 'YYYY년 MM월 DD일' 형식으로 변환
@@ -72,7 +72,7 @@ const TeacherMeetingRecordingList: React.FC = () => {
     } else {
       setNoRecordings(false); // 녹화본이 있을 때 상태를 false로 설정
     }
-    console.log("recordings", recordings)
+    console.log("recordings", recordings);
   }, [recordings]);
 
   const handleDelete = (id: string) => {
@@ -97,16 +97,16 @@ const TeacherMeetingRecordingList: React.FC = () => {
         {noRecordings ? (
           <div className="flex bg-transparent">
             <div className="m-auto text-center mt-24">
-                <img 
-                    src={daramgisad} 
-                    alt="daramgisad" 
-                    className="h-[200px] mb-6 mx-auto" 
-                />
-                <p className="text-[22px] font-bold text-[#333] mb-4">
-                    저장된 녹화본이 없습니다.
-                </p>
+              <img
+                src={daramgisad}
+                alt="daramgisad"
+                className="h-[200px] mb-6 mx-auto"
+              />
+              <p className="text-[22px] font-bold text-[#333] mb-4">
+                저장된 녹화본이 없습니다.
+              </p>
             </div>
-        </div>
+          </div>
         ) : (
           <ul className="list-none p-0">
             {recordings.map((recording) => (
