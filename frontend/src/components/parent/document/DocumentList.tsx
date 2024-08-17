@@ -1,21 +1,10 @@
 import DocumentItem from './DocumentItem'
 import cryingDaramgi from "../../../assets/common/crying-daramgi.png"
+import { DocumentDetail } from '../../../types/document';
 
-interface Document {
-  id: number;
-  date: string;
-  type: 'dosage' | 'absent';
-  checked: boolean;
-  startDate: string;
-  endDate: string;
-  documentId: number;
-  title: string;
-  details: string;
-  childId: number;
-}
 
 interface DocumentListProps {
-  documents: Document[];
+  documents: DocumentDetail[];
   handleDocumentClick: (docType: string, docId: number) => void;
 }
 

@@ -1,5 +1,5 @@
-import { create } from 'zustand'
-import { ParentInfo } from '../api/Info'
+import { create } from "zustand";
+import { ParentInfo } from "../types/info"
 
 interface ParentInfoState {
   parentInfo: ParentInfo | null;
@@ -12,5 +12,6 @@ export const useParentInfoStore = create<ParentInfoState>((set) => ({
   parentInfo: null,
   parentHasAccessedMeeting: false, // 초기값은 false
   setParentInfo: (info) => set({ parentInfo: info }),
-  setParentHasAccessedMeeting: (hasAccessed) => set({ parentHasAccessedMeeting: hasAccessed }),
-}))
+  setParentHasAccessedMeeting: (hasAccessed) =>
+    set({ parentHasAccessedMeeting: hasAccessed }),
+}));

@@ -1,36 +1,40 @@
-import { getParentInfo, getClassTeacherInfo } from "../../../api/Info"
-import { useParentInfoStore } from "../../../stores/useParentInfoStore"
-import { useEffect, useState } from "react"
-import daramgi from "../../../assets/join/default-profile.png"
+import { getParentInfo, getClassTeacherInfo } from "../../../api/info";
+import { useParentInfoStore } from "../../../stores/useParentInfoStore";
+import { useEffect, useState } from "react";
+import daramgi from "../../../assets/join/default-profile.png";
 
 export default function TeacherProfile() {
-  const parentInfo = useParentInfoStore((state) => state.parentInfo)
-  const setParentInfo = useParentInfoStore((state) => state.setParentInfo)
-  const kindergartenClassId = parentInfo?.child.kindergartenClass.kindergartenClassId
-  const [ teacherProfile, setTeacherProfile ] = useState<string>("")
-  const [ teacherName, setTeacherName ] = useState<string>("")
+  const parentInfo = useParentInfoStore((state) => state.parentInfo);
+  const setParentInfo = useParentInfoStore((state) => state.setParentInfo);
+  const kindergartenClassId =
+    parentInfo?.child.kindergartenClass.kindergartenClassId;
+  const [teacherProfile, setTeacherProfile] = useState<string>("");
+  const [teacherName, setTeacherName] = useState<string>("");
 
   useEffect(() => {
     async function fetchParentInfo() {
-      let currentLindergartenClassId = kindergartenClassId
+      let currentLindergartenClassId = kindergartenClassId;
       try {
         if (!parentInfo) {
-          const fetchedParentInfo = await getParentInfo()
-          setParentInfo(fetchedParentInfo)
-          currentLindergartenClassId = fetchedParentInfo.child.kindergartenClass.kindergartenClassId
+          const fetchedParentInfo = await getParentInfo();
+          setParentInfo(fetchedParentInfo);
+          currentLindergartenClassId =
+            fetchedParentInfo.child.kindergartenClass.kindergartenClassId;
         }
 
         if (currentLindergartenClassId) {
-          const teacherInfo = await getClassTeacherInfo(currentLindergartenClassId)
-          setTeacherProfile(teacherInfo.profile)
-          setTeacherName(teacherInfo.name)
+          const teacherInfo = await getClassTeacherInfo(
+            currentLindergartenClassId
+          );
+          setTeacherProfile(teacherInfo.profile);
+          setTeacherName(teacherInfo.name);
         }
       } catch (error) {
-        console.error("Failed to fetch teacher-info", error)
+        console.error("Failed to fetch teacher-info", error);
       }
     }
-    fetchParentInfo()
-  }, [kindergartenClassId, setParentInfo])
+    fetchParentInfo();
+  }, [kindergartenClassId, setParentInfo]);
 
   return (
     <div className="ml-2 flex items-center mt-8">
@@ -45,7 +49,5 @@ export default function TeacherProfile() {
         {teacherName} 선생님
       </p>
     </div>
-  )
+  );
 }
-
-

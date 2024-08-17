@@ -4,7 +4,7 @@ import OpenViduVideoComponent from "../../components/openvidu/VideoComponent";
 import { startMainRecording, stopMainRecording } from "../../api/openvidu";
 import MeetingBackground from "../../assets/teacher/meeting_background.png";
 import { useTeacherInfoStore } from "../../stores/useTeacherInfoStore";
-import { getTeacherInfo } from "../../api/Info";
+import { getTeacherInfo } from "../../api/info";
 import TeacherMeetingFooter from "../../components/openvidu/TeacherMeetingFooter";
 import { ControlState, OpenViduState, User } from "../../types/openvidu";
 import { joinSession, leaveSession } from "../../utils/openvidu";
@@ -14,7 +14,7 @@ import { FaBan } from "react-icons/fa";
 import { IoDocumentAttach, IoRecording } from "react-icons/io5";
 import { GiTalk } from "react-icons/gi";
 import { TbMoodKidFilled } from "react-icons/tb";
-import recImg from "../../assets/teacher/record_img.png"
+import recImg from "../../assets/teacher/record_img.png";
 import parentImg from "../../assets/parent/cute-daramgi.png";
 
 export default function TeacherVideo() {
@@ -46,13 +46,15 @@ export default function TeacherVideo() {
   const [otherVideoActive, setOtherVideoActive] = useState(false);
   const [isSessionJoined, setIsSessionJoined] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
-  const [currentRecordingId, setCurrentRecordingId] = useState<string | null>(null);
+  const [currentRecordingId, setCurrentRecordingId] = useState<string | null>(
+    null
+  );
   const [recordStartTime, setRecordStartTime] = useState<number | null>(null);
   const recordingStartTimeRef = useRef<number | null>(null);
   const [childName, setChildName] = useState<string>(""); // childName 상태 추가
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [showRecIndicator, setShowRecIndicator] = useState(false);
-  
+
   useEffect(() => {
     async function fetchChildInfo() {
       try {
@@ -60,7 +62,9 @@ export default function TeacherVideo() {
         setChildName(meetingInfo.childName); // childName 상태 설정
         // 상담 날짜 설정 (이거 utils에 저장된 날짜 함수 확인해보고 쓸지말지 수정하기)
         const date = new Date(meetingInfo.date);
-        setMeetingDate(`${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일`);
+        setMeetingDate(
+          `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일`
+        );
 
         // 상담 시간 설정
         setMeetingTime(meetingInfo.time);
@@ -85,13 +89,16 @@ export default function TeacherVideo() {
 
   useEffect(() => {
     if (openvidu.session) {
-      openvidu.session.on("signal:profanityDetected", (event) => {       
+      openvidu.session.on("signal:profanityDetected", (event) => {
         // 녹화 시작됐다는 변수 조정해서 REC 뜨게하기
         setShowRecIndicator(true);
-        
+
         if (recordingStartTimeRef.current) {
           const detectedTime = Date.now();
-          const adjustedStartTime = Math.max(recordingStartTimeRef.current, detectedTime - 20000);
+          const adjustedStartTime = Math.max(
+            recordingStartTimeRef.current,
+            detectedTime - 20000
+          );
           setRecordStartTime(adjustedStartTime);
           console.log("Adjusted recording start time:", adjustedStartTime);
         }
@@ -104,7 +111,10 @@ export default function TeacherVideo() {
       try {
         const fetchedTeacherInfo = await getTeacherInfo();
         setTeacherInfo(fetchedTeacherInfo);
-        setUser((prevUser) => ({ ...prevUser, username: fetchedTeacherInfo.name }));
+        setUser((prevUser) => ({
+          ...prevUser,
+          username: fetchedTeacherInfo.name,
+        }));
       } catch (error) {
         console.log("Failed to fetch teacher info:", error);
       }
@@ -167,7 +177,10 @@ export default function TeacherVideo() {
         await handleStopRecording();
         // 학부모들에게 세션 종료를 알리는 Signal을 보냄
       } catch (error) {
-        console.error("Failed to stop recording before leaving session:", error);
+        console.error(
+          "Failed to stop recording before leaving session:",
+          error
+        );
       }
     }
     sendSignalLeaveSession("session-ended");
@@ -205,7 +218,10 @@ export default function TeacherVideo() {
           </div>
         </div>
       )}
-      <img src={MeetingBackground} className="absolute top-0 left-0 w-full h-full object-cover" />
+      <img
+        src={MeetingBackground}
+        className="absolute top-0 left-0 w-full h-full object-cover"
+      />
       <div className="relative z-10 w-full h-full flex flex-col items-center">
         <div className="relative w-full h-full flex">
           {openvidu.session && (
@@ -219,15 +235,23 @@ export default function TeacherVideo() {
           )}
           <div
             className="absolute top-[200px] left-[100px] w-[600px] h-auto rounded-lg bg-white"
-            style={{ opacity: teacherVideoOpacity, backgroundColor: "transparent" }}
+            style={{
+              opacity: teacherVideoOpacity,
+              backgroundColor: "transparent",
+            }}
           >
             {openvidu.mainStreamManager && (
-              <OpenViduVideoComponent streamManager={openvidu.mainStreamManager} />
+              <OpenViduVideoComponent
+                streamManager={openvidu.mainStreamManager}
+              />
             )}
           </div>
           {openvidu.session && (
             <div className="absolute top-[150px] right-[570px] font-bold text-[20px] flex flex-row items-center">
-              <img src={parentImg} className="w-[40px] h-[40px] rounded-full object-cover mr-3" />
+              <img
+                src={parentImg}
+                className="w-[40px] h-[40px] rounded-full object-cover mr-3"
+              />
               {childName} 학부모
             </div>
           )}
@@ -269,14 +293,17 @@ export default function TeacherVideo() {
                       <GiTalk className="text-[#ff6347]" size={20} />
                     </div>
                     <span className="flex-1 text-lg">
-                      학부모가 편안하게 자신의 생각을 표현할 수 있도록 도와주세요.
+                      학부모가 편안하게 자신의 생각을 표현할 수 있도록
+                      도와주세요.
                     </span>
                   </li>
                   <li className="flex items-center">
                     <div className="flex items-center justify-center mr-2">
                       <TbMoodKidFilled className="text-[#ff6347]" size={20} />
                     </div>
-                    <span className="flex-1 text-lg">학생의 긍정적인 면을 강조해주세요.</span>
+                    <span className="flex-1 text-lg">
+                      학생의 긍정적인 면을 강조해주세요.
+                    </span>
                   </li>
                   <li className="flex items-center">
                     <div className="flex items-center justify-center mr-2">
@@ -330,7 +357,9 @@ export default function TeacherVideo() {
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-6 rounded-lg shadow-lg">
-            <h2 className="text-lg font-semibold mb-4">세션을 종료하시겠습니까?</h2>
+            <h2 className="text-lg font-semibold mb-4">
+              세션을 종료하시겠습니까?
+            </h2>
             <p className="mb-4">학부모와 함께 상담이 종료됩니다.</p>
             <div className="flex justify-end space-x-4">
               <button

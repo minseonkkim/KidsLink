@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import profileImg from "../../assets/parent/notice-daramgi.png";
-import { getGrowthDiary, DiaryDetail } from "../../api/growthdiary";
+import { getGrowthDiary } from "../../api/growthdiary";
+import { DiaryDetail } from "../../types/growthdiary"
 import TeacherProfile from "../../components/parent/common/TeacherProfile";
 import GrowthContent from "../../components/parent/growth/GrowthContent";
 import LoadingSpinner from "../../components/common/LoadingSpinner";
