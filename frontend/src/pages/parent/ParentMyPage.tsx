@@ -7,7 +7,7 @@ import { logout } from "../../api/member";
 import { useNavigate } from "react-router-dom";
 import useAppStore from "../../stores/store";
 import { useParentInfoStore } from "../../stores/useParentInfoStore";
-import { getParentInfo } from "../../api/Info";
+import { getParentInfo } from "../../api/info";
 
 export default function ParentMyPage() {
   const { parentInfo, setParentInfo } = useParentInfoStore();
@@ -91,7 +91,12 @@ export default function ParentMyPage() {
           </div>
           <div className="text-[16px] text-gray-700 mt-1 flex items-center">
             <FaVenusMars className={`inline mr-2 ${genderColor}`} />
-            성별: {parentInfo ? (parentInfo.child.gender === "M" ? "남자" : "여자") : ""}
+            성별:{" "}
+            {parentInfo
+              ? parentInfo.child.gender === "M"
+                ? "남자"
+                : "여자"
+              : ""}
           </div>
           <div className="text-[16px] text-gray-700 mt-1 flex items-center">
             <FaBirthdayCake className={`inline mr-2 ${genderColor}`} />
@@ -109,11 +114,17 @@ export default function ParentMyPage() {
         <div className="flex flex-col items-start px-4 mb-8">
           <div className="text-[16px] text-gray-700 flex items-center mb-2">
             <MdSchool className="inline mr-2 text-yellow-500" />
-            유치원: {parentInfo ? parentInfo.child.kindergartenClass.kindergarten.kindergartenName : ""}
+            유치원:{" "}
+            {parentInfo
+              ? parentInfo.child.kindergartenClass.kindergarten.kindergartenName
+              : ""}
           </div>
           <div className="text-[16px] text-gray-700 flex items-center">
             <MdSchool className="inline mr-2 text-yellow-500" />
-            반: {parentInfo ? parentInfo.child.kindergartenClass.kindergartenClassName : ""}
+            반:{" "}
+            {parentInfo
+              ? parentInfo.child.kindergartenClass.kindergartenClassName
+              : ""}
           </div>
         </div>
       </div>

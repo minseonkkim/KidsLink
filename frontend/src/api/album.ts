@@ -1,21 +1,6 @@
 import axiosInstance from "./token/axiosInstance";
+import { SendData } from "../types/album"
 
-export interface Album {
-  albumId: number;
-  albumName: string;
-  albumDate: string;
-  images: { path: string }[];
-}
-
-interface TaggedPhoto{
-  childId: number;
-  photos: number[];
-}
-
-interface SendData{
-  albumName: string;
-  taggedPhotos: TaggedPhoto[];
-}
 
 // 사진 분류하기
 export async function createClassifyImages(classifyImages: File[]) {

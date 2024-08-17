@@ -1,5 +1,3 @@
-import React from 'react';
-
 interface InputFieldsProps {
   formData: { [key: string]: string | number };
   handleInputChange: (

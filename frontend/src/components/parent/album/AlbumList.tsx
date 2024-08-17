@@ -1,4 +1,4 @@
-import { Album } from "../../../api/album";
+import { Album } from "../../../types/album";
 import cryingDaramgi from "../../../assets/common/crying-daramgi.png";
 
 interface AlbumListProps {
