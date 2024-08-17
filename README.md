@@ -213,7 +213,6 @@ KidsLink.
   │   ├───common
   │   ├───join
   │   ├───parent
-  │   │   └───meeting
   │   └───teacher
   ├───components
   │   ├───common
