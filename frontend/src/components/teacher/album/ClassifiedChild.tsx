@@ -37,7 +37,7 @@ export default function ClassifiedChild({ item, index, moveImage, deleteImage }:
         <div
           className={`${
             item.child ? 'border-[#8CAD1E]' : 'bg-[#EAEAEA]'
-          } p-3 mb-2 w-full grid lg:grid-cols-7 sm:grid-cols-4 grid-cols-2 gap-4 overflow-y-auto rounded-[10px] border-[1px]`}
+          } p-3 mb-2 w-full grid lg:grid-cols-7 sm:grid-cols-4 grid-cols-2 gap-4 overflow-y-auto custom-scrollbar rounded-[10px] border-[1px]`}
         >
           {item.images.map((image, imgIndex) => (
             <ImageItemComponent

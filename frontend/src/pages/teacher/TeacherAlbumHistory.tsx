@@ -43,7 +43,7 @@ export default function TeacherAlbumHistory() {
 
   const handleAlbumClick = (images) => {
     openModal(
-      <div className="grid grid-cols-3 gap-4 h-[500px] overflow-y-auto custom-scrollbar">
+      <div className="grid grid-cols-3 gap-4 h-[500px] overflow-y-auto custom-scrollbar custom-scrollbar">
         {images.map((image) => (
           <img
             key={image.imageId}
@@ -86,7 +86,7 @@ export default function TeacherAlbumHistory() {
                 <span className="bg-[#8CAD1E] text-[#fff] cursor-pointer flex items-center justify-center rounded-[30px] w-[95px] h-[45px] font-bold mx-3 my-2 text-[17px]">
                   {childAlbum.child.name}
                 </span>
-                <div className="border-[#8CAD1E] p-5 mb-2 w-full overflow-y-auto rounded-[10px] border-[1px]">
+                <div className="border-[#8CAD1E] p-5 mb-2 w-full overflow-y-auto custom-scrollbar rounded-[10px] border-[1px]">
                   <div className="text-right text-[16px] text-gray-700">
                     전체 사진 개수: {totalImages}장
                   </div>
