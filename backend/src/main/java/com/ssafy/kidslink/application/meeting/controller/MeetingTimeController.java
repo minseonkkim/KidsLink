@@ -240,17 +240,6 @@ public class MeetingTimeController {
 
     @PostMapping("/confirm")
     public ResponseEntity<APIResponse<List<MeetingRoomDTO>>> confirmMeeting(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestBody List<SelectedMeetingDTO> selectedMeetingDTOS) {
-        List<SelectedMeetingDTO> classifySchedule = meetingTimeService.classifySchedule(selectedMeetingDTOS);
-
-        if (classifySchedule.isEmpty()) {
-            APIResponse<List<MeetingRoomDTO>> responseData = new APIResponse<>(
-                    "fail",
-                    null,
-                    "모든 일정을 분류할 수 없습니다.",
-                    null
-            );
-            return new ResponseEntity<>(responseData, HttpStatus.OK);
-        }
         List<MeetingRoomDTO> meetings = meetingTimeService.confirmMeeting(selectedMeetingDTOS);
         meetingTimeService.deleteMeeting(userDetails.getUsername());
         meetingTimeService.deleteMeetingTime(userDetails.getUsername());
