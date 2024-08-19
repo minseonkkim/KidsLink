@@ -13,7 +13,7 @@ export default function AlbumList({ albums, handleAlbumClick }: AlbumListProps) 
         albums.map((album) => (
           <div
             key={album.albumId}
-            className="relative w-full group rounded-[10px] overflow-hidden shadow-md transition-transform duration-300 ease-in-out transform hover:scale-105"
+            className="relative w-full group rounded-[10px] overflow-hidden shadow-md transition-transform duration-300 ease-in-out transform hover:scale-105 cursor-pointer"
             onClick={() => handleAlbumClick(album.albumId)}
             style={{
               paddingBottom: '56.25%',
