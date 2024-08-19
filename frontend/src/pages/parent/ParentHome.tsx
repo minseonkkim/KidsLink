@@ -4,7 +4,7 @@ import InfoSection from "../../components/parent/common/InfoSection";
 import Menu from "../../components/parent/main/Menu";
 import daramgi from "../../assets/parent/daramgi.png";
 import { useParentInfoStore } from "../../stores/useParentInfoStore";
-import { getParentInfo } from "../../api/info";
+import { getParentInfo } from "../../api/Info";
 
 export default function ParentHome() {
   const navigate = useNavigate();

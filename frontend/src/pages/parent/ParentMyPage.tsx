@@ -7,7 +7,7 @@ import { logout } from "../../api/member";
 import { useNavigate } from "react-router-dom";
 import useAppStore from "../../stores/store";
 import { useParentInfoStore } from "../../stores/useParentInfoStore";
-import { getParentInfo } from "../../api/info";
+import { getParentInfo } from "../../api/Info";
 
 export default function ParentMyPage() {
   const { parentInfo, setParentInfo } = useParentInfoStore();
