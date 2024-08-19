@@ -8,7 +8,7 @@ interface AlbumListProps {
 
 export default function AlbumList({ albums, handleAlbumClick }: AlbumListProps) {
   return (
-    <div className="grid grid-cols-1 gap-4 overflow-y-auto custom-scrollbar p-4">
+    <div className="grid grid-cols-1 gap-4 overflow-y-auto p-4">
       {albums.length > 0 ? (
         albums.map((album) => (
           <div

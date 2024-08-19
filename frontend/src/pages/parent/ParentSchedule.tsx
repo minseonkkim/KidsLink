@@ -100,7 +100,7 @@ export default function ParentSchedule() {
   return (
     <div className="relative min-h-[100dvh] flex flex-col bg-[#FFEC8A] overflow-hidden">
       <div className="absolute bottom-0 h-[80%] flex flex-col w-full bg-white shadow-top rounded-tl-[25px] rounded-tr-[25px] py-6 px-8 animate-slideUp">
-        <div className="overflow-y-auto custom-scrollbar">
+        <div className="overflow-y-auto">
           <div className="flex flex-col justify-center items-center mb-6">
             <CustomCalendar
               schedules={schedules}

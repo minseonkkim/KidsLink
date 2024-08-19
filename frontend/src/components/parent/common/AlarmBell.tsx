@@ -127,7 +127,7 @@ export default function AlaramBell({ notificationCount: initialNotificationCount
           
           {/* 모달 창 */}
           <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-md px-8" onClick={(e) => e.stopPropagation()}>
-            <div className="space-y-4 mt-8 max-h-full overflow-y-auto custom-scrollbar" style={{ maxHeight: 'calc(100vh - 8rem)' }}>
+            <div className="space-y-4 mt-8 max-h-full overflow-y-auto" style={{ maxHeight: 'calc(100vh - 8rem)' }}>
               {[...notifications].reverse().map((notification, index) => (
                 <div key={notification.id} className="relative">
 
