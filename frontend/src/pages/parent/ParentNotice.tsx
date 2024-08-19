@@ -52,7 +52,7 @@ export default function ParentNotice() {
 
       <div className="flex flex-col flex-grow overflow-hidden rounded-tl-[20px] rounded-tr-[20px] bg-white shadow-top px-12 py-4 animate-slideUp">
         <SearchTitleBar searchTitle={searchTitle} onSearch={handleSearch} />
-        <div className="flex-grow overflow-y-auto custom-scrollbar">
+        <div className="flex-grow overflow-y-auto">
           <NoticeList notices={filteredNotices} onClick={handleNoticeClick} />
         </div>
       </div>
