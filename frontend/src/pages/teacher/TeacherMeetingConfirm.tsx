@@ -16,6 +16,7 @@ import TeacherLayout from "../../layouts/TeacherLayout";
 import daramgi from "../../assets/teacher/meeting-daramgi.png";
 import daramgisad from "../../assets/common/crying-daramgi.png";
 import { getTeacherInfo } from "../../api/Info";
+import useModal from "../../hooks/teacher/useModal";  // useModal 훅을 import
 
 interface Meeting {
   date: string;
@@ -34,6 +35,15 @@ interface GroupedMeetings {
 }
 
 export default function TeacherMeetingConfirm() {
+  const [groupedMeetings, setGroupedMeetings] = useState<GroupedMeetings>({});
+  const [selectedTimes, setSelectedTimes] = useState<{
+    [parentId: number]: string;
+  }>({});
+  const navigate = useNavigate();
+  const { openModal, closeModal, Modal } = useModal();  // useModal 훅 사용
+
+  const teacherUsername = useTeacherInfoStore.getState().teacherInfo?.username || "Unknown Teacher";
+
   useEffect(() => {
     const getAndSetTeacherInfo = async () => {
       const teacherInfo = useTeacherInfoStore.getState().teacherInfo;
@@ -51,15 +61,9 @@ export default function TeacherMeetingConfirm() {
     getAndSetTeacherInfo();
   }, []);
 
-  const teacherUsername =
-    useTeacherInfoStore.getState().teacherInfo?.username || "Unknown Teacher";
-
-  const [groupedMeetings, setGroupedMeetings] = useState<GroupedMeetings>({});
-  const [selectedTimes, setSelectedTimes] = useState<{
-    [parentId: number]: string;
-  }>({});
-
-  const navigate = useNavigate();
+  useEffect(() => {
+    fetchSelectedMeeting();
+  }, []);
 
   const fetchSelectedMeeting = async () => {
     try {
@@ -101,10 +105,6 @@ export default function TeacherMeetingConfirm() {
     return grouped;
   };
 
-  useEffect(() => {
-    fetchSelectedMeeting();
-  }, []);
-
   const formatTime = (time: string) => {
     const [hours, minutes] = time.split(":");
     const formattedHours = hours.padStart(2, "0");
@@ -114,22 +114,19 @@ export default function TeacherMeetingConfirm() {
   const handleTimeSlotClick = (parentId: number, timeSlot: string) => {
     setSelectedTimes((prevSelectedTimes) => {
       const updatedSelectedTimes = { ...prevSelectedTimes };
-  
-      // 현재 선택된 부모와 시간 슬롯이 동일한 경우 기존 선택을 취소
+
       if (updatedSelectedTimes[parentId] === timeSlot) {
         delete updatedSelectedTimes[parentId];
       } else {
-        // 다른 부모가 동일한 시간 슬롯을 선택한 경우 해당 선택을 취소
         Object.keys(updatedSelectedTimes).forEach((id) => {
           if (updatedSelectedTimes[Number(id)] === timeSlot) {
             delete updatedSelectedTimes[Number(id)];
           }
         });
-  
-        // 선택한 부모의 새로운 시간 슬롯 설정
+
         updatedSelectedTimes[parentId] = timeSlot;
       }
-  
+
       return updatedSelectedTimes;
     });
   };
@@ -166,54 +163,45 @@ export default function TeacherMeetingConfirm() {
     );
   };
 
-  const handleClassifyMeetingClick = async () => {
-    try {
-      const transformedData = createTransformedData(
-        groupedMeetings,
-        selectedTimes,
-        teacherUsername
-      );
-  
-      const response = await optimalMeeting(transformedData);
-      if (response.status === "success") {
-        showToastSuccess(<div>상담일자가 분류되었습니다!</div>);
-  
-        const newSelectedTimes: { [parentId: number]: string } = {};
-        response.data.forEach((meeting: Meeting) => {
-          // 서버에서 받은 시간을 'HH:MM' 형식으로 변환
-          const formattedTime = formatMeetingTime(meeting.time);
-  
-          // meeting.date는 이미 올바른 형식일 것이므로, date와 변환된 time을 사용해 slot을 생성
-          const slot = `${meeting.date} ${formattedTime}`;
-  
-          newSelectedTimes[meeting.parentId] = slot;
-        });
-  
-        setSelectedTimes(newSelectedTimes);
-      } else {
-        showToastError(<div>모든 일정을 분류할 수 없습니다.</div>);
-      }
-    } catch (error) {
-      showToastError(<div>상담일자 분류 중 오류가 발생했습니다.</div>);
-      console.error("상담일자 분류 중 오류 발생:", error);
-    }
-  };
-  
-  const formatMeetingTime = (time: string) => {
-    const [hours, minutes] = time.split(":");
-    const formattedHours = parseInt(hours, 10); // 한자리 숫자 시간 제거
-    return `${formattedHours}:${minutes}`;
-  };
-
   const handleConfirmMeetingClick = async () => {
     const allParentsSelected = Object.keys(groupedMeetings).every(
       (parentId) => selectedTimes[parentId]
     );
 
     if (!allParentsSelected) {
-      showToastError(<div>모든 상담 일정을 선택해주세요.</div>);
+      openModal(
+        <div className="w-full max-w-md py-3 px-3 bg-white">
+        <p className="text-gray-700 mb-6">
+          모든 학부모의 상담 시간이 선택되지 않았습니다. <br />
+          상담시간을 확정하시겠습니까?
+        </p>
+        <div className="flex justify-end space-x-3">
+          <button
+            onClick={async () => {
+              closeModal();
+              await submitConfirmMeeting();
+            }}
+            className="px-4 py-2 border-[2px] border-[#7C7C7C] bg-[#E3EEFF] font-bold rounded-[10px] shadow-md hover:bg-[#D4DDEA] transition duration-300 ease-in-out"
+          >
+            확정
+          </button>
+
+          <button
+            onClick={closeModal}
+            className="px-4 py-2 bg-neutral-200 border-[2px] border-[#7C7C7C] text-black font-semibold rounded-lg shadow-md hover:bg-neutral-300 transition duration-300 ease-in-out"
+          >
+            취소
+          </button>
+        </div>
+      </div>
+      );
       return;
     }
+
+    await submitConfirmMeeting();
+  };
+
+  const submitConfirmMeeting = async () => {
     try {
       const transformedData = createTransformedData(
         groupedMeetings,
@@ -247,6 +235,53 @@ export default function TeacherMeetingConfirm() {
       showToastError(<div>상담일자 확정 중 오류가 발생했습니다.</div>);
       console.error("상담일자 확정 중 오류 발생:", error);
     }
+  };
+
+  const handleClassifyMeetingClick = async () => {
+    try {
+      const selectedTimeSlots = Object.values(selectedTimes);
+
+      const transformedData = Object.entries(groupedMeetings)
+        .filter(([parentId]) => !selectedTimes[Number(parentId)])
+        .flatMap(([parentId, { childName, times }]) => {
+          const availableTimes = times.filter(
+            (timeSlot) => !selectedTimeSlots.includes(`${timeSlot.date} ${timeSlot.time}`)
+          );
+
+          return availableTimes.map((timeSlot) => ({
+            parentId: Number(parentId),
+            childName: childName,
+            date: timeSlot.date,
+            time: timeSlot.time,
+            teacherName: teacherUsername,
+          }));
+        });
+
+      const response = await optimalMeeting(transformedData);
+      if (response.status === "success") {
+        showToastSuccess(<div>상담일자가 분류되었습니다!</div>);
+
+        const newSelectedTimes: { [parentId: number]: string } = { ...selectedTimes };
+        response.data.forEach((meeting: Meeting) => {
+          const formattedTime = formatMeetingTime(meeting.time);
+          const slot = `${meeting.date} ${formattedTime}`;
+          newSelectedTimes[meeting.parentId] = slot;
+        });
+
+        setSelectedTimes(newSelectedTimes);
+      } else {
+        showToastError(<div>모든 일정을 분류할 수 없습니다.</div>);
+      }
+    } catch (error) {
+      showToastError(<div>상담일자 분류 중 오류가 발생했습니다.</div>);
+      console.error("상담일자 분류 중 오류 발생:", error);
+    }
+  };
+
+  const formatMeetingTime = (time: string) => {
+    const [hours, minutes] = time.split(":");
+    const formattedHours = parseInt(hours, 10);
+    return `${formattedHours}:${minutes}`;
   };
 
   const tabs = [
@@ -302,6 +337,7 @@ export default function TeacherMeetingConfirm() {
             </button>
           </div>
         )}
+
         {Object.keys(groupedMeetings).length !== 0 ? (
           <div className="mt-8 mx-4 lg:mx-8 flex flex-col lg:flex-row lg:flex-wrap gap-4">
             {Object.entries(groupedMeetings).map(
@@ -351,6 +387,7 @@ export default function TeacherMeetingConfirm() {
         )}
       </div>
       <ToastNotification />
+      <Modal /> {/* 모달 컴포넌트 */}
     </TeacherLayout>
   );
 }
