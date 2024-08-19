@@ -209,12 +209,21 @@ export default function TeacherMeetingConfirm() {
 
   const submitConfirmMeeting = async () => {
     try {
-      const transformedData = createTransformedData(
-        groupedMeetings,
-        selectedTimes,
-        teacherUsername
+      // 선택된 시간대만을 포함하는 데이터를 생성
+      const transformedData = Object.entries(selectedTimes).map(
+        ([parentId, selectedTime]) => {
+          const [date, time] = selectedTime.split(" ");
+          const childName = groupedMeetings[Number(parentId)].childName;
+          return {
+            parentId: Number(parentId),
+            childName: childName,
+            date: date,
+            time: time,
+            teacherName: teacherUsername,
+          };
+        }
       );
-
+  
       if (transformedData.length > 0) {
         const response = await confirmMeeting(transformedData);
         if (response.status === "success") {
@@ -225,7 +234,7 @@ export default function TeacherMeetingConfirm() {
               상담목록으로 이동합니다.
             </div>
           );
-
+  
           setTimeout(() => {
             navigate("/meeting/scheduled");
           }, 3000);
