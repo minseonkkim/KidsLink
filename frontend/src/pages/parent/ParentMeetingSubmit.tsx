@@ -76,12 +76,13 @@ const ParentMeetingSubmit = () => {
 
     const selectedReservations: ParentReservation[] = Array.from(selectedMeetings).map((meetingId) => {
       const reservation = reservations.find((res) => res.meetingId === meetingId);
+      
       return {
         meetingDate: reservation?.date ?? '',
         meetingTime: reservation?.time ?? '',
       };
     });
-
+    console.log(selectedMeetings)
     try {
       await postAllPossibleReservations(selectedReservations);
       setIsSubmitted(true);
