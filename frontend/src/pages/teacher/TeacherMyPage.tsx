@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useTeacherInfoStore } from "../../stores/useTeacherInfoStore";
 import useAppStore from "../../stores/store";
 import DefaultProfile from "../../assets/teacher/default_profile.png";
-import { getTeacherInfo } from "../../api/info";
+import { getTeacherInfo } from "../../api/Info";
 import TeacherLayout from "../../layouts/TeacherLayout";
 import daramgi from "../../assets/teacher/playing-daramgi.png";
 import LoadingSpinner from "../../components/common/LoadingSpinner";

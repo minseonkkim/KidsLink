@@ -2,7 +2,7 @@ import DefaultProfile from "../../../assets/teacher/default_profile.png";
 import { useTeacherInfoStore } from "../../../stores/useTeacherInfoStore";
 // import { LuSchool2 } from "react-icons/lu";
 import { useNavigate } from "react-router-dom";
-import { getTeacherInfo } from "../../../api/info";
+import { getTeacherInfo } from "../../../api/Info";
 import { useEffect } from "react";
 
 export const TeacherInfoCard: React.FC = () => {

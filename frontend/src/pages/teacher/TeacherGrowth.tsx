@@ -13,7 +13,7 @@ import { useTeacherInfoStore } from "../../stores/useTeacherInfoStore";
 import { getClassChilds } from "../../api/kindergarten";
 import { getKidAllGrowthDiarys } from "../../api/growthdiary";
 import GrowthDiaryForm from "../../components/teacher/growth/GrowthDiaryForm";
-import { getTeacherInfo } from "../../api/info";
+import { getTeacherInfo } from "../../api/Info";
 import TeacherLayout from "../../layouts/TeacherLayout";
 import daramgi from "../../assets/teacher/growth-daramgi.png";
 

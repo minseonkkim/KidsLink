@@ -14,7 +14,7 @@ import ToastNotification, {
 import { useDragLayer } from "react-dnd";
 import TeacherLayout from "../../layouts/TeacherLayout";
 import daramgi from "../../assets/teacher/camera-daramgi.png";
-import { getTeacherInfo } from "../../api/info";
+import { getTeacherInfo } from "../../api/Info";
 import { getClassChilds } from "../../api/kindergarten";
 import { transformData } from "../../utils/album";
 import { sendAlbumToParent } from "../../api/album";

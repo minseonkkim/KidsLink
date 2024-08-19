@@ -3,7 +3,7 @@ import ChildCard from "../../components/teacher/ourclass/ChildCard";
 import { useEffect, useState, useMemo } from "react";
 import { useTeacherInfoStore } from "../../stores/useTeacherInfoStore";
 import { getClassChilds } from "../../api/kindergarten";
-import { getTeacherInfo } from "../../api/info";
+import { getTeacherInfo } from "../../api/Info";
 import { getDocumentsByDate } from "../../api/document";
 import TeacherLayout from "../../layouts/TeacherLayout";
 import useModal from "../../hooks/teacher/useModal";

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParentInfoStore } from "../../../stores/useParentInfoStore";
-import { getClassTeacherInfo, getParentInfo } from "../../../api/info";
+import { getClassTeacherInfo, getParentInfo } from "../../../api/Info";
 import { ParentTeacherMeeting } from "../../../types/meeting";
 import { formatDate } from "../../../utils/parent/dateUtils";
 import { useNavigate } from "react-router-dom";

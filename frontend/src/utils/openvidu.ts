@@ -9,7 +9,7 @@ import {
   getToken,
 } from "../api/openvidu";
 import { OpenViduState, Recording, User } from "../types/openvidu";
-import { getParentInfo } from "../api/info";
+import { getParentInfo } from "../api/Info";
 
 // TODO #2 08142231 범수 수정해야함
 /* 변경전 코드
