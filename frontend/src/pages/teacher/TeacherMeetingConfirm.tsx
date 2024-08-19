@@ -168,6 +168,12 @@ export default function TeacherMeetingConfirm() {
       (parentId) => selectedTimes[parentId]
     );
 
+    // 선택된 시간이 전혀 없는 경우
+    if (Object.keys(selectedTimes).length === 0) {
+      showToastError(<div>상담 일정을 선택해주세요.</div>);
+      return;
+    }
+
     if (!allParentsSelected) {
       openModal(
         <div className="w-full max-w-md py-3 px-3 bg-white">
