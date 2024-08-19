@@ -211,10 +211,10 @@ export default function TeacherBus() {
         </button>
 
         <button
-          onClick={closeModal}
-          className="px-4 py-2 bg-neutral-300 border-[2px] border-[#7C7C7C] text-black font-semibold rounded-lg shadow-md hover:bg-neutral-400 transition duration-300 ease-in-out"
-        >
-          취소
+            onClick={closeModal}
+            className="px-4 py-2 bg-neutral-200 border-[2px] border-[#7C7C7C] text-black font-semibold rounded-lg shadow-md hover:bg-neutral-300 transition duration-300 ease-in-out"
+          >
+            취소
         </button>
       </div>
     </div>
