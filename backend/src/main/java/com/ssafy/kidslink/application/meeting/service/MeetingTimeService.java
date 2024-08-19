@@ -333,12 +333,12 @@ public class MeetingTimeService {
             // 두 개 하나로 합쳐도 괜찮지만, 버그 발생이 있을 수 있으니 따로 빼둠.
             log.info("경우의 수 존재 X Case");
             List<OptimalMeetingResponseDTO> optimalMeetingResponseDTOList = new ArrayList<>();
-            for (int i = 0; i < response.length; i++) {
+            for (int i = 0; i < optimal.length; i++) {
                 Integer parentId = parentIds.get(i);
-                if (response[i] == -1) {
+                if (optimal[i] == -1) {
                     continue;
                 }
-                RequestMeetingTable requestMeetingTable = parentMeetingMap.get(parentId).get(response[i]);
+                RequestMeetingTable requestMeetingTable = parentMeetingMap.get(parentId).get(optimal[i]);
                 LocalDate date = convertIndexToDate(baseDate, requestMeetingTable.dateIndex);
                 LocalTime time = convertIndexToTime(requestMeetingTable.timeIndex);
 
@@ -422,8 +422,7 @@ public class MeetingTimeService {
         }
 
         private LocalTime parseTime(String timeString) {
-            // H:mm 패턴으로 시간을 파싱합니다.
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("H:mm");
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("[H:mm[:ss]][HH:mm[:ss]]");
             return LocalTime.parse(timeString, formatter);
         }
 
