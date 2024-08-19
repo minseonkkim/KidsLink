@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Title from "../../components/teacher/common/Title";
 import { getAllClassChildAlbum } from "../../api/album";
-import { getTeacherInfo } from "../../api/info";
+import { getTeacherInfo } from "../../api/Info";
 import { useTeacherInfoStore } from "../../stores/useTeacherInfoStore";
 import AlbumFolder from "../../components/teacher/album/AlbumFolder";
 import useModal from "../../hooks/teacher/useModal";

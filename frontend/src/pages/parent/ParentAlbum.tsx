@@ -6,7 +6,7 @@ import AlbumList from "../../components/parent/album/AlbumList";
 import daramgi from "../../assets/parent/camera-daramgi.png";
 import { getKidAllAlbums } from "../../api/album";
 import { useParentInfoStore } from "../../stores/useParentInfoStore";
-import { getParentInfo } from "../../api/info";
+import { getParentInfo } from "../../api/Info";
 
 export default function Album() {
   const [searchTitle, setSearchTitle] = useState("");

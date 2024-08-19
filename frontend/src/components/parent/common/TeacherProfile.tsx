@@ -1,4 +1,4 @@
-import { getParentInfo, getClassTeacherInfo } from "../../../api/info";
+import { getParentInfo, getClassTeacherInfo } from "../../../api/Info";
 import { useParentInfoStore } from "../../../stores/useParentInfoStore";
 import { useEffect, useState } from "react";
 import daramgi from "../../../assets/join/default-profile.png";
