@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useTeacherInfoStore } from "../../stores/useTeacherInfoStore";
 import { useNavigate } from "react-router-dom";
 import Title from "../../components/teacher/common/Title";
@@ -16,7 +16,7 @@ import TeacherLayout from "../../layouts/TeacherLayout";
 import daramgi from "../../assets/teacher/meeting-daramgi.png";
 import daramgisad from "../../assets/common/crying-daramgi.png";
 import { getTeacherInfo } from "../../api/Info";
-import useModal from "../../hooks/teacher/useModal";  // useModal 훅을 import
+import useModal from "../../hooks/teacher/useModal"; 
 
 interface Meeting {
   date: string;

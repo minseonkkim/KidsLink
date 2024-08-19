@@ -73,7 +73,6 @@ export async function postTeacherReservations(
 
 //상담일자 확정하기
 export async function confirmMeeting(selectedMeetings) {
-  console.log("확정: ", selectedMeetings)
   try {
     const response = await axiosInstance.post("meeting/confirm",selectedMeetings);
     return response.data;
@@ -83,16 +82,6 @@ export async function confirmMeeting(selectedMeetings) {
     throw error;
   }
 }
-
-// export async function classifyMeeting(selectedMeetings) {
-//   try {
-//     const response = await axiosInstance.post("meeting/classify",selectedMeetings);
-//     return response.data;
-//   } catch (error) {
-//     console.log(error);
-//     throw error;
-//   }
-// }
 
 // 예약된 전체 상담 리스트 조회
 export async function getConfirmedMeeting(): Promise<ParentTeacherMeeting[]> {
@@ -154,12 +143,10 @@ export async function PostParentMeetingSubmitted() {
   }
 }
 
-
+// 상담 일정 조율하기
 export async function optimalMeeting(selectedMeetings) {
-  console.log("selectedMeetings", selectedMeetings)
   try {
     const response = await axiosInstance.post("meeting/optimal", selectedMeetings);
-    console.log("response", response.data.data)
     return response.data;
   } catch (error) {
     console.log(error);
