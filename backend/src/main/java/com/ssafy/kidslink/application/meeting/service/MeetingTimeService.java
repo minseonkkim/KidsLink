@@ -262,6 +262,9 @@ public class MeetingTimeService {
     }
     
     // TODO #1 여기부터 범수 구현
+    private int[] optimal;
+    private int maxSelected;
+
     public List<OptimalMeetingResponseDTO> meetingScheduleListClassifyByAlgorithm(List<SelectedMeetingDTO> selectedMeetingDTOs){
         log.info("meetingScheduleListClassifyByAlgorithm.selectedMeetingDTOs: {}", selectedMeetingDTOs);
 
@@ -291,7 +294,10 @@ public class MeetingTimeService {
             parentMeetingMap.get(parentId).add(requestMeetingTable);
         }
 
-        System.out.println("parentMeetingMap = " + parentMeetingMap);
+        // 선택하지 않는 경우의 수 추가
+        for (Integer parentId : parentMeetingMap.keySet()) {
+            parentMeetingMap.get(parentId).add(new RequestMeetingTable(-1, -1));
+        }
 
         // 구현 방식에 따라 변경, 현재 방식은 백트래킹을 통해 구현할 것임
         // 응답 값은 parentId 마다 최적의 Time 반환
@@ -301,7 +307,6 @@ public class MeetingTimeService {
     // TODO #2 학부모를 안고르는(선택하지않는) 케이스도 구해서 최대 값을 구할 수도 있어야 한다.
     // TODO #2 현재는 무조건 고르는 로직
     private List<OptimalMeetingResponseDTO> optimalMeetingImplByBacktracking(ArrayList<Integer> parentIds, Map<Integer, ArrayList<RequestMeetingTable>> parentMeetingMap, int maxDateIndex, LocalDate baseDate) {
-        System.out.println("maxDateIndex = " + maxDateIndex);
         // 날짜, 시간 2차원 배열
         boolean[][] visit = new boolean[maxDateIndex + 1][20];
 //        OptimalMeetingResponseDTO[] response = new OptimalMeetingResponseDTO[parentIds.size()];
@@ -309,45 +314,66 @@ public class MeetingTimeService {
         // response에 저장되는 부분은 각 부모가 선택한 케이스
         int[] response = new int[parentIds.size()];
         Arrays.fill(response, -1);
+        this.optimal = Arrays.copyOf(response, response.length);
+        this.maxSelected = 0;
 
-        if (meetingBacktrackAlgorithm(0, visit, response, parentIds, parentMeetingMap)) {
-            System.out.println("Arrays.toString(response) = " + Arrays.toString(response));
+        if (meetingBacktrackAlgorithm(0, 0, visit, response, parentIds, parentMeetingMap)) {
             List<OptimalMeetingResponseDTO> optimalMeetingResponseDTOList = new ArrayList<>();
             for (int i = 0; i < response.length; i++) {
                 Integer parentId = parentIds.get(i);
-                System.out.println("parentMeetingMap.get(parentId) = " + parentMeetingMap.get(parentId));
                 RequestMeetingTable requestMeetingTable = parentMeetingMap.get(parentId).get(response[i]);
                 LocalDate date = convertIndexToDate(baseDate, requestMeetingTable.dateIndex);
                 LocalTime time = convertIndexToTime(requestMeetingTable.timeIndex);
-                System.out.println("date = " + date);
-                System.out.println("time = " + time);
+
+                OptimalMeetingResponseDTO optimalMeetingResponseDTO = new OptimalMeetingResponseDTO(parentId, date, time);
+                optimalMeetingResponseDTOList.add(optimalMeetingResponseDTO);
+            }
+            return optimalMeetingResponseDTOList;
+        }else{
+            // 두 개 하나로 합쳐도 괜찮지만, 버그 발생이 있을 수 있으니 따로 빼둠.
+            log.info("경우의 수 존재 X Case");
+            List<OptimalMeetingResponseDTO> optimalMeetingResponseDTOList = new ArrayList<>();
+            for (int i = 0; i < response.length; i++) {
+                Integer parentId = parentIds.get(i);
+                if (response[i] == -1) {
+                    continue;
+                }
+                RequestMeetingTable requestMeetingTable = parentMeetingMap.get(parentId).get(response[i]);
+                LocalDate date = convertIndexToDate(baseDate, requestMeetingTable.dateIndex);
+                LocalTime time = convertIndexToTime(requestMeetingTable.timeIndex);
 
                 OptimalMeetingResponseDTO optimalMeetingResponseDTO = new OptimalMeetingResponseDTO(parentId, date, time);
                 optimalMeetingResponseDTOList.add(optimalMeetingResponseDTO);
             }
             return optimalMeetingResponseDTOList;
         }
-        return null;
     }
 
-    private boolean meetingBacktrackAlgorithm(int current, boolean[][] visit, int[] response, ArrayList<Integer> parentIds, Map<Integer, ArrayList<RequestMeetingTable>> parentMeetingMap) {
-        System.out.println("MeetingTimeService.meetingBacktrackAlgorithm");
-        for (int i = 0; i < visit.length; i++) {
-            System.out.println("Arrays.toString(visit[i]) = " + Arrays.toString(visit[i]));
+    private boolean meetingBacktrackAlgorithm(int current, int selected, boolean[][] visit, int[] response, ArrayList<Integer> parentIds, Map<Integer, ArrayList<RequestMeetingTable>> parentMeetingMap) {
+        if(maxSelected < selected) {
+            maxSelected = selected;
+            optimal = Arrays.copyOf(response, response.length);
         }
-        System.out.println("current = " + current);
-        if(current == parentIds.size()) {
+
+        if(selected == parentIds.size()) {
             // 성공의 케이스 발견
             return true;
+        } else if (current == parentIds.size()) {
+            return false;
         }
+
+
         // 우선 current에 맞는 parentMeeting 접근
         List<RequestMeetingTable> meetings = parentMeetingMap.get(parentIds.get(current));
         for (int i = 0; i < meetings.size(); i++) {
             RequestMeetingTable meeting = meetings.get(i);
-            if (!visit[meeting.dateIndex][meeting.timeIndex]) {
+            if (i == meetings.size() - 1) {
+                // 선택하지 않는 경우의 수
+                meetingBacktrackAlgorithm(current + 1, selected, visit, response, parentIds, parentMeetingMap);
+            } else if (!visit[meeting.dateIndex][meeting.timeIndex]) {
                 visit[meeting.dateIndex][meeting.timeIndex] = true;
                 response[current] = i;
-                if (meetingBacktrackAlgorithm(current + 1, visit, response, parentIds, parentMeetingMap)) {
+                if (meetingBacktrackAlgorithm(current + 1, selected + 1, visit, response, parentIds, parentMeetingMap)) {
                     return true;
                 }
                 response[current] = -1;
@@ -388,6 +414,11 @@ public class MeetingTimeService {
         RequestMeetingTable(LocalDate firstDate, LocalDate date, String time){
             this.dateIndex = convertDateToIndex(firstDate, date);
             this.timeIndex = convertTimeToIndex(parseTime(time));
+        }
+
+        RequestMeetingTable(int dateIndex, int timeIndex) {
+            this.dateIndex = dateIndex;
+            this.timeIndex = timeIndex;
         }
 
         private LocalTime parseTime(String timeString) {
