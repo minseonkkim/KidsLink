@@ -87,13 +87,23 @@ export default function TeacherMeetingConfirm() {
   const groupByParentId = (data: Meeting[]): GroupedMeetings => {
     const grouped = data.reduce((acc, current) => {
       const { parentId, childName, date, time } = current;
+  
       if (!acc[parentId]) {
         acc[parentId] = { childName, times: [] };
       }
-      acc[parentId].times.push({ date, time });
+  
+      // 중복 체크: 동일한 date와 time이 이미 존재하는지 확인
+      const isDuplicate = acc[parentId].times.some(
+        (existingTime) => existingTime.date === date && existingTime.time === time
+      );
+  
+      if (!isDuplicate) {
+        acc[parentId].times.push({ date, time });
+      }
+  
       return acc;
     }, {} as GroupedMeetings);
-
+  
     for (const parentId in grouped) {
       grouped[parentId].times.sort((a, b) => {
         const dateA = new Date(`${a.date} ${a.time}`);
@@ -101,7 +111,7 @@ export default function TeacherMeetingConfirm() {
         return dateA.getTime() - dateB.getTime();
       });
     }
-
+  
     return grouped;
   };
 
