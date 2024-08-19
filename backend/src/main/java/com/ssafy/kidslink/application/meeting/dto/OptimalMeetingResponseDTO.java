@@ -1,5 +1,6 @@
 package com.ssafy.kidslink.application.meeting.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,8 +12,11 @@ import java.time.LocalTime;
 @Getter
 public class OptimalMeetingResponseDTO {
     int parentId;
-    LocalDate date; // 2024-08-19
-    LocalTime time; // 09:28
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    LocalDate date;
+
+    @JsonFormat(pattern = "HH:mm")
+    LocalTime time;
 }
 /*
 {
