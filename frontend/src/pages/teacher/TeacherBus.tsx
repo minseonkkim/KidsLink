@@ -4,7 +4,7 @@ import Title from "../../components/teacher/common/Title";
 import { MdNavigateBefore, MdNavigateNext } from "react-icons/md";
 import { startWebSocket, stopWebSocket } from "../../api/webSocket";
 import { getAllBusStops, postBusStart } from "../../api/bus";
-import { getTeacherInfo } from "../../api/info";
+import { getTeacherInfo } from "../../api/Info";
 import { useBusStore } from "../../stores/useBusStore";
 import { useTeacherInfoStore } from "../../stores/useTeacherInfoStore";
 import useModal from "../../hooks/teacher/useModal";
