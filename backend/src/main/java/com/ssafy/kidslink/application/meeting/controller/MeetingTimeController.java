@@ -30,7 +30,6 @@ import java.util.List;
 public class MeetingTimeController {
     private final MeetingTimeService meetingTimeService;
 
-
     @Operation(summary = "상담 일정 오픈", description = "상담 일정을 오픈합니다.",
             parameters = {
                     @Parameter(name = "Authorization", description = "JWT 토큰", required = true, in = ParameterIn.HEADER, schema = @Schema(type = "string"))
@@ -202,76 +201,66 @@ public class MeetingTimeController {
     }
 
     @PostMapping("/classify")
-    public ResponseEntity<APIResponse<List<SelectedMeetingDTO>>> classifySchedule(@AuthenticationPrincipal Object principal,@RequestBody List<SelectedMeetingDTO> selectedMeetingDTOS){
-        if(principal instanceof CustomUserDetails){
-            List<SelectedMeetingDTO> meetings = meetingTimeService.classifySchedule(selectedMeetingDTOS);
+    public ResponseEntity<APIResponse<List<SelectedMeetingDTO>>> classifySchedule(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestBody List<SelectedMeetingDTO> selectedMeetingDTOS) {
+        log.info("selectedMeetingDTOS: {}", selectedMeetingDTOS);
+        List<SelectedMeetingDTO> meetings = meetingTimeService.classifySchedule(selectedMeetingDTOS);
 
-            if (meetings.isEmpty()) {
-                APIResponse<List<SelectedMeetingDTO>> responseData = new APIResponse<>(
-                        "fail",
-                        null,
-                        "모든 일정을 분류할 수 없습니다.",
-                        null
-                );
-                return new ResponseEntity<>(responseData, HttpStatus.OK);
-            }
-
+        if (meetings == null || meetings.isEmpty()) {
             APIResponse<List<SelectedMeetingDTO>> responseData = new APIResponse<>(
-                    "success",
-                    meetings,
-                    "상담 일정 분류에 성공하였습니다.",
+                    "fail",
+                    null,
+                    "모든 일정을 분류할 수 없습니다.",
                     null
             );
             return new ResponseEntity<>(responseData, HttpStatus.OK);
         }
-        APIError apiError = new APIError("UNAUTHORIZED", "유효한 JWT 토큰이 필요합니다.");
 
         APIResponse<List<SelectedMeetingDTO>> responseData = new APIResponse<>(
-                "fail",
-                null,
-                "상담 일정 분류에 실패했습니다.",
-                apiError
+                "success",
+                meetings,
+                "상담 일정 분류에 성공하였습니다.",
+                null
         );
+        return new ResponseEntity<>(responseData, HttpStatus.OK);
+    }
 
-        return new ResponseEntity<>(responseData, HttpStatus.BAD_REQUEST);
+    @PostMapping("/optimal")
+    public ResponseEntity<APIResponse<List<OptimalMeetingResponseDTO>>> optimalSchedule(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestBody List<SelectedMeetingDTO> selectedMeetingDTOS) {
+        log.info("selectedMeetingDTOS: {}", selectedMeetingDTOS);
+        List<OptimalMeetingResponseDTO> meetings = meetingTimeService.meetingScheduleListClassifyByAlgorithm(selectedMeetingDTOS);
+
+        APIResponse<List<OptimalMeetingResponseDTO>> responseData = new APIResponse<>(
+                "success",
+                meetings,
+                "상담 일정 분류에 성공하였습니다.",
+                null
+        );
+        return new ResponseEntity<>(responseData, HttpStatus.OK);
     }
 
     @PostMapping("/confirm")
-    public ResponseEntity<APIResponse<List<MeetingRoomDTO>>> confirmMeeting(@AuthenticationPrincipal Object principal,@RequestBody List<SelectedMeetingDTO> selectedMeetingDTOS ){
-        if(principal instanceof CustomUserDetails){
-            CustomUserDetails userDetails = (CustomUserDetails) principal;
-            List<SelectedMeetingDTO> classifySchedule = meetingTimeService.classifySchedule(selectedMeetingDTOS);
+    public ResponseEntity<APIResponse<List<MeetingRoomDTO>>> confirmMeeting(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestBody List<SelectedMeetingDTO> selectedMeetingDTOS) {
+        List<SelectedMeetingDTO> classifySchedule = meetingTimeService.classifySchedule(selectedMeetingDTOS);
 
-            if (classifySchedule.isEmpty()) {
-                APIResponse<List<MeetingRoomDTO>> responseData = new APIResponse<>(
-                        "fail",
-                        null,
-                        "모든 일정을 분류할 수 없습니다.",
-                        null
-                );
-                return new ResponseEntity<>(responseData, HttpStatus.OK);
-            }
-            List<MeetingRoomDTO> meetings = meetingTimeService.confirmMeeting(selectedMeetingDTOS);
-            meetingTimeService.deleteMeeting(userDetails.getUsername());
-            meetingTimeService.deleteMeetingTime(userDetails.getUsername());
+        if (classifySchedule.isEmpty()) {
             APIResponse<List<MeetingRoomDTO>> responseData = new APIResponse<>(
-                    "success",
-                    meetings,
-                    "상담 일정 확정에 성공하였습니다.",
+                    "fail",
+                    null,
+                    "모든 일정을 분류할 수 없습니다.",
                     null
             );
             return new ResponseEntity<>(responseData, HttpStatus.OK);
         }
-        APIError apiError = new APIError("UNAUTHORIZED", "유효한 JWT 토큰이 필요합니다.");
-
+        List<MeetingRoomDTO> meetings = meetingTimeService.confirmMeeting(selectedMeetingDTOS);
+        meetingTimeService.deleteMeeting(userDetails.getUsername());
+        meetingTimeService.deleteMeetingTime(userDetails.getUsername());
         APIResponse<List<MeetingRoomDTO>> responseData = new APIResponse<>(
-                "fail",
-                null,
-                "상담 일정 확정을 실패했습니다.",
-                apiError
+                "success",
+                meetings,
+                "상담 일정 확정에 성공하였습니다.",
+                null
         );
-
-        return new ResponseEntity<>(responseData, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(responseData, HttpStatus.OK);
     }
 
     @PostMapping("/submitted")
