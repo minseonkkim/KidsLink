@@ -122,7 +122,7 @@ export default function ParentDocument() {
       <div className="flex flex-col flex-grow overflow-hidden rounded-tl-[20px] rounded-tr-[20px] bg-white shadow-top px-12 py-4 animate-slideUp">
         <SearchTitleBar searchTitle={searchTerm} onSearch={handleSearch} />
 
-        <div className="flex-grow overflow-y-auto space-y-6 pb-6">
+        <div className="flex-grow overflow-y-auto custom-scrollbar space-y-6 pb-6">
           <DocumentList
             documents={filteredDocuments}
             handleDocumentClick={navigateToDetailPage}
