@@ -4,7 +4,7 @@ import OpenViduVideoComponent from "../../components/openvidu/VideoComponent";
 import { startMainRecording, stopMainRecording } from "../../api/openvidu";
 import MeetingBackground from "../../assets/teacher/meeting_background.png";
 import { useTeacherInfoStore } from "../../stores/useTeacherInfoStore";
-import { getTeacherInfo } from "../../api/info";
+import { getTeacherInfo } from "../../api/Info";
 import TeacherMeetingFooter from "../../components/openvidu/TeacherMeetingFooter";
 import { ControlState, OpenViduState, User } from "../../types/openvidu";
 import { joinSession, leaveSession } from "../../utils/openvidu";

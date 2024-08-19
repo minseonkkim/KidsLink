@@ -1,12 +1,15 @@
 import noAuthAxios from "./token/noAuthAxios";
 import useAppStore from "../stores/store";
-import { getTeacherInfo, getParentInfo } from "./info";
+import { getTeacherInfo, getParentInfo } from "./Info";
 import { useTeacherInfoStore } from "../stores/useTeacherInfoStore";
 import { useParentInfoStore } from "../stores/useParentInfoStore";
-import { ParentSignupData, LoginData, TeacherSignupData } from "../types/member";
+import {
+  ParentSignupData,
+  LoginData,
+  TeacherSignupData,
+} from "../types/member";
 
 const API_BASE_URL = import.meta.env.VITE_API_KEY;
-
 
 // 로그인 함수
 export async function login(user: LoginData) {

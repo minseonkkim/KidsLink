@@ -12,7 +12,7 @@ import {
   getTeacherSchedules,
 } from "../../api/schedule";
 import StyledCalendar from "../../components/teacher/common/StyledCalendar";
-import { getOneParentInfo } from "../../api/info";
+import { getOneParentInfo } from "../../api/Info";
 import daramgi from "../../assets/teacher/daramgi.png";
 
 const ItemType = {

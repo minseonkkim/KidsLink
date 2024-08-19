@@ -8,7 +8,7 @@ import {
   getKidBoardingStatus,
   getAllBusStops,
 } from "../../api/bus";
-import { getParentInfo } from "../../api/info";
+import { getParentInfo } from "../../api/Info";
 import { Toggle } from "../../components/parent/bus/Toggle";
 import { FaBus } from "react-icons/fa";
 import { MdGpsFixed } from "react-icons/md";

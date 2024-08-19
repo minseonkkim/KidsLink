@@ -8,7 +8,7 @@ import handWithPen from "../../assets/parent/pen.png";
 import { getKidAllDocuments } from "../../api/document";
 import { ParentDocumentData } from "../../types/document";
 import { useParentInfoStore } from "../../stores/useParentInfoStore";
-import { getParentInfo } from "../../api/info";
+import { getParentInfo } from "../../api/Info";
 import { formatDate } from "../../utils/parent/dateUtils";
 
 interface MappedDocument {

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Title from "../../components/teacher/common/Title";
-import { getOneParentInfo } from "../../api/info";
+import { getOneParentInfo } from "../../api/Info";
 import TeacherMeetingSchedule from "../../components/teacher/consulting/TeacherMeetingSchedule";
 import { isMeetingActive, isMeetingVisible } from "../../utils/meeting";
 import { ParentTeacherMeeting } from "../../types/meeting";
