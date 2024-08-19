@@ -24,21 +24,21 @@ export default function BottomNavbar() {
   const iconColor = '#FFC107'
   return (
     <div className="max-w-md w-full footer fixed bottom-0 w-full bg-white text-gray-700 h-[60px] flex justify-around items-center shadow-md">
-      <div className="footer-item flex flex-col items-center" onClick={handleHomeClick}>
+      <div className="footer-item flex flex-col items-center cursor-pointer" onClick={handleHomeClick}>
         {isCurrentPage('/') ? (
           <GoHomeFill className="w-7 h-7" style={{ color: iconColor }} />
         ) : (
           <GoHome className="w-7 h-7 text-gray-300" />
         )}
       </div>
-      <div className="footer-item flex flex-col items-center" onClick={handleScheduleClick}>
+      <div className="footer-item flex flex-col items-center cursor-pointer" onClick={handleScheduleClick}>
         {isCurrentPage('/schedule') ? (
           <IoCalendarClear className="w-7 h-7" style={{ color: iconColor }} />
         ) : (
           <IoCalendarClearOutline className="w-7 h-7 text-gray-300" />
         )}
       </div>
-      <div className="footer-item flex flex-col items-center" onClick={handleMyPageClick}>
+      <div className="footer-item flex flex-col items-center cursor-pointer" onClick={handleMyPageClick}>
         {isCurrentPage('/mypage') ? (
           <FaUser className="w-6 h-6" style={{ color: iconColor }} />
         ) : (

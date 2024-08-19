@@ -7,7 +7,6 @@ import { formatDate } from '../../../utils/parent/dateUtils';
 import { useNavigate } from 'react-router-dom';
 import { Alarm } from "../../../types/alarm"
 
-
 interface AlaramBellProps {
   notificationCount: number;
   notifications: Alarm[];
@@ -15,8 +14,8 @@ interface AlaramBellProps {
 
 export default function AlaramBell({ notificationCount: initialNotificationCount, notifications: initialNotifications }: AlaramBellProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [notifications, setNotifications] = useState<Alarm[]>(initialNotifications);
-  const [notificationCount, setNotificationCount] = useState(initialNotificationCount);
+  const [notifications, setNotifications] = useState<Alarm[]>(initialNotifications); 
+  const [notificationCount, setNotificationCount] = useState(initialNotificationCount); 
   const navigate = useNavigate(); 
 
   useEffect(() => {
@@ -29,20 +28,21 @@ export default function AlaramBell({ notificationCount: initialNotificationCount
           contents: alarm.contents,
           code: alarm.code as Alarm['code'],
         }));
-        setNotifications(transformedNotifications);
-        setNotificationCount(transformedNotifications.length);
+        setNotifications(transformedNotifications); 
+        setNotificationCount(transformedNotifications.length); 
       } catch (error) {
-        console.error("Failed to fetch notifications:", error);
+        console.error("Failed to fetch notifications:", error); 
       }
     };
 
     fetchNotifications();
-    const intervalId = setInterval(fetchNotifications, 10000);
+    const intervalId = setInterval(fetchNotifications, 10000); // 10초마다 알림 목록을 갱신
 
-    return () => clearInterval(intervalId);
+    return () => clearInterval(intervalId); 
   }, []);
 
   const handleNotificationClick = (notification: Alarm) => {
+    // 알림 코드에 따라 다른 페이지로 이동
     switch (notification.code) {
       case 'NOTICE':
         navigate('/notice');
@@ -65,31 +65,33 @@ export default function AlaramBell({ notificationCount: initialNotificationCount
       default:
         break;
     }
+    setIsModalOpen(false);
   };
 
   const handleDeleteClick = async (id: number, e: React.MouseEvent) => {
     e.stopPropagation(); 
     try {
-      await deleteAlarm(id);
+      await deleteAlarm(id); 
       const updatedNotifications = notifications.filter(notification => notification.id !== id);
-      setNotifications(updatedNotifications);
+      setNotifications(updatedNotifications); 
       setNotificationCount(updatedNotifications.length);
     } catch (error) {
-      console.error("Failed to delete notification:", error);
+      console.error("Failed to delete notification:", error); 
     }
   };
 
   const handleRemoveAllNotifications = async () => {
     try {
-      await deleteAllAlarms();
-      setNotifications([]);
-      setNotificationCount(0);
+      await deleteAllAlarms(); 
+      setNotifications([]); 
+      setNotificationCount(0); 
     } catch (error) {
-      console.error("Failed to delete all notifications:", error);
+      console.error("Failed to delete all notifications:", error); 
     }
   };
 
   const getIcon = (code: string) => {
+    // 알림 코드에 따라 다른 아이콘을 반환
     switch (code) {
       case 'NOTICE':
         return <FcAdvertising className="w-6 h-6" />;
@@ -110,21 +112,26 @@ export default function AlaramBell({ notificationCount: initialNotificationCount
 
   return (
     <div className="font-KoPubDotum relative">
-      <FaRegBell className="w-6 h-6 text-gray-700 cursor-pointer" onClick={() => setIsModalOpen(!isModalOpen)} />
+      <div className=' cursor-pointer' onClick={() => setIsModalOpen(!isModalOpen)} >
+      <FaRegBell className="w-6 h-6 text-gray-700"/>
       {notificationCount > 0 && (
         <div className="absolute top-1 right-1 flex items-center justify-center w-4 h-4 bg-red-500 text-white rounded-full text-xs" style={{ transform: 'translate(50%, -50%)' }}>
           {notificationCount}
         </div>
       )}
+      </div>
       {isModalOpen && (
         <>
+          {/* 모달 뒷배경 */}
           <div className="fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm z-40" onClick={() => setIsModalOpen(false)}></div>
-          <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 w-full px-8" onClick={(e) => e.stopPropagation()}>
-            <div className="space-y-4 mt-8">
+          
+          {/* 모달 창 */}
+          <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-md px-8" onClick={(e) => e.stopPropagation()}>
+            <div className="space-y-4 mt-8 max-h-full overflow-y-auto" style={{ maxHeight: 'calc(100vh - 8rem)' }}>
               {[...notifications].reverse().map((notification, index) => (
                 <div key={notification.id} className="relative">
 
-                  {/* 클릭시 페이지 이동 */}
+                  {/* 알림 항목 */}
                   <div
                     onClick={() => handleNotificationClick(notification)}
                     className="flex items-center p-4 bg-white border border-gray-200 rounded-xl cursor-pointer hover:bg-gray-100 transition"
@@ -137,13 +144,13 @@ export default function AlaramBell({ notificationCount: initialNotificationCount
                       <div className="text-xs text-gray-600">{formatDate(notification.date)}</div>
                     </div>
 
-                    {/* 단일 삭제 */}
+                    {/* 단일 알림 삭제 */}
                     <div onClick={(e) => handleDeleteClick(notification.id, e)} className="ml-3 text-red-600 hover:text-red-800">
                       <FaTrash className="w-4 h-4" />
                     </div>
                   </div>
 
-                  {/* 전체 삭제 */}
+                  {/* 마지막 알림 항목일 경우 전체 삭제 버튼 표시 */}
                   {index === notifications.length - 1 && (
                     <div className="flex justify-end mt-3">
                       <button

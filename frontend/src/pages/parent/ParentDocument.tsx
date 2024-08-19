@@ -132,9 +132,10 @@ export default function ParentDocument() {
 
       {/* 서류 작성 아이콘 */}
       <div
-        className="fixed right-10 z-40 bottom-20"
-        onClick={navigateToSubmitPage}
-      >
+          className="fixed z-40 bottom-20 transform translate-x-[50%] cursor-pointer"
+          onClick={navigateToSubmitPage}
+          style={{ right: 'calc(50% - 150px)' }}
+        >
         <div
           className="z-50 w-[70px] h-[70px] rounded-full bg-[#ffec8a] flex items-center justify-center"
           style={{
