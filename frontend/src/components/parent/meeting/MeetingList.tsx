@@ -55,7 +55,7 @@ export default function MeetingList({
   };
 
   return (
-    <div className="w-full space-y-6 overflow-y-auto">
+    <div className="w-full space-y-6 overflow-y-auto custom-scrollbar">
       {meetings.map((meeting) => {
         const isActive =
           meeting.meetingDate && meeting.meetingTime
