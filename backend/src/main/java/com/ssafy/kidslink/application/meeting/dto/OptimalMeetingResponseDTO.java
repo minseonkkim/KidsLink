@@ -11,6 +11,14 @@ import java.time.LocalTime;
 @Getter
 public class OptimalMeetingResponseDTO {
     int parentId;
-    LocalDate date;
-    LocalTime time;
+    LocalDate date; // 2024-08-19
+    LocalTime time; // 09:28
 }
+/*
+{
+parentId
+date
+time
+}
+
+ */
