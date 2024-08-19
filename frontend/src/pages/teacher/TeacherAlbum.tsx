@@ -79,7 +79,7 @@ useEffect(() => {
           )}
           {images.length > 0 && (
             <div className="flex flex-col justify-center items-center lg:mt-8 mt-0 relative w-full lg:w-auto">
-              <div className={`grid grid-cols-2 lg:grid-cols-5 gap-4 overflow-y-auto lg:h-[442px] h-[330px] border-[#B2D170] border-[1px] mt-10 rounded-[10px] content-start p-3 ${loading ? 'bg-[#f4f4f4] opacity-50' : ''}`}>
+              <div className={`grid grid-cols-2 lg:grid-cols-5 gap-4 overflow-y-auto custom-scrollbar lg:h-[442px] h-[330px] border-[#B2D170] border-[1px] mt-10 rounded-[10px] content-start p-3 ${loading ? 'bg-[#f4f4f4] opacity-50' : ''}`}>
                 {images.map((file, index) => (
                   <div key={index} className="relative w-32 h-32 loading-container">
                     <img 

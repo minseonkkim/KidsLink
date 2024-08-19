@@ -90,7 +90,7 @@ export default function ParentGrowth() {
           handleMonthChange={handleMonthChange}
         />
 
-        <div className="flex-grow overflow-y-auto space-y-6 pb-6">
+        <div className="flex-grow overflow-y-auto custom-scrollbar space-y-6 pb-6">
           <GrowthList
             filteredDiarys={filteredDiarys}
             handleBoxClick={handleBoxClick}
